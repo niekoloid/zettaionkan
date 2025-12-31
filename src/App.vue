@@ -1,28 +1,58 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import * as Tone from 'tone'
 
 const chords = ref([
-  { id: 'domiso', name: 'ドミソ', symbol: 'C', color: '#EF4444' },
-  { id: 'dofara', name: 'ドファラ', symbol: 'F', color: '#EAB308' },
-  { id: 'shireso', name: 'シレソ', symbol: 'G', color: '#3B82F6' },
-  { id: 'radofa', name: 'ラドファ', symbol: 'F', color: '#1F2937' },
-  { id: 'resoshi', name: 'レソシ', symbol: 'G', color: '#22C55E' },
-  { id: 'misodo', name: 'ミソド', symbol: 'C', color: '#F97316' },
-  { id: 'fadorado', name: 'ファラド', symbol: 'F', color: '#A855F7' },
-  { id: 'sorushire', name: 'ソシレ', symbol: 'G', color: '#EC4899' },
-  { id: 'sodomi', name: 'ソドミ', symbol: 'C', color: '#A3744D' },
-  { id: 'radosharpmi', name: 'ラド#ミ', symbol: 'A', color: '#84CC16' },
-  { id: 'refasharpara', name: 'レファ#ラ', symbol: 'D', color: '#F4A460' },
-  { id: 'misosharpshi', name: 'ミソ#シ', symbol: 'E', color: '#DDA0DD' },
-  { id: 'shiflatrefa', name: 'シ♭レファ', symbol: 'B♭', color: '#6B7280' },
-  { id: 'miflatshiblat', name: 'ミ♭ソシ♭', symbol: 'E♭', color: '#06B6D4' },
+  { id: 'domiso', name: 'ドミソ', symbol: 'C', color: '#EF4444', notes: ['C4', 'E4', 'G4'] },
+  { id: 'dofara', name: 'ドファラ', symbol: 'F', color: '#EAB308', notes: ['F3', 'A3', 'C4'] },
+  { id: 'shireso', name: 'シレソ', symbol: 'G', color: '#3B82F6', notes: ['G3', 'B3', 'D4'] },
+  { id: 'radofa', name: 'ラドファ', symbol: 'F', color: '#1F2937', notes: ['F4', 'A4', 'C5'] },
+  { id: 'resoshi', name: 'レソシ', symbol: 'G', color: '#22C55E', notes: ['G4', 'B4', 'D5'] },
+  { id: 'misodo', name: 'ミソド', symbol: 'C', color: '#F97316', notes: ['C4', 'E4', 'G4'] },
+  { id: 'fadorado', name: 'ファラド', symbol: 'F', color: '#A855F7', notes: ['F4', 'A4', 'C5'] },
+  { id: 'sorushire', name: 'ソシレ', symbol: 'G', color: '#EC4899', notes: ['G4', 'B4', 'D5'] },
+  { id: 'sodomi', name: 'ソドミ', symbol: 'C', color: '#A3744D', notes: ['G3', 'C4', 'E4'] },
+  { id: 'radosharpmi', name: 'ラド#ミ', symbol: 'A', color: '#84CC16', notes: ['A3', 'C#4', 'E4'] },
+  { id: 'refasharpara', name: 'レファ#ラ', symbol: 'D', color: '#F4A460', notes: ['D4', 'F#4', 'A4'] },
+  { id: 'misosharpshi', name: 'ミソ#シ', symbol: 'E', color: '#DDA0DD', notes: ['E4', 'G#4', 'B4'] },
+  { id: 'shiflatrefa', name: 'シ♭レファ', symbol: 'B♭', color: '#6B7280', notes: ['Bb3', 'D4', 'F4'] },
+  { id: 'miflatshiblat', name: 'ミ♭ソシ♭', symbol: 'E♭', color: '#06B6D4', notes: ['Eb4', 'G4', 'Bb4'] },
 ])
 
 const selectedChords = ref(['domiso', 'dofara', 'shireso', 'radofa', 'resoshi', 'misodo', 'fadorado', 'sorushire', 'sodomi', 'radosharpmi', 'refasharpara', 'misosharpshi', 'shiflatrefa', 'miflatshiblat'])
 const trialCount = ref(15)
 const soundEnabled = ref(true)
 
-const toggleChord = (id) => {
+let synth = null
+
+onMounted(() => {
+  synth = new Tone.PolySynth(Tone.Synth, {
+    oscillator: {
+      type: 'triangle'
+    },
+    envelope: {
+      attack: 0.005,
+      decay: 0.1,
+      sustain: 0.3,
+      release: 1
+    }
+  }).toDestination()
+})
+
+const playChord = (notes) => {
+  if (!soundEnabled.value || !synth) return
+  
+  if (Tone.context.state !== 'running') {
+    Tone.start()
+  }
+
+  synth.triggerAttackRelease(notes, '2n')
+}
+
+const toggleChord = (chord) => {
+  const id = chord.id
+  playChord(chord.notes)
+
   if (selectedChords.value.includes(id)) {
     if (selectedChords.value.length > 1) {
       selectedChords.value = selectedChords.value.filter(c => c !== id)
@@ -48,7 +78,6 @@ const startTraining = () => {
     trialCount: trialCount.value,
     soundEnabled: soundEnabled.value
   })
-  // Navigation or game logic would go here
 }
 </script>
 
@@ -68,7 +97,7 @@ const startTraining = () => {
         <div 
           v-for="chord in chords" 
           :key="chord.id"
-          @click="toggleChord(chord.id)"
+          @click="toggleChord(chord)"
           :class="[
             'flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all duration-200',
             selectedChords.includes(chord.id) 
@@ -156,7 +185,6 @@ const startTraining = () => {
 </template>
 
 <style>
-/* Any global adjustments if needed */
 body {
   font-family: 'Noto Sans JP', sans-serif;
 }
