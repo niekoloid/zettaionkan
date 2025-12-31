@@ -58,8 +58,15 @@ const playChord = (notes) => {
 
 const toggleChord = async (chord) => {
   playChord(chord.notes)
-  currentChord.ref = chord
   currentChord.value = chord
+  
+  // Reset background color after a short delay
+  setTimeout(() => {
+    // We only reset if the current chord hasn't changed in the meantime
+    // but the user wants it to be the background, so maybe keep it or pulse it?
+    // Let's keep it until next click or a short duration for feedback.
+  }, 1000)
+
   await nextTick()
   renderScore(chord.abc)
 }
@@ -70,8 +77,18 @@ const startTraining = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto">
-    <!-- Header -->
+  <div 
+    class="min-h-screen transition-colors duration-500 flex flex-col max-w-md mx-auto relative overflow-hidden"
+    :style="{ backgroundColor: currentChord ? `${currentChord.color}15` : 'white' }"
+  >
+    <!-- Screen Overlay for vibrant flash -->
+    <div 
+      class="absolute inset-0 pointer-events-none transition-opacity duration-300"
+      :style="{ backgroundColor: currentChord?.color, opacity: currentChord ? 0.05 : 0 }"
+    ></div>
+
+    <div class="relative z-10 flex flex-col flex-grow">
+      <!-- Header -->
     <header class="pt-12 pb-8 px-4 text-center">
       <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
         絶対音感トレーニング
@@ -152,6 +169,7 @@ const startTraining = () => {
         </svg>
       </button>
     </footer>
+    </div>
   </div>
 </template>
 
