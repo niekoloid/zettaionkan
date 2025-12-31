@@ -21,15 +21,15 @@ const chords = ref([
 ])
 
 const soundEnabled = ref(true)
-const pianoModel = ref('steinway') // 'standard' or 'steinway'
+const pianoModel = ref('yamaha') // 'standard' or 'yamaha'
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
 
 let synth = null
 let sampler = null
 
-// Steinway samples from a reliable CDN
-const STEINWAY_SAMPLES = {
+// Yamaha C5 samples from a reliable CDN
+const YAMAHA_C5_SAMPLES = {
   "A0": "A0.mp3", "C1": "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
   "A1": "A1.mp3", "C2": "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
   "A2": "A2.mp3", "C3": "C3.mp3", "D#3": "Ds3.mp3", "F#3": "Fs3.mp3",
@@ -52,9 +52,9 @@ onMounted(() => {
     }
   }).toDestination()
 
-  // Sampler for Steinway sound
+  // Sampler for Yamaha C5 sound
   sampler = new Tone.Sampler({
-    urls: STEINWAY_SAMPLES,
+    urls: YAMAHA_C5_SAMPLES,
     baseUrl: "https://tonejs.github.io/audio/salamander/",
     onload: () => {
       isSamplerLoaded.value = true
@@ -79,7 +79,7 @@ const playChord = (notes) => {
   if (!soundEnabled.value) return
   if (Tone.context.state !== 'running') Tone.start()
 
-  if (pianoModel.value === 'steinway' && isSamplerLoaded.value) {
+  if (pianoModel.value === 'yamaha' && isSamplerLoaded.value) {
     sampler.triggerAttackRelease(notes, '2n')
   } else {
     synth.triggerAttackRelease(notes, '2n')
@@ -112,13 +112,14 @@ const startTraining = () => {
     <div class="relative z-10 flex flex-col flex-grow">
       <!-- Header -->
       <header class="pt-12 pb-8 px-4 text-center">
-        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-          絶対音感トレーニング
+        <h1 class="flex flex-col items-center">
+          <span class="text-lg font-medium text-blue-500 tracking-[0.2em] mb-1">いろおと</span>
+          <span class="text-3xl font-bold text-gray-900 tracking-tight">絶対音感トレーニング</span>
         </h1>
       </header>
 
       <!-- Main Content -->
-      <main class="flex-grow px-4 pb-32 overflow-y-auto">
+      <main class="flex-grow px-4 pb-12 overflow-y-auto">
         <!-- Chord Selection -->
         <div class="grid grid-cols-2 gap-3 mb-10">
           <div 
@@ -140,20 +141,20 @@ const startTraining = () => {
 
         <!-- Settings -->
         <div class="space-y-8 pb-12">
-          <!-- Piano Model Toggle -->
+          <!-- Sound Model Toggle -->
           <section>
-            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">ピアノの種類</h2>
+            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">音の種類</h2>
             <div class="flex bg-gray-100 p-1 rounded-xl">
               <button 
-                @click="pianoModel = 'steinway'"
+                @click="pianoModel = 'yamaha'"
                 :class="[
                   'flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg font-bold transition-all duration-200',
-                  pianoModel === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                  pianoModel === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
                 ]"
               >
                 <div class="flex items-center">
-                  🎹 Steinway
-                  <div v-if="pianoModel === 'steinway' && !isSamplerLoaded.value" class="ml-2 w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                  🎹 グランドピアノ (Yamaha C5)
+                  <div v-if="pianoModel === 'yamaha' && !isSamplerLoaded.value" class="ml-2 w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                 </div>
               </button>
               <button 
@@ -163,7 +164,7 @@ const startTraining = () => {
                   pianoModel === 'standard' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
                 ]"
               >
-                Standard
+                電子音
               </button>
             </div>
           </section>
@@ -171,7 +172,7 @@ const startTraining = () => {
           <!-- Sound Toggle -->
           <section>
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">音の有無</h2>
-            <div class="flex bg-gray-100 p-1 rounded-xl">
+            <div class="flex bg-gray-100 p-1 rounded-xl relative">
               <button 
                 @click="soundEnabled = true"
                 :class="[
@@ -185,12 +186,16 @@ const startTraining = () => {
                 @click="soundEnabled = false"
                 :class="[
                   'flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg font-bold transition-all duration-200',
-                  !soundEnabled ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                  !soundEnabled ? 'bg-white shadow-sm text-red-600' : 'text-gray-500 hover:text-gray-700'
                 ]"
               >
                 <span class="mr-2">🔇</span> 音なし
               </button>
             </div>
+            <!-- Alert message when muted -->
+            <p v-if="!soundEnabled" class="text-[10px] text-red-500 mt-2 text-center font-bold animate-pulse">
+              ⚠️ 音なし設定中です。端末本体の消音モードもご確認ください。
+            </p>
           </section>
 
           <!-- Score Visualization -->
@@ -204,6 +209,7 @@ const startTraining = () => {
               {{ currentChord.name }} ({{ currentChord.symbol }})
             </p>
           </section>
+
         </div>
 
         <!-- Service Info & Company Info -->
@@ -213,8 +219,8 @@ const startTraining = () => {
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 text-center">サービス概要</h2>
             <div class="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 shadow-sm">
               <p class="text-gray-600 leading-relaxed text-sm">
-                「絶対音感トレーニング」は、ピアノの和音を聞いてその種類を当てることで、絶対音感を養うためのトレーニングツールです。
-                多様な和音パターンと、高品質なSteinwayピアノの音源を使用し、日々の練習をサポートします。
+                「いろおと 絶対音感トレーニング」は、ピアノの和音を聞いてその種類を当てることで、絶対音感を養うためのトレーニングツールです。
+                多様な和音パターンと、高品質なグランドピアノ（Yamaha C5）の音源を使用し、日々の練習をサポートします。
               </p>
             </div>
           </section>
@@ -242,18 +248,7 @@ const startTraining = () => {
         </div>
       </main>
 
-      <!-- Footer Action -->
-      <footer class="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-6 bg-gradient-to-t from-white via-white to-transparent pointer-events-none z-50">
-        <button 
-          @click="startTraining"
-          class="pointer-events-auto w-full bg-gray-900 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-blue-600 hover:to-blue-500 text-white font-bold py-5 rounded-2xl shadow-2xl shadow-gray-200 transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-3 group"
-        >
-          <span class="text-xl tracking-widest">記録開始</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-          </svg>
-        </button>
-      </footer>
+
     </div>
   </div>
 </template>
