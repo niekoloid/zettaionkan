@@ -1,0 +1,58 @@
+<template>
+  <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden">
+    <!-- Header -->
+    <header class="pt-12 pb-8 px-4 flex items-center justify-between">
+      <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors group">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </router-link>
+      <h1 class="text-xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
+        運営会社情報
+      </h1>
+      <div class="w-10"></div> <!-- Spacer -->
+    </header>
+
+    <main class="flex-grow px-6 pb-20">
+      <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
+        <div class="text-center mb-10">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">株式会社暁</h2>
+          <p class="text-xs text-gray-400 font-medium tracking-widest uppercase">Akatsuki Inc.</p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="border-b border-gray-100 pb-4">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">所在地</p>
+            <p class="text-sm text-gray-700 font-medium">東京都</p>
+          </div>
+
+          <div class="border-b border-gray-100 pb-4">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">事業内容</p>
+            <p class="text-sm text-gray-700 font-medium leading-relaxed">デジタルコンテンツの企画・制作・運営、教育ツールの開発</p>
+          </div>
+
+          <div class="pb-4">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">公式サイト</p>
+            <a href="https://akatsuki.works" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-500 font-bold flex items-center hover:underline">
+              akatsuki.works
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 space-y-4">
+        <p class="text-xs text-center text-gray-500 leading-relaxed">
+          私たちは最新のテクノロジーを活用し、<br>
+          「できた！」という喜びを創造します。
+        </p>
+      </div>
+    </main>
+
+    <footer class="text-center text-gray-300 text-[10px] pb-8">
+      &copy; {{ new Date().getFullYear() }} Akatsuki Inc.
+    </footer>
+  </div>
+</template>

@@ -1,0 +1,72 @@
+<template>
+  <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden">
+    <!-- Header -->
+    <header class="pt-12 pb-8 px-4 flex items-center justify-between">
+      <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors group">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </router-link>
+      <h1 class="text-xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
+        サービス概要
+      </h1>
+      <div class="w-10"></div> <!-- Spacer -->
+    </header>
+
+    <main class="flex-grow px-6 pb-20">
+      <div class="space-y-8">
+        <section>
+          <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+              <span class="bg-blue-500 w-1.5 h-6 rounded-full mr-3"></span>
+              いろおと とは
+            </h2>
+            <p class="text-gray-600 leading-relaxed text-sm">
+              「いろおと 絶対音感トレーニング」は、ピアノの和音を聞いてその種類を当てることで、絶対音感を養うためのトレーニングツールです。
+            </p>
+            <p class="text-gray-600 leading-relaxed text-sm mt-4">
+              音を単なる記号としてではなく、その響きや「色」として捉える体験を通じて、楽しく効果的な学習をサポートします。
+            </p>
+          </div>
+        </section>
+
+        <section class="space-y-6">
+          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">特徴</h2>
+          
+          <div class="grid gap-4">
+            <div class="bg-white p-6 rounded-2xl border border-gray-50 shadow-sm">
+              <h3 class="font-bold text-gray-800 mb-2">最高峰のピアノ音源</h3>
+              <p class="text-xs text-gray-500 leading-relaxed">
+                世界中のコンサートホールで愛用されているヤマハのグランドピアノ「C5」を丁寧にサンプリングした高品質な音源を使用しています。
+              </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-gray-50 shadow-sm">
+              <h3 class="font-bold text-gray-800 mb-2">視覚的なフィードバック</h3>
+              <p class="text-xs text-gray-500 leading-relaxed">
+                音が鳴ると同時に、その和音が持つイメージカラーと譜面が表示され、聴覚と視覚を組み合わせて記憶を定着させます。
+              </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-gray-50 shadow-sm">
+              <h3 class="font-bold text-gray-800 mb-2">厳選された和音パターン</h3>
+              <p class="text-xs text-gray-500 leading-relaxed">
+                基本となる三和音から、トレーニングに適した多様なパターンを用意しています。
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="mt-12 text-center">
+        <router-link to="/" class="inline-flex items-center justify-center bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:bg-gray-800 transition-all active:scale-95">
+          トレーニングを始める
+        </router-link>
+      </div>
+    </main>
+
+    <footer class="text-center text-gray-300 text-[10px] pb-8">
+      &copy; {{ new Date().getFullYear() }} Akatsuki Inc.
+    </footer>
+  </div>
+</template>
