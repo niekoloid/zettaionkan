@@ -20,48 +20,61 @@
       <div class="space-y-10">
         <div class="text-center mb-6">
           <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-2">Training Method</h1>
-          <h2 class="text-xl font-bold text-gray-900">効率的なトレーニング方法</h2>
+          <h2 class="text-xl font-bold text-gray-900">親子で楽しくトレーニング</h2>
         </div>
 
-        <!-- Step 1 -->
+        <!-- Step 1: Parent-Child Role -->
         <section class="relative">
           <div class="flex items-start space-x-4">
             <div class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-bold text-xs mt-1 shadow-sm">1</div>
             <div class="space-y-2">
-              <h3 class="font-bold text-gray-900 text-base">音と色のイメージを結びつける</h3>
+              <h3 class="font-bold text-gray-900 text-base">親子でクイズ形式</h3>
               <p class="text-sm text-gray-500 leading-relaxed">
-                まずはボタンをタップして、和音を聴き込みましょう。
-                いろおとでは、各和音に固有の「色」を割り当てています。
-                「ドミソは情熱的な赤色」「シレソは爽やかな青色」といったように、<span class="font-bold text-gray-800">音を色としてイメージする</span>のが絶対音感習得への近道です。
+                基本的には<span class="font-bold text-gray-800">二人一組（親と子）</span>で行います。
+                お子様には画面を見せないようにして、親御様がアプリで和音を鳴らします。
+                お子様は、聞こえた音に対応する「色」を答えます（色のついた旗や折り紙を用意するとよりスムーズです）。
               </p>
             </div>
           </div>
         </section>
 
-        <!-- Step 2 -->
+        <!-- Step 2: Feedback -->
         <section>
           <div class="flex items-start space-x-4">
             <div class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-bold text-xs mt-1 shadow-sm">2</div>
             <div class="space-y-2">
-              <h3 class="font-bold text-gray-900 text-base">譜面の「形」をセットで覚える</h3>
+              <h3 class="font-bold text-gray-900 text-base">答え合わせ</h3>
               <p class="text-sm text-gray-500 leading-relaxed">
-                音が鳴ると上部に小さな譜面が表示されます。
-                音の高さ、重なりの形を視覚的に捉え、聴覚とセットで記憶に定着させましょう。
+                親御様は、お子様の回答が正解かどうかをアプリ画面で確認します。
+                正解したらたくさん褒めてあげましょう。間違えた場合は、もう一度正しい音を聞かせ、視覚（画面の色）と聴覚をセットにして印象付けます。
               </p>
             </div>
           </div>
         </section>
 
-        <!-- Step 3 -->
+        <!-- Step 3: Frequency -->
         <section>
           <div class="flex items-start space-x-4">
             <div class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-bold text-xs mt-1 shadow-sm">3</div>
             <div class="space-y-2">
-              <h3 class="font-bold text-gray-900 text-base">「聴く前」に予想する</h3>
-              <p class="text-sm text-gray-500 leading-relaxed">
-                慣れてきたら、ボタンを押す前に「これから鳴るドミソの音」を頭の中で再現してみてください。
-                その後にボタンを押して答え合わせをする。この繰り返しが絶対音感を鍛えます。
+              <h3 class="font-bold text-gray-900 text-base">効果的なトレーニング間隔</h3>
+              <p class="text-sm text-gray-500 leading-relaxed mb-2">
+                江口式メソッドでは、以下のペースが推奨されています。
               </p>
+              <ul class="text-xs text-gray-600 space-y-2 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <li class="flex items-center">
+                  <span class="text-blue-500 mr-2">●</span>
+                  <span><strong>1日4〜5回</strong>（朝・昼・夕・夜など）</span>
+                </li>
+                <li class="flex items-center">
+                  <span class="text-blue-500 mr-2">●</span>
+                  <span><strong>1回 1〜2分</strong>（短時間で集中して）</span>
+                </li>
+                <li class="flex items-center">
+                  <span class="text-blue-500 mr-2">●</span>
+                  <span><strong>毎日続ける</strong>ことが最も重要です</span>
+                </li>
+              </ul>
             </div>
           </div>
         </section>
