@@ -17,6 +17,10 @@
     </header>
 
     <main class="flex-grow px-6 pb-20 overflow-y-auto">
+      <div class="mb-8 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+        <img src="/ogp_image.png" alt="いろおと イメージ" class="w-full h-auto object-cover" />
+      </div>
+
       <div class="space-y-8">
         <section>
           <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
