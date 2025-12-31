@@ -174,7 +174,7 @@ const selectInstrument = (instrument) => {
 const getInstrumentName = (type) => {
   switch (type) {
     case 'yamaha': return 'Grand Piano: Yamaha C5'
-    case 'steinway': return 'Grand Piano: Steinway B'
+    case 'steinway': return 'Grand Piano: Steinway'
     default: return ''
   }
 }
@@ -357,11 +357,10 @@ const getBlackKeyNote = (whiteNote) => {
               Yamaha C5
             </button>
             <button 
-              @click="selectInstrument('steinway')"
-              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
-              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+              disabled
+              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all text-gray-400 bg-gray-100 cursor-not-allowed opacity-60"
             >
-              Steinway B
+              Steinway (Coming Soon)
             </button>
           </div>
         </section>
