@@ -46,6 +46,7 @@ const activeLevelIndex = ref(0)
 let yamahaSampler = null
 let steinwaySampler = null
 let xylophoneSampler = null
+let rainDrumSampler = null
 
 // Yamaha C5 (Salamander) mapping
 const YAMAHA_C5_SAMPLES = {
@@ -79,6 +80,11 @@ const XYLOPHONE_SAMPLES = {
   "C7": "C7.mp3", "G7": "G7.mp3"
 }
 
+// Rain Drum (mapped to Nylon Guitar for similar soft pluck) - Samples from nbrosowsky
+const RAIN_DRUM_SAMPLES = {
+  "A2": "A2.mp3", "B2": "B2.mp3", "B3": "B3.mp3", "E4": "E4.mp3", "G4": "G4.mp3", "A3": "A3.mp3", "A4": "A4.mp3", "A5": "A5.mp3" 
+}
+
 onMounted(() => {
   yamahaSampler = new Tone.Sampler({
     urls: YAMAHA_C5_SAMPLES,
@@ -105,6 +111,15 @@ onMounted(() => {
     },
     onerror: (err) => console.error("Xylophone loading error:", err)
   }).toDestination()
+
+  rainDrumSampler = new Tone.Sampler({
+    urls: RAIN_DRUM_SAMPLES,
+    baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/guitar-nylon/",
+    onload: () => {
+      if (selectedInstrument.value === 'raindrum') isSamplerLoaded.value = true
+    },
+    onerror: (err) => console.error("Rain Drum loading error:", err)
+  }).toDestination()
 })
 
 const renderScore = (abc) => {
@@ -127,6 +142,7 @@ const playChord = (notes) => {
   if (selectedInstrument.value === 'yamaha') currentSampler = yamahaSampler
   else if (selectedInstrument.value === 'steinway') currentSampler = steinwaySampler
   else if (selectedInstrument.value === 'xylophone') currentSampler = xylophoneSampler
+  else if (selectedInstrument.value === 'raindrum') currentSampler = rainDrumSampler
 
   if (currentSampler && currentSampler.loaded) {
     currentSampler.triggerAttackRelease(notes, '2n')
@@ -144,7 +160,9 @@ const getInstrumentName = (type) => {
   switch (type) {
     case 'yamaha': return 'Grand Piano: Yamaha C5'
     case 'steinway': return 'Grand Piano: Steinway B'
+    case 'steinway': return 'Grand Piano: Steinway B'
     case 'xylophone': return 'Xylophone'
+    case 'raindrum': return 'Rain Drum'
     default: return ''
   }
 }
@@ -329,12 +347,19 @@ const getBlackKeyNote = (whiteNote) => {
             >
               Xylophone
             </button>
+            <button 
+              @click="selectedInstrument = 'raindrum'"
+              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+              :class="selectedInstrument === 'raindrum' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+            >
+              Rain Drum
+            </button>
           </div>
 
           <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full pl-3 pr-3 gap-2 py-1 shadow-sm">
             <span class="w-1.5 h-1.5 rounded-full bg-green-500" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
             <span class="text-[9px] font-bold text-gray-500 tracking-wider">
-              {{ selectedInstrument === 'xylophone' ? '🪵' : '🎹' }} {{ getInstrumentName(selectedInstrument) }}
+              {{ selectedInstrument === 'raindrum' ? '🥁' : (selectedInstrument === 'xylophone' ? '🪵' : '🎹') }} {{ getInstrumentName(selectedInstrument) }}
             </span>
           </div>
         </section>
