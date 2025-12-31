@@ -65,13 +65,13 @@
           <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
             <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
               <span class="bg-indigo-500 w-1.5 h-6 rounded-full mr-3"></span>
-              開発ストーリー
+              ご利用を検討中の親御様へ
             </h2>
             <p class="text-gray-600 leading-relaxed text-sm">
               このサービスは、「子供に絶対音感という一生の財産をプレゼントしてあげたい」という一人の親の想いから生まれました。
             </p>
             <p class="text-gray-600 leading-relaxed text-sm mt-4">
-              私自身はピアノを弾くことができません。また、自宅にはピアノを置く十分なスペースも、すぐに購入できる金銭的な余裕もありませんでした。
+              開発者自身はピアノを弾くことができません。また、自宅にはピアノを置く十分なスペースも、すぐに購入できる金銭的な余裕もありませんでした。
             </p>
             <p class="text-gray-600 leading-relaxed text-sm mt-4">
               「楽器の経験も、環境も、予算もない。それでも、子供の可能性を広げてあげたい」
