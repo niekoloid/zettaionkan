@@ -91,8 +91,8 @@ const toggleChord = async (chord) => {
       <!-- Score Visualization (Moved to Top) -->
       <section class="flex flex-col items-center mb-6">
         <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
-        <div class="w-full max-w-[250px] bg-gray-50 rounded-2xl p-1 flex flex-col items-center justify-center min-h-[70px] border border-gray-100 shadow-inner overflow-hidden">
-          <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center scale-90 translate-y-1"></div>
+        <div class="w-full max-w-[250px] max-h-[250px] aspect-square bg-gray-50 rounded-3xl p-2 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
+          <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center scale-110"></div>
           <p v-if="!currentChord" class="text-gray-300 text-[10px] italic font-medium">和音ボタンをタップ</p>
         </div>
       </section>
