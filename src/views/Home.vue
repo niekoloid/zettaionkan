@@ -73,7 +73,7 @@ const STEINWAY_B_SAMPLES = {
 
 // Xylophone samples from nbrosowsky/tonejs-instruments (as close to Kalimba as available in this library)
 const XYLOPHONE_SAMPLES = {
-  "C4": "C4.mp3", "G4": "G4.mp3",
+  "G4": "G4.mp3",
   "C5": "C5.mp3", "G5": "G5.mp3",
   "C6": "C6.mp3", "G6": "G6.mp3",
   "C7": "C7.mp3", "G7": "G7.mp3"
