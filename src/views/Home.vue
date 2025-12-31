@@ -182,7 +182,6 @@ const getBlackKeyNote = (whiteNote) => {
     <main class="flex-grow px-4 pb-8 overflow-y-auto">
       <!-- Score Visualization -->
       <section class="flex flex-col items-center mb-10 text-center">
-        <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
         <div class="w-full max-w-[250px] max-h-[500px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
           <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
           <p v-if="!currentChord" class="text-gray-300 text-sm italic font-medium">タップ</p>
@@ -191,7 +190,6 @@ const getBlackKeyNote = (whiteNote) => {
 
       <!-- Keyboard Visualization -->
       <section class="flex flex-col items-center mb-10">
-        <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">鍵盤表示</h2>
         <div class="w-full max-w-sm px-4">
           <div class="relative flex justify-center h-24 bg-gray-100 p-1 rounded-xl shadow-inner border border-gray-200">
             <!-- White Keys -->
@@ -220,7 +218,6 @@ const getBlackKeyNote = (whiteNote) => {
               </div>
             </div>
           </div>
-          <p class="text-[9px] text-center text-gray-300 mt-2 font-medium tracking-wider uppercase">Piano Keyboard</p>
         </div>
       </section>
 
