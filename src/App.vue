@@ -38,12 +38,13 @@ onMounted(() => {
 })
 
 const renderScore = (abc) => {
-  abcjs.renderAbc('chord-score', `L:1/4\nK:C\n${abc}`, {
+  abcjs.renderAbc('chord-score', `L:1/4\nK:C\n| ${abc} |`, {
     responsive: 'resize',
     scale: 1.5,
     paddingtop: 0,
     paddingbottom: 0,
-    staffwidth: 200
+    staffwidth: 200,
+    add_classes: true
   })
 }
 
@@ -97,7 +98,7 @@ const startTraining = () => {
       </div>
 
       <!-- Settings -->
-      <div class="space-y-8">
+      <div class="space-y-8 pb-12">
         <!-- Sound Toggle -->
         <section>
           <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">音の有無</h2>
@@ -126,9 +127,9 @@ const startTraining = () => {
         <!-- Score Visualization -->
         <section class="flex flex-col items-center">
           <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">譜面表示</h2>
-          <div class="w-full bg-gray-50 rounded-2xl p-4 flex items-center justify-center min-h-[120px] border border-gray-100 shadow-inner">
-            <div v-if="currentChord" id="chord-score" class="w-full flex justify-center"></div>
-            <p v-else class="text-gray-400 text-sm italic">和音ボタンを押すと譜面が表示されます</p>
+          <div class="w-full bg-gray-50 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[140px] border border-gray-100 shadow-inner">
+            <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center overflow-hidden"></div>
+            <p v-if="!currentChord" class="text-gray-400 text-sm italic">和音ボタンを押すと譜面が表示されます</p>
           </div>
           <p v-if="currentChord" class="mt-2 text-lg font-bold text-gray-700">
             {{ currentChord.name }} ({{ currentChord.symbol }})
