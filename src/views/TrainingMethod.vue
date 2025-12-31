@@ -1,4 +1,5 @@
 <script setup>
+import InstallPwa from '../components/InstallPwa.vue'
 </script>
 
 <template>
@@ -91,6 +92,7 @@
               <p class="text-[10px] text-gray-500 leading-relaxed">
                 ブラウザのメニューから「ホーム画面に追加」を行うことで、フルスクリーンのアプリとして快適にトレーニングできます。
               </p>
+              <InstallPwa class="mt-3" />
             </div>
 
             <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
