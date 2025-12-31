@@ -28,7 +28,7 @@
         <div class="space-y-6">
           <div class="border-b border-gray-100 pb-4">
             <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">所在地</p>
-            <p class="text-sm text-gray-700 font-mediumLeading-relaxed">長野県長野市大字鶴賀緑町１４１８番地</p>
+            <p class="text-sm text-gray-700 font-medium leading-relaxed">長野県長野市１４１８番地</p>
           </div>
 
           <div class="border-b border-gray-100 pb-4">
