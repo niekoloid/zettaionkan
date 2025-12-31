@@ -90,6 +90,51 @@ const toggleChord = async (chord) => {
   await nextTick()
   renderScore(chord.abc)
 }
+
+// Piano Keyboard Logic
+const whiteKeys = ['F3', 'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5']
+const keyboardLayout = [
+  { note: 'F3', type: 'white' }, { note: 'F#3', type: 'black' },
+  { note: 'G3', type: 'white' }, { note: 'G#3', type: 'black' },
+  { note: 'A3', type: 'white' }, { note: 'A#3', type: 'black' },
+  { note: 'B3', type: 'white' },
+  { note: 'C4', type: 'white' }, { note: 'C#4', type: 'black' },
+  { note: 'D4', type: 'white' }, { note: 'D#4', type: 'black' },
+  { note: 'E4', type: 'white' },
+  { note: 'F4', type: 'white' }, { note: 'F#4', type: 'black' },
+  { note: 'G4', type: 'white' }, { note: 'G#4', type: 'black' },
+  { note: 'A4', type: 'white' }, { note: 'A#4', type: 'black' },
+  { note: 'B4', type: 'white' },
+  { note: 'C5', type: 'white' }, { note: 'C#5', type: 'black' },
+  { note: 'D5', type: 'white' }, { note: 'D#5', type: 'black' },
+  { note: 'E5', type: 'white' },
+  { note: 'F5', type: 'white' }, { note: 'F#5', type: 'black' },
+  { note: 'G5', type: 'white' }
+]
+
+const isNoteActive = (note) => {
+  if (!currentChord.value) return false
+  // Normalize notes for comparison (e.g., C#4 vs Db4)
+  const normalizedActive = currentChord.value.notes.map(n => n.replace('♭', 'b'))
+  const target = note.replace('#', 's').replace('s', '#') // basic normalization
+  return normalizedActive.some(n => {
+    // Basic enharmonic check for the current chord set
+    if (n === 'Bb3' && note === 'A#3') return true
+    if (n === 'Eb4' && note === 'D#4') return true
+    return n === note
+  })
+}
+
+const hasBlackKey = (whiteNote) => {
+  const noteName = whiteNote.replace(/\d/, '')
+  return !['B', 'E'].includes(noteName)
+}
+
+const getBlackKeyNote = (whiteNote) => {
+  const noteName = whiteNote.replace(/\d/, '')
+  const octave = whiteNote.match(/\d/)[0]
+  return `${noteName}#${octave}`
+}
 </script>
 
 <template>
@@ -109,12 +154,46 @@ const toggleChord = async (chord) => {
 
     <!-- Main Content -->
     <main class="flex-grow px-4 pb-8 overflow-y-auto">
-      <!-- Score Visualization -->
-      <section class="flex flex-col items-center mb-10">
-        <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
-        <div class="w-full max-w-[125px] max-h-[125px] aspect-square bg-gray-50 rounded-3xl p-2 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
-          <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
-          <p v-if="!currentChord" class="text-gray-300 text-[9px] italic font-medium">タップ</p>
+      <!-- Score & Keyboard Visualization -->
+      <section class="flex flex-col items-center space-y-6 mb-10">
+        <div class="flex flex-col items-center">
+          <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
+          <div class="w-full max-w-[125px] max-h-[125px] aspect-square bg-gray-50 rounded-3xl p-2 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
+            <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
+            <p v-if="!currentChord" class="text-gray-300 text-[9px] italic font-medium">タップ</p>
+          </div>
+        </div>
+
+        <!-- Piano Keyboard -->
+        <div class="w-full max-w-sm px-4">
+          <div class="relative flex justify-center h-24 bg-gray-100 p-1 rounded-xl shadow-inner border border-gray-200">
+            <!-- White Keys -->
+            <div 
+              v-for="note in whiteKeys" 
+              :key="note"
+              class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm transition-colors duration-300"
+              :class="[isNoteActive(note) ? '' : 'bg-white']"
+              :style="isNoteActive(note) ? { backgroundColor: currentChord.color } : {}"
+            >
+              <span class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[6px] text-gray-300 font-bold uppercase">{{ note.replace(/\d/, '') }}</span>
+            </div>
+            
+            <!-- Black Keys -->
+            <div class="absolute inset-x-1 top-1 h-14 pointer-events-none flex">
+              <div v-for="(note, index) in keyboardLayout" :key="'gap-'+index" 
+                class="flex-grow relative h-full"
+                :class="{'hidden': note.type === 'black'}"
+              >
+                <div 
+                  v-if="hasBlackKey(note.note)"
+                  class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-colors duration-300 z-10"
+                  :class="[isNoteActive(getBlackKeyNote(note.note)) ? '' : 'bg-gray-800']"
+                  :style="isNoteActive(getBlackKeyNote(note.note)) ? { backgroundColor: currentChord.color, borderColor: 'white' } : {}"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <p class="text-[9px] text-center text-gray-300 mt-2 font-medium tracking-wider">PIANO KEYBOARD</p>
         </div>
       </section>
 
