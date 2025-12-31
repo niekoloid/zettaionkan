@@ -78,6 +78,13 @@
               本ポリシーに関するお問い合わせは、運営会社情報ページに記載の連絡先までお願いいたします。
             </p>
           </section>
+
+          <div class="pt-8 text-right">
+            <p class="text-[10px] text-gray-400">
+              制定日：2026年1月1日<br>
+              改定日：2026年1月1日
+            </p>
+          </div>
         </div>
       </div>
     </main>
