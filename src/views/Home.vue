@@ -186,14 +186,19 @@ const toggleChord = async (chord) => {
 </template>
 
 <style scoped>
-#chord-score :deep(.abcjs-highlight) {
-  fill: var(--chord-color) !important;
-}
+#chord-score :deep(.abcjs-highlight),
 #chord-score :deep(.abcjs-note.abcjs-clicked) {
   fill: var(--chord-color) !important;
 }
-#chord-score :deep(svg g path[fill="#f00"]),
-#chord-score :deep(svg g path[fill="red"]) {
+
+/* Broad override for any injected red fills or strokes */
+#chord-score :deep(svg [fill="red"]),
+#chord-score :deep(svg [fill="#f00"]),
+#chord-score :deep(svg [fill="#ff0000"]),
+#chord-score :deep(svg [stroke="red"]),
+#chord-score :deep(svg [stroke="#f00"]),
+#chord-score :deep(svg [stroke="#ff0000"]) {
   fill: var(--chord-color) !important;
+  stroke: var(--chord-color) !important;
 }
 </style>
