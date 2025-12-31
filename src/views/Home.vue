@@ -78,7 +78,7 @@ const toggleChord = async (chord) => {
 </script>
 
 <template>
-  <div class="flex flex-col flex-grow">
+  <div :style="{ '--chord-color': currentChord?.color || '#EF4444' }" class="flex flex-col flex-grow min-h-screen">
     <!-- Header -->
     <header class="pt-10 pb-6 px-4 text-center shrink-0">
       <div class="flex flex-col items-center">
@@ -146,9 +146,23 @@ const toggleChord = async (chord) => {
         <router-link to="/about" class="text-xs text-gray-400 hover:text-gray-600 font-medium">サービス概要</router-link>
         <router-link to="/company" class="text-xs text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
         <footer class="text-center text-gray-300 text-[10px] pt-4 pb-8">
-          &copy; {{ new Date().getFullYear() }} Akatsuki Inc.
+          &copy; 2026 Akatsuki Inc.
         </footer>
       </div>
     </main>
   </div>
 </template>
+
+<style scoped>
+#chord-score :deep(.abcjs-highlight) {
+  fill: var(--chord-color) !important;
+}
+#chord-score :deep(.abcjs-note.abcjs-clicked) {
+  fill: var(--chord-color) !important;
+}
+/* Force override any default red fills that abcjs might apply on click/selection */
+#chord-score :deep(svg g path[fill="#f00"]),
+#chord-score :deep(svg g path[fill="red"]) {
+  fill: var(--chord-color) !important;
+}
+</style>
