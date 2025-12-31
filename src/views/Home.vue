@@ -202,16 +202,26 @@ const keyboardLayout = [
 
 const isNoteActive = (note) => {
   if (!currentChord.value) return false
-  const normalizedActive = currentChord.value.notes.map(n => n.replace('♭', 'b'))
-  return normalizedActive.some(n => {
-    // Basic enharmonic check
-    if ((n === 'Bb3' && note === 'A#3') || (n === 'A#3' && note === 'Bb3')) return true
-    if ((n === 'Eb4' && note === 'D#4') || (n === 'D#4' && note === 'Eb4')) return true
-    if ((n === 'Ab4' && note === 'G#4') || (n === 'G#4' && note === 'Ab4')) return true
-    if ((n === 'C#4' && note === 'Db4') || (n === 'Db4' && note === 'C#4')) return true
-    if ((n === 'F#4' && note === 'Gb4') || (n === 'Gb4' && note === 'F#4')) return true
-    return n === note
-  })
+  
+  // Normalize checking note to sharp if it's flat (though keyboard layout uses sharps)
+  const toSharp = (n) => {
+    // Handle special replacements for flats to sharps
+    const map = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' }
+    // Replace traditional flat symbol first
+    let clean = n.replace('♭', 'b')
+    // Replace note name part
+    for (const [flat, sharp] of Object.entries(map)) {
+      if (clean.startsWith(flat)) {
+        return clean.replace(flat, sharp)
+      }
+    }
+    return clean
+  }
+
+  const normalizedChordNotes = currentChord.value.notes.map(toSharp)
+  const targetNote = toSharp(note)
+
+  return normalizedChordNotes.includes(targetNote)
 }
 
 const hasBlackKey = (whiteNote) => {
