@@ -257,6 +257,9 @@ const getBlackKeyNote = (whiteNote) => {
       <section class="flex flex-col items-center mb-10 text-center">
         <div class="w-full max-w-[150px] max-h-[400px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
           <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
+          <div v-if="currentChord" class="mt-2 text-sm font-bold text-gray-700">
+            {{ currentChord.name }} ({{ currentChord.colorName }})
+          </div>
         </div>
       </section>
 
