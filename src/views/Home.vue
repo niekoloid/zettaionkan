@@ -115,6 +115,7 @@ onMounted(() => {
   rainDrumSampler = new Tone.Sampler({
     urls: RAIN_DRUM_SAMPLES,
     baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/guitar-nylon/",
+    volume: 5,
     onload: () => {
       if (selectedInstrument.value === 'raindrum') isSamplerLoaded.value = true
     },
@@ -156,10 +157,33 @@ const toggleChord = async (chord) => {
   renderScore(chord.abc)
 }
 
+const selectInstrument = (instrument) => {
+  selectedInstrument.value = instrument
+  
+  // Play 'Do' (C4) to confirm instrument sound
+  // Short delay to ensure state update propagates if needed, though reactive trigger is better handled directly
+  // Actually we can just play immediately as the sampler should be loaded by now (except arguably on first load, but user is switching)
+  
+  // Determine if the target sampler is loaded
+  let targetSampler
+  if (instrument === 'yamaha') targetSampler = yamahaSampler
+  else if (instrument === 'steinway') targetSampler = steinwaySampler
+  else if (instrument === 'xylophone') targetSampler = xylophoneSampler
+  else if (instrument === 'raindrum') targetSampler = rainDrumSampler
+
+  if (targetSampler && targetSampler.loaded) {
+    isSamplerLoaded.value = true
+    if (Tone.context.state !== 'running') Tone.start()
+    targetSampler.triggerAttackRelease('C4', '8n')
+  } else {
+    isSamplerLoaded.value = false // Let the loading indicator pulse
+    // Check loading status if needed, but the onload callbacks handle isSamplerLoaded
+  }
+}
+
 const getInstrumentName = (type) => {
   switch (type) {
     case 'yamaha': return 'Grand Piano: Yamaha C5'
-    case 'steinway': return 'Grand Piano: Steinway B'
     case 'steinway': return 'Grand Piano: Steinway B'
     case 'xylophone': return 'Xylophone'
     case 'raindrum': return 'Rain Drum'
@@ -327,28 +351,28 @@ const getBlackKeyNote = (whiteNote) => {
           <!-- Instrument Selector -->
           <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200">
             <button 
-              @click="selectedInstrument = 'yamaha'"
+              @click="selectInstrument('yamaha')"
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
               :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
               Yamaha C5
             </button>
             <button 
-              @click="selectedInstrument = 'steinway'"
+              @click="selectInstrument('steinway')"
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
               :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
               Steinway B
             </button>
             <button 
-              @click="selectedInstrument = 'xylophone'"
+              @click="selectInstrument('xylophone')"
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
               :class="selectedInstrument === 'xylophone' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
               Xylophone
             </button>
             <button 
-              @click="selectedInstrument = 'raindrum'"
+              @click="selectInstrument('raindrum')"
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
               :class="selectedInstrument === 'raindrum' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
