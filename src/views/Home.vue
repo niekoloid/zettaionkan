@@ -67,12 +67,12 @@ onMounted(() => {
 const renderScore = (abc) => {
   abcjs.renderAbc('chord-score', `L:1/4\nK:C\n${abc}`, {
     responsive: 'resize',
-    scale: 1.3,
+    scale: 1.8,
     paddingtop: 0,
     paddingbottom: 0,
     paddingleft: 0,
     paddingright: 0,
-    staffwidth: 80,
+    staffwidth: 120,
     add_classes: true
   })
 }
@@ -158,9 +158,9 @@ const getBlackKeyNote = (whiteNote) => {
       <section class="flex flex-col items-center space-y-6 mb-10">
         <div class="flex flex-col items-center">
           <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
-          <div class="w-full max-w-[125px] max-h-[125px] aspect-square bg-gray-50 rounded-3xl p-2 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
+          <div class="w-full max-w-[200px] max-h-[200px] aspect-square bg-gray-50 rounded-3xl p-2 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
             <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
-            <p v-if="!currentChord" class="text-gray-300 text-[9px] italic font-medium">タップ</p>
+            <p v-if="!currentChord" class="text-gray-300 text-xs italic font-medium">タップ</p>
           </div>
         </div>
 
