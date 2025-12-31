@@ -78,7 +78,13 @@ const toggleChord = async (chord) => {
 </script>
 
 <template>
-  <div :style="{ '--chord-color': currentChord?.color || '#EF4444' }" class="flex flex-col flex-grow min-h-screen">
+  <div 
+    :style="{ 
+      '--chord-color': currentChord?.color || '#EF4444',
+      backgroundColor: currentChord ? currentChord.color + '0D' : 'white'
+    }" 
+    class="flex flex-col flex-grow min-h-screen transition-colors duration-500"
+  >
     <!-- Header -->
     <header class="pt-10 pb-6 px-4 text-center shrink-0">
       <div class="flex flex-col items-center">
