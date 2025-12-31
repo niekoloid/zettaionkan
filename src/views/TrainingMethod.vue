@@ -59,7 +59,7 @@
             <div class="space-y-2">
               <h3 class="font-bold text-gray-900 text-base">効果的なトレーニング間隔</h3>
               <p class="text-sm text-gray-500 leading-relaxed mb-2">
-                江口式メソッドでは、以下のペースが推奨されています。
+                効果的な絶対音感トレーニングでは、以下のペースが推奨されています。
               </p>
               <ul class="text-xs text-gray-600 space-y-2 bg-gray-50 p-3 rounded-xl border border-gray-100">
                 <li class="flex items-center">

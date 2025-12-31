@@ -6,7 +6,7 @@ import abcjs from 'abcjs'
 const levels = ref([
   {
     name: 'Level 1: 基本の3和音（赤・黄・青）',
-    description: 'まずはここから。江口式メソッドの基本となる3つの和音。',
+    description: 'まずはここから。絶対音感トレーニングの基本となる3つの和音。',
     chords: [
       { id: 'domiso', name: 'ドミソ', symbol: 'C', colorName: '赤', color: '#EF4444', notes: ['C4', 'E4', 'G4'], abc: '[CEG]' },
       { id: 'dofara', name: 'ドファラ', symbol: 'F/C', colorName: '黄', color: '#EAB308', notes: ['C4', 'F4', 'A4'], abc: '[CFA]' },
