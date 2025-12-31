@@ -144,7 +144,7 @@ const getInstrumentName = (type) => {
   switch (type) {
     case 'yamaha': return 'Grand Piano: Yamaha C5'
     case 'steinway': return 'Grand Piano: Steinway B'
-    case 'xylophone': return 'Xylophone (Kalimba style)'
+    case 'xylophone': return 'Xylophone'
     default: return ''
   }
 }
@@ -327,19 +327,15 @@ const getBlackKeyNote = (whiteNote) => {
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
               :class="selectedInstrument === 'xylophone' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
-              Kalimba
+              Xylophone
             </button>
           </div>
 
-          <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full pl-3 pr-1 gap-2 py-1 shadow-sm">
+          <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full pl-3 pr-3 gap-2 py-1 shadow-sm">
             <span class="w-1.5 h-1.5 rounded-full bg-green-500" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
-            <span class="text-[9px] font-bold text-gray-500 tracking-wider">🎹 {{ getInstrumentName(selectedInstrument) }}</span>
-            <button 
-              @click="playChord(['C4', 'E4', 'G4'])" 
-              class="bg-white border border-gray-100 text-gray-500 text-[8px] px-2.5 py-0.5 rounded-full hover:bg-gray-50 active:scale-95 transition-all font-bold"
-            >
-              音テスト
-            </button>
+            <span class="text-[9px] font-bold text-gray-500 tracking-wider">
+              {{ selectedInstrument === 'xylophone' ? '🪵' : '🎹' }} {{ getInstrumentName(selectedInstrument) }}
+            </span>
           </div>
         </section>
       </div>
