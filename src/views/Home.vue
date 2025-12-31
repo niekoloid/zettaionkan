@@ -8,31 +8,31 @@ const levels = ref([
     name: 'Level 1: 基本の3和音（赤・黄・青）',
     description: 'まずはここから。江口式メソッドの基本となる3つの和音。',
     chords: [
-      { id: 'domiso', name: 'ドミソ', colorName: '赤', color: '#EF4444', notes: ['C4', 'E4', 'G4'], abc: '[CEG]' },
-      { id: 'dofara', name: 'ドファラ', colorName: '黄', color: '#EAB308', notes: ['C4', 'F4', 'A4'], abc: '[CFA]' },
-      { id: 'shireso', name: 'シレソ', colorName: '青', color: '#3B82F6', notes: ['B3', 'D4', 'G4'], abc: '[B,DG]' }
+      { id: 'domiso', name: 'ドミソ', symbol: 'C', colorName: '赤', color: '#EF4444', notes: ['C4', 'E4', 'G4'], abc: '[CEG]' },
+      { id: 'dofara', name: 'ドファラ', symbol: 'F/C', colorName: '黄', color: '#EAB308', notes: ['C4', 'F4', 'A4'], abc: '[CFA]' },
+      { id: 'shireso', name: 'シレソ', symbol: 'G/B', colorName: '青', color: '#3B82F6', notes: ['B3', 'D4', 'G4'], abc: '[B,DG]' }
     ]
   },
   {
     name: 'Level 2: 白鍵の展開形',
     description: '基本の和音を展開した形。構成音が変わり、響きの色も変化します。',
     chords: [
-      { id: 'resoshi', name: 'レソシ', colorName: '緑', color: '#22C55E', notes: ['D4', 'G4', 'B4'], abc: '[DGB]' },
-      { id: 'misodo', name: 'ミソド', colorName: 'オレンジ', color: '#F97316', notes: ['E4', 'G4', 'C5'], abc: '[EGc]' },
-      { id: 'radofa', name: 'ラドファ', colorName: '紫', color: '#A855F7', notes: ['A3', 'C4', 'F4'], abc: '[A,CF]' },
-      { id: 'soshire', name: 'ソシレ', colorName: 'ピンク', color: '#EC4899', notes: ['G4', 'B4', 'D5'], abc: '[GBd]' },
-      { id: 'sodomi', name: 'ソドミ', colorName: '茶', color: '#A3744D', notes: ['G3', 'C4', 'E4'], abc: '[G,CE]' }
+      { id: 'resoshi', name: 'レソシ', symbol: 'G/D', colorName: '緑', color: '#22C55E', notes: ['D4', 'G4', 'B4'], abc: '[DGB]' },
+      { id: 'misodo', name: 'ミソド', symbol: 'C/E', colorName: 'オレンジ', color: '#F97316', notes: ['E4', 'G4', 'C5'], abc: '[EGc]' },
+      { id: 'radofa', name: 'ラドファ', symbol: 'F/A', colorName: '紫', color: '#A855F7', notes: ['A3', 'C4', 'F4'], abc: '[A,CF]' },
+      { id: 'soshire', name: 'ソシレ', symbol: 'G', colorName: 'ピンク', color: '#EC4899', notes: ['G4', 'B4', 'D5'], abc: '[GBd]' },
+      { id: 'sodomi', name: 'ソドミ', symbol: 'C/G', colorName: '茶', color: '#A3744D', notes: ['G3', 'C4', 'E4'], abc: '[G,CE]' }
     ]
   },
   {
     name: 'Level 3: 黒鍵を含む和音',
     description: 'シャープやフラットを含む、より複雑な色の響き。',
     chords: [
-      { id: 'radosharpmi', name: 'ラド#ミ', colorName: '黄緑', color: '#84CC16', notes: ['A3', 'C#4', 'E4'], abc: '[A,^CE]' },
-      { id: 'refasharpara', name: 'レファ#ラ', colorName: '肌色', color: '#F4A460', notes: ['D4', 'F#4', 'A4'], abc: '[D^FA]' },
-      { id: 'misosharpshi', name: 'ミソ#シ', colorName: '薄紫', color: '#DDA0DD', notes: ['E4', 'G#4', 'B4'], abc: '[E^GB]' },
-      { id: 'shiflatrefa', name: 'シ♭レファ', colorName: '灰色', color: '#6B7280', notes: ['Bb3', 'D4', 'F4'], abc: '[_B,DF]' },
-      { id: 'miflatshiblat', name: 'ミ♭ソシ♭', colorName: '水色', color: '#06B6D4', notes: ['Eb4', 'G4', 'Bb4'], abc: '[_EG_B]' }
+      { id: 'radosharpmi', name: 'ラド#ミ', symbol: 'A', colorName: '黄緑', color: '#84CC16', notes: ['A3', 'C#4', 'E4'], abc: '[A,^CE]' },
+      { id: 'refasharpara', name: 'レファ#ラ', symbol: 'D', colorName: '肌色', color: '#F4A460', notes: ['D4', 'F#4', 'A4'], abc: '[D^FA]' },
+      { id: 'misosharpshi', name: 'ミソ#シ', symbol: 'E', colorName: '薄紫', color: '#DDA0DD', notes: ['E4', 'G#4', 'B4'], abc: '[E^GB]' },
+      { id: 'shiflatrefa', name: 'シ♭レファ', symbol: 'B♭', colorName: '灰色', color: '#6B7280', notes: ['Bb3', 'D4', 'F4'], abc: '[_B,DF]' },
+      { id: 'miflatshiblat', name: 'ミ♭ソシ♭', symbol: 'E♭', colorName: '水色', color: '#06B6D4', notes: ['Eb4', 'G4', 'Bb4'], abc: '[_EG_B]' }
     ]
   }
 ])
@@ -257,8 +257,9 @@ const getBlackKeyNote = (whiteNote) => {
       <section class="flex flex-col items-center mb-10 text-center">
         <div class="w-full max-w-[150px] max-h-[400px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
           <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
-          <div v-if="currentChord" class="mt-2 text-sm font-bold text-gray-700">
-            {{ currentChord.name }} ({{ currentChord.colorName }})
+          <div v-if="currentChord" class="mt-2 text-sm font-bold text-gray-700 flex flex-col items-center">
+            <span>{{ currentChord.name }} ({{ currentChord.colorName }})</span>
+            <span class="text-xs font-normal text-gray-500 mt-0.5">{{ currentChord.symbol }}</span>
           </div>
         </div>
       </section>
