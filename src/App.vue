@@ -19,7 +19,7 @@ const chords = ref([
   { id: 'miflatshiblat', name: 'ミ♭ソシ♭', symbol: 'E♭', color: '#06B6D4', notes: ['Eb4', 'G4', 'Bb4'] },
 ])
 
-const selectedChords = ref(['domiso', 'dofara', 'shireso', 'radofa', 'resoshi', 'misodo', 'fadorado', 'sorushire', 'sodomi', 'radosharpmi', 'refasharpara', 'misosharpshi', 'shiflatrefa', 'miflatshiblat'])
+const selectedChords = ref([])
 const soundEnabled = ref(true)
 
 let synth = null
@@ -49,16 +49,10 @@ const playChord = (notes) => {
 }
 
 const toggleChord = (chord) => {
-  const id = chord.id
+  // Play sound
   playChord(chord.notes)
 
-  if (selectedChords.value.includes(id)) {
-    if (selectedChords.value.length > 1) {
-      selectedChords.value = selectedChords.value.filter(c => c !== id)
-    }
-  } else {
-    selectedChords.value.push(id)
-  }
+  // Selection logic removed as per user request to prevent selection
 }
 
 const startTraining = () => {
@@ -87,10 +81,7 @@ const startTraining = () => {
           :key="chord.id"
           @click="toggleChord(chord)"
           :class="[
-            'flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all duration-200',
-            selectedChords.includes(chord.id) 
-              ? 'border-blue-500 bg-blue-50 text-blue-900' 
-              : 'border-gray-200 bg-white text-gray-900 hover:bg-gray-50'
+            'flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all duration-200 border-gray-200 bg-white text-gray-900 hover:bg-gray-50'
           ]"
         >
           <div 
@@ -140,7 +131,7 @@ const startTraining = () => {
         @click="startTraining"
         class="pointer-events-auto w-full bg-gray-900 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-blue-600 hover:to-blue-500 text-white font-bold py-5 rounded-2xl shadow-2xl shadow-gray-200 transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-3 group"
       >
-        <span class="text-xl tracking-widest">トレーニング開始</span>
+        <span class="text-xl tracking-widest">記録開始</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
         </svg>
