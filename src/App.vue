@@ -75,12 +75,12 @@ onMounted(() => {
 const renderScore = (abc) => {
   abcjs.renderAbc('chord-score', `L:1/4\nK:C\n${abc}`, {
     responsive: 'resize',
-    scale: 1.1,
+    scale: 0.85,
     paddingtop: 0,
     paddingbottom: 0,
     paddingleft: 0,
     paddingright: 0,
-    staffwidth: 80,
+    staffwidth: 60,
     add_classes: true
   })
 }
@@ -134,15 +134,22 @@ const startTraining = () => {
             v-for="chord in chords" 
             :key="chord.id"
             @click="toggleChord(chord)"
-            class="flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all duration-200 border-gray-200 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100"
+            class="flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all duration-300"
+            :class="[
+              currentChord?.id === chord.id 
+                ? 'shadow-md border-transparent text-white ring-2 ring-offset-2 ring-transparent' 
+                : 'border-gray-100 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100'
+            ]"
+            :style="currentChord?.id === chord.id ? { backgroundColor: chord.color, ringColor: chord.color } : {}"
           >
             <div 
-              class="w-3 h-3 rounded-full mr-3 shrink-0" 
+              class="w-3 h-3 rounded-full mr-3 shrink-0 border border-white/20" 
               :style="{ backgroundColor: chord.color }"
+              v-show="currentChord?.id !== chord.id"
             ></div>
             <div class="flex items-baseline space-x-1 overflow-hidden">
-              <span class="font-bold text-xl leading-none truncate">{{ chord.name }}</span>
-              <span class="text-sm font-medium opacity-60">({{ chord.symbol }})</span>
+              <span class="font-bold text-lg leading-none truncate">{{ chord.name }}</span>
+              <span class="text-[10px] font-medium opacity-60">({{ chord.symbol }})</span>
             </div>
           </div>
         </div>
@@ -178,11 +185,11 @@ const startTraining = () => {
           <!-- Score Visualization -->
           <section class="flex flex-col items-center">
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">譜面表示</h2>
-            <div class="w-full bg-gray-50 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[110px] border border-gray-100 shadow-inner overflow-hidden">
+            <div class="w-full bg-gray-50 rounded-2xl p-2 flex flex-col items-center justify-center min-h-[90px] border border-gray-100 shadow-inner overflow-hidden">
               <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center overflow-hidden"></div>
-              <p v-if="!currentChord" class="text-gray-400 text-sm italic">和音ボタンを押すと譜面が表示されます</p>
+              <p v-if="!currentChord" class="text-gray-400 text-xs italic">和音ボタンを押すと譜面が表示されます</p>
             </div>
-            <p v-if="currentChord" class="mt-2 text-lg font-bold text-gray-700">
+            <p v-if="currentChord" class="mt-2 text-base font-bold text-gray-700">
               {{ currentChord.name }} ({{ currentChord.symbol }})
             </p>
           </section>
