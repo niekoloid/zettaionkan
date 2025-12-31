@@ -51,12 +51,12 @@ onMounted(() => {
 const renderScore = (abc) => {
   abcjs.renderAbc('chord-score', `L:1/4\nK:C\n${abc}`, {
     responsive: 'resize',
-    scale: 0.85,
+    scale: 0.65,
     paddingtop: 0,
     paddingbottom: 0,
     paddingleft: 0,
     paddingright: 0,
-    staffwidth: 60,
+    staffwidth: 40,
     add_classes: true
   })
 }
@@ -80,68 +80,64 @@ const toggleChord = async (chord) => {
 <template>
   <div class="flex flex-col flex-grow">
     <!-- Header -->
-    <header class="pt-12 pb-8 px-4 text-center">
+    <header class="pt-10 pb-6 px-4 text-center shrink-0">
       <h1 class="flex flex-col items-center">
-        <span class="text-lg font-medium text-blue-500 tracking-[0.2em] mb-1">いろおと</span>
-        <span class="text-3xl font-bold text-gray-900 tracking-tight">絶対音感トレーニング</span>
+        <span class="text-base font-medium text-blue-500 tracking-[0.2em] mb-0.5">いろおと</span>
+        <span class="text-2xl font-bold text-gray-900 tracking-tight">絶対音感トレーニング</span>
       </h1>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow px-4 pb-12 overflow-y-auto">
+    <main class="flex-grow px-4 pb-8 overflow-y-auto">
       <!-- Chord Selection -->
-      <div class="grid grid-cols-2 gap-3 mb-10">
+      <div class="grid grid-cols-2 gap-2 mb-8">
         <div 
           v-for="chord in chords" 
           :key="chord.id"
           @click="toggleChord(chord)"
-          class="flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all duration-300"
+          class="flex items-center p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-300"
           :class="[
             currentChord?.id === chord.id 
               ? 'shadow-md border-transparent text-white' 
-              : 'border-gray-100 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100'
+              : 'border-gray-50 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100'
           ]"
           :style="currentChord?.id === chord.id ? { backgroundColor: chord.color } : {}"
         >
           <div 
-            class="w-3 h-3 rounded-full mr-3 shrink-0 border border-white/20" 
+            class="w-2.5 h-2.5 rounded-full mr-2.5 shrink-0 border border-white/20" 
             :style="{ backgroundColor: chord.color }"
             v-show="currentChord?.id !== chord.id"
           ></div>
           <div class="flex items-baseline space-x-1 overflow-hidden">
-            <span class="font-bold text-lg leading-none truncate">{{ chord.name }}</span>
-            <span class="text-[10px] font-medium opacity-60">({{ chord.symbol }})</span>
+            <span class="font-bold text-base leading-none truncate">{{ chord.name }}</span>
+            <span class="text-[9px] font-medium opacity-60">({{ chord.symbol }})</span>
           </div>
         </div>
       </div>
 
       <!-- Settings -->
-      <div class="space-y-6 pb-8">
+      <div class="space-y-4">
         <!-- Current Sound Indicator -->
         <section class="flex flex-col items-center">
-          <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full pl-4 pr-1 gap-2 py-1 shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-green-500" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
-            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Engine: Yamaha C5</span>
+          <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full pl-3 pr-1 gap-2 py-1 shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
+            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Engine: Yamaha C5</span>
             <button 
               @click="playChord(['C4', 'E4', 'G4'])" 
-              class="bg-white border border-gray-200 text-gray-600 text-[9px] px-3 py-1 rounded-full hover:bg-gray-50 active:scale-95 transition-all font-bold"
+              class="bg-white border border-gray-100 text-gray-500 text-[8px] px-2.5 py-0.5 rounded-full hover:bg-gray-50 active:scale-95 transition-all font-bold"
             >
               音テスト
             </button>
           </div>
-          <p class="text-[9px] text-gray-400 mt-2">※音が鳴らない場合は端末のマナーモードを解除してください</p>
         </section>
 
         <!-- Score Visualization -->
         <section class="flex flex-col items-center">
-          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">譜面表示</h2>
-          <div class="w-full bg-gray-50 rounded-2xl p-2 flex flex-col items-center justify-center min-h-[90px] border border-gray-100 shadow-inner overflow-hidden">
-            <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center overflow-hidden"></div>
-            <p v-if="!currentChord" class="text-gray-400 text-xs italic">和音ボタンを押すと譜面が表示されます</p>
+          <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
+          <div class="w-full bg-gray-50 rounded-2xl p-1 flex flex-col items-center justify-center min-h-[70px] border border-gray-100 shadow-inner overflow-hidden">
+            <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center scale-90 translate-y-1"></div>
+            <p v-if="!currentChord" class="text-gray-300 text-[10px] italic">和音ボタンをタップ</p>
           </div>
-          <p v-if="currentChord" class="mt-2 text-base font-bold text-gray-700">
-            {{ currentChord.name }} ({{ currentChord.symbol }})
-          </p>
         </section>
       </div>
 
