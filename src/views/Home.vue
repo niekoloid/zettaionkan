@@ -115,6 +115,9 @@ onMounted(() => {
     },
     onerror: (err) => console.error("Steinway loading error:", err)
   }).toDestination()
+  
+  // Render empty score initially
+  renderScore('')
 })
 
 const renderScore = (abc) => {
@@ -256,7 +259,7 @@ const getBlackKeyNote = (whiteNote) => {
       <!-- Score Visualization -->
       <section class="flex flex-col items-center mb-10 text-center">
         <div class="w-full max-w-[150px] max-h-[400px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
-          <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
+          <div id="chord-score" class="w-full flex justify-center items-center"></div>
           <div v-if="currentChord" class="mt-2 text-sm font-bold text-gray-700 flex flex-col items-center">
             <span>{{ currentChord.name }} ({{ currentChord.colorName }})</span>
             <span class="text-xs font-normal text-gray-500 mt-0.5">{{ currentChord.symbol }}</span>
