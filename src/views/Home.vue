@@ -40,11 +40,12 @@ const levels = ref([
 
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
-const selectedPiano = ref('yamaha') // 'yamaha' or 'steinway'
+const selectedInstrument = ref('yamaha') // 'yamaha' | 'steinway' | 'xylophone'
 const activeLevelIndex = ref(0)
 
 let yamahaSampler = null
 let steinwaySampler = null
+let xylophoneSampler = null
 
 // Yamaha C5 (Salamander) mapping
 const YAMAHA_C5_SAMPLES = {
@@ -58,8 +59,7 @@ const YAMAHA_C5_SAMPLES = {
   "A7": "A7.mp3", "C8": "C8.mp3"
 }
 
-// Steinway B (nbrosowsky) mapping - Reduced to sparse set for performance
-// (Loading all 88 keys causes network congestion/timeouts)
+// Steinway B (nbrosowsky) mapping - Sparse set for performance
 const STEINWAY_B_SAMPLES = {
   "A0": "A0.mp3", "C1": "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
   "A1": "A1.mp3", "C2": "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
@@ -71,25 +71,39 @@ const STEINWAY_B_SAMPLES = {
   "A7": "A7.mp3", "C8": "C8.mp3"
 }
 
+// Xylophone samples from nbrosowsky/tonejs-instruments (as close to Kalimba as available in this library)
+const XYLOPHONE_SAMPLES = {
+  "C4": "C4.mp3", "G4": "G4.mp3",
+  "C5": "C5.mp3", "G5": "G5.mp3",
+  "C6": "C6.mp3", "G6": "G6.mp3",
+  "C7": "C7.mp3", "G7": "G7.mp3"
+}
+
 onMounted(() => {
   yamahaSampler = new Tone.Sampler({
     urls: YAMAHA_C5_SAMPLES,
     baseUrl: "https://tonejs.github.io/audio/salamander/",
     onload: () => {
-      if (selectedPiano.value === 'yamaha') isSamplerLoaded.value = true
+      if (selectedInstrument.value === 'yamaha') isSamplerLoaded.value = true
     }
   }).toDestination()
 
-  // Use a more robust CDN source for Steinway MP3s
   steinwaySampler = new Tone.Sampler({
     urls: STEINWAY_B_SAMPLES,
     baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/piano/",
     onload: () => {
-      if (selectedPiano.value === 'steinway') isSamplerLoaded.value = true
+      if (selectedInstrument.value === 'steinway') isSamplerLoaded.value = true
     },
-    onerror: (err) => {
-      console.error("Steinway loading error:", err)
-    }
+    onerror: (err) => console.error("Steinway loading error:", err)
+  }).toDestination()
+
+  xylophoneSampler = new Tone.Sampler({
+    urls: XYLOPHONE_SAMPLES,
+    baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/xylophone/",
+    onload: () => {
+      if (selectedInstrument.value === 'xylophone') isSamplerLoaded.value = true
+    },
+    onerror: (err) => console.error("Xylophone loading error:", err)
   }).toDestination()
 })
 
@@ -109,7 +123,11 @@ const renderScore = (abc) => {
 const playChord = (notes) => {
   if (Tone.context.state !== 'running') Tone.start()
   
-  const currentSampler = selectedPiano.value === 'yamaha' ? yamahaSampler : steinwaySampler
+  let currentSampler
+  if (selectedInstrument.value === 'yamaha') currentSampler = yamahaSampler
+  else if (selectedInstrument.value === 'steinway') currentSampler = steinwaySampler
+  else if (selectedInstrument.value === 'xylophone') currentSampler = xylophoneSampler
+
   if (currentSampler && currentSampler.loaded) {
     currentSampler.triggerAttackRelease(notes, '2n')
   }
@@ -120,6 +138,15 @@ const toggleChord = async (chord) => {
   currentChord.value = chord
   await nextTick()
   renderScore(chord.abc)
+}
+
+const getInstrumentName = (type) => {
+  switch (type) {
+    case 'yamaha': return 'Grand Piano: Yamaha C5'
+    case 'steinway': return 'Grand Piano: Steinway B'
+    case 'xylophone': return 'Xylophone (Kalimba style)'
+    default: return ''
+  }
 }
 
 // Piano Keyboard Logic
@@ -146,7 +173,10 @@ const keyboardLayout = [
 const isNoteActive = (note) => {
   if (!currentChord.value) return false
   const normalizedActive = currentChord.value.notes.map(n => n.replace('♭', 'b'))
+  // Removing octave check to highlight keys across all octaves if needed, or keeping it strict
+  // Here we normalize note names
   return normalizedActive.some(n => {
+    // Basic enharmonic check
     if (n === 'Bb3' && note === 'A#3') return true
     if (n === 'Eb4' && note === 'D#4') return true
     return n === note
@@ -222,8 +252,6 @@ const getBlackKeyNote = (whiteNote) => {
         </div>
       </section>
 
-
-
       <!-- Level Selector -->
       <div class="flex bg-gray-100 p-1 rounded-xl mb-6 border border-gray-200">
         <button 
@@ -278,27 +306,34 @@ const getBlackKeyNote = (whiteNote) => {
       <!-- Settings -->
       <div class="space-y-4">
         <section class="flex flex-col items-center">
-          <!-- Piano Selector -->
+          <!-- Instrument Selector -->
           <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200">
             <button 
-              @click="selectedPiano = 'yamaha'"
+              @click="selectedInstrument = 'yamaha'"
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
-              :class="selectedPiano === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+              :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
               Yamaha C5
             </button>
             <button 
-              @click="selectedPiano = 'steinway'"
+              @click="selectedInstrument = 'steinway'"
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
-              :class="selectedPiano === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
               Steinway B
+            </button>
+            <button 
+              @click="selectedInstrument = 'xylophone'"
+              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+              :class="selectedInstrument === 'xylophone' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+            >
+              Kalimba
             </button>
           </div>
 
           <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full pl-3 pr-1 gap-2 py-1 shadow-sm">
             <span class="w-1.5 h-1.5 rounded-full bg-green-500" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
-            <span class="text-[9px] font-bold text-gray-500 tracking-wider">🎹 {{ selectedPiano === 'yamaha' ? 'Grand Piano: Yamaha C5' : 'Grand Piano: Steinway B' }}</span>
+            <span class="text-[9px] font-bold text-gray-500 tracking-wider">🎹 {{ getInstrumentName(selectedInstrument) }}</span>
             <button 
               @click="playChord(['C4', 'E4', 'G4'])" 
               class="bg-white border border-gray-100 text-gray-500 text-[8px] px-2.5 py-0.5 rounded-full hover:bg-gray-50 active:scale-95 transition-all font-bold"
