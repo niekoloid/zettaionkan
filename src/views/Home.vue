@@ -180,17 +180,18 @@ const getBlackKeyNote = (whiteNote) => {
 
     <!-- Main Content -->
     <main class="flex-grow px-4 pb-8 overflow-y-auto">
-      <!-- Score & Keyboard Visualization -->
-      <section class="flex flex-col items-center space-y-6 mb-10">
-        <div class="flex flex-col items-center">
-          <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
-          <div class="w-full max-w-[250px] max-h-[500px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
-            <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
-            <p v-if="!currentChord" class="text-gray-300 text-sm italic font-medium">タップ</p>
-          </div>
+      <!-- Score Visualization -->
+      <section class="flex flex-col items-center mb-10 text-center">
+        <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
+        <div class="w-full max-w-[250px] max-h-[500px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
+          <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
+          <p v-if="!currentChord" class="text-gray-300 text-sm italic font-medium">タップ</p>
         </div>
+      </section>
 
-        <!-- Piano Keyboard -->
+      <!-- Keyboard Visualization -->
+      <section class="flex flex-col items-center mb-10">
+        <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">鍵盤表示</h2>
         <div class="w-full max-w-sm px-4">
           <div class="relative flex justify-center h-24 bg-gray-100 p-1 rounded-xl shadow-inner border border-gray-200">
             <!-- White Keys -->
@@ -199,7 +200,7 @@ const getBlackKeyNote = (whiteNote) => {
               :key="note"
               class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm transition-colors duration-300"
               :class="[isNoteActive(note) ? '' : 'bg-white']"
-              :style="isNoteActive(note) ? { backgroundColor: currentChord.color } : {}"
+              :style="isNoteActive(note) ? { backgroundColor: currentChord?.color } : {}"
             >
               <span class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[6px] text-gray-300 font-bold uppercase">{{ note.replace(/\d/, '') }}</span>
             </div>
@@ -214,12 +215,12 @@ const getBlackKeyNote = (whiteNote) => {
                   v-if="hasBlackKey(note.note)"
                   class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-colors duration-300 z-10"
                   :class="[isNoteActive(getBlackKeyNote(note.note)) ? '' : 'bg-gray-800']"
-                  :style="isNoteActive(getBlackKeyNote(note.note)) ? { backgroundColor: currentChord.color, borderColor: 'white' } : {}"
+                  :style="isNoteActive(getBlackKeyNote(note.note)) ? { backgroundColor: currentChord?.color, borderColor: 'white' } : {}"
                 ></div>
               </div>
             </div>
           </div>
-          <p class="text-[9px] text-center text-gray-300 mt-2 font-medium tracking-wider">PIANO KEYBOARD</p>
+          <p class="text-[9px] text-center text-gray-300 mt-2 font-medium tracking-wider uppercase">Piano Keyboard</p>
         </div>
       </section>
 
