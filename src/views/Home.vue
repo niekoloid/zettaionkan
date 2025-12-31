@@ -116,8 +116,10 @@ onMounted(() => {
     onerror: (err) => console.error("Steinway loading error:", err)
   }).toDestination()
   
-  // Render empty score initially
-  renderScore('')
+  // Render empty score initially (using 'y' as spacer to ensure staff lines appear)
+  nextTick(() => {
+    renderScore('y')
+  })
 })
 
 const renderScore = (abc) => {
