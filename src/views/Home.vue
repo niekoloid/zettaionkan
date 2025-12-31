@@ -360,7 +360,7 @@ const getBlackKeyNote = (whiteNote) => {
               disabled
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all text-gray-400 bg-gray-100 cursor-not-allowed opacity-60"
             >
-              Steinway (Coming Soon)
+              Steinway <span class="text-[8px] font-normal block sm:inline">(Coming Soon)</span>
             </button>
           </div>
         </section>
