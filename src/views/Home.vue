@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, computed } from 'vue'
 import * as Tone from 'tone'
 import abcjs from 'abcjs'
 
@@ -36,6 +36,37 @@ const levels = ref([
     ]
   }
 ])
+
+const findChordById = (id) => {
+  for (const level of currentLevels.value) { // Update to search in the dynamically computed levels
+    const found = level.chords.find(c => c.id === id)
+    if (found) return found
+  }
+  return null
+}
+
+const trainingMethod = ref('eguchi') // 'eguchi' | 'kito'
+
+const currentLevels = computed(() => {
+  if (trainingMethod.value === 'eguchi') {
+    return levels.value
+  } else {
+    // Kito Style: Remap existing chords to focus on Symbol and Code Name, removing Color associations.
+    // Note: Kito method officially uses Code Names (C, F, G...) directly, not Colors. 
+    return levels.value.map(level => ({
+      ...level,
+      name: level.name.replace('（赤・黄・青）', '').replace('（緑・オレンジ・紫など）', ''),
+      description: '鬼頭式では色を使わず、コードネーム（記号）を直接読み取って音を識別します。',
+      chords: level.chords.map(chord => ({
+        ...chord,
+        name: chord.symbol, // Display Symbol as main Name (e.g. "C")
+        colorName: 'コード', // Label as Code
+        color: '#4B5563', // Neutral Gray/Black
+        // Keep notes and abc same
+      }))
+    }))
+  }
+})
 
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
@@ -96,94 +127,6 @@ const FLUTE_SAMPLES = {
 const GUITAR_SAMPLES = {
   "A2": "A2.mp3", "A3": "A3.mp3", "A4": "A4.mp3", "A5": "A5.mp3",
   "B3": "B3.mp3", "E4": "E4.mp3", "G4": "G4.mp3"
-}
-
-// Chord Progressions
-const progressionSongs = ref([
-  {
-    id: 'twinkle',
-    title: 'きらきら星 (Twinkle Twinkle Little Star)',
-    description: '赤(C)、黄(F)、青(G)の基本3和音で弾ける名曲。色の変化を楽しんでみましょう。',
-    sequence: [
-      { chordId: 'domiso', duration: 1000 }, // Do
-      { chordId: 'domiso', duration: 1000 }, // Do
-      { chordId: 'dofara', duration: 1000 }, // Sol (Subdom) - Simplified to F for Eguchi context or G? Usually C-C-G-G-A-A-G. 
-      // Eguchi method maps colors directly. Let's use standard harmonization I-IV-I-V
-      // C(Red) - F(Yellow) - C(Red) - G(Blue)
-      { chordId: 'domiso', duration: 2000 }, // C (Red)
-      { chordId: 'dofara', duration: 2000 }, // F (Yellow)
-      { chordId: 'domiso', duration: 2000 }, // C (Red)
-      { chordId: 'shireso', duration: 2000 }, // G (Blue)
-      { chordId: 'domiso', duration: 4000 }, // C (Red)
-    ]
-  },
-  {
-    id: 'ode_to_joy',
-    title: 'よろこびの歌 (Ode to Joy)',
-    description: 'ベートーヴェン交響曲第9番より。力強い赤と青の響きを感じてください。',
-    sequence: [
-      { chordId: 'domiso', duration: 2000 }, // Mi (C)
-      { chordId: 'shireso', duration: 2000 }, // Sol (G)
-      { chordId: 'domiso', duration: 2000 }, // Mi (C)
-      { chordId: 'dofara', duration: 2000 }, // Fa (F) - Reharm for variety or stick to I-V?
-      // Standard: E-E-F-G-G-F-E-D... (Melody)
-      // Chords: C - G - C ...
-      { chordId: 'domiso', duration: 1500 }, 
-      { chordId: 'shireso', duration: 1500 },
-      { chordId: 'domiso', duration: 3000 },
-    ]
-  }
-])
-
-const isPlaying = ref(false)
-const currentSongStep = ref(-1)
-
-const findChordById = (id) => {
-  for (const level of levels.value) {
-    const found = level.chords.find(c => c.id === id)
-    if (found) return found
-  }
-  return null
-}
-
-const stopSong = () => {
-  isPlaying.value = false
-  currentSongStep.value = -1
-}
-
-const playSong = async (song) => {
-  if (isPlaying.value) {
-    stopSong()
-    await nextTick() // ensure Loop breaks
-    return
-  }
-  
-  isPlaying.value = true
-  currentSongStep.value = -1
-
-  // Initial wait
-  await new Promise(r => setTimeout(r, 500))
-
-  for (let i = 0; i < song.sequence.length; i++) {
-    if (!isPlaying.value) break
-    
-    currentSongStep.value = i
-    const step = song.sequence[i]
-    const chord = findChordById(step.chordId)
-    
-    if (chord) {
-      toggleChord(chord)
-    }
-    
-    await new Promise(r => setTimeout(r, step.duration))
-  }
-  
-  if (isPlaying.value) {
-    // Only clear if finished naturally
-    currentSongStep.value = -1
-    isPlaying.value = false
-    currentChord.value = null // Optional: clear chord after song
-  }
 }
 
 onMounted(() => {
@@ -388,7 +331,7 @@ const getBlackKeyNote = (whiteNote) => {
       <!-- Level Selector -->
       <div class="flex bg-gray-100 p-1 rounded-xl mb-6 border border-gray-200">
         <button 
-          v-for="(level, index) in levels" 
+          v-for="(level, index) in currentLevels" 
           :key="index"
           @click="activeLevelIndex = index"
           class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center"
@@ -404,14 +347,16 @@ const getBlackKeyNote = (whiteNote) => {
           <div class="px-2">
             <h2 class="text-sm font-bold text-gray-800 flex items-center">
               <span class="w-1.5 h-4 bg-gray-900 rounded-full mr-2"></span>
-              {{ levels[activeLevelIndex].name }}
+            <h2 class="text-sm font-bold text-gray-800 flex items-center">
+              <span class="w-1.5 h-4 bg-gray-900 rounded-full mr-2"></span>
+              {{ currentLevels[activeLevelIndex].name }}
             </h2>
-            <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">{{ levels[activeLevelIndex].description }}</p>
+            <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">{{ currentLevels[activeLevelIndex].description }}</p>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div 
-              v-for="chord in levels[activeLevelIndex].chords" 
+              v-for="chord in currentLevels[activeLevelIndex].chords" 
               :key="chord.id"
               @click="toggleChord(chord)"
               class="flex items-center p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-300"
@@ -431,60 +376,6 @@ const getBlackKeyNote = (whiteNote) => {
                 <span class="font-bold text-base leading-none truncate">{{ chord.name }}</span>
                 <span class="text-[9px] font-medium opacity-60">({{ chord.colorName }})</span>
               </div>
-
-      <!-- Classic Chord Progressions -->
-      <section class="mb-12">
-        <div class="px-2 mb-4">
-          <h2 class="text-sm font-bold text-gray-800 flex items-center">
-            <span class="w-1.5 h-4 bg-indigo-500 rounded-full mr-2"></span>
-            実践！コード進行（クラシック）
-          </h2>
-          <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">
-            色の変化を目と耳で追いながら、名曲の和音進行を感じてみましょう。
-          </p>
-        </div>
-
-        <div class="space-y-3">
-          <div 
-            v-for="song in progressionSongs" 
-            :key="song.id"
-            class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div class="flex justify-between items-start mb-3">
-              <div>
-                <h3 class="font-bold text-gray-800 text-sm">{{ song.title }}</h3>
-                <p class="text-[10px] text-gray-400 mt-1">{{ song.description }}</p>
-              </div>
-              <button 
-                @click="playSong(song)"
-                class="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
-                :class="{'bg-red-50 text-red-500 hover:bg-red-100': isPlaying && currentSongStep >= 0}"
-              >
-                <span v-if="isPlaying && currentSongStep >= 0" class="text-xs">■</span>
-                <span v-else class="text-xs">▶</span>
-              </button>
-            </div>
-            
-            <!-- Visualization of steps -->
-            <div class="flex gap-1 h-2 overflow-hidden rounded-full bg-gray-100">
-              <div 
-                v-for="(step, idx) in song.sequence" 
-                :key="idx"
-                class="h-full transition-all duration-300"
-                :class="{
-                  'opacity-100': currentSongStep === idx,
-                  'opacity-30': currentSongStep !== idx && currentSongStep !== -1,
-                  'opacity-100': currentSongStep === -1
-                }"
-                :style="{
-                  width: (100 / song.sequence.length) + '%',
-                  backgroundColor: findChordById(step.chordId)?.color || '#ccc'
-                }"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </section>
             </div>
           </div>
         </section>
@@ -507,6 +398,24 @@ const getBlackKeyNote = (whiteNote) => {
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all text-gray-400 bg-gray-100 cursor-not-allowed opacity-60"
             >
               Steinway <span class="text-[8px] font-normal block sm:inline">(Coming Soon)</span>
+            </button>
+          </div>
+
+          <!-- Method Selector -->
+          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200">
+            <button 
+              @click="trainingMethod = 'eguchi'"
+              class="flex-1 px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+              :class="trainingMethod === 'eguchi' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-400 hover:text-gray-600'"
+            >
+              江口式 (色)
+            </button>
+            <button 
+              @click="trainingMethod = 'kito'"
+              class="flex-1 px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+              :class="trainingMethod === 'kito' ? 'bg-white shadow-sm text-gray-800' : 'text-gray-400 hover:text-gray-600'"
+            >
+              鬼頭式 (コード)
             </button>
           </div>
         </section>
