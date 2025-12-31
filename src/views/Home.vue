@@ -98,7 +98,7 @@ const toggleChord = async (chord) => {
       '--chord-color': currentChord?.color || '#EF4444',
       backgroundColor: currentChord ? currentChord.color + '4D' : 'white'
     }" 
-    class="flex flex-col flex-grow min-h-screen transition-colors duration-500"
+    class="flex flex-col min-h-screen max-w-md mx-auto shadow-2xl relative transition-colors duration-500 overflow-hidden bg-white"
   >
     <!-- Header -->
     <header class="pt-10 pb-6 px-4 text-center shrink-0">
