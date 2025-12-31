@@ -43,7 +43,7 @@ const selectedInstrument = ref('yamaha') // 'yamaha' | 'steinway' | 'xylophone'
 const activeLevelIndex = ref(0)
 
 let yamahaSampler = null
-let xylophoneSampler = null
+let steinwaySampler = null
 
 // Yamaha C5 (Salamander) mapping
 const YAMAHA_C5_SAMPLES = {
@@ -107,13 +107,13 @@ onMounted(() => {
     }
   }).toDestination()
 
-  xylophoneSampler = new Tone.Sampler({
-    urls: XYLOPHONE_SAMPLES,
-    baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/xylophone/",
+  steinwaySampler = new Tone.Sampler({
+    urls: STEINWAY_B_SAMPLES,
+    baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/piano/",
     onload: () => {
-      if (selectedInstrument.value === 'xylophone') isSamplerLoaded.value = true
+      if (selectedInstrument.value === 'steinway') isSamplerLoaded.value = true
     },
-    onerror: (err) => console.error("Xylophone loading error:", err)
+    onerror: (err) => console.error("Steinway loading error:", err)
   }).toDestination()
 })
 
@@ -135,7 +135,7 @@ const playChord = (notes) => {
   
   let currentSampler
   if (selectedInstrument.value === 'yamaha') currentSampler = yamahaSampler
-  else if (selectedInstrument.value === 'xylophone') currentSampler = xylophoneSampler
+  else if (selectedInstrument.value === 'steinway') currentSampler = steinwaySampler
 
   if (currentSampler && currentSampler.loaded) {
     currentSampler.triggerAttackRelease(notes, '2n')
@@ -159,7 +159,7 @@ const selectInstrument = (instrument) => {
   // Determine if the target sampler is loaded
   let targetSampler
   if (instrument === 'yamaha') targetSampler = yamahaSampler
-  else if (instrument === 'xylophone') targetSampler = xylophoneSampler
+  else if (instrument === 'steinway') targetSampler = steinwaySampler
 
   if (targetSampler && targetSampler.loaded) {
     isSamplerLoaded.value = true
@@ -174,7 +174,7 @@ const selectInstrument = (instrument) => {
 const getInstrumentName = (type) => {
   switch (type) {
     case 'yamaha': return 'Grand Piano: Yamaha C5'
-    case 'xylophone': return 'Xylophone'
+    case 'steinway': return 'Grand Piano: Steinway B'
     default: return ''
   }
 }
@@ -357,11 +357,11 @@ const getBlackKeyNote = (whiteNote) => {
               Yamaha C5
             </button>
             <button 
-              @click="selectInstrument('xylophone')"
+              @click="selectInstrument('steinway')"
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
-              :class="selectedInstrument === 'xylophone' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
-              Xylophone
+              Steinway B
             </button>
           </div>
         </section>
