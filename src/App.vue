@@ -22,8 +22,24 @@ const chords = ref([
 
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
+const isMuted = ref(false)
 
 let sampler = null
+
+import { Mute } from '@capgo/capacitor-mute'
+import { App } from '@capacitor/app'
+import { Capacitor } from '@capacitor/core'
+
+const checkMute = async () => {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const result = await Mute.isMuted()
+      isMuted.value = result.value
+    } catch (e) {
+      console.error('Mute detection error:', e)
+    }
+  }
+}
 
 // Yamaha C5 samples from a reliable CDN
 const YAMAHA_C5_SAMPLES = {
@@ -46,6 +62,14 @@ onMounted(() => {
       isSamplerLoaded.value = true
     }
   }).toDestination()
+
+  // Native platform listeners
+  if (Capacitor.isNativePlatform()) {
+    checkMute()
+    App.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) checkMute()
+    })
+  }
 })
 
 const renderScore = (abc) => {
@@ -70,6 +94,7 @@ const playChord = (notes) => {
 }
 
 const toggleChord = async (chord) => {
+  if (Capacitor.isNativePlatform()) checkMute()
   playChord(chord.notes)
   currentChord.value = chord
   await nextTick()
@@ -126,11 +151,28 @@ const startTraining = () => {
         <div class="space-y-6 pb-8">
           <!-- Current Sound Indicator -->
           <section class="flex flex-col items-center">
-            <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full px-4 py-1.5 shadow-sm">
-              <span class="w-2 h-2 rounded-full bg-green-500 mr-2" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
-              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Engine: Yamaha C5 Grand Piano</span>
+            <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full pl-4 pr-1 gap-2 py-1 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-green-500" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Engine: Yamaha C5</span>
+              <button 
+                @click="playChord(['C4', 'E4', 'G4'])" 
+                class="bg-white border border-gray-200 text-gray-600 text-[9px] px-3 py-1 rounded-full hover:bg-gray-50 active:scale-95 transition-all font-bold"
+              >
+                音テスト
+              </button>
             </div>
-            <p class="text-[9px] text-gray-400 mt-2">※音が鳴らない場合は端末のマナーモードを解除してください</p>
+            
+            <!-- Dynamic Alert Message -->
+            <transition name="fade">
+              <div v-if="isMuted" class="mt-4 bg-red-50 border border-red-100 rounded-xl p-3 flex items-center space-x-3 max-w-[280px]">
+                <span class="text-xl">🔇</span>
+                <div class="text-left">
+                  <p class="text-[10px] text-red-600 font-bold leading-tight">端末が消音モードです</p>
+                  <p class="text-[9px] text-red-400 leading-tight mt-0.5">本体横のスイッチを切り替えてください</p>
+                </div>
+              </div>
+              <p v-else class="text-[9px] text-gray-400 mt-2">※音が鳴らない場合は端末のマナーモードを解除してください</p>
+            </transition>
           </section>
 
           <!-- Score Visualization -->
@@ -144,7 +186,6 @@ const startTraining = () => {
               {{ currentChord.name }} ({{ currentChord.symbol }})
             </p>
           </section>
-
         </div>
 
         <!-- Service Info & Company Info -->
@@ -194,5 +235,11 @@ body {
 }
 #chord-score svg {
   background: transparent !important;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>
