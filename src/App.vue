@@ -1,34 +1,33 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import * as Tone from 'tone'
+import abcjs from 'abcjs'
 
 const chords = ref([
-  { id: 'domiso', name: 'ドミソ', symbol: 'C', color: '#EF4444', notes: ['C4', 'E4', 'G4'] },
-  { id: 'dofara', name: 'ドファラ', symbol: 'F', color: '#EAB308', notes: ['F3', 'A3', 'C4'] },
-  { id: 'shireso', name: 'シレソ', symbol: 'G', color: '#3B82F6', notes: ['G3', 'B3', 'D4'] },
-  { id: 'radofa', name: 'ラドファ', symbol: 'F', color: '#1F2937', notes: ['F4', 'A4', 'C5'] },
-  { id: 'resoshi', name: 'レソシ', symbol: 'G', color: '#22C55E', notes: ['G4', 'B4', 'D5'] },
-  { id: 'misodo', name: 'ミソド', symbol: 'C', color: '#F97316', notes: ['C4', 'E4', 'G4'] },
-  { id: 'fadorado', name: 'ファラド', symbol: 'F', color: '#A855F7', notes: ['F4', 'A4', 'C5'] },
-  { id: 'sorushire', name: 'ソシレ', symbol: 'G', color: '#EC4899', notes: ['G4', 'B4', 'D5'] },
-  { id: 'sodomi', name: 'ソドミ', symbol: 'C', color: '#A3744D', notes: ['G3', 'C4', 'E4'] },
-  { id: 'radosharpmi', name: 'ラド#ミ', symbol: 'A', color: '#84CC16', notes: ['A3', 'C#4', 'E4'] },
-  { id: 'refasharpara', name: 'レファ#ラ', symbol: 'D', color: '#F4A460', notes: ['D4', 'F#4', 'A4'] },
-  { id: 'misosharpshi', name: 'ミソ#シ', symbol: 'E', color: '#DDA0DD', notes: ['E4', 'G#4', 'B4'] },
-  { id: 'shiflatrefa', name: 'シ♭レファ', symbol: 'B♭', color: '#6B7280', notes: ['Bb3', 'D4', 'F4'] },
-  { id: 'miflatshiblat', name: 'ミ♭ソシ♭', symbol: 'E♭', color: '#06B6D4', notes: ['Eb4', 'G4', 'Bb4'] },
+  { id: 'domiso', name: 'ドミソ', symbol: 'C', color: '#EF4444', notes: ['C4', 'E4', 'G4'], abc: '[CEG]' },
+  { id: 'dofara', name: 'ドファラ', symbol: 'F', color: '#EAB308', notes: ['F3', 'A3', 'C4'], abc: '[F,A,C]' },
+  { id: 'shireso', name: 'シレソ', symbol: 'G', color: '#3B82F6', notes: ['G3', 'B3', 'D4'], abc: '[G,B,D]' },
+  { id: 'radofa', name: 'ラドファ', symbol: 'F', color: '#1F2937', notes: ['F4', 'A4', 'C5'], abc: '[fac]' },
+  { id: 'resoshi', name: 'レソシ', symbol: 'G', color: '#22C55E', notes: ['G4', 'B4', 'D5'], abc: '[gbd\']' },
+  { id: 'misodo', name: 'ミソド', symbol: 'C', color: '#F97316', notes: ['C4', 'E4', 'G4'], abc: '[CEG]' },
+  { id: 'fadorado', name: 'ファラド', symbol: 'F', color: '#A855F7', notes: ['F4', 'A4', 'C5'], abc: '[fac]' },
+  { id: 'sorushire', name: 'ソシレ', symbol: 'G', color: '#EC4899', notes: ['G4', 'B4', 'D5'], abc: '[gbd\']' },
+  { id: 'sodomi', name: 'ソドミ', symbol: 'C', color: '#A3744D', notes: ['G3', 'C4', 'E4'], abc: '[G,CE]' },
+  { id: 'radosharpmi', name: 'ラド#ミ', symbol: 'A', color: '#84CC16', notes: ['A3', 'C#4', 'E4'], abc: '[A,^CE]' },
+  { id: 'refasharpara', name: 'レファ#ラ', symbol: 'D', color: '#F4A460', notes: ['D4', 'F#4', 'A4'], abc: '[D^FA]' },
+  { id: 'misosharpshi', name: 'ミソ#シ', symbol: 'E', color: '#DDA0DD', notes: ['E4', 'G#4', 'B4'], abc: '[E^G B]' },
+  { id: 'shiflatrefa', name: 'シ♭レファ', symbol: 'B♭', color: '#6B7280', notes: ['Bb3', 'D4', 'F4'], abc: '[_B,DF]' },
+  { id: 'miflatshiblat', name: 'ミ♭ソシ♭', symbol: 'E♭', color: '#06B6D4', notes: ['Eb4', 'G4', 'Bb4'], abc: '[_E G _B]' },
 ])
 
-const selectedChords = ref([])
 const soundEnabled = ref(true)
+const currentChord = ref(null)
 
 let synth = null
 
 onMounted(() => {
   synth = new Tone.PolySynth(Tone.Synth, {
-    oscillator: {
-      type: 'triangle'
-    },
+    oscillator: { type: 'triangle' },
     envelope: {
       attack: 0.005,
       decay: 0.1,
@@ -38,28 +37,32 @@ onMounted(() => {
   }).toDestination()
 })
 
+const renderScore = (abc) => {
+  abcjs.renderAbc('chord-score', `L:1/4\nK:C\n${abc}`, {
+    responsive: 'resize',
+    scale: 1.5,
+    paddingtop: 0,
+    paddingbottom: 0,
+    staffwidth: 200
+  })
+}
+
 const playChord = (notes) => {
   if (!soundEnabled.value || !synth) return
-  
-  if (Tone.context.state !== 'running') {
-    Tone.start()
-  }
-
+  if (Tone.context.state !== 'running') Tone.start()
   synth.triggerAttackRelease(notes, '2n')
 }
 
-const toggleChord = (chord) => {
-  // Play sound
+const toggleChord = async (chord) => {
   playChord(chord.notes)
-
-  // Selection logic removed as per user request to prevent selection
+  currentChord.ref = chord
+  currentChord.value = chord
+  await nextTick()
+  renderScore(chord.abc)
 }
 
 const startTraining = () => {
-  console.log('Starting training with:', {
-    selectedChords: selectedChords.value,
-    soundEnabled: soundEnabled.value
-  })
+  console.log('Starting training')
 }
 </script>
 
@@ -73,16 +76,14 @@ const startTraining = () => {
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow px-4 pb-24 overflow-y-auto">
+    <main class="flex-grow px-4 pb-32 overflow-y-auto">
       <!-- Chord Selection -->
       <div class="grid grid-cols-2 gap-3 mb-10">
         <div 
           v-for="chord in chords" 
           :key="chord.id"
           @click="toggleChord(chord)"
-          :class="[
-            'flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all duration-200 border-gray-200 bg-white text-gray-900 hover:bg-gray-50'
-          ]"
+          class="flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all duration-200 border-gray-200 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100"
         >
           <div 
             class="w-3 h-3 rounded-full mr-3 shrink-0" 
@@ -97,10 +98,9 @@ const startTraining = () => {
 
       <!-- Settings -->
       <div class="space-y-8">
-
         <!-- Sound Toggle -->
         <section>
-          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">音の有無</h2>
+          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">音の有無</h2>
           <div class="flex bg-gray-100 p-1 rounded-xl">
             <button 
               @click="soundEnabled = true"
@@ -121,6 +121,18 @@ const startTraining = () => {
               <span class="mr-2">🔇</span> 音なし
             </button>
           </div>
+        </section>
+
+        <!-- Score Visualization -->
+        <section class="flex flex-col items-center">
+          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">譜面表示</h2>
+          <div class="w-full bg-gray-50 rounded-2xl p-4 flex items-center justify-center min-h-[120px] border border-gray-100 shadow-inner">
+            <div v-if="currentChord" id="chord-score" class="w-full flex justify-center"></div>
+            <p v-else class="text-gray-400 text-sm italic">和音ボタンを押すと譜面が表示されます</p>
+          </div>
+          <p v-if="currentChord" class="mt-2 text-lg font-bold text-gray-700">
+            {{ currentChord.name }} ({{ currentChord.symbol }})
+          </p>
         </section>
       </div>
     </main>
@@ -143,5 +155,9 @@ const startTraining = () => {
 <style>
 body {
   font-family: 'Noto Sans JP', sans-serif;
+}
+/* abcjs styling overrides */
+#chord-score svg {
+  background: transparent !important;
 }
 </style>
