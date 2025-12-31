@@ -147,6 +147,7 @@ const toggleChord = async (chord) => {
 
       <!-- Footer Links -->
       <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col items-center space-y-4">
+        <router-link to="/guide" class="text-xs text-gray-400 hover:text-gray-600 font-medium">利用方法</router-link>
         <router-link to="/about" class="text-xs text-gray-400 hover:text-gray-600 font-medium">サービス概要</router-link>
         <router-link to="/company" class="text-xs text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
         <footer class="text-center text-gray-300 text-[10px] pt-4 pb-8">
