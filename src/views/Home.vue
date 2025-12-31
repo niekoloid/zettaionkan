@@ -47,6 +47,9 @@ let yamahaSampler = null
 let steinwaySampler = null
 let xylophoneSampler = null
 let rainDrumSampler = null
+let violinSampler = null
+let fluteSampler = null
+let guitarSampler = null
 
 // Yamaha C5 (Salamander) mapping
 const YAMAHA_C5_SAMPLES = {
@@ -81,8 +84,24 @@ const XYLOPHONE_SAMPLES = {
 }
 
 // Rain Drum (mapped to Nylon Guitar for similar soft pluck) - Samples from nbrosowsky
+// Rain Drum (mapped to Nylon Guitar for similar soft pluck) - Samples from nbrosowsky
 const RAIN_DRUM_SAMPLES = {
   "A2": "A2.mp3", "B2": "B2.mp3", "B3": "B3.mp3", "E4": "E4.mp3", "G4": "G4.mp3", "A3": "A3.mp3", "A4": "A4.mp3", "A5": "A5.mp3" 
+}
+
+const VIOLIN_SAMPLES = {
+  "A3": "A3.mp3", "C4": "C4.mp3", "G4": "G4.mp3", "A4": "A4.mp3",
+  "A5": "A5.mp3", "A6": "A6.mp3"
+}
+
+const FLUTE_SAMPLES = {
+  "A4": "A4.mp3", "C5": "C5.mp3", "A5": "A5.mp3", "A6": "A6.mp3"
+}
+
+// Nylon Guitar samples
+const GUITAR_SAMPLES = {
+  "A2": "A2.mp3", "A3": "A3.mp3", "A4": "A4.mp3", "A5": "A5.mp3",
+  "B3": "B3.mp3", "E4": "E4.mp3", "G4": "G4.mp3"
 }
 
 onMounted(() => {
@@ -121,6 +140,33 @@ onMounted(() => {
     },
     onerror: (err) => console.error("Rain Drum loading error:", err)
   }).toDestination()
+
+  violinSampler = new Tone.Sampler({
+    urls: VIOLIN_SAMPLES,
+    baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/violin/",
+    onload: () => {
+      if (selectedInstrument.value === 'violin') isSamplerLoaded.value = true
+    },
+    onerror: (err) => console.error("Violin loading error:", err)
+  }).toDestination()
+
+  fluteSampler = new Tone.Sampler({
+    urls: FLUTE_SAMPLES,
+    baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/flute/",
+    onload: () => {
+      if (selectedInstrument.value === 'flute') isSamplerLoaded.value = true
+    },
+    onerror: (err) => console.error("Flute loading error:", err)
+  }).toDestination()
+
+  guitarSampler = new Tone.Sampler({
+    urls: GUITAR_SAMPLES,
+    baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/guitar-nylon/",
+    onload: () => {
+      if (selectedInstrument.value === 'guitar') isSamplerLoaded.value = true
+    },
+    onerror: (err) => console.error("Guitar loading error:", err)
+  }).toDestination()
 })
 
 const renderScore = (abc) => {
@@ -144,6 +190,9 @@ const playChord = (notes) => {
   else if (selectedInstrument.value === 'steinway') currentSampler = steinwaySampler
   else if (selectedInstrument.value === 'xylophone') currentSampler = xylophoneSampler
   else if (selectedInstrument.value === 'raindrum') currentSampler = rainDrumSampler
+  else if (selectedInstrument.value === 'violin') currentSampler = violinSampler
+  else if (selectedInstrument.value === 'flute') currentSampler = fluteSampler
+  else if (selectedInstrument.value === 'guitar') currentSampler = guitarSampler
 
   if (currentSampler && currentSampler.loaded) {
     currentSampler.triggerAttackRelease(notes, '2n')
@@ -170,6 +219,9 @@ const selectInstrument = (instrument) => {
   else if (instrument === 'steinway') targetSampler = steinwaySampler
   else if (instrument === 'xylophone') targetSampler = xylophoneSampler
   else if (instrument === 'raindrum') targetSampler = rainDrumSampler
+  else if (instrument === 'violin') targetSampler = violinSampler
+  else if (instrument === 'flute') targetSampler = fluteSampler
+  else if (instrument === 'guitar') targetSampler = guitarSampler
 
   if (targetSampler && targetSampler.loaded) {
     isSamplerLoaded.value = true
@@ -187,6 +239,9 @@ const getInstrumentName = (type) => {
     case 'steinway': return 'Grand Piano: Steinway B'
     case 'xylophone': return 'Xylophone'
     case 'raindrum': return 'Rain Drum'
+    case 'violin': return 'Violin'
+    case 'flute': return 'Flute'
+    case 'guitar': return 'Guitar (Nylon)'
     default: return ''
   }
 }
@@ -379,11 +434,42 @@ const getBlackKeyNote = (whiteNote) => {
               Rain Drum
             </button>
           </div>
+          
+          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200">
+             <button 
+              @click="selectInstrument('violin')"
+              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+              :class="selectedInstrument === 'violin' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+            >
+              Violin
+            </button>
+             <button 
+              @click="selectInstrument('flute')"
+              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+              :class="selectedInstrument === 'flute' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+            >
+              Flute
+            </button>
+             <button 
+              @click="selectInstrument('guitar')"
+              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+              :class="selectedInstrument === 'guitar' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+            >
+              Guitar
+            </button>
+          </div>
 
           <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full pl-3 pr-3 gap-2 py-1 shadow-sm">
             <span class="w-1.5 h-1.5 rounded-full bg-green-500" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
             <span class="text-[9px] font-bold text-gray-500 tracking-wider">
-              {{ selectedInstrument === 'raindrum' ? '🥁' : (selectedInstrument === 'xylophone' ? '🪵' : '🎹') }} {{ getInstrumentName(selectedInstrument) }}
+               {{ 
+                  selectedInstrument === 'raindrum' ? '🥁' : 
+                  selectedInstrument === 'xylophone' ? '🪵' : 
+                  selectedInstrument === 'violin' ? '🎻' : 
+                  selectedInstrument === 'flute' ? '🪈' : 
+                  selectedInstrument === 'guitar' ? '🎸' : 
+                  '🎹' 
+               }} {{ getInstrumentName(selectedInstrument) }}
             </span>
           </div>
         </section>
