@@ -51,12 +51,12 @@ onMounted(() => {
 const renderScore = (abc) => {
   abcjs.renderAbc('chord-score', `L:1/4\nK:C\n${abc}`, {
     responsive: 'resize',
-    scale: 0.65,
+    scale: 1.3,
     paddingtop: 0,
     paddingbottom: 0,
     paddingleft: 0,
     paddingright: 0,
-    staffwidth: 40,
+    staffwidth: 150,
     add_classes: true
   })
 }
@@ -91,8 +91,8 @@ const toggleChord = async (chord) => {
       <!-- Score Visualization (Moved to Top) -->
       <section class="flex flex-col items-center mb-6">
         <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
-        <div class="w-full max-w-[250px] max-h-[250px] aspect-square bg-gray-50 rounded-3xl p-2 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
-          <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center scale-110"></div>
+        <div class="w-full max-w-[250px] max-h-[250px] aspect-square bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
+          <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center"></div>
           <p v-if="!currentChord" class="text-gray-300 text-[10px] italic font-medium">和音ボタンをタップ</p>
         </div>
       </section>
