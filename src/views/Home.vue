@@ -203,12 +203,13 @@ const keyboardLayout = [
 const isNoteActive = (note) => {
   if (!currentChord.value) return false
   const normalizedActive = currentChord.value.notes.map(n => n.replace('♭', 'b'))
-  // Removing octave check to highlight keys across all octaves if needed, or keeping it strict
-  // Here we normalize note names
   return normalizedActive.some(n => {
     // Basic enharmonic check
-    if (n === 'Bb3' && note === 'A#3') return true
-    if (n === 'Eb4' && note === 'D#4') return true
+    if ((n === 'Bb3' && note === 'A#3') || (n === 'A#3' && note === 'Bb3')) return true
+    if ((n === 'Eb4' && note === 'D#4') || (n === 'D#4' && note === 'Eb4')) return true
+    if ((n === 'Ab4' && note === 'G#4') || (n === 'G#4' && note === 'Ab4')) return true
+    if ((n === 'C#4' && note === 'Db4') || (n === 'Db4' && note === 'C#4')) return true
+    if ((n === 'F#4' && note === 'Gb4') || (n === 'Gb4' && note === 'F#4')) return true
     return n === note
   })
 }
@@ -370,17 +371,5 @@ const getBlackKeyNote = (whiteNote) => {
 </template>
 
 <style scoped>
-#chord-score :deep(.abcjs-highlight),
-#chord-score :deep(.abcjs-note.abcjs-clicked) {
-  fill: var(--chord-color) !important;
-}
-#chord-score :deep(svg [fill="red"]),
-#chord-score :deep(svg [fill="#f00"]),
-#chord-score :deep(svg [fill="#ff0000"]),
-#chord-score :deep(svg [stroke="red"]),
-#chord-score :deep(svg [stroke="#f00"]),
-#chord-score :deep(svg [stroke="#ff0000"]) {
-  fill: var(--chord-color) !important;
-  stroke: var(--chord-color) !important;
-}
+/* Score coloring removed to keep notes black */
 </style>
