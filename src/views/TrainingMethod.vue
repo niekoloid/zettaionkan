@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden">
+  <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden shadow-2xl">
     <!-- Header -->
     <header class="pt-12 pb-8 px-4 flex items-center justify-between relative shrink-0">
       <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors group z-10">
