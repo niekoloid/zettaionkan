@@ -20,7 +20,6 @@ const chords = ref([
 ])
 
 const selectedChords = ref(['domiso', 'dofara', 'shireso', 'radofa', 'resoshi', 'misodo', 'fadorado', 'sorushire', 'sodomi', 'radosharpmi', 'refasharpara', 'misosharpshi', 'shiflatrefa', 'miflatshiblat'])
-const trialCount = ref(15)
 const soundEnabled = ref(true)
 
 let synth = null
@@ -62,20 +61,9 @@ const toggleChord = (chord) => {
   }
 }
 
-const incrementTrials = () => {
-  trialCount.value += 5
-}
-
-const decrementTrials = () => {
-  if (trialCount.value > 5) {
-    trialCount.value -= 5
-  }
-}
-
 const startTraining = () => {
   console.log('Starting training with:', {
     selectedChords: selectedChords.value,
-    trialCount: trialCount.value,
     soundEnabled: soundEnabled.value
   })
 }
@@ -118,29 +106,6 @@ const startTraining = () => {
 
       <!-- Settings -->
       <div class="space-y-8">
-        <!-- Trial Count -->
-        <section>
-          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">問題数</h2>
-          <div class="flex items-center justify-between">
-            <button 
-              @click="decrementTrials"
-              class="w-12 h-12 flex items-center justify-center rounded-full border border-gray-900 text-gray-900 hover:bg-gray-100 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4" />
-              </svg>
-            </button>
-            <span class="text-2xl font-bold text-gray-900">{{ trialCount }}問</span>
-            <button 
-              @click="incrementTrials"
-              class="w-12 h-12 flex items-center justify-center rounded-full border border-gray-900 text-gray-900 hover:bg-gray-100 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
-          </div>
-        </section>
 
         <!-- Sound Toggle -->
         <section>
