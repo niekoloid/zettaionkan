@@ -81,10 +81,9 @@ const toggleChord = async (chord) => {
   <div class="flex flex-col flex-grow">
     <!-- Header -->
     <header class="pt-10 pb-6 px-4 text-center shrink-0">
-      <h1 class="flex flex-col items-center">
-        <span class="text-base font-medium text-blue-500 tracking-[0.2em] mb-0.5">いろおと</span>
-        <span class="text-2xl font-bold text-gray-900 tracking-tight">絶対音感トレーニング</span>
-      </h1>
+      <div class="flex flex-col items-center">
+        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-16 w-auto object-contain" />
+      </div>
     </header>
 
     <!-- Main Content -->
