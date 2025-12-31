@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick, computed } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import * as Tone from 'tone'
 import abcjs from 'abcjs'
 
@@ -36,37 +36,6 @@ const levels = ref([
     ]
   }
 ])
-
-const findChordById = (id) => {
-  for (const level of currentLevels.value) { // Update to search in the dynamically computed levels
-    const found = level.chords.find(c => c.id === id)
-    if (found) return found
-  }
-  return null
-}
-
-const trainingMethod = ref('eguchi') // 'eguchi' | 'kito'
-
-const currentLevels = computed(() => {
-  if (trainingMethod.value === 'eguchi') {
-    return levels.value
-  } else {
-    // Kito Style: Remap existing chords to focus on Symbol and Code Name, removing Color associations.
-    // Note: Kito method officially uses Code Names (C, F, G...) directly, not Colors. 
-    return levels.value.map(level => ({
-      ...level,
-      name: level.name.replace('（赤・黄・青）', '').replace('（緑・オレンジ・紫など）', ''),
-      description: '鬼頭式では色を使わず、コードネーム（記号）を直接読み取って音を識別します。',
-      chords: level.chords.map(chord => ({
-        ...chord,
-        name: chord.symbol, // Display Symbol as main Name (e.g. "C")
-        colorName: 'コード', // Label as Code
-        color: '#4B5563', // Neutral Gray/Black
-        // Keep notes and abc same
-      }))
-    }))
-  }
-})
 
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
@@ -331,7 +300,7 @@ const getBlackKeyNote = (whiteNote) => {
       <!-- Level Selector -->
       <div class="flex bg-gray-100 p-1 rounded-xl mb-6 border border-gray-200">
         <button 
-          v-for="(level, index) in currentLevels" 
+          v-for="(level, index) in levels" 
           :key="index"
           @click="activeLevelIndex = index"
           class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center"
@@ -347,16 +316,14 @@ const getBlackKeyNote = (whiteNote) => {
           <div class="px-2">
             <h2 class="text-sm font-bold text-gray-800 flex items-center">
               <span class="w-1.5 h-4 bg-gray-900 rounded-full mr-2"></span>
-            <h2 class="text-sm font-bold text-gray-800 flex items-center">
-              <span class="w-1.5 h-4 bg-gray-900 rounded-full mr-2"></span>
-              {{ currentLevels[activeLevelIndex].name }}
+              {{ levels[activeLevelIndex].name }}
             </h2>
-            <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">{{ currentLevels[activeLevelIndex].description }}</p>
+            <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">{{ levels[activeLevelIndex].description }}</p>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div 
-              v-for="chord in currentLevels[activeLevelIndex].chords" 
+              v-for="chord in levels[activeLevelIndex].chords" 
               :key="chord.id"
               @click="toggleChord(chord)"
               class="flex items-center p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-300"
@@ -398,24 +365,6 @@ const getBlackKeyNote = (whiteNote) => {
               class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all text-gray-400 bg-gray-100 cursor-not-allowed opacity-60"
             >
               Steinway <span class="text-[8px] font-normal block sm:inline">(Coming Soon)</span>
-            </button>
-          </div>
-
-          <!-- Method Selector -->
-          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200">
-            <button 
-              @click="trainingMethod = 'eguchi'"
-              class="flex-1 px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
-              :class="trainingMethod === 'eguchi' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-400 hover:text-gray-600'"
-            >
-              江口式 (色)
-            </button>
-            <button 
-              @click="trainingMethod = 'kito'"
-              class="flex-1 px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
-              :class="trainingMethod === 'kito' ? 'bg-white shadow-sm text-gray-800' : 'text-gray-400 hover:text-gray-600'"
-            >
-              鬼頭式 (コード)
             </button>
           </div>
         </section>

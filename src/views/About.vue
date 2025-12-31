@@ -39,7 +39,7 @@
           
           <div class="grid gap-4">
             <div class="bg-white p-6 rounded-2xl border border-gray-50 shadow-sm">
-              <h3 class="font-bold text-gray-800 mb-2">最高峰のピアノ音源</h3>
+              <h3 class="font-bold text-gray-800 mb-2">本物のグランドピアノ音源</h3>
               <p class="text-xs text-gray-500 leading-relaxed">
                 世界中のコンサートホールで愛用されているヤマハのグランドピアノ「C5」を丁寧にサンプリングした高品質な音源を使用しています。
               </p>
@@ -58,6 +58,27 @@
                 基本となる三和音から、トレーニングに適した多様なパターンを用意しています。
               </p>
             </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+              <span class="bg-indigo-500 w-1.5 h-6 rounded-full mr-3"></span>
+              開発ストーリー
+            </h2>
+            <p class="text-gray-600 leading-relaxed text-sm">
+              このサービスは、「子供に絶対音感という一生の財産をプレゼントしてあげたい」という一人の親の想いから生まれました。
+            </p>
+            <p class="text-gray-600 leading-relaxed text-sm mt-4">
+              私自身はピアノを弾くことができません。また、自宅にはピアノを置く十分なスペースも、すぐに購入できる金銭的な余裕もありませんでした。
+            </p>
+            <p class="text-gray-600 leading-relaxed text-sm mt-4">
+              「楽器の経験も、環境も、予算もない。それでも、子供の可能性を広げてあげたい」
+            </p>
+            <p class="text-gray-600 leading-relaxed text-sm mt-4">
+              そんな葛藤の中で、誰もが手軽に、しかし本格的な音色でトレーニングができるツールがあればと思い、このアプリを開発しました。
+            </p>
           </div>
         </section>
       </div>
