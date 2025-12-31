@@ -20,7 +20,6 @@ const chords = ref([
   { id: 'miflatshiblat', name: 'ミ♭ソシ♭', symbol: 'E♭', color: '#06B6D4', notes: ['Eb4', 'G4', 'Bb4'], abc: '[_E G _B]' },
 ])
 
-const soundEnabled = ref(true)
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
 
@@ -63,7 +62,6 @@ const renderScore = (abc) => {
 }
 
 const playChord = (notes) => {
-  if (!soundEnabled.value) return
   if (Tone.context.state !== 'running') Tone.start()
 
   if (isSamplerLoaded.value) {
@@ -125,42 +123,14 @@ const startTraining = () => {
         </div>
 
         <!-- Settings -->
-        <div class="space-y-8 pb-12">
-          <!-- Sound Toggle -->
-          <section>
-            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">音の有無</h2>
-            <div class="flex bg-gray-100 p-1 rounded-xl relative">
-              <button 
-                @click="soundEnabled = true"
-                :class="[
-                  'flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg font-bold transition-all duration-200',
-                  soundEnabled ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
-                ]"
-              >
-                <span class="mr-2">🔊</span> 音あり
-              </button>
-              <button 
-                @click="soundEnabled = false"
-                :class="[
-                  'flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg font-bold transition-all duration-200',
-                  !soundEnabled ? 'bg-white shadow-sm text-red-600' : 'text-gray-500 hover:text-gray-700'
-                ]"
-              >
-                <span class="mr-2">🔇</span> 音なし
-              </button>
-            </div>
-            <!-- Alert message when muted -->
-            <p v-if="!soundEnabled" class="text-[10px] text-red-500 mt-2 text-center font-bold animate-pulse">
-              ⚠️ 音なし設定中です。端末本体の消音モードもご確認ください。
-            </p>
-          </section>
-
+        <div class="space-y-6 pb-8">
           <!-- Current Sound Indicator -->
           <section class="flex flex-col items-center">
-            <div class="flex items-center text-gray-500 text-[10px] space-x-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-green-500" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
-              <span>Sound Engine: Yamaha C5 Grand Piano</span>
+            <div class="inline-flex items-center bg-gray-50 border border-gray-100 rounded-full px-4 py-1.5 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-green-500 mr-2" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Engine: Yamaha C5 Grand Piano</span>
             </div>
+            <p class="text-[9px] text-gray-400 mt-2">※音が鳴らない場合は端末のマナーモードを解除してください</p>
           </section>
 
           <!-- Score Visualization -->
