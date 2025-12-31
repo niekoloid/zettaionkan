@@ -21,11 +21,9 @@ const chords = ref([
 ])
 
 const soundEnabled = ref(true)
-const pianoModel = ref('yamaha') // 'standard' or 'yamaha'
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
 
-let synth = null
 let sampler = null
 
 // Yamaha C5 samples from a reliable CDN
@@ -41,17 +39,6 @@ const YAMAHA_C5_SAMPLES = {
 }
 
 onMounted(() => {
-  // PolySynth for Standard sound
-  synth = new Tone.PolySynth(Tone.Synth, {
-    oscillator: { type: 'triangle' },
-    envelope: {
-      attack: 0.005,
-      decay: 0.1,
-      sustain: 0.3,
-      release: 1
-    }
-  }).toDestination()
-
   // Sampler for Yamaha C5 sound
   sampler = new Tone.Sampler({
     urls: YAMAHA_C5_SAMPLES,
@@ -79,10 +66,8 @@ const playChord = (notes) => {
   if (!soundEnabled.value) return
   if (Tone.context.state !== 'running') Tone.start()
 
-  if (pianoModel.value === 'yamaha' && isSamplerLoaded.value) {
+  if (isSamplerLoaded.value) {
     sampler.triggerAttackRelease(notes, '2n')
-  } else {
-    synth.triggerAttackRelease(notes, '2n')
   }
 }
 
@@ -141,34 +126,6 @@ const startTraining = () => {
 
         <!-- Settings -->
         <div class="space-y-8 pb-12">
-          <!-- Sound Model Toggle -->
-          <section>
-            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">音の種類</h2>
-            <div class="flex bg-gray-100 p-1 rounded-xl">
-              <button 
-                @click="pianoModel = 'yamaha'"
-                :class="[
-                  'flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg font-bold transition-all duration-200',
-                  pianoModel === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
-                ]"
-              >
-                <div class="flex items-center">
-                  🎹 グランドピアノ (Yamaha C5)
-                  <div v-if="pianoModel === 'yamaha' && !isSamplerLoaded.value" class="ml-2 w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-              </button>
-              <button 
-                @click="pianoModel = 'standard'"
-                :class="[
-                  'flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg font-bold transition-all duration-200',
-                  pianoModel === 'standard' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
-                ]"
-              >
-                電子音
-              </button>
-            </div>
-          </section>
-
           <!-- Sound Toggle -->
           <section>
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">音の有無</h2>
@@ -196,6 +153,14 @@ const startTraining = () => {
             <p v-if="!soundEnabled" class="text-[10px] text-red-500 mt-2 text-center font-bold animate-pulse">
               ⚠️ 音なし設定中です。端末本体の消音モードもご確認ください。
             </p>
+          </section>
+
+          <!-- Current Sound Indicator -->
+          <section class="flex flex-col items-center">
+            <div class="flex items-center text-gray-500 text-[10px] space-x-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-500" :class="{ 'animate-pulse': isSamplerLoaded }"></span>
+              <span>Sound Engine: Yamaha C5 Grand Piano</span>
+            </div>
           </section>
 
           <!-- Score Visualization -->
