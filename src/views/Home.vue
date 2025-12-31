@@ -41,6 +41,7 @@ const levels = ref([
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
 const selectedPiano = ref('yamaha') // 'yamaha' or 'steinway'
+const activeLevelIndex = ref(0)
 
 let yamahaSampler = null
 let steinwaySampler = null
@@ -221,20 +222,35 @@ const getBlackKeyNote = (whiteNote) => {
         </div>
       </section>
 
-      <!-- Level Groups -->
-      <div class="space-y-12 mb-12">
-        <section v-for="level in levels" :key="level.name" class="space-y-4">
+
+
+      <!-- Level Selector -->
+      <div class="flex bg-gray-100 p-1 rounded-xl mb-6 border border-gray-200">
+        <button 
+          v-for="(level, index) in levels" 
+          :key="index"
+          @click="activeLevelIndex = index"
+          class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center"
+          :class="activeLevelIndex === index ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+        >
+          Level {{ index + 1 }}
+        </button>
+      </div>
+
+      <!-- Active Level Content -->
+      <div class="mb-12 transition-all duration-300">
+        <section class="space-y-4">
           <div class="px-2">
             <h2 class="text-sm font-bold text-gray-800 flex items-center">
               <span class="w-1.5 h-4 bg-gray-900 rounded-full mr-2"></span>
-              {{ level.name }}
+              {{ levels[activeLevelIndex].name }}
             </h2>
-            <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">{{ level.description }}</p>
+            <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">{{ levels[activeLevelIndex].description }}</p>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div 
-              v-for="chord in level.chords" 
+              v-for="chord in levels[activeLevelIndex].chords" 
               :key="chord.id"
               @click="toggleChord(chord)"
               class="flex items-center p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-300"
