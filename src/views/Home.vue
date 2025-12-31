@@ -88,6 +88,15 @@ const toggleChord = async (chord) => {
 
     <!-- Main Content -->
     <main class="flex-grow px-4 pb-8 overflow-y-auto">
+      <!-- Score Visualization (Moved to Top) -->
+      <section class="flex flex-col items-center mb-6">
+        <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
+        <div class="w-full max-w-[250px] bg-gray-50 rounded-2xl p-1 flex flex-col items-center justify-center min-h-[70px] border border-gray-100 shadow-inner overflow-hidden">
+          <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center scale-90 translate-y-1"></div>
+          <p v-if="!currentChord" class="text-gray-300 text-[10px] italic font-medium">和音ボタンをタップ</p>
+        </div>
+      </section>
+
       <!-- Chord Selection -->
       <div class="grid grid-cols-2 gap-2 mb-8">
         <div 
@@ -127,15 +136,6 @@ const toggleChord = async (chord) => {
             >
               音テスト
             </button>
-          </div>
-        </section>
-
-        <!-- Score Visualization -->
-        <section class="flex flex-col items-center">
-          <h2 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">譜面表示</h2>
-          <div class="w-full bg-gray-50 rounded-2xl p-1 flex flex-col items-center justify-center min-h-[70px] border border-gray-100 shadow-inner overflow-hidden">
-            <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center scale-90 translate-y-1"></div>
-            <p v-if="!currentChord" class="text-gray-300 text-[10px] italic">和音ボタンをタップ</p>
           </div>
         </section>
       </div>
