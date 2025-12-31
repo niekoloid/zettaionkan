@@ -205,10 +205,45 @@ const startTraining = () => {
             </p>
           </section>
         </div>
+
+        <!-- Service Info & Company Info -->
+        <div class="mt-8 space-y-12 pb-12 border-t border-gray-100 pt-12">
+          <!-- Service Description -->
+          <section>
+            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 text-center">サービス概要</h2>
+            <div class="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <p class="text-gray-600 leading-relaxed text-sm">
+                「絶対音感トレーニング」は、ピアノの和音を聞いてその種類を当てることで、絶対音感を養うためのトレーニングツールです。
+                多様な和音パターンと、高品質なSteinwayピアノの音源を使用し、日々の練習をサポートします。
+              </p>
+            </div>
+          </section>
+
+          <!-- Company Info -->
+          <section>
+            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 text-center">運営会社情報</h2>
+            <div class="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 shadow-sm text-center">
+              <h3 class="text-lg font-bold text-gray-900 mb-2">株式会社暁</h3>
+              <p class="text-gray-500 text-sm">Akatsuki Inc.</p>
+              <div class="mt-4 pt-4 border-t border-gray-50 flex flex-col items-center space-y-2">
+                <a href="https://akatsuki.works" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-600 font-medium text-sm flex items-center">
+                  公式サイト
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <footer class="text-center text-gray-400 text-[10px] pb-4">
+            &copy; {{ new Date().getFullYear() }} Akatsuki Inc. All rights reserved.
+          </footer>
+        </div>
       </main>
 
       <!-- Footer Action -->
-      <footer class="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-6 bg-gradient-to-t from-white via-white to-transparent pointer-events-none">
+      <footer class="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-6 bg-gradient-to-t from-white via-white to-transparent pointer-events-none z-50">
         <button 
           @click="startTraining"
           class="pointer-events-auto w-full bg-gray-900 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-blue-600 hover:to-blue-500 text-white font-bold py-5 rounded-2xl shadow-2xl shadow-gray-200 transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-3 group"
