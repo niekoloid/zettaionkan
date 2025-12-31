@@ -40,12 +40,12 @@ onMounted(() => {
 const renderScore = (abc) => {
   abcjs.renderAbc('chord-score', `L:1/4\nK:C\n${abc}`, {
     responsive: 'resize',
-    scale: 1.8,
+    scale: 1.1,
     paddingtop: 0,
     paddingbottom: 0,
     paddingleft: 0,
     paddingright: 0,
-    staffwidth: 100,
+    staffwidth: 80,
     add_classes: true
   })
 }
@@ -129,7 +129,7 @@ const startTraining = () => {
         <!-- Score Visualization -->
         <section class="flex flex-col items-center">
           <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">譜面表示</h2>
-          <div class="w-full bg-gray-50 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[140px] border border-gray-100 shadow-inner">
+          <div class="w-full bg-gray-50 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[110px] border border-gray-100 shadow-inner overflow-hidden">
             <div v-show="currentChord" id="chord-score" class="w-full flex justify-center items-center overflow-hidden"></div>
             <p v-if="!currentChord" class="text-gray-400 text-sm italic">和音ボタンを押すと譜面が表示されます</p>
           </div>
