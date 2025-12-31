@@ -1,7 +1,10 @@
+<script setup>
+</script>
+
 <template>
   <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden">
     <!-- Header -->
-    <header class="pt-12 pb-8 px-4 flex items-center justify-between relative">
+    <header class="pt-12 pb-8 px-4 flex items-center justify-between relative shrink-0">
       <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors group z-10">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -13,10 +16,11 @@
       <div class="w-10"></div> <!-- Spacer -->
     </header>
 
-    <main class="flex-grow px-6 pb-20">
+    <main class="flex-grow px-6 pb-20 overflow-y-auto">
       <div class="space-y-8">
         <section>
           <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
+            <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">About Service</h1>
             <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
               <span class="bg-blue-500 w-1.5 h-6 rounded-full mr-3"></span>
               いろおと とは
@@ -65,8 +69,8 @@
       </div>
     </main>
 
-    <footer class="text-center text-gray-300 text-[10px] pb-8">
-      &copy; {{ new Date().getFullYear() }} Akatsuki Inc.
+    <footer class="text-center text-gray-300 text-[10px] pb-8 shrink-0">
+      &copy; 2026 Akatsuki Inc.
     </footer>
   </div>
 </template>
