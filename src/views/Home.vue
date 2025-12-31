@@ -270,7 +270,7 @@ const getBlackKeyNote = (whiteNote) => {
       </section>
 
       <!-- Keyboard Visualization -->
-      <section class="flex flex-col items-center mb-10">
+      <section class="flex flex-col items-center mb-4">
         <div class="w-full max-w-sm px-4">
           <div class="relative flex justify-center h-24 bg-gray-100 p-1 rounded-xl shadow-inner border border-gray-200">
             <!-- White Keys -->
