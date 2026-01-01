@@ -318,11 +318,18 @@ const isLightColor = (hex) => {
       <div class="flex flex-col items-center">
         <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-16 w-auto object-contain" />
       </div>
-      <router-link to="/auth" class="p-2 hover:bg-black/5 rounded-full transition-colors group">
+      <router-link :to="user ? '/account' : '/auth'" class="p-2 hover:bg-black/5 rounded-full transition-colors group">
         <svg v-if="!user" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
         </svg>
-        <div v-else class="w-8 h-8 bg-black/5 rounded-full flex items-center justify-center text-[10px] font-bold text-gray-400 group-hover:text-gray-600 uppercase">
+        <div v-else 
+          class="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold uppercase border-2 transition-all"
+          :class="[
+            userTier === 'free' ? 'bg-black/5 text-gray-400 border-transparent' : 
+            userTier === 'entry' ? 'bg-blue-50 text-blue-500 border-blue-200' :
+            'bg-amber-50 text-amber-500 border-amber-200'
+          ]"
+        >
           {{ user?.email?.charAt(0) || '?' }}
         </div>
       </router-link>
