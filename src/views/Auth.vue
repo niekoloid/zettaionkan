@@ -94,14 +94,25 @@ const handleAuth = async () => {
           {{ message }}
         </p>
 
-        <div class="text-center">
+        <div class="text-center space-y-4">
           <button 
             type="button"
             @click="isSignUp = !isSignUp"
-            class="text-xs text-gray-400 hover:text-gray-600 font-medium"
+            class="text-xs text-gray-400 hover:text-gray-600 font-medium block w-full"
           >
             {{ isSignUp ? '既にアカウントをお持ちの方はこちら' : '新しくアカウントを作成する' }}
           </button>
+
+          <!-- Debug Login Button -->
+          <div v-if="!isSignUp" class="pt-4 border-t border-gray-50">
+            <button 
+              type="button"
+              @click="email = 'test@example.com'; password = 'password123'; handleAuth()"
+              class="text-[10px] text-gray-300 hover:text-gray-500 font-medium px-4 py-2 rounded-lg border border-dashed border-gray-100 hover:border-gray-200 transition-all uppercase tracking-widest"
+            >
+              🛠️ Debug Test Login
+            </button>
+          </div>
         </div>
       </form>
     </main>
