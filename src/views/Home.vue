@@ -267,7 +267,7 @@ const isLightColor = (hex) => {
     <header class="pt-10 pb-6 px-4 flex items-center justify-between shrink-0">
       <div class="w-10"></div> <!-- Spacer -->
       <div class="flex flex-col items-center">
-        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-16 w-auto object-contain" />
+        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-20 w-auto object-contain" />
       </div>
       <router-link :to="user ? '/account' : '/auth'" class="p-2 hover:bg-black/5 rounded-full transition-colors group">
         <svg v-if="!user" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
