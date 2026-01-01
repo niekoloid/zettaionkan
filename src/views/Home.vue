@@ -150,31 +150,28 @@ const playChord = (notes) => {
   }
 }
 
-  // 音を鳴らすかどうかの判定
-  const canPlaySound = (chordIndex) => {
+  // 和音が制限されているか（音が出るか）の判定
+  const isChordRestricted = (levelIdx, chordIdx) => {
     // 最初の和音 (Level 1 の index 0) は未ログインでも全員OK
-    if (activeLevelIndex.value === 0 && chordIndex === 0) return true
+    if (levelIdx === 0 && chordIdx === 0) return false
     
     // それ以外（Level 1の2つ目以降含む）は最低限ログインが必要
-    if (!user.value) return false
+    if (!user.value) return true
 
     // ログイン済み無料ユーザー (free)
     if (userTier.value === 'free') {
       // Level 1 のみOK
-      return activeLevelIndex.value === 0
+      return levelIdx > 0
     }
     
     // エントリープラン (entry)
     if (userTier.value === 'entry') {
       // Level 2 までOK
-      return activeLevelIndex.value <= 1
+      return levelIdx > 1
     }
     
     // スタンダードプラン以上 (standard, premium)
-    if (['standard', 'premium'].includes(userTier.value)) {
-      return true
-    }
-    
+    // 制限なし
     return false
   }
 
@@ -184,7 +181,7 @@ const playChord = (notes) => {
     await nextTick()
     renderScore(chord.abc)
 
-    if (!canPlaySound(index)) {
+    if (isChordRestricted(activeLevelIndex.value, index)) {
       if (!user.value) {
         if (confirm('ドミソ以外の和音を鳴らすにはログインが必要です。ログイン画面に移動しますか？')) {
           router.push('/auth')
@@ -433,9 +430,9 @@ const isLightColor = (hex) => {
                   : { backgroundColor: chord.color + '14', borderColor: chord.color + '4D' }
               ]"
             >
-              <!-- Lock Icon for restricted chords in Level 1 (Guest only) -->
-              <div v-if="activeLevelIndex === 0 && index > 0 && !user" class="absolute top-1 right-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+              <!-- Lock Icon for restricted chords -->
+              <div v-if="isChordRestricted(activeLevelIndex, index)" class="absolute top-1 right-1 opacity-40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :class="user ? 'text-amber-500' : 'text-gray-300'" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                 </svg>
               </div>
