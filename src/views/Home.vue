@@ -150,50 +150,57 @@ const playChord = (notes) => {
   }
 }
 
-const toggleChord = async (chord) => {
-  // 視覚情報（楽譜、鍵盤の着色）は常に更新
-  currentChord.value = chord
-  await nextTick()
-  renderScore(chord.abc)
-
   // 音を鳴らすかどうかの判定
-  const canPlaySound = () => {
-    // Level 1: 全員OK
-    if (activeLevelIndex.value === 0) return true
+  const canPlaySound = (chordIndex) => {
+    // 最初の和音 (Level 1 の index 0) は未ログインでも全員OK
+    if (activeLevelIndex.value === 0 && chordIndex === 0) return true
     
-    // Level 2以降はプラン加入必須（ログインを含む）
-    if (!user.value || userTier.value === 'free') return false
-    
-    // Level 2: Entry以上が必要
-    if (activeLevelIndex.value === 1) {
-      return ['entry', 'standard', 'premium'].includes(userTier.value)
+    // それ以外（Level 1の2つ目以降含む）は最低限ログインが必要
+    if (!user.value) return false
+
+    // ログイン済み無料ユーザー (free)
+    if (userTier.value === 'free') {
+      // Level 1 のみOK
+      return activeLevelIndex.value === 0
     }
     
-    // Level 3以降: Standard以上が必要
-    if (activeLevelIndex.value >= 2) {
-      return ['standard', 'premium'].includes(userTier.value)
+    // エントリープラン (entry)
+    if (userTier.value === 'entry') {
+      // Level 2 までOK
+      return activeLevelIndex.value <= 1
+    }
+    
+    // スタンダードプラン以上 (standard, premium)
+    if (['standard', 'premium'].includes(userTier.value)) {
+      return true
     }
     
     return false
   }
 
-  if (!canPlaySound()) {
-    if (!user.value) {
-      if (confirm('Level 2 以降の和音を鳴らすにはログインおよびプランへの加入が必要です。ログイン画面に移動しますか？')) {
-        router.push('/auth')
-      }
-    } else {
-      const neededPlan = activeLevelIndex.value === 1 ? 'エントリー' : 'スタンダード'
-      if (confirm(`このレベルの和音を鳴らすには${neededPlan}プラン以上への加入が必要です。プラン一覧を確認しますか？`)) {
-        router.push('/premium')
-      }
-    }
-    return
-  }
+  const toggleChord = async (chord, index) => {
+    // 視覚情報（楽譜、鍵盤の着色）は常に更新
+    currentChord.value = chord
+    await nextTick()
+    renderScore(chord.abc)
 
-  // 条件クリアなら音を鳴らす
-  playChord(chord.notes)
-}
+    if (!canPlaySound(index)) {
+      if (!user.value) {
+        if (confirm('ドミソ以外の和音を鳴らすにはログインが必要です。ログイン画面に移動しますか？')) {
+          router.push('/auth')
+        }
+      } else {
+        const neededPlan = activeLevelIndex.value === 1 ? 'エントリー' : 'スタンダード'
+        if (confirm(`このレベルの和音を鳴らすには${neededPlan}プラン以上への加入が必要です。プラン一覧を確認しますか？`)) {
+          router.push('/premium')
+        }
+      }
+      return
+    }
+
+    // 条件クリアなら音を鳴らす
+    playChord(chord.notes)
+  }
 
 const selectInstrument = (instrument) => {
   // Steinway restriction: entry以上が必要
@@ -414,8 +421,8 @@ const isLightColor = (hex) => {
             <div 
               v-for="(chord, index) in levels[activeLevelIndex].chords" 
               :key="chord.id"
-              @click="toggleChord(chord)"
-              class="flex items-center p-2 border-2 rounded-xl cursor-pointer transition-all duration-300"
+              @click="toggleChord(chord, index)"
+              class="flex items-center p-2 border-2 rounded-xl cursor-pointer transition-all duration-300 relative overflow-hidden"
               :class="[
                 currentChord?.id === chord.id 
                   ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900' : 'text-white'))
@@ -427,6 +434,12 @@ const isLightColor = (hex) => {
                   : { backgroundColor: chord.color + '14', borderColor: chord.color + '4D' }
               ]"
             >
+              <!-- Lock Icon for restricted chords in Level 1 (Guest only) -->
+              <div v-if="activeLevelIndex === 0 && index > 0 && !user" class="absolute top-1 right-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
               <!-- Step Number Bubble -->
               <div 
                 class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black mr-2 shrink-0 border border-black/5"
