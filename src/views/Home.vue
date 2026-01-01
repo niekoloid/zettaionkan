@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
+import { supabase } from '../lib/supabase'
 import * as Tone from 'tone'
 import abcjs from 'abcjs'
 
@@ -68,7 +69,16 @@ const GUITAR_SAMPLES = {
   "B3": "B3.mp3", "E4": "E4.mp3", "G4": "G4.mp3"
 }
 
-onMounted(() => {
+const user = ref(null)
+
+onMounted(async () => {
+  const { data } = await supabase.auth.getUser()
+  user.value = data.user
+
+  supabase.auth.onAuthStateChange((_event, session) => {
+    user.value = session?.user ?? null
+  })
+
   yamahaSampler = new Tone.Sampler({
     urls: YAMAHA_C5_SAMPLES,
     baseUrl: "https://tonejs.github.io/audio/salamander/",
@@ -220,10 +230,19 @@ const getBlackKeyNote = (whiteNote) => {
     class="flex flex-col h-[100dvh] w-full sm:max-w-md mx-auto shadow-2xl relative transition-colors duration-500 overflow-hidden bg-white"
   >
     <!-- Header -->
-    <header class="pt-10 pb-6 px-4 text-center shrink-0">
+    <header class="pt-10 pb-6 px-4 flex items-center justify-between shrink-0">
+      <div class="w-10"></div> <!-- Spacer -->
       <div class="flex flex-col items-center">
         <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-16 w-auto object-contain" />
       </div>
+      <router-link to="/auth" class="p-2 hover:bg-black/5 rounded-full transition-colors group">
+        <svg v-if="!user" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+        </svg>
+        <div v-else class="w-8 h-8 bg-black/5 rounded-full flex items-center justify-center text-[10px] font-bold text-gray-400 group-hover:text-gray-600 uppercase">
+          {{ user.email.charAt(0) }}
+        </div>
+      </router-link>
     </header>
 
     <!-- Main Content -->
@@ -351,6 +370,7 @@ const getBlackKeyNote = (whiteNote) => {
         <router-link to="/about" class="text-xs text-gray-400 hover:text-gray-600 font-medium">サービス概要</router-link>
         <router-link to="/company" class="text-xs text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
         <router-link to="/privacy" class="text-xs text-gray-400 hover:text-gray-600 font-medium">プライバシーポリシー</router-link>
+        <router-link to="/premium" class="text-xs text-amber-500 hover:text-amber-600 font-bold">プレミアムプラン</router-link>
         <footer class="text-center text-gray-300 text-[10px] pt-4 pb-8">
           &copy; 2026 Akatsuki Inc.
         </footer>

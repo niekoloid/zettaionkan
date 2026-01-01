@@ -26,6 +26,16 @@ const routes = [
     path: '/privacy',
     name: 'Privacy',
     component: () => import('../views/Privacy.vue')
+  },
+  {
+    path: '/premium',
+    name: 'Premium',
+    component: () => import('../views/Premium.vue')
+  },
+  {
+    path: '/auth',
+    name: 'Auth',
+    component: () => import('../views/Auth.vue')
   }
 ]
 
