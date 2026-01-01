@@ -20,6 +20,9 @@ const handleAuth = async () => {
       const { error } = await supabase.auth.signUp({
         email: email.value,
         password: password.value,
+        options: {
+          emailRedirectTo: window.location.origin
+        }
       })
       if (error) throw error
       message.value = '確認メールを送信しました。メールボックスをご確認ください。'
@@ -40,7 +43,7 @@ const handleAuth = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden shadow-2xl font-['Noto_Sans_JP']">
+  <div class="min-h-screen bg-white flex flex-col items-center justify-center p-4 max-w-3xl mx-auto relative overflow-hidden font-['Noto_Sans_JP']">
     <!-- Header -->
     <header class="pt-12 pb-8 px-4 flex items-center justify-between relative shrink-0">
       <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors group z-10">
@@ -58,7 +61,7 @@ const handleAuth = async () => {
       <div class="text-center mb-10">
         <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Account</h1>
         <h2 class="text-xl font-bold text-gray-900 mb-2">{{ isSignUp ? '新規登録' : 'ログイン' }}</h2>
-        <p class="text-xs text-gray-500">アカウントを作成して、<br>すべての機能を楽しもう。</p>
+        <p class="text-xs text-gray-500">ログインして、<br>和音を奏でよう。</p>
       </div>
 
       <form @submit.prevent="handleAuth" class="space-y-6">

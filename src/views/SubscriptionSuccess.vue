@@ -13,7 +13,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden shadow-2xl items-center justify-center px-8 text-center">
+  <div class="min-h-screen bg-white flex flex-col max-w-3xl mx-auto relative overflow-hidden shadow-2xl items-center justify-center px-8 text-center">
     <div class="mb-8 bg-green-50 p-6 rounded-full">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />

@@ -23,18 +23,16 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'No authorization header' }), { status: 401, headers: corsHeaders })
     }
     
-    const token = authHeader.replace('Bearer ', '')
-    
+    // 1. Supabaseクライアントを作成してユーザーを検証
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
     )
-    
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token)
 
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
     if (userError || !user) {
-      console.error('Auth User Error:', userError)
-      return new Response(JSON.stringify({ error: 'Unauthorized', details: userError }), { status: 401, headers: corsHeaders })
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
     }
 
     const { tier, return_url } = await req.json();

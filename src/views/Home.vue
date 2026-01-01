@@ -261,7 +261,7 @@ const isLightColor = (hex) => {
       '--chord-color': currentChord?.color || '#EF4444',
       backgroundColor: currentChord ? currentChord.color + '4D' : 'white'
     }" 
-    class="flex flex-col h-[100dvh] w-full sm:max-w-md mx-auto shadow-2xl relative transition-colors duration-500 overflow-hidden bg-white"
+    class="min-h-screen bg-white flex flex-col font-['Noto_Sans_JP'] max-w-3xl mx-auto relative overflow-hidden shadow-2xl transition-colors duration-500"
   >
     <!-- Header -->
     <header class="pt-10 pb-6 px-4 flex items-center justify-between shrink-0">
@@ -431,6 +431,7 @@ const isLightColor = (hex) => {
       <!-- Footer Links -->
       <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col items-center space-y-4">
         <router-link to="/method" class="text-xs text-gray-400 hover:text-gray-600 font-medium">トレーニング方法</router-link>
+        <router-link to="/test" class="text-xs text-blue-500 hover:text-blue-600 font-bold">和音テスト</router-link>
         <router-link to="/about" class="text-xs text-gray-400 hover:text-gray-600 font-medium">サービス概要</router-link>
         <router-link to="/company" class="text-xs text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
         <router-link to="/privacy" class="text-xs text-gray-400 hover:text-gray-600 font-medium">プライバシーポリシー</router-link>
