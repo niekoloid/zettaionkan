@@ -337,19 +337,22 @@ const isLightColor = (hex) => {
               class="flex items-center p-2 border-2 rounded-xl cursor-pointer transition-all duration-300"
               :class="[
                 currentChord?.id === chord.id 
-                  ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900 border-gray-100' : 'text-white'))
-                  : 'border-gray-50 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100'
+                  ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900' : 'text-white'))
+                  : 'text-gray-900 border-opacity-30'
               ]"
-              :style="currentChord?.id === chord.id ? { backgroundColor: chord.color } : {}"
+              :style="[
+                currentChord?.id === chord.id 
+                  ? { backgroundColor: chord.color } 
+                  : { backgroundColor: chord.color + '14', borderColor: chord.color + '4D' }
+              ]"
             >
               <!-- Step Number Bubble -->
               <div 
-                class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black mr-2 shrink-0 border"
-                :class="[
-                  currentChord?.id === chord.id
-                    ? (isLightColor(chord.color) ? 'bg-black/10 border-black/10 text-gray-900' : 'bg-white/20 border-white/20 text-white')
-                    : 'bg-gray-50 border-gray-100 text-gray-400'
-                ]"
+                class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black mr-2 shrink-0 border border-black/5"
+                :style="{ 
+                  backgroundColor: chord.color, 
+                  color: isLightColor(chord.color) ? '#000' : '#fff' 
+                }"
               >
                 {{ (activeLevelIndex === 0 ? 0 : levels.slice(0, activeLevelIndex).reduce((acc, l) => acc + l.chords.length, 0)) + index + 1 }}
               </div>
