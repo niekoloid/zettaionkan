@@ -38,7 +38,6 @@ const XYLOPHONE_SAMPLES = {
 }
 
 // Rain Drum (mapped to Nylon Guitar for similar soft pluck) - Samples from nbrosowsky
-// Rain Drum (mapped to Nylon Guitar for similar soft pluck) - Samples from nbrosowsky
 const RAIN_DRUM_SAMPLES = {
   "A2": "A2.mp3", "B2": "B2.mp3", "B3": "B3.mp3", "E4": "E4.mp3", "G4": "G4.mp3", "A3": "A3.mp3", "A4": "A4.mp3", "A5": "A5.mp3" 
 }
