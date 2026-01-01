@@ -423,7 +423,7 @@ const isLightColor = (hex) => {
               class="px-6 py-1.5 rounded-lg text-[10px] font-bold bg-white shadow-sm text-gray-900 flex items-center mx-auto"
             >
               <span class="text-gray-400 mr-2 font-medium">音源</span>
-              YAMAHA C5 グランドピアノ
+              YAMAHA C5 Grand Piano
             </button>
           </div>
         </section>
