@@ -12,6 +12,7 @@ const levels = ref(Levels)
 
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
+const userTier = ref('free') // 'free' | 'entry' | 'standard' | 'premium'
 const selectedInstrument = ref('yamaha') // 'yamaha' | 'steinway' | 'xylophone'
 const activeLevelIndex = ref(0)
 
@@ -77,12 +78,24 @@ onMounted(async () => {
   try {
     const { data } = await supabase.auth.getUser()
     user.value = data?.user || null
+    if (user.value) {
+      const { checkPremiumStatus } = await import('../lib/supabase')
+      const status = await checkPremiumStatus()
+      userTier.value = status.tier
+    }
   } catch (err) {
     console.error('Supabase auth error:', err)
   }
 
-  supabase.auth.onAuthStateChange((_event, session) => {
+  supabase.auth.onAuthStateChange(async (_event, session) => {
     user.value = session?.user ?? null
+    if (user.value) {
+      const { checkPremiumStatus } = await import('../lib/supabase')
+      const status = await checkPremiumStatus()
+      userTier.value = status.tier
+    } else {
+      userTier.value = 'free'
+    }
   })
 
   try {
@@ -144,11 +157,39 @@ const toggleChord = async (chord) => {
   renderScore(chord.abc)
 
   // 音を鳴らすかどうかの判定
-  // Level 1 (activeLevelIndex === 0) は未ログインでも鳴らせる
-  // それ以外はログインが必要
-  if (activeLevelIndex.value > 0 && !user.value) {
-    if (confirm('Level 2 以降の和音を鳴らすには会員登録・ログインが必要です。ログイン画面に移動しますか？')) {
-      router.push('/auth')
+  const canPlaySound = () => {
+    // Level 1: 全員OK
+    if (activeLevelIndex.value === 0) return true
+    
+    // Level 2以降はログイン必須
+    if (!user.value) return false
+    
+    // Level 2: ログインしてれば無料でもOK
+    if (activeLevelIndex.value === 1) return true
+    
+    // Level 3: Entry以上が必要
+    if (activeLevelIndex.value === 2) {
+      return ['entry', 'standard', 'premium'].includes(userTier.value)
+    }
+    
+    // Level 4, 5: Standard以上が必要
+    if (activeLevelIndex.value >= 3) {
+      return ['standard', 'premium'].includes(userTier.value)
+    }
+    
+    return false
+  }
+
+  if (!canPlaySound()) {
+    if (!user.value) {
+      if (confirm('Level 2 以降の和音を鳴らすにはログインが必要です。ログイン画面に移動しますか？')) {
+        router.push('/auth')
+      }
+    } else {
+      const neededPlan = activeLevelIndex.value === 2 ? 'エントリー' : 'スタンダード'
+      if (confirm(`このレベルの和音を鳴らすには${neededPlan}プラン以上へのアップグレードが必要です。プラン一覧を確認しますか？`)) {
+        router.push('/premium')
+      }
     }
     return
   }
@@ -158,6 +199,15 @@ const toggleChord = async (chord) => {
 }
 
 const selectInstrument = (instrument) => {
+  // Steinway restriction: entry以上が必要
+  // エントリープランは「一部」だが、ここでは動作確認のためスタンダード以上限定にする（またはentryでも簡易版）
+  if (instrument === 'steinway' && userTier.value === 'free') {
+    if (confirm('Steinway音源を使用するにはプレミアムプランへの加入が必要です。プランを確認しますか？')) {
+      router.push('/premium')
+    }
+    return
+  }
+
   selectedInstrument.value = instrument
   
   // Play 'Do' (C4) to confirm instrument sound
@@ -334,9 +384,25 @@ const isLightColor = (hex) => {
           v-for="(level, index) in levels" 
           :key="index"
           @click="activeLevelIndex = index"
-          class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center"
+          class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center flex items-center justify-center"
           :class="activeLevelIndex === index ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
         >
+          <!-- ロックアイコンの表示ロジック -->
+          <template v-if="index > 0">
+            <!-- ログインが必要な場合 (Level 2+) -->
+            <svg v-if="!user" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+            </svg>
+            <!-- アップグレードが必要な場合 (Level 3以降) -->
+            <template v-else>
+              <svg v-if="index === 2 && userTier === 'free'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+              </svg>
+              <svg v-else-if="index >= 3 && !['standard', 'premium'].includes(userTier)" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+              </svg>
+            </template>
+          </template>
           {{ level.shortName }}
         </button>
       </div>
@@ -402,10 +468,14 @@ const isLightColor = (hex) => {
               Yamaha C5
             </button>
             <button 
-              disabled
-              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all text-gray-400 bg-gray-100 cursor-not-allowed opacity-60"
+              @click="selectInstrument('steinway')"
+              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center"
+              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
-              Steinway <span class="text-[8px] font-normal block sm:inline">(Coming Soon)</span>
+              <svg v-if="userTier === 'free'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+              </svg>
+              Steinway
             </button>
           </div>
         </section>

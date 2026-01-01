@@ -40,12 +40,21 @@ serve(async (req) => {
     const session = event.data.object;
     const userId = session.client_reference_id;
     const customerId = session.customer;
+    
+    // サブスクリプション詳細を取得してメタデータ（tier）を確認
+    const subscriptionId = session.subscription;
+    let tier = 'free';
+    if (subscriptionId) {
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      tier = subscription.metadata.tier || 'entry'; // デフォルトはエントリー
+    }
 
     if (userId) {
       const { error } = await supabaseClient
         .from("profiles")
         .update({ 
           is_premium: true,
+          subscription_tier: tier,
           stripe_customer_id: customerId 
         })
         .eq("id", userId);
@@ -54,14 +63,16 @@ serve(async (req) => {
     }
   }
 
-  // サブスクリプションがキャンセルされた場合の処理も追加可能
   if (event.type === "customer.subscription.deleted") {
     const subscription = event.data.object;
     const customerId = subscription.customer;
 
     const { error } = await supabaseClient
       .from("profiles")
-      .update({ is_premium: false })
+      .update({ 
+        is_premium: false,
+        subscription_tier: 'free' 
+      })
       .eq("stripe_customer_id", customerId);
       
     if (error) console.error("Error revoking premium:", error);
