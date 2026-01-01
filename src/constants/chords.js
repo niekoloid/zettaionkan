@@ -129,8 +129,8 @@ export const Levels = [
     description: 'まずはここから。絶対音感トレーニングの基本となる3つの和音。',
     chords: [
       ChordDefinitions.DOMISO,
-      ChordDefinitions.DOFARA,
-      ChordDefinitions.SHIRESO
+      ChordDefinitions.SHIRESO,
+      ChordDefinitions.DOFARA
     ]
   },
   {

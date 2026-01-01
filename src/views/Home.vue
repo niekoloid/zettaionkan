@@ -331,25 +331,32 @@ const isLightColor = (hex) => {
 
           <div class="grid grid-cols-2 gap-2">
             <div 
-              v-for="chord in levels[activeLevelIndex].chords" 
+              v-for="(chord, index) in levels[activeLevelIndex].chords" 
               :key="chord.id"
               @click="toggleChord(chord)"
-              class="flex items-center p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-300"
+              class="flex items-center p-2 border-2 rounded-xl cursor-pointer transition-all duration-300"
               :class="[
                 currentChord?.id === chord.id 
-                  ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900' : 'text-white'))
+                  ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900 border-gray-100' : 'text-white'))
                   : 'border-gray-50 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100'
               ]"
               :style="currentChord?.id === chord.id ? { backgroundColor: chord.color } : {}"
             >
+              <!-- Step Number Bubble -->
               <div 
-                class="w-2.5 h-2.5 rounded-full mr-2.5 shrink-0 border border-white/20" 
-                :style="{ backgroundColor: chord.color }"
-                v-show="currentChord?.id !== chord.id"
-              ></div>
+                class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black mr-2 shrink-0 border"
+                :class="[
+                  currentChord?.id === chord.id
+                    ? (isLightColor(chord.color) ? 'bg-black/10 border-black/10 text-gray-900' : 'bg-white/20 border-white/20 text-white')
+                    : 'bg-gray-50 border-gray-100 text-gray-400'
+                ]"
+              >
+                {{ (activeLevelIndex === 0 ? 0 : levels.slice(0, activeLevelIndex).reduce((acc, l) => acc + l.chords.length, 0)) + index + 1 }}
+              </div>
+
               <div class="flex items-baseline space-x-1 overflow-hidden">
-                <span class="font-bold text-base leading-none truncate">{{ chord.name }}</span>
-                <span class="text-[9px] font-medium opacity-60">({{ chord.colorName }})</span>
+                <span class="font-bold text-sm leading-none truncate">{{ chord.name }}</span>
+                <span class="text-[8px] font-medium opacity-60">({{ chord.colorName }})</span>
               </div>
             </div>
           </div>
