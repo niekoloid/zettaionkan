@@ -10,7 +10,7 @@ const plans = [
     name: 'エントリー',
     price: 100,
     description: '白鍵の和音をすべて学べる基本プラン。',
-    features: ['Level 2 (白鍵 2) の全開放', 'Steinway音源の利用'],
+    features: ['Level 2 (白鍵 2) の全開放', 'すべての基本機能へのアクセス'],
     color: 'bg-blue-50 border-blue-100 text-blue-600'
   },
   {

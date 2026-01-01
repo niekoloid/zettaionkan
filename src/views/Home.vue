@@ -15,25 +15,11 @@ const isSamplerLoaded = ref(false)
 const userTier = ref('free') // 'free' | 'entry' | 'standard' | 'premium'
 const selectedInstrument = ref('yamaha') // 'yamaha' | 'steinway' | 'xylophone'
 const activeLevelIndex = ref(0)
-
 let yamahaSampler = null
-let steinwaySampler = null
 
 // Yamaha C5 (Salamander) mapping
 const YAMAHA_C5_SAMPLES = {
   "A0": "A0.mp3", "C1": "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
-  "A1": "A1.mp3", "C2": "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
-  "A2": "A2.mp3", "C3": "C3.mp3", "D#3": "Ds3.mp3", "F#3": "Fs3.mp3",
-  "A3": "A3.mp3", "C4": "C4.mp3", "D#4": "Ds4.mp3", "F#4": "Fs4.mp3",
-  "A4": "A4.mp3", "C5": "C5.mp3", "D#5": "Ds5.mp3", "F#5": "Fs5.mp3",
-  "A5": "A5.mp3", "C6": "C6.mp3", "D#6": "Ds6.mp3", "F#6": "Fs6.mp3",
-  "A6": "A6.mp3", "C7": "C7.mp3", "D#7": "Ds7.mp3", "F#7": "Fs7.mp3",
-  "A7": "A7.mp3", "C8": "C8.mp3"
-}
-
-// Steinway B (nbrosowsky) mapping - Sparse set for performance
-const STEINWAY_B_SAMPLES = {
-  "C1": "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
   "A1": "A1.mp3", "C2": "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
   "A2": "A2.mp3", "C3": "C3.mp3", "D#3": "Ds3.mp3", "F#3": "Fs3.mp3",
   "A3": "A3.mp3", "C4": "C4.mp3", "D#4": "Ds4.mp3", "F#4": "Fs4.mp3",
@@ -106,15 +92,6 @@ onMounted(async () => {
         if (selectedInstrument.value === 'yamaha') isSamplerLoaded.value = true
       }
     }).toDestination()
-
-    steinwaySampler = new Tone.Sampler({
-      urls: STEINWAY_B_SAMPLES,
-      baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/piano/",
-      onload: () => {
-        if (selectedInstrument.value === 'steinway') isSamplerLoaded.value = true
-      },
-      onerror: (err) => console.error("Steinway loading error:", err)
-    }).toDestination()
   } catch (err) {
     console.error('Tonejs initialization error:', err)
   }
@@ -141,9 +118,7 @@ const renderScore = (abc) => {
 const playChord = (notes) => {
   if (Tone.context.state !== 'running') Tone.start()
   
-  let currentSampler
-  if (selectedInstrument.value === 'yamaha') currentSampler = yamahaSampler
-  else if (selectedInstrument.value === 'steinway') currentSampler = steinwaySampler
+  let currentSampler = yamahaSampler
 
   if (currentSampler && currentSampler.loaded) {
     currentSampler.triggerAttackRelease(notes, 3)
@@ -200,42 +175,19 @@ const playChord = (notes) => {
   }
 
 const selectInstrument = (instrument) => {
-  // Steinway restriction: entry以上が必要
-  // エントリープランは「一部」だが、ここでは動作確認のためスタンダード以上限定にする（またはentryでも簡易版）
-  if (instrument === 'steinway' && userTier.value === 'free') {
-    if (confirm('Steinway音源を使用するにはプレミアムプランへの加入が必要です。プランを確認しますか？')) {
-      router.push('/premium')
-    }
-    return
-  }
-
   selectedInstrument.value = instrument
   
-  // Play 'Do' (C4) to confirm instrument sound
-  // Short delay to ensure state update propagates if needed, though reactive trigger is better handled directly
-  // Actually we can just play immediately as the sampler should be loaded by now (except arguably on first load, but user is switching)
-  
-  // Determine if the target sampler is loaded
-  let targetSampler
-  if (instrument === 'yamaha') targetSampler = yamahaSampler
-  else if (instrument === 'steinway') targetSampler = steinwaySampler
-
-  if (targetSampler && targetSampler.loaded) {
+  if (yamahaSampler && yamahaSampler.loaded) {
     isSamplerLoaded.value = true
     if (Tone.context.state !== 'running') Tone.start()
-    targetSampler.triggerAttackRelease('C4', '8n')
+    yamahaSampler.triggerAttackRelease('C4', '8n')
   } else {
-    isSamplerLoaded.value = false // Let the loading indicator pulse
-    // Check loading status if needed, but the onload callbacks handle isSamplerLoaded
+    isSamplerLoaded.value = false
   }
 }
 
 const getInstrumentName = (type) => {
-  switch (type) {
-    case 'yamaha': return 'Grand Piano: Yamaha C5'
-    case 'steinway': return 'Grand Piano: Steinway'
-    default: return ''
-  }
+  return 'Grand Piano: Yamaha C5'
 }
 
 // Piano Keyboard Logic
@@ -469,21 +421,9 @@ const isLightColor = (hex) => {
           <!-- Instrument Selector -->
           <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200">
             <button 
-              @click="selectInstrument('yamaha')"
-              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all"
-              :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+              class="px-6 py-1.5 rounded-lg text-[10px] font-bold bg-white shadow-sm text-gray-900"
             >
-              Yamaha C5
-            </button>
-            <button 
-              @click="selectInstrument('steinway')"
-              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center"
-              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
-            >
-              <svg v-if="userTier === 'free'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-              </svg>
-              Steinway
+              Yamaha Grand Piano
             </button>
           </div>
         </section>
