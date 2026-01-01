@@ -95,7 +95,7 @@ export const ChordDefinitions = {
   // ❶ 黄緑
   LA_CIS_MI: { 
     id: 'lacismi', 
-    name: 'ラチスミ', 
+    name: 'ラ<u>チス</u>ミ', 
     symbol: 'A', 
     colorName: 'きみどり', 
     color: '#84CC16', 
@@ -105,7 +105,7 @@ export const ChordDefinitions = {
   // ❷ 薄橙
   RE_FIS_LA: { 
     id: 'refisla', 
-    name: 'レフィスラ', 
+    name: 'レ<u>フィス</u>ラ', 
     symbol: 'D', 
     colorName: 'うすだいだい', 
     color: '#FFCC99', 
@@ -115,7 +115,7 @@ export const ChordDefinitions = {
   // ❸ 藤色
   MI_GIS_SI: { 
     id: 'migissi', 
-    name: 'ミギスシ', 
+    name: 'ミ<u>ギス</u>シ', 
     symbol: 'E', 
     colorName: 'ふじいろ', 
     color: '#AF8AF2', 
@@ -125,7 +125,7 @@ export const ChordDefinitions = {
   // ❹ 灰色
   BE_RE_FA: { 
     id: 'berefa', 
-    name: 'ベーレファ', 
+    name: '<u>ベー</u>レファ', 
     symbol: 'B♭', 
     colorName: 'はいいろ', 
     color: '#6B7280', 
@@ -135,7 +135,7 @@ export const ChordDefinitions = {
   // ❺ 水色
   ES_SO_BE: { 
     id: 'essobe', 
-    name: 'エスソベー', 
+    name: '<u>エス</u>ソ<u>ベー</u>', 
     symbol: 'E♭', 
     colorName: 'みずいろ', 
     color: '#06B6D4', 

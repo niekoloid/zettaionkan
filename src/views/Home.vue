@@ -260,9 +260,9 @@ const isLightColor = (hex) => {
       <section class="flex flex-col items-center mb-2 text-center">
         <div class="w-full max-w-[150px] max-h-[400px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
           <div id="chord-score" class="w-full flex justify-center items-center pointer-events-none"></div>
-          <div v-if="currentChord" class="mt-2 text-sm font-bold text-gray-700 flex flex-col items-center">
-            <span>{{ currentChord.name }} ({{ currentChord.colorName }})</span>
-            <span class="text-xs font-normal text-gray-500 mt-0.5">{{ currentChord.symbol }}</span>
+          <div v-if="currentChord" class="mt-2 text-[13px] font-bold text-gray-700 flex flex-col items-center">
+            <span v-html="currentChord.name + ' (' + currentChord.colorName + ')'"></span>
+            <span class="text-[10px] font-normal text-gray-400 mt-0.5">{{ currentChord.symbol }}</span>
           </div>
         </div>
       </section>
@@ -354,9 +354,9 @@ const isLightColor = (hex) => {
                 {{ (activeLevelIndex === 0 ? 0 : levels.slice(0, activeLevelIndex).reduce((acc, l) => acc + l.chords.length, 0)) + index + 1 }}
               </div>
 
-              <div class="flex items-baseline space-x-1 overflow-hidden">
-                <span class="font-bold text-sm leading-none truncate">{{ chord.name }}</span>
-                <span class="text-[8px] font-medium opacity-60">({{ chord.colorName }})</span>
+              <div class="flex items-baseline space-x-1 overflow-hidden min-w-0">
+                <span class="font-bold text-[13px] leading-tight truncate" v-html="chord.name"></span>
+                <span class="text-[8px] font-medium opacity-60 shrink-0">({{ chord.colorName }})</span>
               </div>
             </div>
           </div>
