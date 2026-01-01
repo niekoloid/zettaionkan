@@ -123,7 +123,7 @@ const playChord = (notes) => {
   else if (selectedInstrument.value === 'steinway') currentSampler = steinwaySampler
 
   if (currentSampler && currentSampler.loaded) {
-    currentSampler.triggerAttackRelease(notes, 10)
+    currentSampler.triggerAttackRelease(notes, 3)
   }
 }
 
