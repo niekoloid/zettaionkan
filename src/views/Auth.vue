@@ -40,6 +40,20 @@ const handleAuth = async () => {
     isLoading.value = false
   }
 }
+
+const handleOAuthLogin = async (provider) => {
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: provider,
+      options: {
+        redirectTo: window.location.origin
+      }
+    })
+    if (error) throw error
+  } catch (error) {
+    message.value = error.message
+  }
+}
 </script>
 
 <template>
@@ -62,6 +76,26 @@ const handleAuth = async () => {
         <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Account</h1>
         <h2 class="text-xl font-bold text-gray-900 mb-2">{{ isSignUp ? '新規登録' : 'ログイン' }}</h2>
         <p class="text-xs text-gray-500">ログインして、<br>和音を奏でよう。</p>
+      </div>
+
+      <div class="space-y-3 mb-8">
+        <button 
+          @click="handleOAuthLogin('google')"
+          type="button"
+          class="w-full bg-white border border-gray-200 text-gray-700 font-bold py-3.5 rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-all active:scale-95 shadow-sm"
+        >
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 mr-3" alt="Google" />
+          Googleで{{ isSignUp ? '登録' : 'ログイン' }}
+        </button>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-100"></div>
+        </div>
+        <div class="relative flex justify-center text-xs">
+          <span class="px-2 bg-white text-gray-400">またはメールアドレスで</span>
+        </div>
       </div>
 
       <form @submit.prevent="handleAuth" class="space-y-6">
