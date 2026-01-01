@@ -4,11 +4,38 @@ import { supabase } from '../lib/supabase'
 
 const isLoading = ref(false)
 
-const handleSubscribe = async () => {
+const plans = [
+  {
+    id: 'entry',
+    name: 'エントリー',
+    price: 100,
+    description: 'まずは手軽に。',
+    features: ['Level 3 までの全開放', 'Steinway音源（一部）'],
+    color: 'bg-blue-50 border-blue-100 text-blue-600'
+  },
+  {
+    id: 'standard',
+    name: 'スタンダード',
+    price: 980,
+    description: '一番人気のプラン。',
+    features: ['全レベルの全開放', '音源の全種類利用可能', '広告非表示'],
+    color: 'bg-amber-50 border-amber-100 text-amber-600',
+    popular: true
+  },
+  {
+    id: 'premium',
+    name: 'プレミアム',
+    price: 1980,
+    description: 'プロを目指すお子様に。',
+    features: ['全機能利用可能', '新機能の先行体験', '優先サポート'],
+    color: 'bg-gray-900 border-gray-800 text-white'
+  }
+]
+
+const handleSubscribe = async (tier) => {
   isLoading.value = true
   
   try {
-    // ログイン状態を確認
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
@@ -16,17 +43,16 @@ const handleSubscribe = async () => {
       return
     }
 
-    // Supabase Edge Functionを呼び出してCheckout URLを取得
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: { 
         user_id: user.id,
+        tier: tier, // プラン情報を送信
         return_url: window.location.origin + '/premium/success'
       }
     })
 
     if (error) throw error
     if (data?.url) {
-      // Stripeの決済ページへリダイレクト
       window.location.href = data.url
     }
   } catch (err) {
@@ -53,48 +79,54 @@ const handleSubscribe = async () => {
       <div class="w-10"></div>
     </header>
 
-    <main class="flex-grow px-6 pb-20 overflow-y-auto text-center">
-      <div class="mb-8">
-        <h1 class="text-xs font-bold text-amber-500 uppercase tracking-[0.2em] mb-4">Premium Plan</h1>
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">プレミアムプラン</h2>
-        <p class="text-sm text-gray-500 leading-relaxed">全ての機能を開放して、<br>さらに本格的なトレーニングを。</p>
+    <main class="flex-grow px-6 pb-20 overflow-y-auto">
+      <div class="text-center mb-10">
+        <h1 class="text-xs font-bold text-amber-500 uppercase tracking-[0.2em] mb-4">Pricing Plans</h1>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">料金プラン</h2>
+        <p class="text-sm text-gray-500 leading-relaxed">目的に合わせた3つのプランをご用意しました。</p>
       </div>
 
-      <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 border border-amber-100 shadow-sm mb-8">
-        <div class="text-3xl font-bold text-gray-900 mb-1">¥500<span class="text-sm font-normal text-gray-500 ml-1">/月</span></div>
-        <div class="text-xs text-amber-600 font-bold mb-6">初月無料キャンペーン中</div>
-        
-        <ul class="text-left space-y-4 mb-8">
-          <li class="flex items-start">
-            <svg class="h-5 w-5 text-amber-500 mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-sm text-gray-700 font-medium">Steinway グランドピアノ音源の全開放</span>
-          </li>
-          <li class="flex items-start">
-            <svg class="h-5 w-5 text-amber-500 mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-sm text-gray-700 font-medium">レベル3以降の全てのコード練習</span>
-          </li>
-          <li class="flex items-start">
-            <svg class="h-5 w-5 text-amber-500 mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-sm text-gray-700 font-medium">広告の完全非表示</span>
-          </li>
-        </ul>
-
-        <button 
-          @click="handleSubscribe" 
-          :disabled="isLoading"
-          class="w-full bg-gray-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50"
+      <div class="space-y-6">
+        <div 
+          v-for="plan in plans" 
+          :key="plan.id"
+          class="rounded-3xl p-6 border transition-all relative overflow-hidden"
+          :class="[plan.color, plan.id === 'premium' ? 'shadow-xl' : 'shadow-sm']"
         >
-          {{ isLoading ? '処理中...' : 'プランを申しむ' }}
-        </button>
+          <div v-if="plan.popular" class="absolute top-4 right-4 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">Popular</div>
+          
+          <h3 class="text-lg font-bold mb-1" :class="plan.id === 'premium' ? 'text-white' : 'text-gray-900'">{{ plan.name }}</h3>
+          <p class="text-xs mb-4 opacity-70">{{ plan.description }}</p>
+          
+          <div class="text-2xl font-bold mb-6" :class="plan.id === 'premium' ? 'text-white' : 'text-gray-900'">
+            ¥{{ plan.price.toLocaleString() }}<span class="text-xs font-normal opacity-60 ml-1">/月</span>
+          </div>
+          
+          <ul class="space-y-3 mb-8">
+            <li v-for="feature in plan.features" :key="feature" class="flex items-center text-xs">
+              <svg class="h-4 w-4 mr-2 shrink-0" :class="plan.id === 'premium' ? 'text-blue-400' : 'text-amber-500'" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span :class="plan.id === 'premium' ? 'text-gray-300' : 'text-gray-600'">{{ feature }}</span>
+            </li>
+          </ul>
+
+          <button 
+            @click="handleSubscribe(plan.id)" 
+            :disabled="isLoading"
+            class="w-full font-bold py-3.5 rounded-2xl transition-all active:scale-95 disabled:opacity-50 text-sm"
+            :class="[
+              plan.id === 'premium' 
+                ? 'bg-white text-gray-900 hover:bg-gray-100' 
+                : 'bg-gray-900 text-white hover:bg-gray-800'
+            ]"
+          >
+            {{ isLoading ? '処理中...' : plan.name + 'を始める' }}
+          </button>
+        </div>
       </div>
 
-      <p class="text-[10px] text-gray-400">
+      <p class="text-[10px] text-gray-400 mt-12 text-center">
         決済はStripeを通じて安全に行われます。<br>
         いつでもマイページからキャンセル可能です。
       </p>

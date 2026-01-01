@@ -14,7 +14,7 @@ export const ChordDefinitions = {
     name: 'ドファラ', 
     symbol: 'F/C', 
     colorName: '黄', 
-    color: '#EAB308', 
+    color: '#FACC15', 
     notes: ['C4', 'F4', 'A4'], 
     abc: '[CFA]' 
   },
