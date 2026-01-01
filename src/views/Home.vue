@@ -3,39 +3,9 @@ import { ref, onMounted, nextTick } from 'vue'
 import * as Tone from 'tone'
 import abcjs from 'abcjs'
 
-const levels = ref([
-  {
-    name: 'Level 1: 基本の3和音（赤・黄・青）',
-    description: 'まずはここから。絶対音感トレーニングの基本となる3つの和音。',
-    chords: [
-      { id: 'domiso', name: 'ドミソ', symbol: 'C', colorName: '赤', color: '#EF4444', notes: ['C4', 'E4', 'G4'], abc: '[CEG]' },
-      { id: 'dofara', name: 'ドファラ', symbol: 'F/C', colorName: '黄', color: '#EAB308', notes: ['C4', 'F4', 'A4'], abc: '[CFA]' },
-      { id: 'shireso', name: 'シレソ', symbol: 'G/B', colorName: '青', color: '#3B82F6', notes: ['B3', 'D4', 'G4'], abc: '[B,DG]' }
-    ]
-  },
-  {
-    name: 'Level 2: 白鍵の展開形',
-    description: '基本の和音を展開した形。構成音が変わり、響きの色も変化します。',
-    chords: [
-      { id: 'resoshi', name: 'レソシ', symbol: 'G/D', colorName: '緑', color: '#22C55E', notes: ['D4', 'G4', 'B4'], abc: '[DGB]' },
-      { id: 'misodo', name: 'ミソド', symbol: 'C/E', colorName: 'オレンジ', color: '#F97316', notes: ['E4', 'G4', 'C5'], abc: '[EGc]' },
-      { id: 'radofa', name: 'ラドファ', symbol: 'F/A', colorName: '紫', color: '#A855F7', notes: ['A3', 'C4', 'F4'], abc: '[A,CF]' },
-      { id: 'soshire', name: 'ソシレ', symbol: 'G', colorName: 'ピンク', color: '#EC4899', notes: ['G4', 'B4', 'D5'], abc: '[GBd]' },
-      { id: 'sodomi', name: 'ソドミ', symbol: 'C/G', colorName: '茶', color: '#A3744D', notes: ['G3', 'C4', 'E4'], abc: '[G,CE]' }
-    ]
-  },
-  {
-    name: 'Level 3: 黒鍵を含む和音',
-    description: 'シャープやフラットを含む、より複雑な色の響き。',
-    chords: [
-      { id: 'radosharpmi', name: 'ラド#ミ', symbol: 'A', colorName: '黄緑', color: '#84CC16', notes: ['A3', 'C#4', 'E4'], abc: '[A,^CE]' },
-      { id: 'refasharpara', name: 'レファ#ラ', symbol: 'D', colorName: '肌色', color: '#F4A460', notes: ['D4', 'F#4', 'A4'], abc: '[D^FA]' },
-      { id: 'misosharpshi', name: 'ミソ#シ', symbol: 'E', colorName: '薄紫', color: '#DDA0DD', notes: ['E4', 'G#4', 'B4'], abc: '[E^GB]' },
-      { id: 'shiflatrefa', name: 'シ♭レファ', symbol: 'B♭', colorName: '灰色', color: '#6B7280', notes: ['Bb3', 'D4', 'F4'], abc: '[_B,DF]' },
-      { id: 'miflatshiblat', name: 'ミ♭ソシ♭', symbol: 'E♭', colorName: '水色', color: '#06B6D4', notes: ['Eb4', 'G4', 'Bb4'], abc: '[_EG_B]' }
-    ]
-  }
-])
+import { Levels } from '../constants/chords.js'
+
+const levels = ref(Levels)
 
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
