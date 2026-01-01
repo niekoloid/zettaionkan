@@ -25,7 +25,7 @@ export const ChordDefinitions = {
   SO_BE_ES: { id: 'sobees', name: 'ソ<u>ベー</u><u>エス</u>', symbol: 'E♭/G', colorName: '水色', color: '#06B6D4', notes: ['G4', 'Bb4', 'Eb5'], abc: '[G_B_e]' },
 
   // --- 黒鍵の和音：第2転回形 ---
-  MI_LA_CIS: { id: 'milacis', name: 'ミラ<u>チス</u>', symbol: 'A/E', colorName: '黄緑', color: '#84CC16', notes: ['E4', 'A4', 'C#5'], abc: '[EAc]' },
+  MI_LA_CIS: { id: 'milacis', name: 'ミラ<u>チス</u>', symbol: 'A/E', colorName: '黄緑', color: '#84CC16', notes: ['E4', 'A4', 'C#5'], abc: '[EA^c]' },
   LA_RE_FIS: { id: 'larefis', name: 'ラレ<u>フィス</u>', symbol: 'D/A', colorName: '肌色', color: '#FFCC99', notes: ['A3', 'D4', 'F#4'], abc: '[A,D^F]' },
   SI_MI_GIS: { id: 'simigis', name: 'シミ<u>ギス</u>', symbol: 'E/B', colorName: '藤色', color: '#AF8AF2', notes: ['B3', 'E4', 'G#4'], abc: '[B,E^G]' },
   FA_BE_RE: { id: 'fabere', name: 'ファ<u>ベー</u>レ', symbol: 'B♭/F', colorName: '灰色', color: '#6B7280', notes: ['F4', 'Bb4', 'D5'], abc: '[F_Bd]' },
