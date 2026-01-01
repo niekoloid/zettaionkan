@@ -9,26 +9,18 @@ const plans = [
     id: 'entry',
     name: 'エントリー',
     price: 100,
-    description: 'まずは手軽に。',
-    features: ['Level 3 までの全開放', 'Steinway音源（一部）'],
+    description: '白鍵の和音をすべて学べる基本プラン。',
+    features: ['Level 2 (白鍵 2) の全開放', 'Steinway音源の利用'],
     color: 'bg-blue-50 border-blue-100 text-blue-600'
   },
   {
     id: 'standard',
     name: 'スタンダード',
     price: 980,
-    description: '一番人気のプラン。',
-    features: ['全レベルの全開放', '音源の全種類利用可能', '広告非表示'],
+    description: '黒鍵や転回形まで含めた完全版。',
+    features: ['Level 3〜5 (黒鍵) の全開放', 'すべてのアップデートへのアクセス'],
     color: 'bg-amber-50 border-amber-100 text-amber-600',
     popular: true
-  },
-  {
-    id: 'premium',
-    name: 'プレミアム',
-    price: 1980,
-    description: 'プロを目指すお子様に。',
-    features: ['全機能利用可能', '新機能の先行体験', '優先サポート'],
-    color: 'bg-gray-900 border-gray-800 text-white'
   }
 ]
 
@@ -83,7 +75,7 @@ const handleSubscribe = async (tier) => {
       <div class="text-center mb-10">
         <h1 class="text-xs font-bold text-amber-500 uppercase tracking-[0.2em] mb-4">Pricing Plans</h1>
         <h2 class="text-2xl font-bold text-gray-900 mb-2">料金プラン</h2>
-        <p class="text-sm text-gray-500 leading-relaxed">目的に合わせた3つのプランをご用意しました。</p>
+        <p class="text-sm text-gray-500 leading-relaxed">全ての音を演奏するにはプランへの加入が必要です。</p>
       </div>
 
       <div class="space-y-6">
@@ -114,14 +106,9 @@ const handleSubscribe = async (tier) => {
           <button 
             @click="handleSubscribe(plan.id)" 
             :disabled="isLoading"
-            class="w-full font-bold py-3.5 rounded-2xl transition-all active:scale-95 disabled:opacity-50 text-sm"
-            :class="[
-              plan.id === 'premium' 
-                ? 'bg-white text-gray-900 hover:bg-gray-100' 
-                : 'bg-gray-900 text-white hover:bg-gray-800'
-            ]"
+            class="w-full font-bold py-3.5 rounded-2xl transition-all active:scale-95 disabled:opacity-50 text-sm bg-gray-900 text-white hover:bg-gray-800"
           >
-            {{ isLoading ? '処理中...' : plan.name + 'を始める' }}
+            {{ isLoading ? '処理中...' : plan.name + 'プランに加入する' }}
           </button>
         </div>
       </div>

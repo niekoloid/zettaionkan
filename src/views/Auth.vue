@@ -58,7 +58,7 @@ const handleAuth = async () => {
       <div class="text-center mb-10">
         <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Account</h1>
         <h2 class="text-xl font-bold text-gray-900 mb-2">{{ isSignUp ? '新規登録' : 'ログイン' }}</h2>
-        <p class="text-xs text-gray-500">トレーニング結果を保存して、<br>複数端末で同期できます。</p>
+        <p class="text-xs text-gray-500">アカウントを作成して、<br>すべての機能を楽しもう。</p>
       </div>
 
       <form @submit.prevent="handleAuth" class="space-y-6">

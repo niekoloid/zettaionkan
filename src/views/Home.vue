@@ -161,19 +161,16 @@ const toggleChord = async (chord) => {
     // Level 1: 全員OK
     if (activeLevelIndex.value === 0) return true
     
-    // Level 2以降はログイン必須
-    if (!user.value) return false
+    // Level 2以降はプラン加入必須（ログインを含む）
+    if (!user.value || userTier.value === 'free') return false
     
-    // Level 2: ログインしてれば無料でもOK
-    if (activeLevelIndex.value === 1) return true
-    
-    // Level 3: Entry以上が必要
-    if (activeLevelIndex.value === 2) {
+    // Level 2: Entry以上が必要
+    if (activeLevelIndex.value === 1) {
       return ['entry', 'standard', 'premium'].includes(userTier.value)
     }
     
-    // Level 4, 5: Standard以上が必要
-    if (activeLevelIndex.value >= 3) {
+    // Level 3以降: Standard以上が必要
+    if (activeLevelIndex.value >= 2) {
       return ['standard', 'premium'].includes(userTier.value)
     }
     
@@ -182,12 +179,12 @@ const toggleChord = async (chord) => {
 
   if (!canPlaySound()) {
     if (!user.value) {
-      if (confirm('Level 2 以降の和音を鳴らすにはログインが必要です。ログイン画面に移動しますか？')) {
+      if (confirm('Level 2 以降の和音を鳴らすにはログインおよびプランへの加入が必要です。ログイン画面に移動しますか？')) {
         router.push('/auth')
       }
     } else {
-      const neededPlan = activeLevelIndex.value === 2 ? 'エントリー' : 'スタンダード'
-      if (confirm(`このレベルの和音を鳴らすには${neededPlan}プラン以上へのアップグレードが必要です。プラン一覧を確認しますか？`)) {
+      const neededPlan = activeLevelIndex.value === 1 ? 'エントリー' : 'スタンダード'
+      if (confirm(`このレベルの和音を鳴らすには${neededPlan}プラン以上への加入が必要です。プラン一覧を確認しますか？`)) {
         router.push('/premium')
       }
     }
@@ -389,19 +386,14 @@ const isLightColor = (hex) => {
         >
           <!-- ロックアイコンの表示ロジック -->
           <template v-if="index > 0">
-            <!-- ログインが必要な場合 (Level 2+) -->
-            <svg v-if="!user" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+            <!-- 未ログインまたは未課金の場合 -->
+            <svg v-if="!user || userTier === 'free'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
             </svg>
-            <!-- アップグレードが必要な場合 (Level 3以降) -->
-            <template v-else>
-              <svg v-if="index === 2 && userTier === 'free'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-              </svg>
-              <svg v-else-if="index >= 3 && !['standard', 'premium'].includes(userTier)" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-              </svg>
-            </template>
+            <!-- エントリープランでLevel 3以降を制限 -->
+            <svg v-else-if="index >= 2 && userTier === 'entry'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+            </svg>
           </template>
           {{ level.shortName }}
         </button>
