@@ -1,17 +1,20 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-import { supabase } from '../lib/supabase'
+import { supabase, checkPremiumStatus } from '../lib/supabase'
+import { useRouter } from 'vue-router'
 import * as Tone from 'tone'
 import abcjs from 'abcjs'
 
 import { Levels } from '../constants/chords.js'
 
+const router = useRouter()
 const levels = ref(Levels)
 
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
 const selectedInstrument = ref('yamaha') // 'yamaha' | 'steinway' | 'xylophone'
 const activeLevelIndex = ref(0)
+const isPremium = ref(false)
 
 let yamahaSampler = null
 let steinwaySampler = null
@@ -71,12 +74,19 @@ const GUITAR_SAMPLES = {
 
 const user = ref(null)
 
+const refreshPremiumStatus = async () => {
+  isPremium.value = await checkPremiumStatus()
+}
+
 onMounted(async () => {
   const { data } = await supabase.auth.getUser()
   user.value = data.user
+  if (user.value) await refreshPremiumStatus()
 
-  supabase.auth.onAuthStateChange((_event, session) => {
+  supabase.auth.onAuthStateChange(async (_event, session) => {
     user.value = session?.user ?? null
+    if (user.value) await refreshPremiumStatus()
+    else isPremium.value = false
   })
 
   yamahaSampler = new Tone.Sampler({
@@ -128,14 +138,41 @@ const playChord = (notes) => {
 }
 
 const toggleChord = async (chord) => {
+  // 和音を鳴らす前にも念のためチェック（基本レベル以外）
+  if (activeLevelIndex.value > 0 && !user.value) {
+    alert('会員登録・ログインが必要です。')
+    router.push('/auth')
+    return
+  }
+
   playChord(chord.notes)
   currentChord.value = chord
   await nextTick()
   renderScore(chord.abc)
 }
 
+const changeLevel = (index) => {
+  if (index > 0 && !user.value) {
+    if (confirm('Level 2 以降を練習するには会員登録・ログインが必要です。ログイン画面に移動しますか？')) {
+      router.push('/auth')
+    }
+    return
+  }
+  activeLevelIndex.value = index
+}
+
 const selectInstrument = (instrument) => {
+  if (instrument === 'steinway' && !isPremium.value) {
+    if (confirm('Steinway音源はプレミアム会員限定機能です。プランを確認しますか？')) {
+      router.push('/premium')
+    }
+    return
+  }
   selectedInstrument.value = instrument
+  
+  if (instrument === 'yamaha' && yamahaSampler.loaded) isSamplerLoaded.value = true
+  else if (instrument === 'steinway' && steinwaySampler.loaded) isSamplerLoaded.value = true
+  else isSamplerLoaded.value = false
   
   // Play 'Do' (C4) to confirm instrument sound
   // Short delay to ensure state update propagates if needed, though reactive trigger is better handled directly
@@ -310,15 +347,18 @@ const isLightColor = (hex) => {
         <button 
           v-for="(level, index) in levels" 
           :key="index"
-          @click="activeLevelIndex = index"
-          class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center"
+          @click="changeLevel(index)"
+          class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center flex items-center justify-center space-x-1"
           :class="[
             activeLevelIndex === index 
               ? (level.shortName.includes('黒鍵') ? 'bg-black shadow-sm text-white' : 'bg-white shadow-sm text-gray-900')
               : 'text-gray-400 hover:text-gray-600'
           ]"
         >
-          {{ level.shortName }}
+          <span>{{ level.shortName }}</span>
+          <svg v-if="index > 0 && !user" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
         </button>
       </div>
 
@@ -383,10 +423,17 @@ const isLightColor = (hex) => {
               Yamaha C5
             </button>
             <button 
-              disabled
-              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all text-gray-400 bg-gray-100 cursor-not-allowed opacity-60"
+              @click="selectInstrument('steinway')"
+              class="px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center space-x-1"
+              :class="[
+                selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600',
+                !isPremium ? 'opacity-100' : ''
+              ]"
             >
-              Steinway <span class="text-[8px] font-normal block sm:inline">(Coming Soon)</span>
+              <span>Steinway B</span>
+              <svg v-if="!isPremium" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
             </button>
           </div>
         </section>
