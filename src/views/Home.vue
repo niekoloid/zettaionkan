@@ -163,7 +163,7 @@ const playChord = (notes) => {
       } else {
         const neededPlan = activeLevelIndex.value === 1 ? 'エントリー' : 'スタンダード'
         if (confirm(`このレベルの和音を鳴らすには${neededPlan}プラン以上への加入が必要です。プラン一覧を確認しますか？`)) {
-          router.push('/premium')
+          router.push('/subscription')
         }
       }
       return
@@ -434,7 +434,7 @@ const isLightColor = (hex) => {
         <router-link to="/about" class="text-xs text-gray-400 hover:text-gray-600 font-medium">サービス概要</router-link>
         <router-link to="/company" class="text-xs text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
         <router-link to="/privacy" class="text-xs text-gray-400 hover:text-gray-600 font-medium">プライバシーポリシー</router-link>
-        <router-link to="/premium" class="text-xs text-amber-500 hover:text-amber-600 font-bold">プレミアムプラン</router-link>
+        <router-link to="/subscription" class="text-xs text-amber-500 hover:text-amber-600 font-bold">料金プラン</router-link>
         <footer class="text-center text-gray-300 text-[10px] pt-4 pb-8">
           &copy; 2026 Akatsuki Inc.
         </footer>

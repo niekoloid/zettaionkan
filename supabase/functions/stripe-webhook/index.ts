@@ -53,6 +53,7 @@ serve(async (req) => {
       const { error } = await supabaseClient
         .from("profiles")
         .update({ 
+          is_premium: true,
           subscription_tier: tier,
           stripe_customer_id: customerId 
         })
@@ -69,6 +70,7 @@ serve(async (req) => {
     const { error } = await supabaseClient
       .from("profiles")
       .update({ 
+        is_premium: false,
         subscription_tier: 'free' 
       })
       .eq("stripe_customer_id", customerId);

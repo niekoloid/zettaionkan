@@ -37,9 +37,8 @@ const handleSubscribe = async (tier) => {
 
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: { 
-        user_id: user.id,
-        tier: tier, // プラン情報を送信
-        return_url: window.location.origin + '/premium/success'
+        tier: tier,
+        return_url: window.location.origin + '/subscription/success'
       }
     })
 
@@ -57,16 +56,12 @@ const handleSubscribe = async (tier) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden shadow-2xl">
+  <div class="min-h-screen bg-white flex flex-col max-w-md mx-auto relative overflow-hidden shadow-2xl font-['Noto_Sans_JP']">
     <!-- Header -->
     <header class="pt-12 pb-8 px-4 flex items-center justify-between relative shrink-0">
-      <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors group z-10">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </router-link>
+      <router-link to="/subscription" class="text-xs text-amber-500 hover:text-amber-600 font-bold">料金プラン</router-link>
       <div class="absolute left-1/2 transform -translate-x-1/2">
-        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-10 w-auto object-contain" />
+        <img src="../assets/logo_irooto.png" alt="いろおと" class="h-10 w-auto object-contain" />
       </div>
       <div class="w-10"></div>
     </header>
@@ -82,38 +77,38 @@ const handleSubscribe = async (tier) => {
         <div 
           v-for="plan in plans" 
           :key="plan.id"
-          class="rounded-3xl p-6 border transition-all relative overflow-hidden"
-          :class="[plan.color, plan.id === 'premium' ? 'shadow-xl' : 'shadow-sm']"
+          class="rounded-3xl p-6 border transition-all relative overflow-hidden border-gray-100"
+          :class="[plan.color]"
         >
-          <div v-if="plan.popular" class="absolute top-4 right-4 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">Popular</div>
+          <div v-if="plan.popular" class="absolute top-4 right-4 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">Popular</div>
           
-          <h3 class="text-lg font-bold mb-1" :class="plan.id === 'premium' ? 'text-white' : 'text-gray-900'">{{ plan.name }}</h3>
-          <p class="text-xs mb-4 opacity-70">{{ plan.description }}</p>
+          <h3 class="text-lg font-bold mb-1 text-gray-900">{{ plan.name }}</h3>
+          <p class="text-[11px] mb-4 text-gray-400 font-medium">{{ plan.description }}</p>
           
-          <div class="text-2xl font-bold mb-6" :class="plan.id === 'premium' ? 'text-white' : 'text-gray-900'">
-            ¥{{ plan.price.toLocaleString() }}<span class="text-xs font-normal opacity-60 ml-1">/月</span>
+          <div class="text-2xl font-black mb-6 text-gray-900">
+            ¥{{ plan.price.toLocaleString() }}<span class="text-xs font-normal text-gray-400 ml-1 italic">/月</span>
           </div>
           
           <ul class="space-y-3 mb-8">
-            <li v-for="feature in plan.features" :key="feature" class="flex items-center text-xs">
-              <svg class="h-4 w-4 mr-2 shrink-0" :class="plan.id === 'premium' ? 'text-blue-400' : 'text-amber-500'" fill="currentColor" viewBox="0 0 20 20">
+            <li v-for="feature in plan.features" :key="feature" class="flex items-center text-[11px] font-bold text-gray-600">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
               </svg>
-              <span :class="plan.id === 'premium' ? 'text-gray-300' : 'text-gray-600'">{{ feature }}</span>
+              <span>{{ feature }}</span>
             </li>
           </ul>
 
           <button 
             @click="handleSubscribe(plan.id)" 
             :disabled="isLoading"
-            class="w-full font-bold py-3.5 rounded-2xl transition-all active:scale-95 disabled:opacity-50 text-sm bg-gray-900 text-white hover:bg-gray-800"
+            class="w-full font-bold py-3.5 rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50 text-[13px] bg-gray-900 text-white hover:bg-gray-800 shadow-lg shadow-black/5"
           >
             {{ isLoading ? '処理中...' : plan.name + 'プランに加入する' }}
           </button>
         </div>
       </div>
 
-      <p class="text-[10px] text-gray-400 mt-12 text-center">
+      <p class="text-[10px] text-gray-400 mt-12 text-center font-medium leading-relaxed">
         決済はStripeを通じて安全に行われます。<br>
         いつでもマイページからキャンセル可能です。
       </p>

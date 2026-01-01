@@ -96,7 +96,7 @@ const openCustomerPortal = async () => {
               <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">現在のプラン</p>
               <p class="text-base font-black text-gray-900">{{ getTierName(userTier) }}</p>
             </div>
-            <router-link v-if="userTier === 'free'" to="/premium" class="text-[10px] font-bold text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full hover:bg-amber-100 transition-colors">
+            <router-link v-if="userTier === 'free'" to="/subscription" class="text-[10px] font-bold text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full hover:bg-amber-100 transition-colors">
               プラン一覧を見る
             </router-link>
           </div>

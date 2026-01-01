@@ -28,14 +28,14 @@ const routes = [
     component: () => import('../views/Privacy.vue')
   },
   {
-    path: '/premium',
-    name: 'Premium',
-    component: () => import('../views/Premium.vue')
+    path: '/subscription',
+    name: 'Subscription',
+    component: () => import('../views/Subscription.vue')
   },
   {
-    path: '/premium/success',
-    name: 'PremiumSuccess',
-    component: () => import('../views/PremiumSuccess.vue')
+    path: '/subscription/success',
+    name: 'SubscriptionSuccess',
+    component: () => import('../views/SubscriptionSuccess.vue')
   },
   {
     path: '/auth',
