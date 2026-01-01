@@ -9,6 +9,7 @@ const password = ref('')
 const isLoading = ref(false)
 const isSignUp = ref(false)
 const message = ref('')
+const isDev = import.meta.env.DEV
 
 const handleAuth = async () => {
   isLoading.value = true
@@ -104,7 +105,7 @@ const handleAuth = async () => {
           </button>
 
           <!-- Debug Login Button (Development Only) -->
-          <div v-if="!isSignUp && import.meta.env.DEV" class="pt-4 border-t border-gray-50">
+          <div v-if="!isSignUp && isDev" class="pt-4 border-t border-gray-50">
             <button 
               type="button"
               @click="email = 'test@example.com'; password = 'password123'; handleAuth()"
