@@ -1,5 +1,6 @@
 export const ChordDefinitions = {
-  // Level 1 Chords
+  // --- 白鍵の9個の和音 ---
+  // ① 赤
   DOMISO: { 
     id: 'domiso', 
     name: 'ドミソ', 
@@ -9,6 +10,7 @@ export const ChordDefinitions = {
     notes: ['C4', 'E4', 'G4'], 
     abc: '[CEG]' 
   },
+  // ② 黄色
   DOFARA: { 
     id: 'dofara', 
     name: 'ドファラ', 
@@ -18,6 +20,7 @@ export const ChordDefinitions = {
     notes: ['C4', 'F4', 'A4'], 
     abc: '[CFA]' 
   },
+  // ③ 青
   SHIRESO: { 
     id: 'shireso', 
     name: 'シレソ', 
@@ -27,8 +30,17 @@ export const ChordDefinitions = {
     notes: ['B3', 'D4', 'G4'], 
     abc: '[B,DG]' 
   },
-
-  // Level 2 Chords
+  // ④ 黒
+  RADOFA: { 
+    id: 'radofa', 
+    name: 'ラドファ', 
+    symbol: 'F/A', 
+    colorName: 'くろ', 
+    color: '#000000', 
+    notes: ['A3', 'C4', 'F4'], 
+    abc: '[A,CF]' 
+  },
+  // ⑤ 緑
   RESOSHI: { 
     id: 'resoshi', 
     name: 'レソシ', 
@@ -38,6 +50,7 @@ export const ChordDefinitions = {
     notes: ['D4', 'G4', 'B4'], 
     abc: '[DGB]' 
   },
+  // ⑥ オレンジ
   MISODO: { 
     id: 'misodo', 
     name: 'ミソド', 
@@ -47,15 +60,17 @@ export const ChordDefinitions = {
     notes: ['E4', 'G4', 'C5'], 
     abc: '[EGc]' 
   },
-  RADOFA: { 
-    id: 'radofa', 
-    name: 'ラドファ', 
-    symbol: 'F/A', 
+  // ⑦ 紫
+  FARADO: { 
+    id: 'farado', 
+    name: 'ファラド', 
+    symbol: 'F', 
     colorName: 'むらさき', 
     color: '#A855F7', 
-    notes: ['A3', 'C4', 'F4'], 
-    abc: '[A,CF]' 
+    notes: ['F4', 'A4', 'C5'], 
+    abc: '[FAc]' 
   },
+  // ⑧ ピンク
   SOSHIRE: { 
     id: 'soshire', 
     name: 'ソシレ', 
@@ -65,6 +80,7 @@ export const ChordDefinitions = {
     notes: ['G4', 'B4', 'D5'], 
     abc: '[GBd]' 
   },
+  // ⑨ 茶色
   SODOMI: { 
     id: 'sodomi', 
     name: 'ソドミ', 
@@ -75,46 +91,51 @@ export const ChordDefinitions = {
     abc: '[G,CE]' 
   },
 
-  // Level 3 Chords
-  RADOSHARPMI: { 
-    id: 'radosharpmi', 
-    name: 'ラド#ミ', 
+  // --- 黒鍵の5個の和音 ---
+  // ❶ 黄緑
+  LA_CIS_MI: { 
+    id: 'lacismi', 
+    name: 'ラチスミ', 
     symbol: 'A', 
     colorName: 'きみどり', 
     color: '#84CC16', 
     notes: ['A3', 'C#4', 'E4'], 
     abc: '[A,^CE]' 
   },
-  REFASHARPARA: { 
-    id: 'refasharpara', 
-    name: 'レファ#ラ', 
+  // ❷ 薄橙
+  RE_FIS_LA: { 
+    id: 'refisla', 
+    name: 'レフィスラ', 
     symbol: 'D', 
-    colorName: 'はだいろ', 
-    color: '#F4A460', 
+    colorName: 'うすだいだい', 
+    color: '#FFCC99', 
     notes: ['D4', 'F#4', 'A4'], 
     abc: '[D^FA]' 
   },
-  MISOSHARPSHI: { 
-    id: 'misosharpshi', 
-    name: 'ミソ#シ', 
+  // ❸ 藤色
+  MI_GIS_SI: { 
+    id: 'migissi', 
+    name: 'ミギスシ', 
     symbol: 'E', 
-    colorName: 'うすむらさき', 
-    color: '#DDA0DD', 
+    colorName: 'ふじいろ', 
+    color: '#AF8AF2', 
     notes: ['E4', 'G#4', 'B4'], 
     abc: '[E^GB]' 
   },
-  SHIFLATREFA: { 
-    id: 'shiflatrefa', 
-    name: 'シ♭レファ', 
+  // ❹ 灰色
+  BE_RE_FA: { 
+    id: 'berefa', 
+    name: 'ベーレファ', 
     symbol: 'B♭', 
     colorName: 'はいいろ', 
     color: '#6B7280', 
     notes: ['Bb3', 'D4', 'F4'], 
     abc: '[_B,DF]' 
   },
-  MIFLATSHIBLAT: { 
-    id: 'miflatshiblat', 
-    name: 'ミ♭ソシ♭', 
+  // ❺ 水色
+  ES_SO_BE: { 
+    id: 'essobe', 
+    name: 'エスソベー', 
     symbol: 'E♭', 
     colorName: 'みずいろ', 
     color: '#06B6D4', 
@@ -125,34 +146,35 @@ export const ChordDefinitions = {
 
 export const Levels = [
   {
-    name: 'Level 1: 基本の3和音（あか・きいろ・あお）',
-    description: 'まずはここから。絶対音感トレーニングの基本となる3つの和音。',
+    name: 'Level 1: 基本の3和音',
+    description: 'まずはここから。赤・黄・青の3つの和音で基礎を固めます。',
     chords: [
       ChordDefinitions.DOMISO,
-      ChordDefinitions.SHIRESO,
-      ChordDefinitions.DOFARA
+      ChordDefinitions.DOFARA,
+      ChordDefinitions.SHIRESO
     ]
   },
   {
-    name: 'Level 2: 白鍵の展開形',
-    description: '基本の和音を展開した形。構成音が変わり、響きの色も変化します。',
+    name: 'Level 2: 白鍵の発展形',
+    description: '黒・緑・オレンジ・紫・ピンク・茶色の6つの和音を追加します。',
     chords: [
+      ChordDefinitions.RADOFA,
       ChordDefinitions.RESOSHI,
       ChordDefinitions.MISODO,
-      ChordDefinitions.RADOFA,
+      ChordDefinitions.FARADO,
       ChordDefinitions.SOSHIRE,
       ChordDefinitions.SODOMI
     ]
   },
   {
     name: 'Level 3: 黒鍵を含む和音',
-    description: 'シャープやフラットを含む、より複雑な色の響き。',
+    description: '黄緑・薄橙・藤色・灰色・水色の5つの和音。より複雑な音の響きを学びます。',
     chords: [
-      ChordDefinitions.RADOSHARPMI,
-      ChordDefinitions.REFASHARPARA,
-      ChordDefinitions.MISOSHARPSHI,
-      ChordDefinitions.SHIFLATREFA,
-      ChordDefinitions.MIFLATSHIBLAT
+      ChordDefinitions.LA_CIS_MI,
+      ChordDefinitions.RE_FIS_LA,
+      ChordDefinitions.MI_GIS_SI,
+      ChordDefinitions.BE_RE_FA,
+      ChordDefinitions.ES_SO_BE
     ]
   }
 ]
