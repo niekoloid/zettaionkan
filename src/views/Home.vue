@@ -420,9 +420,12 @@ const isLightColor = (hex) => {
           <!-- Instrument Selector -->
           <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200">
             <button 
-              class="px-6 py-1.5 rounded-lg text-[10px] font-bold bg-white shadow-sm text-gray-900"
+              class="px-6 py-1.5 rounded-lg text-[10px] font-bold bg-white shadow-sm text-gray-900 flex items-center mx-auto"
             >
-              Yamaha Grand Piano
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 5H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-2 12h-2v-5h2v5zm-4 0h-2v-5h2v5zm-4 0H8v-5h2v5zm-4 0H4v-5h2v5z"/>
+              </svg>
+              YAMAHA C5
             </button>
           </div>
         </section>
