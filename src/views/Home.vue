@@ -312,7 +312,11 @@ const isLightColor = (hex) => {
           :key="index"
           @click="activeLevelIndex = index"
           class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center"
-          :class="activeLevelIndex === index ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+          :class="[
+            activeLevelIndex === index 
+              ? (level.shortName.includes('黒鍵') ? 'bg-black shadow-sm text-white' : 'bg-white shadow-sm text-gray-900')
+              : 'text-gray-400 hover:text-gray-600'
+          ]"
         >
           {{ level.shortName }}
         </button>
