@@ -103,8 +103,8 @@ const handleAuth = async () => {
             {{ isSignUp ? '既にアカウントをお持ちの方はこちら' : '新しくアカウントを作成する' }}
           </button>
 
-          <!-- Debug Login Button -->
-          <div v-if="!isSignUp" class="pt-4 border-t border-gray-50">
+          <!-- Debug Login Button (Development Only) -->
+          <div v-if="!isSignUp && import.meta.env.DEV" class="pt-4 border-t border-gray-50">
             <button 
               type="button"
               @click="email = 'test@example.com'; password = 'password123'; handleAuth()"
