@@ -10,17 +10,7 @@ export const ChordDefinitions = {
     notes: ['C4', 'E4', 'G4'], 
     abc: '[CEG]' 
   },
-  // ② 黄色
-  DOFARA: { 
-    id: 'dofara', 
-    name: 'ドファラ', 
-    symbol: 'F/C', 
-    colorName: '黄色', 
-    color: '#FFFF00', 
-    notes: ['C4', 'F4', 'A4'], 
-    abc: '[CFA]' 
-  },
-  // ③ 青
+  // ② 青 (順番修正)
   SHIRESO: { 
     id: 'shireso', 
     name: 'シレソ', 
@@ -29,6 +19,16 @@ export const ChordDefinitions = {
     color: '#3B82F6', 
     notes: ['B3', 'D4', 'G4'], 
     abc: '[B,DG]' 
+  },
+  // ③ 黄色 (順番修正)
+  DOFARA: { 
+    id: 'dofara', 
+    name: 'ドファラ', 
+    symbol: 'F/C', 
+    colorName: '黄色', 
+    color: '#FFFF00', 
+    notes: ['C4', 'F4', 'A4'], 
+    abc: '[CFA]' 
   },
   // ④ 黒
   RADOFA: { 
@@ -147,11 +147,11 @@ export const ChordDefinitions = {
 export const Levels = [
   {
     name: 'Level 1: 基本の3和音',
-    description: '赤・黄・青の基本となる3つの和音です。',
+    description: '赤・青・黄の基本となる3つの和音です。',
     chords: [
       ChordDefinitions.DOMISO,
-      ChordDefinitions.DOFARA,
-      ChordDefinitions.SHIRESO
+      ChordDefinitions.SHIRESO,
+      ChordDefinitions.DOFARA
     ]
   },
   {
