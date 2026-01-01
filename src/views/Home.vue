@@ -74,29 +74,37 @@ const GUITAR_SAMPLES = {
 const user = ref(null)
 
 onMounted(async () => {
-  const { data } = await supabase.auth.getUser()
-  user.value = data.user
+  try {
+    const { data } = await supabase.auth.getUser()
+    user.value = data?.user || null
+  } catch (err) {
+    console.error('Supabase auth error:', err)
+  }
 
   supabase.auth.onAuthStateChange((_event, session) => {
     user.value = session?.user ?? null
   })
 
-  yamahaSampler = new Tone.Sampler({
-    urls: YAMAHA_C5_SAMPLES,
-    baseUrl: "https://tonejs.github.io/audio/salamander/",
-    onload: () => {
-      if (selectedInstrument.value === 'yamaha') isSamplerLoaded.value = true
-    }
-  }).toDestination()
+  try {
+    yamahaSampler = new Tone.Sampler({
+      urls: YAMAHA_C5_SAMPLES,
+      baseUrl: "https://tonejs.github.io/audio/salamander/",
+      onload: () => {
+        if (selectedInstrument.value === 'yamaha') isSamplerLoaded.value = true
+      }
+    }).toDestination()
 
-  steinwaySampler = new Tone.Sampler({
-    urls: STEINWAY_B_SAMPLES,
-    baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/piano/",
-    onload: () => {
-      if (selectedInstrument.value === 'steinway') isSamplerLoaded.value = true
-    },
-    onerror: (err) => console.error("Steinway loading error:", err)
-  }).toDestination()
+    steinwaySampler = new Tone.Sampler({
+      urls: STEINWAY_B_SAMPLES,
+      baseUrl: "https://nbrosowsky.github.io/tonejs-instruments/samples/piano/",
+      onload: () => {
+        if (selectedInstrument.value === 'steinway') isSamplerLoaded.value = true
+      },
+      onerror: (err) => console.error("Steinway loading error:", err)
+    }).toDestination()
+  } catch (err) {
+    console.error('Tonejs initialization error:', err)
+  }
   
   // Render empty score initially (using 'y' as spacer to ensure staff lines appear)
   nextTick(() => {
@@ -135,7 +143,9 @@ const toggleChord = async (chord) => {
   await nextTick()
   renderScore(chord.abc)
 
-  // 音を鳴らす判定：Level 1（index 0）以外、かつ未ログインの場合は音を鳴らさない
+  // 音を鳴らすかどうかの判定
+  // Level 1 (activeLevelIndex === 0) は未ログインでも鳴らせる
+  // それ以外はログインが必要
   if (activeLevelIndex.value > 0 && !user.value) {
     if (confirm('Level 2 以降の和音を鳴らすには会員登録・ログインが必要です。ログイン画面に移動しますか？')) {
       router.push('/auth')
@@ -143,7 +153,7 @@ const toggleChord = async (chord) => {
     return
   }
 
-  // 条件をクリアしていれば音を鳴らす
+  // 条件クリアなら音を鳴らす
   playChord(chord.notes)
 }
 
@@ -262,7 +272,7 @@ const isLightColor = (hex) => {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
         </svg>
         <div v-else class="w-8 h-8 bg-black/5 rounded-full flex items-center justify-center text-[10px] font-bold text-gray-400 group-hover:text-gray-600 uppercase">
-          {{ user.email.charAt(0) }}
+          {{ user?.email?.charAt(0) || '?' }}
         </div>
       </router-link>
     </header>
