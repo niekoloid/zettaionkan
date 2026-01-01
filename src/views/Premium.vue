@@ -1,20 +1,40 @@
 <script setup>
-import { loadStripe } from '@stripe/stripe-js'
 import { ref } from 'vue'
+import { supabase } from '../lib/supabase'
 
 const isLoading = ref(false)
 
 const handleSubscribe = async () => {
   isLoading.value = true
   
-  // Stripeの初期化
-  const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
-  
-  // ※本来はここでバックエンドのAPIを叩き、Checkout Session IDを取得します。
-  // 現在バックエンドがないため、ここではプレースホルダーのアラートを表示します。
-  alert('決済機能を有効にするには、Stripe管理画面で商品を作成し、バックエンド（API）でSessionを作成する必要があります。バックエンドの実装準備が整いましたら、接続のお手伝いをいたします！')
-  
-  isLoading.value = false
+  try {
+    // ログイン状態を確認
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      alert('決済を行うにはログインが必要です。')
+      return
+    }
+
+    // Supabase Edge Functionを呼び出してCheckout URLを取得
+    const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+      body: { 
+        user_id: user.id,
+        return_url: window.location.origin + '/premium/success'
+      }
+    })
+
+    if (error) throw error
+    if (data?.url) {
+      // Stripeの決済ページへリダイレクト
+      window.location.href = data.url
+    }
+  } catch (err) {
+    console.error('Subscription error:', err)
+    alert('決済の準備中にエラーが発生しました。しばらく時間をおいて再度お試しください。')
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 

@@ -33,6 +33,11 @@ const routes = [
     component: () => import('../views/Premium.vue')
   },
   {
+    path: '/premium/success',
+    name: 'PremiumSuccess',
+    component: () => import('../views/PremiumSuccess.vue')
+  },
+  {
     path: '/auth',
     name: 'Auth',
     component: () => import('../views/Auth.vue')
