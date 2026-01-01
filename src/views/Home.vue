@@ -219,6 +219,15 @@ const getBlackKeyNote = (whiteNote) => {
   const octave = whiteNote.match(/\d/)[0]
   return `${noteName}#${octave}`
 }
+const isLightColor = (hex) => {
+  if (!hex) return false
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  // Contrast formula
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+  return brightness > 180 // Threshold for bright colors
+}
 </script>
 
 <template>
@@ -270,7 +279,12 @@ const getBlackKeyNote = (whiteNote) => {
               :class="[isNoteActive(note) ? '' : 'bg-white']"
               :style="isNoteActive(note) ? { backgroundColor: currentChord?.color } : {}"
             >
-              <span class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[6px] text-gray-300 font-bold uppercase">{{ note.replace(/\d/, '') }}</span>
+              <span 
+                class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[6px] font-bold uppercase transition-colors duration-300"
+                :class="[isNoteActive(note) ? (isLightColor(currentChord?.color) ? 'text-black/40' : 'text-white/60') : 'text-gray-300']"
+              >
+                {{ note.replace(/\d/, '') }}
+              </span>
             </div>
             
             <!-- Black Keys -->
@@ -323,7 +337,7 @@ const getBlackKeyNote = (whiteNote) => {
               class="flex items-center p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-300"
               :class="[
                 currentChord?.id === chord.id 
-                  ? 'shadow-md border-transparent text-white' 
+                  ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900' : 'text-white'))
                   : 'border-gray-50 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100'
               ]"
               :style="currentChord?.id === chord.id ? { backgroundColor: chord.color } : {}"
