@@ -103,7 +103,7 @@ onMounted(async () => {
 })
 
 const renderScore = (abc) => {
-  abcjs.renderAbc('chord-score', `L:1/4\nK:C\n${abc}`, {
+  abcjs.renderAbc('chord-score', `L:1\nK:C\n${abc}`, {
     responsive: 'resize',
     scale: 1.5, 
     paddingtop: 0,
