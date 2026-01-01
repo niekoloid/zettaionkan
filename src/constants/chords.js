@@ -155,26 +155,20 @@ export const Levels = [
     ]
   },
   {
-    name: 'Level 2: 白鍵の和音(1)',
-    description: '黒・緑・オレンジの3つの和音を追加します。',
+    name: 'Level 2: 白鍵の発展形',
+    description: '黒・緑・オレンジ・紫・ピンク・茶色の6つの和音。白鍵のみで構成される和音をマスターします。',
     chords: [
       ChordDefinitions.RADOFA,
       ChordDefinitions.RESOSHI,
-      ChordDefinitions.MISODO
-    ]
-  },
-  {
-    name: 'Level 3: 白鍵の和音(2)',
-    description: '紫・ピンク・茶色の3つの和音を追加します。',
-    chords: [
+      ChordDefinitions.MISODO,
       ChordDefinitions.FARADO,
       ChordDefinitions.SOSHIRE,
       ChordDefinitions.SODOMI
     ]
   },
   {
-    name: 'Level 4: 黒鍵を含む和音',
-    description: '黄緑・薄橙・藤色・灰色・水色の5つの和音。より複雑な響きを学びます。',
+    name: 'Level 3: 黒鍵を含む和音',
+    description: '黄緑・薄橙・藤色・灰色・水色の5つの和音。黒鍵を含むより複雑な響き。',
     chords: [
       ChordDefinitions.LA_CIS_MI,
       ChordDefinitions.RE_FIS_LA,
