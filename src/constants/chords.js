@@ -34,27 +34,27 @@ export const ChordDefinitions = {
 
 export const Levels = [
   {
-    name: '白鍵 1',
+    name: 'Level 1: 基本の3和音',
     description: '赤・青・黄の基本となる3つの和音です。',
     chords: [ChordDefinitions.DOMISO, ChordDefinitions.SHIRESO, ChordDefinitions.DOFARA]
   },
   {
-    name: '白鍵 2',
+    name: 'Level 2: 白鍵の発展形',
     description: '黒・緑・オレンジ・紫・ピンク・茶色の6つの和音。',
     chords: [ChordDefinitions.RADOFA, ChordDefinitions.RESOSHI, ChordDefinitions.MISODO, ChordDefinitions.FARADO, ChordDefinitions.SOSHIRE, ChordDefinitions.SODOMI]
   },
   {
-    name: '黒鍵 1',
+    name: 'Level 3: 黒鍵の和音（基本形）',
     description: '黄緑・肌色・藤色・灰色・水色の5つの和音（基本形）。',
     chords: [ChordDefinitions.LA_CIS_MI, ChordDefinitions.RE_FIS_LA, ChordDefinitions.MI_GIS_SI, ChordDefinitions.BE_RE_FA, ChordDefinitions.ES_SO_BE]
   },
   {
-    name: '黒鍵 2',
+    name: 'Level 4: 黒鍵の和音（第1転回形）',
     description: '黒鍵を含む和音の第1転回形を学びます。',
     chords: [ChordDefinitions.CIS_MI_LA, ChordDefinitions.FIS_LA_RE, ChordDefinitions.GIS_SI_MI, ChordDefinitions.RE_FA_BE, ChordDefinitions.SO_BE_ES]
   },
   {
-    name: '黒鍵 3',
+    name: 'Level 5: 黒鍵の和音（第2転回形）',
     description: '黒鍵を含む和音の第2転回形を学びます。',
     chords: [ChordDefinitions.MI_LA_CIS, ChordDefinitions.LA_RE_FIS, ChordDefinitions.SI_MI_GIS, ChordDefinitions.FA_BE_RE, ChordDefinitions.BE_ES_SO]
   }
