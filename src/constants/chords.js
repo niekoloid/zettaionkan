@@ -36,11 +36,11 @@ export const Levels = [
   {
     name: '白鍵 1: 基本の3和音',
     shortName: '白鍵 1',
-    description: '赤・青・黄の基本となる3つの和音です。',
-    chords: [ChordDefinitions.DOMISO, ChordDefinitions.SHIRESO, ChordDefinitions.DOFARA]
+    description: '赤・黄・青の基本となる3つの和音です。',
+    chords: [ChordDefinitions.DOMISO, ChordDefinitions.DOFARA, ChordDefinitions.SHIRESO]
   },
   {
-    name: '白鍵 2: 白鍵の発展形',
+    name: '白鍵 2: 白鍵の和音',
     shortName: '白鍵 2',
     description: '黒・緑・オレンジ・紫・ピンク・茶色の6つの和音。',
     chords: [ChordDefinitions.RADOFA, ChordDefinitions.RESOSHI, ChordDefinitions.MISODO, ChordDefinitions.FARADO, ChordDefinitions.SOSHIRE, ChordDefinitions.SODOMI]
