@@ -87,8 +87,8 @@ export const ChordDefinitions = {
     symbol: 'C/G', 
     colorName: '茶色', 
     color: '#A3744D', 
-    notes: ['G3', 'C4', 'E4'], 
-    abc: '[G,CE]' 
+    notes: ['G4', 'C5', 'E5'], 
+    abc: '[Gce]' 
   },
 
   // --- 黒鍵の5個の和音 ---
