@@ -28,8 +28,9 @@ onMounted(() => {
     <main class="flex-grow px-6 pb-20 overflow-y-auto">
       <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
         <div class="text-center mb-10">
-          <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">基本情報</h1>
-          <p class="text-xs text-gray-400 font-medium tracking-widest uppercase">Company Info</p>
+          <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Company Info</h1>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">株式会社暁</h2>
+          <p class="text-xs text-gray-400 font-medium tracking-widest uppercase">Akatsuki Inc.</p>
         </div>
 
         <div class="space-y-6">
@@ -60,7 +61,7 @@ onMounted(() => {
 
           <div class="pb-4">
             <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">事業内容</p>
-            <p class="text-sm text-gray-700 font-bold leading-relaxed">デジタルコンテンツの企画・制作・運営</p>
+            <p class="text-sm text-gray-700 font-bold leading-relaxed">インターネットサービスの企画・開発・運営</p>
           </div>
         </div>
       </div>
