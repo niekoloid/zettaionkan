@@ -382,21 +382,25 @@ onUnmounted(() => {
               <template v-for="(chord, index) in whiteKeyChords" :key="chord.id">
                 <div 
                   @click="toggleChordSelection(chord.id)"
-                  class="flex items-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98]"
+                  class="flex items-center p-4 border rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98] group"
                   :class="[
                     selectedChordIds.has(chord.id) 
-                      ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900' : 'text-white'))
-                      : 'text-gray-900 border-opacity-30'
-                  ]"
-                  :style="[
-                    selectedChordIds.has(chord.id) 
-                      ? { backgroundColor: chord.color } 
-                      : { backgroundColor: chord.color + '14', borderColor: chord.color + '4D' }
+                      ? 'shadow-lg bg-white border-gray-200' 
+                      : 'bg-gray-50/50 border-gray-100 hover:border-gray-200 hover:bg-white'
                   ]"
                 >
+                  <!-- Top Highlight Bar -->
+                  <div 
+                    class="absolute top-0 left-0 right-0 h-1.5 transition-all duration-300"
+                    :style="{ 
+                      backgroundColor: selectedChordIds.has(chord.id) ? chord.color : 'transparent',
+                      opacity: selectedChordIds.has(chord.id) ? 1 : 0
+                    }"
+                  ></div>
+
                   <!-- Number Indicator Circle -->
                   <div 
-                    class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 text-[11px] font-black border border-black/5"
+                    class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 text-[11px] font-black shadow-sm"
                     :style="{ 
                       backgroundColor: chord.color, 
                       color: isLightColor(chord.color) ? '#000' : '#fff' 
@@ -406,13 +410,16 @@ onUnmounted(() => {
                   </div>
 
                   <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
-                    <span class="font-bold text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
-                    <span class="text-[11px] font-medium opacity-70 shrink-0">({{ chord.displayColor }})</span>
+                    <span class="font-bold text-gray-900 text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
+                    <span class="text-[11px] font-medium text-gray-400 shrink-0">({{ chord.displayColor }})</span>
                   </div>
 
                   <!-- Selection Mark -->
-                  <div v-if="selectedChordIds.has(chord.id)" class="absolute top-2 right-2 w-5 h-5 bg-black/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :class="isLightColor(chord.color) ? 'text-black' : 'text-white'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div 
+                    v-if="selectedChordIds.has(chord.id)" 
+                    class="absolute top-2 right-2 w-5 h-5 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100 shadow-sm transition-all"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :style="{ color: chord.color }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
@@ -450,21 +457,25 @@ onUnmounted(() => {
                 v-for="chord in blackKeyChords" 
                 :key="chord.id"
                 @click="toggleChordSelection(chord.id)"
-                class="flex items-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98]"
+                class="flex items-center p-4 border rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98] group"
                 :class="[
                   selectedChordIds.has(chord.id) 
-                    ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900' : 'text-white'))
-                    : 'text-gray-900 border-opacity-30'
-                ]"
-                :style="[
-                  selectedChordIds.has(chord.id) 
-                    ? { backgroundColor: chord.color } 
-                    : { backgroundColor: chord.color + '14', borderColor: chord.color + '4D' }
+                    ? 'shadow-lg bg-white border-gray-200' 
+                    : 'bg-gray-50/50 border-gray-100 hover:border-gray-200 hover:bg-white'
                 ]"
               >
+                <!-- Top Highlight Bar -->
+                <div 
+                  class="absolute top-0 left-0 right-0 h-1.5 transition-all duration-300"
+                  :style="{ 
+                    backgroundColor: selectedChordIds.has(chord.id) ? chord.color : 'transparent',
+                    opacity: selectedChordIds.has(chord.id) ? 1 : 0
+                  }"
+                ></div>
+
                 <!-- Number Indicator Circle -->
                 <div 
-                  class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 text-[11px] font-black border border-black/5"
+                  class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 text-[11px] font-black shadow-sm"
                   :style="{ 
                     backgroundColor: chord.color, 
                     color: isLightColor(chord.color) ? '#000' : '#fff' 
@@ -474,13 +485,16 @@ onUnmounted(() => {
                 </div>
 
                 <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
-                  <span class="font-bold text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
-                  <span class="text-[11px] font-medium opacity-70 shrink-0">({{ chord.displayColor }})</span>
+                  <span class="font-bold text-gray-900 text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
+                  <span class="text-[11px] font-medium text-gray-400 shrink-0">({{ chord.displayColor }})</span>
                 </div>
 
                 <!-- Selection Mark -->
-                <div v-if="selectedChordIds.has(chord.id)" class="absolute top-2 right-2 w-5 h-5 bg-black/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :class="isLightColor(chord.color) ? 'text-black' : 'text-white'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div 
+                  v-if="selectedChordIds.has(chord.id)" 
+                  class="absolute top-2 right-2 w-5 h-5 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100 shadow-sm transition-all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :style="{ color: chord.color }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
