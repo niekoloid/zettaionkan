@@ -108,24 +108,7 @@ const progressPercentage = computed(() => ((currentQuestionIndex.value + 1) / qu
 const isAllSelected = computed(() => selectedChordIds.value.size > 0)
 
 const currentLayoutChords = computed(() => {
-  // Check if any black key is selected (sortOrder > 9)
-  const hasBlackKeys = Array.from(selectedChordIds.value).some(id => {
-    const chord = TEST_CHORDS.find(c => c.id === id)
-    return chord && chord.sortOrder > 9
-  })
-
-  if (hasBlackKeys) {
-    // Return all 14 chords (white + gap + black)
-    // Indexes 0-8 are white keys
-    // Indexes 9-13 are black keys
-    // We want to insert a gap between white and black
-    const whiteKeys = TEST_CHORDS.slice(0, 9)
-    const blackKeys = TEST_CHORDS.slice(9)
-    return [...whiteKeys, { id: null }, ...blackKeys]
-  } else {
-    // Return only white keys (9 chords)
-    return TEST_CHORDS.filter(c => c.sortOrder <= 9)
-  }
+  return TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
 })
 
 const hasBlackKeysInSelection = computed(() => {
@@ -283,6 +266,17 @@ const submitAnswer = (chord) => {
       finishTest()
     }
   }, 1000)
+}
+const skipQuestion = () => {
+  if (resultMessage.value) return
+  
+  if (currentQuestionIndex.value < questions.value.length - 1) {
+    currentQuestionIndex.value++
+    resultMessage.value = null
+    setTimeout(() => playCurrentQuestion(), 300)
+  } else {
+    finishTest()
+  }
 }
 
 const finishTest = () => {
@@ -595,34 +589,32 @@ onUnmounted(() => {
 
         <!-- Answer Options -->
         <div class="w-full grid grid-cols-2 gap-3 mb-8">
-            <template v-for="(chord, index) in currentLayoutChords" :key="chord.id || index">
-              <div v-if="!chord.id" class="col-span-2 h-4"></div>
+            <template v-for="chord in currentLayoutChords" :key="chord.id">
               <button
-                v-else
                 @click="submitAnswer(chord)"
                 :disabled="!!resultMessage"
-                class="relative h-24 rounded-xl shadow-sm transition-all duration-200 active:scale-95 border-2"
+                class="relative h-28 rounded-2xl shadow-sm transition-all duration-200 active:scale-95 border-2"
                 :class="[
                   !!resultMessage 
                     ? (chord.id === currentQuestion.id 
-                        ? 'border-green-500 ring-4 ring-green-200 z-10' 
+                        ? 'border-green-500 ring-4 ring-green-200 z-10 scale-105' 
                         : 'opacity-20 border-transparent')
-                    : 'border-transparent hover:shadow-md'
+                    : 'border-transparent hover:shadow-md hover:scale-[1.02]'
                 ]"
                 :style="{ backgroundColor: chord.color }"
               >
-                <span 
-                  class="absolute top-2 left-3 text-xs font-bold"
-                  :class="isLightColor(chord.color) ? 'text-black/40' : 'text-white/60'"
-                >
-                  {{ chord.label }}
-                </span>
-                <span class="text-xs font-bold" :class="isLightColor(chord.color) ? 'text-black' : 'text-white'">
-                  <span v-html="namingConvention === 'german' ? chord.name : (chord.nameIt || chord.name)"></span>
-                </span>
               </button>
             </template>
         </div>
+
+        <!-- Skip Button -->
+        <button 
+          @click="skipQuestion"
+          :disabled="!!resultMessage"
+          class="w-full py-4 text-gray-400 font-bold hover:text-gray-600 transition-colors disabled:opacity-0"
+        >
+          この問題をスキップ
+        </button>
       </div>
 
       <!-- RESULT VIEW -->
