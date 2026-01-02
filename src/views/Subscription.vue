@@ -21,6 +21,15 @@ const plans = [
     features: ['Level 3〜5 (黒鍵) の全開放', 'すべてのアップデートへのアクセス'],
     color: 'bg-amber-50 border-amber-100 text-amber-600',
     popular: true
+  },
+  {
+    id: 'premium',
+    name: 'プレミアム',
+    price: 1980,
+    description: 'プロ仕様のSTEINWAY B音源を利用できる最高峰プラン。',
+    features: ['STEINWAY B音源の利用可能', '最高の音質でのトレーニング', '全レベル・全機能の開放'],
+    color: 'bg-gray-900 border-gray-800 text-white',
+    premium: true
   }
 ]
 
@@ -94,15 +103,15 @@ const handleSubscribe = async (tier) => {
         >
           <div v-if="plan.popular" class="absolute top-4 right-4 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">Popular</div>
           
-          <h3 class="text-lg font-bold mb-1 text-gray-900">{{ plan.name }}</h3>
-          <p class="text-[11px] mb-4 text-gray-400 font-medium">{{ plan.description }}</p>
+          <h3 class="text-lg font-bold mb-1" :class="plan.premium ? 'text-white' : 'text-gray-900'">{{ plan.name }}</h3>
+          <p class="text-[11px] mb-4 font-medium" :class="plan.premium ? 'text-gray-400' : 'text-gray-400'">{{ plan.description }}</p>
           
-          <div class="text-2xl font-black mb-6 text-gray-900">
-            ¥{{ plan.price.toLocaleString() }}<span class="text-xs font-normal text-gray-400 ml-1 italic">/月</span>
+          <div class="text-2xl font-black mb-6" :class="plan.premium ? 'text-white' : 'text-gray-900'">
+            ¥{{ plan.price.toLocaleString() }}<span class="text-xs font-normal ml-1 italic" :class="plan.premium ? 'text-gray-500' : 'text-gray-400'">/月</span>
           </div>
           
           <ul class="space-y-3 mb-8">
-            <li v-for="feature in plan.features" :key="feature" class="flex items-center text-[11px] font-bold text-gray-600">
+            <li v-for="feature in plan.features" :key="feature" class="flex items-center text-[11px] font-bold" :class="plan.premium ? 'text-gray-300' : 'text-gray-600'">
               <svg class="h-4 w-4 mr-2 shrink-0 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
               </svg>
@@ -113,7 +122,8 @@ const handleSubscribe = async (tier) => {
           <button 
             @click="handleSubscribe(plan.id)" 
             :disabled="isLoading"
-            class="w-full font-bold py-3.5 rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50 text-[13px] bg-gray-900 text-white hover:bg-gray-800 shadow-lg shadow-black/5"
+            class="w-full font-bold py-3.5 rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50 text-[13px] shadow-lg shadow-black/5"
+            :class="plan.premium ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'"
           >
             {{ isLoading ? '処理中...' : plan.name + 'プランに加入する' }}
           </button>
