@@ -45,46 +45,46 @@ onMounted(() => {
 
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">所在地</p>
-              <p class="text-sm text-gray-700 font-medium leading-relaxed">長野県長野市大字鶴賀緑町1418番地</p>
+              <p class="text-sm text-gray-700 font-bold leading-relaxed">長野県長野市大字鶴賀緑町1418番地</p>
             </div>
 
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">お問い合わせ先</p>
-              <p class="text-sm text-gray-700 font-medium leading-relaxed">
+              <p class="text-sm text-gray-700 font-bold leading-relaxed">
                 <router-link to="/contact" class="text-blue-500 hover:underline font-bold">お問い合わせフォーム</router-link>よりご連絡ください。
               </p>
             </div>
 
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">販売価格</p>
-              <p class="text-sm text-gray-700 font-medium leading-relaxed">各プランのご購入ページ（料金プラン画面）に表示された価格に基づきます。表示価格は消費税を含みます。</p>
+              <p class="text-sm text-gray-700 font-bold leading-relaxed">各プランのご購入ページ（料金プラン画面）に表示された価格に基づきます。表示価格は消費税を含みます。</p>
             </div>
 
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">商品代金以外に必要な料金</p>
-              <p class="text-sm text-gray-700 font-medium leading-relaxed">インターネット接続料金、通信料金等はお客様の負担となります。</p>
+              <p class="text-sm text-gray-700 font-bold leading-relaxed">インターネット接続料金、通信料金等はお客様の負担となります。</p>
             </div>
 
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">お支払い方法</p>
-              <p class="text-sm text-gray-700 font-medium leading-relaxed">クレジットカード（Stripe決済）</p>
+              <p class="text-sm text-gray-700 font-bold leading-relaxed">クレジットカード（Stripe決済）</p>
             </div>
 
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">代金の支払い時期</p>
-              <p class="text-sm text-gray-700 font-medium leading-relaxed">
+              <p class="text-sm text-gray-700 font-bold leading-relaxed">
                 初回お申込みから1ヶ月間は無料期間となります。無料期間終了後、1ヶ月分のご利用料金が前払いで決済されます。以後、解約が行われない限り1ヶ月ごとに自動更新されます。
               </p>
             </div>
 
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">サービスの提供時期</p>
-              <p class="text-sm text-gray-700 font-medium leading-relaxed">決済完了後（無料期間開始後）、直ちにご利用いただけます。</p>
+              <p class="text-sm text-gray-700 font-bold leading-relaxed">決済完了後（無料期間開始後）、直ちにご利用いただけます。</p>
             </div>
 
             <div class="pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">返品・キャンセルについて</p>
-              <p class="text-sm text-gray-600 leading-relaxed text-xs">
+              <p class="text-sm text-gray-700 font-bold leading-relaxed text-xs">
                 デジタルコンテンツの特性上、購入確定後の返品・キャンセルはお受けできません。解約は次回の更新日前日までにマイページの設定からお手続きいただけます。解約後も有効期間内はサービスをご利用いただけます。
               </p>
             </div>
