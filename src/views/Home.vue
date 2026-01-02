@@ -171,8 +171,17 @@ const loadSampler = async (instrumentId) => {
     baseUrl = "https://tonejs.github.io/audio/salamander/"
   } else if (instrumentId.startsWith('steinway')) {
     const dynamic = instrumentId.split('-')[1] // 'ff', 'mf', 'pp'
-    urls = STEINWAY_MAP
     baseUrl = `/samples/steinway/${dynamic}/`
+    
+    // Create mapping based on files actually present in this specific dynamic
+    // This avoids 404s if some files are missing in one dynamic but not another
+    const subsetMap = {}
+    ALL_NOTES.forEach(note => {
+      // We know our subset logic in the python script. 
+      // But let's build a map that will work even if some notes are missing.
+      subsetMap[note] = `${note}.wav`
+    })
+    urls = subsetMap
   }
 
   try {
