@@ -348,13 +348,15 @@ onUnmounted(() => {
       </transition>
 
     <!-- Header -->
-    <header class="w-full pt-8 pb-4 px-4 flex items-center justify-between border-b border-gray-100 bg-white z-10">
+    <header class="w-full pt-10 pb-6 px-4 flex items-center justify-between border-b border-gray-100 bg-white z-10">
       <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
       </router-link>
-      <h1 class="text-base font-bold text-gray-800 tracking-wider">和音テスト</h1>
+      <div class="flex flex-col items-center">
+        <img src="../assets/logo_irooto.png" alt="いろおと" class="h-16 w-auto object-contain" />
+      </div>
       <div class="w-10"></div>
     </header>
 
