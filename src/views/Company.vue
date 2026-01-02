@@ -35,11 +35,6 @@ onMounted(() => {
 
         <div class="space-y-6">
           <div class="border-b border-gray-100 pb-4">
-            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">社名</p>
-            <p class="text-sm text-gray-700 font-bold leading-relaxed">株式会社暁</p>
-          </div>
-
-          <div class="border-b border-gray-100 pb-4">
             <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">設立</p>
             <p class="text-sm text-gray-700 font-bold leading-relaxed">2025年4月30日</p>
           </div>
