@@ -380,35 +380,32 @@ onUnmounted(() => {
               <template v-for="(chord, index) in whiteKeyChords" :key="chord.id">
                 <div 
                   @click="toggleChordSelection(chord.id)"
-                  class="relative flex items-center p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 group"
+                  class="flex items-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98]"
                   :class="[
                     selectedChordIds.has(chord.id) 
-                      ? 'bg-white shadow-md border-transparent' 
-                      : 'bg-white border-gray-100 hover:border-gray-200'
+                      ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900' : 'text-white'))
+                      : 'text-gray-900 border-opacity-30'
                   ]"
-                  :style="selectedChordIds.has(chord.id) ? { borderColor: chord.color } : {}"
+                  :style="[
+                    selectedChordIds.has(chord.id) 
+                      ? { backgroundColor: chord.color } 
+                      : { backgroundColor: chord.color + '14', borderColor: chord.color + '4D' }
+                  ]"
                 >
-                  <!-- Color Indicator Bar for Unselected -->
-                  <div 
-                    v-if="!selectedChordIds.has(chord.id)"
-                    class="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-lg opacity-30 group-hover:opacity-60 transition-opacity"
-                    :style="{ backgroundColor: chord.color }"
-                  ></div>
-
                   <!-- Number Indicator Circle -->
                   <div 
-                    class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 transition-all duration-200 border text-[11px] font-black"
-                    :class="selectedChordIds.has(chord.id) ? 'border-transparent scale-110' : 'border-gray-200 bg-gray-50 text-gray-300'"
-                    :style="selectedChordIds.has(chord.id) ? { backgroundColor: chord.color, color: isLightColor(chord.color) ? '#000' : '#fff' } : {}"
+                    class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 text-[11px] font-black border border-black/5"
+                    :style="{ 
+                      backgroundColor: chord.color, 
+                      color: isLightColor(chord.color) ? '#000' : '#fff' 
+                    }"
                   >
                     {{ chord.label }}
                   </div>
 
-                  <div>
-                    <p class="text-[10px] font-bold mb-0.5 transition-colors" :class="selectedChordIds.has(chord.id) ? 'text-gray-500' : 'text-gray-400'">{{ chord.label }} {{ chord.displayColor }}</p>
-                    <p class="text-sm font-bold transition-colors" :class="selectedChordIds.has(chord.id) ? 'text-gray-900' : 'text-gray-400'">
-                      <span v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
-                    </p>
+                  <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
+                    <span class="font-bold text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
+                    <span class="text-[8px] font-medium opacity-60 shrink-0">({{ chord.displayColor }})</span>
                   </div>
                 </div>
               </template>
@@ -444,37 +441,34 @@ onUnmounted(() => {
                 v-for="chord in blackKeyChords" 
                 :key="chord.id"
                 @click="toggleChordSelection(chord.id)"
-                class="relative flex items-center p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 group"
+                class="flex items-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98]"
                 :class="[
                   selectedChordIds.has(chord.id) 
-                    ? 'bg-white shadow-md border-transparent' 
-                    : 'bg-white border-gray-100 hover:border-gray-200'
+                    ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900' : 'text-white'))
+                    : 'text-gray-900 border-opacity-30'
                 ]"
-                :style="selectedChordIds.has(chord.id) ? { borderColor: chord.color } : {}"
+                :style="[
+                  selectedChordIds.has(chord.id) 
+                    ? { backgroundColor: chord.color } 
+                    : { backgroundColor: chord.color + '14', borderColor: chord.color + '4D' }
+                ]"
               >
-               <!-- Color Indicator Bar for Unselected -->
-                  <div 
-                    v-if="!selectedChordIds.has(chord.id)"
-                    class="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-lg opacity-30 group-hover:opacity-60 transition-opacity"
-                    :style="{ backgroundColor: chord.color }"
-                  ></div>
-
                 <!-- Number Indicator Circle -->
                 <div 
-                  class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 transition-all duration-200 border text-[11px] font-black"
-                  :class="selectedChordIds.has(chord.id) ? 'border-transparent scale-110' : 'border-gray-200 bg-gray-50 text-gray-300'"
-                  :style="selectedChordIds.has(chord.id) ? { backgroundColor: chord.color, color: isLightColor(chord.color) ? '#000' : '#fff' } : {}"
+                  class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 text-[11px] font-black border border-black/5"
+                  :style="{ 
+                    backgroundColor: chord.color, 
+                    color: isLightColor(chord.color) ? '#000' : '#fff' 
+                  }"
                 >
                   {{ chord.label }}
                 </div>
 
-                <div>
-                  <p class="text-[10px] font-bold mb-0.5 transition-colors" :class="selectedChordIds.has(chord.id) ? 'text-gray-500' : 'text-gray-400'">{{ chord.label }} {{ chord.displayColor }}</p>
-                  <p class="text-sm font-bold transition-colors" :class="selectedChordIds.has(chord.id) ? 'text-gray-900' : 'text-gray-400'">
-                    <span v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
-                  </p>
+                <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
+                  <span class="font-bold text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
+                  <span class="text-[8px] font-medium opacity-60 shrink-0">({{ chord.displayColor }})</span>
                 </div>
-            </div>
+              </div>
           </div>
         </section>
 
