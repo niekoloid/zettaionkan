@@ -164,9 +164,17 @@ onMounted(async () => {
     loadSampler('yamaha')
   }
   
-  // Render empty score initially
+  // Set initial chord and render its score
+  if (levels.value.length > 0 && levels.value[0].chords.length > 0) {
+    currentChord.value = levels.value[0].chords[0]
+  }
+
   nextTick(() => {
-    renderScore('y')
+    if (currentChord.value) {
+      renderScore(currentChord.value.abc)
+    } else {
+      renderScore('y')
+    }
   })
 })
 
