@@ -208,7 +208,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 font-['Noto_Sans_JP'] flex flex-col items-center max-w-3xl mx-auto relative shadow-2xl bg-white overflow-hidden">
+  <div class="min-h-screen bg-white font-['Noto_Sans_JP']">
+    <div class="min-h-screen flex flex-col items-center max-w-3xl mx-auto relative overflow-hidden">
     
     <!-- Header -->
     <header class="w-full pt-8 pb-4 px-4 flex items-center justify-between border-b border-gray-100 bg-white z-10">
@@ -453,6 +454,7 @@ onUnmounted(() => {
       </button>
     </div>
 
+    </div>
   </div>
 </template>
 

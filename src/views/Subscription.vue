@@ -73,7 +73,8 @@ const handleSubscribe = async (tier) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex flex-col max-w-3xl mx-auto relative overflow-hidden shadow-2xl font-['Noto_Sans_JP']">
+  <div class="min-h-screen bg-white font-['Noto_Sans_JP']">
+    <div class="min-h-screen flex flex-col max-w-3xl mx-auto relative overflow-hidden">
     <!-- Header -->
     <header class="pt-12 pb-8 px-4 flex items-center justify-between relative shrink-0">
       <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors group z-10">
@@ -139,5 +140,6 @@ const handleSubscribe = async (tier) => {
     <footer class="text-center text-gray-300 text-[10px] pb-8 shrink-0">
       &copy; 2026 Akatsuki Inc.
     </footer>
+    </div>
   </div>
 </template>
