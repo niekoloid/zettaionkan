@@ -40,17 +40,17 @@ onMounted(() => {
 
           <div class="border-b border-gray-100 pb-4">
             <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">設立</p>
-            <p class="text-sm text-gray-700 font-medium leading-relaxed">2025年4月30日</p>
+            <p class="text-sm text-gray-700 font-bold leading-relaxed">2025年4月30日</p>
           </div>
 
           <div class="border-b border-gray-100 pb-4">
             <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">資本金</p>
-            <p class="text-sm text-gray-700 font-medium leading-relaxed">300,000円</p>
+            <p class="text-sm text-gray-700 font-bold leading-relaxed">300,000円</p>
           </div>
 
           <div class="border-b border-gray-100 pb-4">
             <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">所在地</p>
-            <p class="text-sm text-gray-700 font-medium leading-relaxed">長野県長野市大字鶴賀緑町1418番地</p>
+            <p class="text-sm text-gray-700 font-bold leading-relaxed">長野県長野市大字鶴賀緑町1418番地</p>
           </div>
 
           <div class="border-b border-gray-100 pb-4">
@@ -60,7 +60,7 @@ onMounted(() => {
 
           <div class="pb-4">
             <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">事業内容</p>
-            <p class="text-sm text-gray-700 font-medium leading-relaxed">デジタルコンテンツの企画・制作・運営</p>
+            <p class="text-sm text-gray-700 font-bold leading-relaxed">デジタルコンテンツの企画・制作・運営</p>
           </div>
         </div>
       </div>
