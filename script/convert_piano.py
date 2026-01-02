@@ -5,7 +5,7 @@ from pydub.silence import detect_leading_silence
 # ==========================================
 # 設定エリア
 # ==========================================
-INPUT_FOLDER = "Piano.mf.Steinway"  # 解凍したフォルダ名に合わせて変更してください
+INPUT_FOLDER = "Steinway_Raw/mf"    # 解凍したフォルダ名に合わせて変更してください
 OUTPUT_FOLDER = "processed_sounds"  # 出力先フォルダ
 TARGET_FORMAT = "mp3"               # mp3 または m4a (iOS推奨)
 BITRATE = "192k"                    # 音質 (128k, 192k, 256kなど)

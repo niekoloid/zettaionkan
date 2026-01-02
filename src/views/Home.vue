@@ -16,6 +16,22 @@ const userTier = ref('free') // 'free' | 'entry' | 'standard' | 'premium'
 const selectedInstrument = ref('yamaha') // 'yamaha' | 'steinway' | 'xylophone'
 const activeLevelIndex = ref(0)
 let yamahaSampler = null
+let steinwaySampler = null
+
+const STEINWAY_SAMPLES = {
+  "A1": "A1.wav", "A2": "A2.wav", "A3": "A3.wav", "A4": "A4.wav", "A5": "A5.wav", "A6": "A6.wav", "A7": "A7.wav",
+  "Ab1": "Ab1.wav", "Ab2": "Ab2.wav", "Ab3": "Ab3.wav", "Ab4": "Ab4.wav", "Ab5": "Ab5.wav", "Ab6": "Ab6.wav", "Ab7": "Ab7.wav",
+  "B0": "B0.wav", "B1": "B1.wav", "B2": "B2.wav", "B3": "B3.wav", "B4": "B4.wav", "B5": "B5.wav", "B6": "B6.wav", "B7": "B7.wav",
+  "Bb1": "Bb1.wav", "Bb2": "Bb2.wav", "Bb3": "Bb3.wav", "Bb4": "Bb4.wav", "Bb5": "Bb5.wav", "Bb6": "Bb6.wav", "Bb7": "Bb7.wav",
+  "C1": "C1.wav", "C2": "C2.wav", "C3": "C3.wav", "C4": "C4.wav", "C5": "C5.wav", "C6": "C6.wav", "C7": "C7.wav", "C8": "C8.wav",
+  "D1": "D1.wav", "D2": "D2.wav", "D3": "D3.wav", "D4": "D4.wav", "D5": "D5.wav", "D6": "D6.wav", "D7": "D7.wav",
+  "Db1": "Db1.wav", "Db2": "Db2.wav", "Db3": "Db3.wav", "Db4": "Db4.wav", "Db5": "Db5.wav", "Db6": "Db6.wav", "Db7": "Db7.wav",
+  "E1": "E1.wav", "E2": "E2.wav", "E3": "E3.wav", "E4": "E4.wav", "E5": "E5.wav", "E6": "E6.wav", "E7": "E7.wav",
+  "Eb1": "Eb1.wav", "Eb2": "Eb2.wav", "Eb3": "Eb3.wav", "Eb4": "Eb4.wav", "Eb5": "Eb5.wav", "Eb6": "Eb6.wav", "Eb7": "Eb7.wav",
+  "F1": "F1.wav", "F2": "F2.wav", "F3": "F3.wav", "F4": "F4.wav", "F5": "F5.wav", "F6": "F6.wav", "F7": "F7.wav",
+  "G1": "G1.wav", "G2": "G2.wav", "G3": "G3.wav", "G4": "G4.wav", "G5": "G5.wav", "G6": "G6.wav", "G7": "G7.wav",
+  "Gb1": "Gb1.wav", "Gb2": "Gb2.wav", "Gb3": "Gb3.wav", "Gb4": "Gb4.wav", "Gb5": "Gb5.wav", "Gb6": "Gb6.wav", "Gb7": "Gb7.wav"
+}
 
 // Yamaha C5 (Salamander) mapping
 const YAMAHA_C5_SAMPLES = {
@@ -91,6 +107,14 @@ onMounted(async () => {
         if (selectedInstrument.value === 'yamaha') isSamplerLoaded.value = true
       }
     }).toDestination()
+
+    steinwaySampler = new Tone.Sampler({
+      urls: STEINWAY_SAMPLES,
+      baseUrl: "/samples/steinway/",
+      onload: () => {
+        if (selectedInstrument.value === 'steinway') isSamplerLoaded.value = true
+      }
+    }).toDestination()
   } catch (err) {
     console.error('Tonejs initialization error:', err)
   }
@@ -117,7 +141,7 @@ const renderScore = (abc) => {
 const playChord = (notes) => {
   if (Tone.context.state !== 'running') Tone.start()
   
-  let currentSampler = yamahaSampler
+  let currentSampler = selectedInstrument.value === 'steinway' ? steinwaySampler : yamahaSampler
 
   if (currentSampler && currentSampler.loaded) {
     currentSampler.triggerAttackRelease(notes, 3)
@@ -176,10 +200,12 @@ const playChord = (notes) => {
 const selectInstrument = (instrument) => {
   selectedInstrument.value = instrument
   
-  if (yamahaSampler && yamahaSampler.loaded) {
+  const currentSampler = instrument === 'steinway' ? steinwaySampler : yamahaSampler
+  
+  if (currentSampler && currentSampler.loaded) {
     isSamplerLoaded.value = true
     if (Tone.context.state !== 'running') Tone.start()
-    yamahaSampler.triggerAttackRelease('C4', '8n')
+    currentSampler.triggerAttackRelease('C4', '8n')
   } else {
     isSamplerLoaded.value = false
   }
@@ -418,14 +444,23 @@ const isLightColor = (hex) => {
       <div class="space-y-4">
         <section class="flex flex-col items-center">
           <!-- Instrument Selector -->
-          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200">
+          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200 w-full max-w-[280px]">
             <button 
-              class="px-6 py-1.5 rounded-lg text-[10px] font-bold bg-white shadow-sm text-gray-900 flex items-center mx-auto"
+              @click="selectInstrument('yamaha')"
+              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
+              :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
-              <span class="text-gray-400 mr-2 font-medium">音源</span>
-              YAMAHA C5 Grand Piano
+              YAMAHA C5
+            </button>
+            <button 
+              @click="selectInstrument('steinway')"
+              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
+              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+            >
+              STEINWAY B
             </button>
           </div>
+          <p class="text-[9px] text-gray-400 font-medium">音源: {{ selectedInstrument === 'steinway' ? 'Steinway & Sons Model B' : 'Yamaha C5 Grand Piano' }}</p>
         </section>
       </div>
 
