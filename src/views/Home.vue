@@ -179,9 +179,8 @@ const loadSampler = async (instrumentId) => {
   if (instrumentId === 'yamaha') {
     urls = YAMAHA_MAP
     baseUrl = "https://tonejs.github.io/audio/salamander/"
-  } else if (instrumentId.startsWith('steinway')) {
-    const dynamic = instrumentId.split('-')[1] // 'ff', 'mf', 'pp'
-    baseUrl = `/samples/steinway/${dynamic}/`
+  } else if (instrumentId === 'steinway') {
+    baseUrl = `/samples/steinway/ff/`
     urls = STEINWAY_MAP
   }
 
@@ -567,43 +566,24 @@ const isLightColor = (hex) => {
           <p class="text-[10px] text-gray-400 font-bold mb-2 uppercase tracking-widest">Sound Source</p>
           
           <!-- Instrument Selector -->
-          <div class="flex flex-col w-full max-w-[280px] space-y-2">
-            <!-- Yamaha Button -->
+          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200 w-full max-w-[280px]">
             <button 
               @click="selectInstrument('yamaha')"
-              class="w-full py-2.5 rounded-xl text-[11px] font-bold transition-all border-2 text-center"
-              :class="selectedInstrument === 'yamaha' ? 'bg-gray-900 text-white border-gray-900 shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'"
+              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
+              :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
-              YAMAHA C5 Grand Piano
+              YAMAHA C5
             </button>
-
-            <!-- Steinway Dynamics Buttons -->
-            <div class="grid grid-cols-3 gap-2">
-              <button 
-                @click="selectInstrument('steinway-ff')"
-                class="py-2 rounded-xl text-[10px] font-bold transition-all border-2 text-center"
-                :class="selectedInstrument === 'steinway-ff' ? 'bg-gray-900 text-white border-gray-900 shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'"
-              >
-                STEINWAY ff
-              </button>
-              <button 
-                @click="selectInstrument('steinway-mf')"
-                class="py-2 rounded-xl text-[10px] font-bold transition-all border-2 text-center"
-                :class="selectedInstrument === 'steinway-mf' ? 'bg-gray-900 text-white border-gray-900 shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'"
-              >
-                STEINWAY mf
-              </button>
-              <button 
-                @click="selectInstrument('steinway-pp')"
-                class="py-2 rounded-xl text-[10px] font-bold transition-all border-2 text-center"
-                :class="selectedInstrument === 'steinway-pp' ? 'bg-gray-900 text-white border-gray-900 shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'"
-              >
-                STEINWAY pp
-              </button>
-            </div>
+            <button 
+              @click="selectInstrument('steinway')"
+              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
+              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+            >
+              STEINWAY B
+            </button>
           </div>
-          <p v-if="isSamplerLoaded" class="text-[9px] text-gray-400 font-medium mt-3">
-            Ready: {{ selectedInstrument.toUpperCase() }}
+          <p v-if="isSamplerLoaded" class="text-[9px] text-gray-400 font-medium">
+            READY: {{ selectedInstrument === 'steinway' ? 'Steinway & Sons Model B (ff)' : 'Yamaha C5 Grand Piano' }}
           </p>
         </section>
       </div>

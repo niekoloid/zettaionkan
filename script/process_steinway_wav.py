@@ -9,7 +9,7 @@ import array
 # ==========================================
 BASE_INPUT_FOLDER = "Steinway_Raw"
 BASE_OUTPUT_FOLDER = "public/samples/steinway"
-DYNAMICS = ["ff", "mf", "pp"]
+DYNAMICS = ["ff"]
 SILENCE_THRESHOLD = 500  # Amplitude threshold for silence
 MAX_DURATION_SEC = 4.0   # Trim to 4 seconds for lightweight
 # Select subset of notes (minor 3rd spacing: C, Eb, Gb, A)
