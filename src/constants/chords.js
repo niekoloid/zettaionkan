@@ -34,32 +34,32 @@ export const ChordDefinitions = {
 
 export const Levels = [
   {
-    name: '白鍵 1: 基本の3和音',
-    shortName: '白鍵 1',
+    name: 'STEP 1: はじまりの3和音',
+    shortName: 'STEP 1',
     description: 'あか・あお・きいろの基本となる3つの和音です。',
     chords: [ChordDefinitions.DOMISO, ChordDefinitions.DOFARA, ChordDefinitions.SHIRESO]
   },
   {
-    name: '白鍵 2: 白鍵の和音',
-    shortName: '白鍵 2',
-    description: 'くろ・みどり・おれんじ・むらさき・ぴんく・ちゃいろの6つの和音。',
+    name: 'STEP 2: 白鍵のハーモニー',
+    shortName: 'STEP 2',
+    description: '白鍵のすべての和音（6個）を習得しましょう。',
     chords: [ChordDefinitions.RADOFA, ChordDefinitions.RESOSHI, ChordDefinitions.MISODO, ChordDefinitions.FARADO, ChordDefinitions.SOSHIRE, ChordDefinitions.SODOMI]
   },
   {
-    name: '黒鍵 1: 黒鍵の和音（基本形）',
-    shortName: '黒鍵 1',
-    description: 'きみどり・はだいろ・ふじいろ・はいいろ・みずいろの5つの和音（基本形）。',
+    name: 'STEP 3: 黒鍵の彩り',
+    shortName: 'STEP 3',
+    description: '黒鍵を含む5つの和音を学び、色の世界を広げます。',
     chords: [ChordDefinitions.LA_CIS_MI, ChordDefinitions.RE_FIS_LA, ChordDefinitions.MI_GIS_SI, ChordDefinitions.BE_RE_FA, ChordDefinitions.ES_SO_BE]
   },
   {
-    name: '黒鍵 2: 黒鍵の和音（第1転回形）',
-    shortName: '黒鍵 2',
+    name: 'STEP 4: 黒鍵の響き（転回形 I）',
+    shortName: 'STEP 4',
     description: '黒鍵を含む和音の第1転回形を学びます。',
     chords: [ChordDefinitions.CIS_MI_LA, ChordDefinitions.FIS_LA_RE, ChordDefinitions.GIS_SI_MI, ChordDefinitions.RE_FA_BE, ChordDefinitions.SO_BE_ES]
   },
   {
-    name: '黒鍵 3: 黒鍵の和音（第2転回形）',
-    shortName: '黒鍵 3',
+    name: 'STEP 5: 黒鍵の響き（転回形 II）',
+    shortName: 'STEP 5',
     description: '黒鍵を含む和音の第2転回形を学びます。',
     chords: [ChordDefinitions.MI_LA_CIS, ChordDefinitions.LA_RE_FIS, ChordDefinitions.SI_MI_GIS, ChordDefinitions.FA_BE_RE, ChordDefinitions.BE_ES_SO]
   }

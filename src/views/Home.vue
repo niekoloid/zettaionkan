@@ -8,7 +8,7 @@ import abcjs from 'abcjs'
 import { Levels } from '../constants/chords.js'
 
 const router = useRouter()
-const levels = ref(Levels.filter(l => !['黒鍵 2', '黒鍵 3'].includes(l.shortName)))
+const levels = ref(Levels.filter(l => !['STEP 4', 'STEP 5'].includes(l.shortName)))
 
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
@@ -656,16 +656,39 @@ const isLightColor = (hex) => {
       </div>
 
       <!-- Footer Links -->
-      <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col items-center space-y-4">
-        <router-link to="/method" class="text-xs text-gray-400 hover:text-gray-600 font-medium">トレーニング方法</router-link>
-        <router-link to="/test" class="text-xs text-blue-500 hover:text-blue-600 font-bold">和音テスト</router-link>
-        <router-link to="/about" class="text-xs text-gray-400 hover:text-gray-600 font-medium">サービス概要</router-link>
-        <router-link to="/company" class="text-xs text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
-        <router-link to="/privacy" class="text-xs text-gray-400 hover:text-gray-600 font-medium">プライバシーポリシー</router-link>
-        <router-link to="/legal" class="text-xs text-gray-400 hover:text-gray-600 font-medium">特定商取引法に基づく表記</router-link>
-        <router-link to="/contact" class="text-xs text-gray-400 hover:text-gray-600 font-medium">お問い合わせ</router-link>
-        <router-link to="/subscription" class="text-xs text-amber-500 hover:text-amber-600 font-bold">料金プラン</router-link>
-        <footer class="text-center text-gray-300 text-[10px] pt-4 pb-8">
+      <div class="mt-12 pt-10 border-t border-gray-100 pb-12">
+        <div class="grid grid-cols-2 gap-x-8 gap-y-10 px-4">
+          <!-- Training Group -->
+          <div class="space-y-4">
+            <p class="text-[10px] font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Training</p>
+            <div class="flex flex-col space-y-3">
+              <router-link to="/test" class="text-xs text-blue-500 hover:text-blue-600 font-bold">和音テスト</router-link>
+              <router-link to="/method" class="text-xs text-gray-500 hover:text-gray-900 font-medium">トレーニング方法</router-link>
+              <router-link to="/subscription" class="text-xs text-amber-500 hover:text-amber-600 font-bold tracking-tight">料金プラン</router-link>
+            </div>
+          </div>
+
+          <!-- Support Group -->
+          <div class="space-y-4">
+            <p class="text-[10px] font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Support</p>
+            <div class="flex flex-col space-y-3">
+              <router-link to="/about" class="text-xs text-gray-500 hover:text-gray-900 font-medium">サービス概要</router-link>
+              <router-link to="/contact" class="text-xs text-gray-500 hover:text-gray-900 font-medium">お問い合わせ</router-link>
+            </div>
+          </div>
+
+          <!-- Legal Group -->
+          <div class="col-span-2 space-y-4 mt-4">
+            <p class="text-[10px] font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Legal/Corporate</p>
+            <div class="flex flex-wrap gap-x-6 gap-y-3">
+              <router-link to="/company" class="text-[11px] text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
+              <router-link to="/privacy" class="text-[11px] text-gray-400 hover:text-gray-600 font-medium">プライバシーポリシー</router-link>
+              <router-link to="/legal" class="text-[11px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">特定商取引法に基づく表記</router-link>
+            </div>
+          </div>
+        </div>
+
+        <footer class="text-center text-gray-300 text-[10px] mt-16">
           &copy; 2026 Akatsuki Inc.
         </footer>
       </div>
