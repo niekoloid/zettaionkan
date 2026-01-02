@@ -242,20 +242,8 @@ const playChord = async (notes) => {
   const currentSampler = samplers[selectedInstrument.value]
 
   if (currentSampler && isSamplerLoaded.value) {
-    // 1. Play original chord
     currentSampler.triggerAttackRelease(notes, 3)
     console.log('Playing chord:', notes)
-
-    // 2. Play individual notes after a short delay (for verification/training)
-    // We use a small delay between each note
-    setTimeout(() => {
-      notes.forEach((note, i) => {
-        setTimeout(() => {
-          currentSampler.triggerAttackRelease(note, 1.5, `+${0}`)
-          console.log('Playing individual note:', note)
-        }, i * 600) // 0.6s interval between notes
-      })
-    }, 2500) // Start individual notes after 2.5s (chord is 3s)
   } else {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
   }
