@@ -89,7 +89,6 @@ const selectedChordIds = ref(new Set()) // Default empty
 
 const whiteKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder <= 9))
 const blackKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder > 9))
-const questionCountPromise = ref(20)
 const questions = ref([])
 const currentQuestionIndex = ref(0)
 const score = ref(0)
@@ -105,7 +104,7 @@ const namingConvention = ref('italian') // 'german' | 'italian'
 
 // === Computed ===
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
-const progressPercentage = computed(() => ((currentQuestionIndex.value + 1) / questions.value.length) * 100)
+const currentQuestionCount = computed(() => currentQuestionIndex.value + 1)
 const isAllSelected = computed(() => selectedChordIds.value.size > 0)
 
 const currentLayoutChords = computed(() => {
@@ -215,25 +214,11 @@ const selectInstrument = (instrumentId) => {
   
   loadSampler(instrumentId)
 }
-
 const startTest = () => {
-  // Generate questions
   const availableChords = TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
   if (availableChords.length === 0) return
 
-  const count = questionCountPromise.value
-  const newQuestions = []
-
-  while (newQuestions.length < count) {
-    const deck = [...availableChords]
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
-    newQuestions.push(...deck)
-  }
-  
-  questions.value = newQuestions.slice(0, count)
+  questions.value = [availableChords[Math.floor(Math.random() * availableChords.length)]]
   currentQuestionIndex.value = 0
   score.value = 0
   testHistory.value = []
@@ -267,13 +252,14 @@ const submitAnswer = (chord) => {
   resultMessage.value = isCorrect ? 'correct' : 'incorrect'
   
   setTimeout(() => {
-    if (currentQuestionIndex.value < questions.value.length - 1) {
-      currentQuestionIndex.value++
-      resultMessage.value = null
-      setTimeout(() => playCurrentQuestion(), 300)
-    } else {
-      finishTest()
-    }
+    // Generate next question
+    const availableChords = TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
+    const nextChord = availableChords[Math.floor(Math.random() * availableChords.length)]
+    questions.value.push(nextChord)
+    
+    currentQuestionIndex.value++
+    resultMessage.value = null
+    setTimeout(() => playCurrentQuestion(), 300)
   }, 1000)
 }
 const skipQuestion = () => {
@@ -286,13 +272,13 @@ const skipQuestion = () => {
     isSkipped: true
   })
 
-  if (currentQuestionIndex.value < questions.value.length - 1) {
-    currentQuestionIndex.value++
-    resultMessage.value = null
-    setTimeout(() => playCurrentQuestion(), 300)
-  } else {
-    finishTest()
-  }
+  const availableChords = TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
+  const nextChord = availableChords[Math.floor(Math.random() * availableChords.length)]
+  questions.value.push(nextChord)
+
+  currentQuestionIndex.value++
+  resultMessage.value = null
+  setTimeout(() => playCurrentQuestion(), 300)
 }
 
 const finishTest = () => {
@@ -376,21 +362,7 @@ onUnmounted(() => {
       
       <!-- SETTINGS VIEW -->
       <div v-if="view === 'settings'" class="space-y-8 pb-20">
-        <!-- Number of Questions -->
-        <section class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">問題数</label>
-          <div class="flex items-center space-x-2">
-            <button 
-              v-for="count in [10, 20, 50, 100]" 
-              :key="count"
-              @click="questionCountPromise = count"
-              class="flex-1 py-3 rounded-xl font-bold transition-all text-sm border-2"
-              :class="questionCountPromise === count ? 'bg-gray-900 text-white border-gray-900 shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-2 hover:border-gray-200'"
-            >
-              {{ count }}問
-            </button>
-          </div>
-        </section>
+        <!-- Number of Questions (REMOVED) -->
 
         <!-- Chord Selection -->
         <section>
@@ -423,15 +395,13 @@ onUnmounted(() => {
                     :style="{ backgroundColor: chord.color }"
                   ></div>
 
-                  <!-- Check Circle -->
+                  <!-- Number Indicator Circle -->
                   <div 
-                    class="w-5 h-5 rounded-full flex items-center justify-center mr-3 shrink-0 transition-all duration-200 border"
-                    :class="selectedChordIds.has(chord.id) ? 'border-transparent scale-110' : 'border-gray-200 bg-gray-50'"
-                    :style="selectedChordIds.has(chord.id) ? { backgroundColor: chord.color } : {}"
+                    class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 transition-all duration-200 border text-[11px] font-black"
+                    :class="selectedChordIds.has(chord.id) ? 'border-transparent scale-110' : 'border-gray-200 bg-gray-50 text-gray-300'"
+                    :style="selectedChordIds.has(chord.id) ? { backgroundColor: chord.color, color: isLightColor(chord.color) ? '#000' : '#fff' } : {}"
                   >
-                    <svg v-if="selectedChordIds.has(chord.id)" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :class="isLightColor(chord.color) ? 'text-gray-900' : 'text-white'" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
+                    {{ chord.label }}
                   </div>
 
                   <div>
@@ -489,15 +459,13 @@ onUnmounted(() => {
                     :style="{ backgroundColor: chord.color }"
                   ></div>
 
-                <!-- Check Circle -->
+                <!-- Number Indicator Circle -->
                 <div 
-                  class="w-5 h-5 rounded-full flex items-center justify-center mr-3 shrink-0 transition-all duration-200 border"
-                  :class="selectedChordIds.has(chord.id) ? 'border-transparent scale-110' : 'border-gray-200 bg-gray-50'"
-                  :style="selectedChordIds.has(chord.id) ? { backgroundColor: chord.color } : {}"
+                  class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 transition-all duration-200 border text-[11px] font-black"
+                  :class="selectedChordIds.has(chord.id) ? 'border-transparent scale-110' : 'border-gray-200 bg-gray-50 text-gray-300'"
+                  :style="selectedChordIds.has(chord.id) ? { backgroundColor: chord.color, color: isLightColor(chord.color) ? '#000' : '#fff' } : {}"
                 >
-                  <svg v-if="selectedChordIds.has(chord.id)" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :class="isLightColor(chord.color) ? 'text-gray-900' : 'text-white'" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                  </svg>
+                  {{ chord.label }}
                 </div>
 
                 <div>
@@ -543,7 +511,15 @@ onUnmounted(() => {
         <!-- Progress & Replay -->
         <div class="w-full mb-8">
           <div class="flex justify-between items-end text-xs font-bold text-gray-400 mb-2">
-            <span>Question {{ currentQuestionIndex + 1 }} / {{ questions.length }}</span>
+            <span>Question {{ currentQuestionCount }}</span>
+            <button 
+              @click="finishTest"
+              class="text-[10px] text-red-400 hover:text-red-500 font-black border border-red-100 rounded-lg px-3 py-1 bg-red-50/30"
+            >
+              トレーニングを終了する
+            </button>
+          </div>
+          <div class="flex justify-end mt-2">
             <button 
               @click="playCurrentQuestion" 
               class="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center space-x-1"
@@ -553,12 +529,6 @@ onUnmounted(() => {
               </svg>
               <span>もう一度聞く</span>
             </button>
-          </div>
-          <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-            <div 
-              class="h-full bg-gray-900 transition-all duration-300 ease-out"
-              :style="{ width: `${progressPercentage}%` }"
-            ></div>
           </div>
         </div>
 
