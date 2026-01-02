@@ -405,7 +405,7 @@ onUnmounted(() => {
 
                   <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
                     <span class="font-bold text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
-                    <span class="text-[8px] font-medium opacity-60 shrink-0">({{ chord.displayColor }})</span>
+                    <span class="text-[11px] font-medium opacity-70 shrink-0">({{ chord.displayColor }})</span>
                   </div>
                 </div>
               </template>
@@ -466,7 +466,7 @@ onUnmounted(() => {
 
                 <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
                   <span class="font-bold text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
-                  <span class="text-[8px] font-medium opacity-60 shrink-0">({{ chord.displayColor }})</span>
+                  <span class="text-[11px] font-medium opacity-70 shrink-0">({{ chord.displayColor }})</span>
                 </div>
               </div>
           </div>
