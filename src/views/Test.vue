@@ -128,6 +128,13 @@ const currentLayoutChords = computed(() => {
   }
 })
 
+const hasBlackKeysInSelection = computed(() => {
+  return Array.from(selectedChordIds.value).some(id => {
+    const chord = TEST_CHORDS.find(c => c.id === id)
+    return chord && chord.sortOrder > 9
+  })
+})
+
 // === Methods ===
 const toggleChordSelection = async (id) => {
   // Find the selected chord and its sort order
@@ -510,7 +517,7 @@ onUnmounted(() => {
           <!-- Common Settings -->
           <div class="mt-8 pb-32 w-full border-t border-gray-100 pt-8 flex flex-col items-center space-y-8">
             <!-- Naming Convention Selector -->
-            <section class="flex flex-col items-center w-full px-4">
+            <section v-if="hasBlackKeysInSelection" class="flex flex-col items-center w-full px-4">
               <p class="text-[10px] text-gray-400 font-bold mb-3 uppercase tracking-widest text-center">Notation / Reading</p>
               <div class="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full max-w-[280px]">
                 <button 

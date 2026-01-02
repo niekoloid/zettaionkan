@@ -617,7 +617,7 @@ const isLightColor = (hex) => {
           </p>
         </section>
 
-        <section class="flex flex-col items-center">
+        <section v-if="activeLevelIndex === 2" class="flex flex-col items-center">
           <p class="text-[10px] text-gray-400 font-bold mb-2 uppercase tracking-widest">Notation / Reading</p>
           
           <div class="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full max-w-[280px]">
