@@ -25,63 +25,11 @@ const TEST_CHORDS = [
   { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: 'みずいろ', sortOrder: 14 },
 ]
 
-// Comprehensive mapping for 88 keys
-const ALL_NOTES = [
-  "A0", "Bb0", "B0",
-  "C1", "Db1", "D1", "Eb1", "E1", "F1", "Gb1", "G1", "Ab1", "A1", "Bb1", "B1",
-  "C2", "Db2", "D2", "Eb2", "E2", "F2", "Gb2", "G2", "Ab2", "A2", "Bb2", "B2",
-  "C3", "Db3", "D3", "Eb3", "E3", "F3", "Gb3", "G3", "Ab3", "A3", "Bb3", "B3",
-  "C4", "Db4", "D4", "Eb4", "E4", "F4", "Gb4", "G4", "Ab4", "A4", "Bb4", "B4",
-  "C5", "Db5", "D5", "Eb5", "E5", "F5", "Gb5", "G5", "Ab5", "A5", "Bb5", "B5",
-  "C6", "Db6", "D6", "Eb6", "E6", "F6", "Gb6", "G6", "Ab6", "A6", "Bb6", "B6",
-  "C7", "Db7", "D7", "Eb7", "E7", "F7", "Gb7", "G7", "Ab7", "A7", "Bb7", "B7",
-  "C8"
-]
-
-const isSubsetNote = (note) => {
-  const match = note.match(/([A-G][b#]?|Ab|Bb|Db|Eb|Gb)(\d)/)
-  if (!match) return false
-  const name = match[1].replace('♯', '#').replace('♭', 'b')
-  const octave = parseInt(match[2])
-  const normalizedName = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' }[name] || name
-  if (normalizedName === 'A') return octave >= 1 && octave <= 7
-  if (normalizedName === 'C') return octave >= 1 && octave <= 8
-  if (normalizedName === 'Eb') return octave >= 1 && octave <= 7
-  if (normalizedName === 'Gb') return octave >= 1 && octave <= 6
-  return false
-}
-
-const STEINWAY_MAP = {}
-ALL_NOTES.forEach(note => {
-  if (isSubsetNote(note)) {
-    STEINWAY_MAP[note] = `${note}.wav`
-  }
-})
-
-Object.keys(STEINWAY_MAP).forEach(note => {
-  if (note.includes('b')) {
-    const sharp = note.replace('Db', 'C#').replace('Eb', 'D#').replace('Gb', 'F#').replace('Ab', 'G#').replace('Bb', 'A#')
-    if (sharp !== note) STEINWAY_MAP[sharp] = STEINWAY_MAP[note]
-  }
-})
-
-const YAMAHA_MAP = {
-  "A0": "A0.mp3", "C1": "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
-  "A1": "A1.mp3", "C2": "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
-  "A2": "A2.mp3", "C3": "C3.mp3", "D#3": "Ds3.mp3", "F#3": "Fs3.mp3",
-  "A3": "A3.mp3", "C4": "C4.mp3", "D#4": "Ds4.mp3", "F#4": "Fs4.mp3",
-  "A4": "A4.mp3", "C5": "C5.mp3", "D#5": "Ds5.mp3", "F#5": "Fs5.mp3",
-  "A5": "A5.mp3", "C6": "C6.mp3", "D#6": "Ds6.mp3", "F#6": "Fs6.mp3",
-  "A6": "A6.mp3", "C7": "C7.mp3", "D#7": "Ds7.mp3", "F#7": "Fs7.mp3",
-  "A7": "A7.mp3", "C8": "C8.mp3"
-}
-
-Object.keys(YAMAHA_MAP).forEach(note => {
-  if (note.includes('#')) {
-    const flat = note.replace('C#', 'Db').replace('D#', 'Eb').replace('F#', 'Gb').replace('G#', 'Ab').replace('A#', 'Bb')
-    if (flat !== note) YAMAHA_MAP[flat] = YAMAHA_MAP[note]
-  }
-})
+import { 
+  ALL_NOTES, 
+  STEINWAY_MAP, 
+  YAMAHA_MAP 
+} from '../constants/instruments.js'
 
 // === State ===
 const view = ref('settings') // 'settings' | 'quiz' | 'result'
