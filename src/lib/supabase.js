@@ -13,16 +13,17 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
 
 export const checkPremiumStatus = async () => {
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { isPremium: false, tier: 'free' }
+  if (!user) return { isPremium: false, tier: 'free', hasCustomer: false }
 
   const { data, error } = await supabase
     .from('profiles')
-    .select('subscription_tier')
+    .select('subscription_tier, stripe_customer_id')
     .eq('id', user.id)
     .single()
 
-  if (error || !data) return { tier: 'free' }
+  if (error || !data) return { tier: 'free', hasCustomer: false }
   return { 
-    tier: data.subscription_tier || 'free' 
+    tier: data.subscription_tier || 'free',
+    hasCustomer: !!data.stripe_customer_id
   }
 }

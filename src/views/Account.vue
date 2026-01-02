@@ -9,6 +9,8 @@ const userTier = ref('free')
 const isLoading = ref(true)
 const isPortalLoading = ref(false)
 
+const hasCustomer = ref(false)
+
 onMounted(async () => {
   const { data } = await supabase.auth.getUser()
   if (!data?.user) {
@@ -19,6 +21,7 @@ onMounted(async () => {
   
   const status = await checkPremiumStatus()
   userTier.value = status.tier
+  hasCustomer.value = status.hasCustomer
   isLoading.value = false
 })
 
@@ -37,11 +40,22 @@ const getTierName = (tier) => {
 }
 
 const openCustomerPortal = async () => {
+  if (!hasCustomer.value) {
+    alert('お支払い情報が見つかりません。プランへの加入履歴がありません。')
+    return
+  }
+
   isPortalLoading.value = true
   try {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) throw new Error('No session')
+
     // Edge Function 'create-portal-session' を呼び出す
     const { data, error } = await supabase.functions.invoke('create-portal-session', {
-      body: { return_url: window.location.origin + '/account' }
+      body: { return_url: window.location.origin + '/account' },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`
+      }
     })
     
     if (error) throw error
@@ -108,7 +122,7 @@ const openCustomerPortal = async () => {
           <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">各種設定</p>
           
           <button 
-            v-if="userTier !== 'free'"
+            v-if="hasCustomer"
             @click="openCustomerPortal"
             :disabled="isPortalLoading"
             class="w-full flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all group"
