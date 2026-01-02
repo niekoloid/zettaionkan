@@ -60,13 +60,11 @@ def trim_silence_and_save_as_wav(input_path, output_path):
         return False
 
 def is_subset_note(note_name):
-    """Checks if a note like 'C4' or 'Eb2' is in our subset."""
-    # Special cases for boundaries
-    if note_name in ["A0", "C8"]:
-        return True
-    # Strip octave
-    name_only = "".join([c for c in note_name if not c.isdigit()])
-    return name_only in SUBSET_NOTES
+    """
+    Originally used to filter for a subset (C, Eb, Gb, A).
+    Now returns True for all notes to process everything.
+    """
+    return True
 
 def process_all_dynamics():
     for dyn in DYNAMICS:
@@ -77,10 +75,11 @@ def process_all_dynamics():
             os.makedirs(output_dir)
 
         if not os.path.exists(input_dir):
+            print(f"[{dyn}] Input directory not found: {input_dir}")
             continue
 
         files = [f for f in os.listdir(input_dir) if f.endswith(('.aiff', '.AIFF'))]
-        print(f"[{dyn}] Found {len(files)} files. Filtering for subset...")
+        print(f"[{dyn}] Found {len(files)} files. Processing ALL notes...")
 
         success_count = 0
         for filename in files:
@@ -90,8 +89,9 @@ def process_all_dynamics():
             else:
                 continue
                 
-            if not is_subset_note(note_name):
-                continue
+            # No filtering anymore
+            # if not is_subset_note(note_name):
+            #    continue
                 
             output_filename = f"{note_name}.wav"
             input_path = os.path.join(input_dir, filename)
@@ -100,7 +100,7 @@ def process_all_dynamics():
             if trim_silence_and_save_as_wav(input_path, output_path):
                 success_count += 1
                 
-        print(f"[{dyn}] Finished! Processed {success_count} subset files.")
+        print(f"[{dyn}] Finished! Processed {success_count} files.")
 
 if __name__ == "__main__":
     process_all_dynamics()

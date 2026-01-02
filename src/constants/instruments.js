@@ -30,20 +30,8 @@ const addAliases = (map) => {
 
 // Steinway Logic
 const isSteinwaySubsetNote = (note) => {
-  const match = note.match(/([A-G][b#]?|Ab|Bb|Db|Eb|Gb)(\d)/)
-  if (!match) return false
-  
-  const name = match[1].replace('♯', '#').replace('♭', 'b')
-  const octave = parseInt(match[2])
-  
-  const normalizedName = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' }[name] || name
-  
-  if (normalizedName === 'A') return octave >= 1 && octave <= 7
-  if (normalizedName === 'C') return octave >= 1 && octave <= 8
-  if (normalizedName === 'Eb') return octave >= 1 && octave <= 7
-  if (normalizedName === 'Gb') return octave >= 1 && octave <= 6
-  
-  return false
+  // We now have all samples (88 keys), so we accept everything in ALL_NOTES
+  return true
 }
 
 const rawSteinwayMap = {}
