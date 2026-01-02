@@ -656,34 +656,69 @@ const isLightColor = (hex) => {
       </div>
 
       <!-- Footer Links -->
-      <div class="mt-12 pt-10 border-t border-gray-100 pb-12">
-        <div class="grid grid-cols-2 gap-x-8 gap-y-10 px-4">
-          <!-- Service & Support Group -->
-          <div class="col-span-2 space-y-4">
-            <p class="text-[10px] font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Service & Support</p>
-            <div class="flex flex-wrap gap-x-8 gap-y-4">
-              <router-link to="/test" class="text-xs text-blue-500 hover:text-blue-600 font-bold">和音テスト</router-link>
-              <router-link to="/method" class="text-xs text-gray-500 hover:text-gray-900 font-medium">トレーニング方法</router-link>
-              <router-link to="/subscription" class="text-xs text-amber-500 hover:text-amber-600 font-bold tracking-tight">料金プラン</router-link>
-              <router-link to="/about" class="text-xs text-gray-500 hover:text-gray-900 font-medium">サービス概要</router-link>
-              <router-link to="/contact" class="text-xs text-gray-500 hover:text-gray-900 font-medium">お問い合わせ</router-link>
+      <div class="mt-20 border-t border-gray-100 pt-16 pb-12">
+        <div class="px-6">
+          <!-- Main Feature: Chord Test -->
+          <div class="mb-16 text-center">
+            <router-link to="/test" class="group block relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 to-blue-600 p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div class="relative z-10">
+                <p class="text-blue-100 text-xs font-bold tracking-widest uppercase mb-2">Try it now</p>
+                <h3 class="text-2xl font-black text-white mb-2">和音テストに挑戦</h3>
+                <p class="text-blue-100 text-sm font-medium mb-6">あなたの音感レベルをチェックしてみましょう</p>
+                <span class="inline-block bg-white text-blue-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm group-hover:bg-blue-50 transition-colors">
+                  テストを始める
+                </span>
+              </div>
+              <!-- Decorative Circle -->
+              <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-500"></div>
+            </router-link>
+          </div>
+
+          <div class="grid grid-cols-2 gap-x-8 gap-y-12 mb-16">
+            <!-- Training & Plans -->
+            <div class="space-y-4">
+              <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest pb-1 pl-1">Training</p>
+              <div class="flex flex-col space-y-3">
+                <router-link to="/method" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
+                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
+                  トレーニング方法
+                </router-link>
+                <router-link to="/subscription" class="text-sm text-amber-500 hover:text-amber-600 font-bold transition-colors flex items-center">
+                  <span class="w-1.5 h-1.5 bg-amber-400 rounded-full mr-2.5"></span>
+                  料金プラン
+                </router-link>
+              </div>
+            </div>
+
+            <!-- About & Support -->
+            <div class="space-y-4">
+              <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest pb-1 pl-1">Support</p>
+              <div class="flex flex-col space-y-3">
+                <router-link to="/about" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
+                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
+                  サービス概要
+                </router-link>
+                <router-link to="/contact" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
+                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
+                  お問い合わせ
+                </router-link>
+              </div>
             </div>
           </div>
 
-          <!-- Legal Group -->
-          <div class="col-span-2 space-y-4 mt-4">
-            <p class="text-[10px] font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Legal/Corporate</p>
-            <div class="flex flex-wrap gap-x-6 gap-y-3">
-              <router-link to="/company" class="text-[11px] text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
-              <router-link to="/privacy" class="text-[11px] text-gray-400 hover:text-gray-600 font-medium">プライバシーポリシー</router-link>
-              <router-link to="/legal" class="text-[11px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">特定商取引法に基づく表記</router-link>
+          <!-- Legal & Corporate -->
+          <div class="border-t border-gray-100 pt-8">
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-4 mb-8">
+              <router-link to="/company" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">運営会社</router-link>
+              <router-link to="/privacy" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">プライバシーポリシー</router-link>
+              <router-link to="/legal" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">特定商取引法に基づく表記</router-link>
             </div>
+            
+            <footer class="text-center">
+              <p class="text-[10px] text-gray-300 font-medium">&copy; 2026 Akatsuki Inc.</p>
+            </footer>
           </div>
         </div>
-
-        <footer class="text-center text-gray-300 text-[10px] mt-16">
-          &copy; 2026 Akatsuki Inc.
-        </footer>
       </div>
     </main>
     </div>
