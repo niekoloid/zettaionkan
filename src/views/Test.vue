@@ -363,7 +363,7 @@ onUnmounted(() => {
     <main class="w-full flex-grow overflow-y-auto px-4 py-6 scrollbar-hide" style="scrollbar-gutter: stable;">
       
       <!-- SETTINGS VIEW -->
-      <div v-if="view === 'settings'" class="space-y-8 pb-20">
+      <div v-if="view === 'settings'" class="space-y-8 pb-40">
         <!-- Number of Questions (REMOVED) -->
 
         <!-- Chord Selection -->
@@ -686,11 +686,11 @@ onUnmounted(() => {
     </main>
 
     <!-- Footer Action (Settings View Only) -->
-    <div v-if="view === 'settings'" class="w-full p-4 bg-white border-t border-gray-100 shrink-0 z-10 box-border absolute bottom-0">
+    <div v-if="view === 'settings'" class="w-full p-6 bg-gradient-to-t from-white via-white to-white/0 shrink-0 z-20 box-border absolute bottom-0 pb-10">
       <button 
         @click="startTest"
         :disabled="selectedChordIds.size === 0 || !isSamplerLoaded"
-        class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-lg hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center space-x-2"
+        class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center space-x-2 border-b-4 border-gray-700"
       >
         <span v-if="!isSamplerLoaded">読み込み中...</span>
         <span v-else>テストを開始する</span>
