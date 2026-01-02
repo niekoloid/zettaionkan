@@ -327,18 +327,17 @@ const isLightColor = (hex) => {
     >
       <!-- Loading Overlay -->
       <transition name="fade">
-        <div v-if="isLoading" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md">
-          <div class="w-64">
-            <div class="flex justify-between mb-2">
-              <span class="text-xs font-bold text-gray-700">音源を読み込み中...</span>
-              <span class="text-xs font-bold text-gray-900">{{ loadingProgress }}%</span>
+        <div v-if="isLoading" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm">
+          <div class="flex flex-col items-center">
+            <!-- Cute Bouncing Dots -->
+            <div class="flex space-x-3 mb-6">
+              <div class="w-4 h-4 bg-rose-400 rounded-full animate-bounce" style="animation-delay: 0s; animation-duration: 0.6s;"></div>
+              <div class="w-4 h-4 bg-amber-400 rounded-full animate-bounce" style="animation-delay: 0.1s; animation-duration: 0.6s;"></div>
+              <div class="w-4 h-4 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0.2s; animation-duration: 0.6s;"></div>
             </div>
-            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-              <div 
-                class="bg-gray-900 h-full transition-all duration-300"
-                :style="{ width: loadingProgress + '%' }"
-              ></div>
-            </div>
+            
+            <p class="text-sm font-bold text-gray-400 tracking-widest animate-pulse">LOADING</p>
+            <p class="text-[10px] text-gray-300 mt-2 font-medium">音源を準備しています...</p>
           </div>
         </div>
       </transition>
@@ -430,7 +429,7 @@ const isLightColor = (hex) => {
           v-for="(level, index) in levels" 
           :key="index"
           @click="activeLevelIndex = index"
-          class="flex-1 py-2 rounded-lg text-[9px] font-bold transition-all text-center flex items-center justify-center whitespace-nowrap"
+          class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center flex items-center justify-center"
           :class="activeLevelIndex === index ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
         >
           <!-- ロックアイコンの表示ロジック -->
@@ -525,25 +524,22 @@ const isLightColor = (hex) => {
       <div class="space-y-4">
         <section class="flex flex-col items-center">
           <p class="text-[10px] text-gray-400 font-bold mb-2 uppercase tracking-widest">Sound Source</p>
+          
           <!-- Instrument Selector -->
-          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200 w-full max-w-[280px] gap-2">
+          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200 w-full max-w-[280px]">
             <button 
               @click="selectInstrument('yamaha')"
-              class="flex-1 py-3 px-2 rounded-xl text-[9px] font-bold transition-all flex items-center justify-center whitespace-nowrap"
-              :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900 border border-gray-100 ring-1 ring-black/5' : 'text-gray-400 hover:bg-gray-50 bg-gray-50/50'"
+              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
+              :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
-              <span class="w-1.5 h-4 bg-gray-900 rounded-full mr-2" :class="selectedInstrument === 'yamaha' ? 'opacity-100' : 'opacity-0'"></span>
               YAMAHA C5
             </button>
             <button 
               @click="selectInstrument('steinway')"
-              class="flex-1 py-3 px-2 rounded-xl text-[9px] font-bold transition-all flex items-center justify-center whitespace-nowrap"
-              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900 border border-gray-100 ring-1 ring-black/5' : 'text-gray-400 hover:bg-gray-50 bg-gray-50/50'"
+              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center flex items-center justify-center"
+              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
             >
-              <svg v-if="userTier !== 'free' && selectedInstrument === 'steinway'" class="w-3 h-3 text-amber-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <svg v-if="userTier === 'free'" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1 text-amber-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+              <svg v-if="userTier !== 'premium'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
               </svg>
               STEINWAY B
