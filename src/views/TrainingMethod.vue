@@ -22,63 +22,66 @@ import InstallPwa from '../components/InstallPwa.vue'
       <div class="space-y-10">
         <div class="text-center mb-6">
           <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-2">Training Method</h1>
-          <h2 class="text-xl font-bold text-gray-900">親子で楽しくトレーニング</h2>
+          <h2 class="text-2xl font-bold text-gray-900">練習方法は2パターンあります</h2>
         </div>
 
-        <!-- Step 1: Parent-Child Role -->
-        <section class="relative">
-          <div class="flex items-start space-x-4">
-            <div class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-bold text-xs mt-1 shadow-sm">1</div>
-            <div class="space-y-2">
-              <h3 class="font-bold text-gray-900 text-base">親子でクイズ形式</h3>
-              <p class="text-sm text-gray-500 leading-relaxed">
-                基本的には<span class="font-bold text-gray-800">二人一組（親と子）</span>で行います。
-                お子様には画面を見せないようにして、親御様がアプリで和音を鳴らします。
-                お子様は、聞こえた音に対応する「色」を答えます（色のついた旗や折り紙を用意するとよりスムーズです）。
-              </p>
+        <!-- Pattern 1 -->
+        <section class="bg-gray-50 rounded-3xl p-6 border border-gray-100 shadow-sm">
+          <div class="flex items-center mb-4">
+            <div class="bg-blue-500 text-white w-8 h-8 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm shadow-sm mr-3">1</div>
+            <h3 class="font-bold text-gray-900 text-lg">親子でクイズ形式でやる方法</h3>
+          </div>
+          <div class="space-y-4 pl-11">
+            <p class="text-sm text-gray-600 leading-relaxed font-medium">
+              親御様がアプリ（ホーム画面）を操作し、お子様に見えないように音を鳴らします。お子様は聞こえた音の「色」を答えます。
+            </p>
+            <div class="bg-white/60 rounded-2xl p-4 text-[11px] text-gray-500 space-y-2 border border-blue-50/50">
+              <p class="flex items-center"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>お子様にスマホが見えないように行います</p>
+              <p class="flex items-center"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>正解したらたくさん褒めてあげましょう</p>
+              <p class="flex items-center"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>色の旗を用意するとより楽しく取り組めます</p>
             </div>
           </div>
         </section>
 
-        <!-- Step 2: Feedback -->
-        <section>
-          <div class="flex items-start space-x-4">
-            <div class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-bold text-xs mt-1 shadow-sm">2</div>
-            <div class="space-y-2">
-              <h3 class="font-bold text-gray-900 text-base">答え合わせ</h3>
-              <p class="text-sm text-gray-500 leading-relaxed">
-                親御様は、お子様の回答が正解かどうかをアプリ画面で確認します。
-                正解したらたくさん褒めてあげましょう。間違えた場合は、もう一度正しい音を聞かせ、視覚（画面の色）と聴覚をセットにして印象付けます。
-              </p>
+        <!-- Pattern 2 -->
+        <section class="bg-gray-50 rounded-3xl p-6 border border-gray-100 shadow-sm">
+          <div class="flex items-center mb-4">
+            <div class="bg-blue-500 text-white w-8 h-8 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm shadow-sm mr-3">2</div>
+            <h3 class="font-bold text-gray-900 text-lg">子供が一人でクイズに取り組む方法</h3>
+          </div>
+          <div class="space-y-4 pl-11">
+            <p class="text-sm text-gray-600 leading-relaxed font-medium">
+              「和音テスト」機能を使えば、自動でクイズが出題されます。お子様が一人で遊びながら学ぶことができます。
+            </p>
+            <div class="bg-white/60 rounded-2xl p-4 text-[11px] text-gray-500 space-y-2 border border-blue-50/50">
+              <p class="flex items-center"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>正解すると視覚的なフィードバックがあります</p>
+              <p class="flex items-center"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>結果が保存され、成長を実感できます</p>
             </div>
           </div>
         </section>
 
-        <!-- Step 3: Frequency -->
-        <section>
-          <div class="flex items-start space-x-4">
-            <div class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-bold text-xs mt-1 shadow-sm">3</div>
-            <div class="space-y-2">
-              <h3 class="font-bold text-gray-900 text-base">効果的なトレーニング間隔</h3>
-              <p class="text-sm text-gray-500 leading-relaxed mb-2">
-                効果的な絶対音感トレーニングでは、以下のペースが推奨されています。
-              </p>
-              <ul class="text-xs text-gray-600 space-y-2 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <li class="flex items-center">
-                  <span class="text-blue-500 mr-2">●</span>
-                  <span><strong>1日4〜5回</strong>（朝・昼・夕・夜など）</span>
-                </li>
-                <li class="flex items-center">
-                  <span class="text-blue-500 mr-2">●</span>
-                  <span><strong>1回 1〜2分</strong>（短時間で集中して）</span>
-                </li>
-                <li class="flex items-center">
-                  <span class="text-blue-500 mr-2">●</span>
-                  <span><strong>毎日続ける</strong>ことが最も重要です</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+        <!-- Frequency Info -->
+        <section class="bg-white border-2 border-dashed border-gray-100 rounded-3xl p-6">
+          <h3 class="font-bold text-gray-900 text-base mb-4 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            効果的なトレーニングのコツ
+          </h3>
+          <ul class="grid grid-cols-1 gap-3">
+            <li class="flex items-center bg-gray-50/50 p-3 rounded-2xl border border-gray-100/50">
+              <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+              <span class="text-xs text-gray-600 font-bold">1日4〜5回、短時間で（1回1〜2分）</span>
+            </li>
+            <li class="flex items-center bg-gray-50/50 p-3 rounded-2xl border border-gray-100/50">
+              <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+              <span class="text-xs text-gray-600 font-bold">嫌がる時は無理強いしない</span>
+            </li>
+            <li class="flex items-center bg-gray-50/50 p-3 rounded-2xl border border-gray-100/50">
+              <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+              <span class="text-xs text-gray-600 font-bold">毎日続けることが最も重要です</span>
+            </li>
+          </ul>
         </section>
 
         <!-- Setup Info -->
