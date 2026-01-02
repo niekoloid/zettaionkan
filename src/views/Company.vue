@@ -28,20 +28,14 @@ onMounted(() => {
     <main class="flex-grow px-6 pb-20 overflow-y-auto">
       <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
         <div class="text-center mb-10">
-          <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Company Info</h1>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">株式会社暁</h2>
-          <p class="text-xs text-gray-400 font-medium tracking-widest uppercase">Akatsuki Inc.</p>
+          <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">基本情報</h1>
+          <p class="text-xs text-gray-400 font-medium tracking-widest uppercase">Company Info</p>
         </div>
 
         <div class="space-y-6">
           <div class="border-b border-gray-100 pb-4">
-            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">所在地</p>
-            <p class="text-sm text-gray-700 font-medium leading-relaxed">長野県長野市大字鶴賀緑町1418番地</p>
-          </div>
-
-          <div class="border-b border-gray-100 pb-4">
-            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">代表取締役</p>
-            <p class="text-sm text-gray-700 font-bold leading-relaxed">司空 舜</p>
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">社名</p>
+            <p class="text-sm text-gray-700 font-bold leading-relaxed">株式会社暁</p>
           </div>
 
           <div class="border-b border-gray-100 pb-4">
@@ -52,6 +46,16 @@ onMounted(() => {
           <div class="border-b border-gray-100 pb-4">
             <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">資本金</p>
             <p class="text-sm text-gray-700 font-medium leading-relaxed">300,000円</p>
+          </div>
+
+          <div class="border-b border-gray-100 pb-4">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">所在地</p>
+            <p class="text-sm text-gray-700 font-medium leading-relaxed">長野県長野市大字鶴賀緑町1418番地</p>
+          </div>
+
+          <div class="border-b border-gray-100 pb-4">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">代表者</p>
+            <p class="text-sm text-gray-700 font-bold leading-relaxed">司空 舜</p>
           </div>
 
           <div class="pb-4">
