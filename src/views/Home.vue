@@ -430,7 +430,7 @@ const isLightColor = (hex) => {
           v-for="(level, index) in levels" 
           :key="index"
           @click="activeLevelIndex = index"
-          class="flex-1 py-2 rounded-lg text-[10px] font-bold transition-all text-center flex items-center justify-center"
+          class="flex-1 py-2 rounded-lg text-[9px] font-bold transition-all text-center flex items-center justify-center whitespace-nowrap"
           :class="activeLevelIndex === index ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
         >
           <!-- ロックアイコンの表示ロジック -->
@@ -525,22 +525,25 @@ const isLightColor = (hex) => {
       <div class="space-y-4">
         <section class="flex flex-col items-center">
           <p class="text-[10px] text-gray-400 font-bold mb-2 uppercase tracking-widest">Sound Source</p>
-          
           <!-- Instrument Selector -->
-          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200 w-full max-w-[280px]">
+          <div class="flex bg-gray-100 p-1 rounded-xl mb-4 border border-gray-200 w-full max-w-[280px] gap-2">
             <button 
               @click="selectInstrument('yamaha')"
-              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
-              :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+              class="flex-1 py-3 px-2 rounded-xl text-[9px] font-bold transition-all flex items-center justify-center whitespace-nowrap"
+              :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900 border border-gray-100 ring-1 ring-black/5' : 'text-gray-400 hover:bg-gray-50 bg-gray-50/50'"
             >
+              <span class="w-1.5 h-4 bg-gray-900 rounded-full mr-2" :class="selectedInstrument === 'yamaha' ? 'opacity-100' : 'opacity-0'"></span>
               YAMAHA C5
             </button>
             <button 
               @click="selectInstrument('steinway')"
-              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center flex items-center justify-center"
-              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+              class="flex-1 py-3 px-2 rounded-xl text-[9px] font-bold transition-all flex items-center justify-center whitespace-nowrap"
+              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900 border border-gray-100 ring-1 ring-black/5' : 'text-gray-400 hover:bg-gray-50 bg-gray-50/50'"
             >
-              <svg v-if="userTier !== 'premium'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+              <svg v-if="userTier !== 'free' && selectedInstrument === 'steinway'" class="w-3 h-3 text-amber-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <svg v-if="userTier === 'free'" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1 text-amber-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
               </svg>
               STEINWAY B
