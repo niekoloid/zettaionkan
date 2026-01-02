@@ -604,14 +604,14 @@ const isLightColor = (hex) => {
             <div class="space-y-4">
               <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest pb-1 pl-1">Support</p>
               <div class="flex flex-col space-y-3">
-                <router-link to="/about" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
-                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
-                  サービス概要
-                </router-link>
                 <router-link to="/contact" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
                   <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
                   お問い合わせ
                 </router-link>
+                <!-- Sound Troubleshooting Text -->
+                <p class="text-[10px] text-gray-400 leading-tight pt-2">
+                  音が鳴らない場合<br>端末の消音スイッチ（マナーモード）がオンになっていないかご確認ください。
+                </p>
               </div>
             </div>
           </div>
