@@ -52,11 +52,21 @@ const getSampleMap = (extension) => {
 
 const STEINWAY_SUBSET_NOTES = ["C", "Eb", "Gb", "A"]
 const isSubsetNote = (note) => {
-  if (["A0", "C1", "C8"].includes(note)) return true // Boundaries
-  const name = note.replace(/\d/, '').replace('♭', 'b').replace('♯', '#')
-  const aliases = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb', 'Db': 'Db', 'Eb': 'Eb', 'Gb': 'Gb', 'Ab': 'Ab', 'Bb': 'Bb' }
-  const normalized = aliases[name] || name
-  return STEINWAY_SUBSET_NOTES.includes(normalized) || STEINWAY_SUBSET_NOTES.includes(name)
+  const match = note.match(/([A-G][b#]?|Ab|Bb|Db|Eb|Gb)(\d)/)
+  if (!match) return false
+  
+  const name = match[1].replace('♯', '#').replace('♭', 'b')
+  const octave = parseInt(match[2])
+  
+  // Safe set present in all dynamics (ff, mf, pp) based on raw data inspection
+  const normalizedName = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' }[name] || name
+  
+  if (normalizedName === 'A') return octave >= 1 && octave <= 7
+  if (normalizedName === 'C') return octave >= 1 && octave <= 8
+  if (normalizedName === 'Eb') return octave >= 1 && octave <= 7
+  if (normalizedName === 'Gb') return octave >= 1 && octave <= 6
+  
+  return false
 }
 
 const STEINWAY_MAP = {}
