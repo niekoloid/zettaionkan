@@ -26,13 +26,7 @@ const samplers = {} // Cache for Tone.Sampler instances
 import { 
   ALL_NOTES, 
   STEINWAY_MAP, 
-  YAMAHA_MAP, 
-  XYLOPHONE_SAMPLES, 
-  RAIN_DRUM_SAMPLES, 
-  VIOLIN_SAMPLES, 
-  FLUTE_SAMPLES, 
-  GUITAR_SAMPLES,
-  getSampleMap
+  YAMAHA_MAP
 } from '../constants/instruments.js'
 
 const user = ref(null)

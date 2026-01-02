@@ -67,36 +67,3 @@ const rawYamahaMap = {
 }
 
 export const YAMAHA_MAP = addAliases(rawYamahaMap)
-
-export const XYLOPHONE_SAMPLES = addAliases({
-  "G4": "G4.mp3",
-  "C5": "C5.mp3", "G5": "G5.mp3",
-  "C6": "C6.mp3", "G6": "G6.mp3",
-  "C7": "C7.mp3", "G7": "G7.mp3"
-})
-
-export const RAIN_DRUM_SAMPLES = addAliases({
-  "A2": "A2.mp3", "B2": "B2.mp3", "B3": "B3.mp3", "E4": "E4.mp3", "G4": "G4.mp3", "A3": "A3.mp3", "A4": "A4.mp3", "A5": "A5.mp3" 
-})
-
-export const VIOLIN_SAMPLES = addAliases({
-  "A3": "A3.mp3", "C4": "C4.mp3", "G4": "G4.mp3", "A4": "A4.mp3",
-  "A5": "A5.mp3", "A6": "A6.mp3"
-})
-
-export const FLUTE_SAMPLES = addAliases({
-  "A4": "A4.mp3", "C5": "C5.mp3", "A5": "A5.mp3", "A6": "A6.mp3"
-})
-
-export const GUITAR_SAMPLES = addAliases({
-  "A2": "A2.mp3", "A3": "A3.mp3", "A4": "A4.mp3", "A5": "A5.mp3",
-  "B3": "B3.mp3", "E4": "E4.mp3", "G4": "G4.mp3"
-})
-
-export const getSampleMap = (extension) => {
-  const map = {}
-  ALL_NOTES.forEach(note => {
-    map[note] = `${note}.${extension}`
-  })
-  return addAliases(map)
-}
