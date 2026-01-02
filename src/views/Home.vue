@@ -658,20 +658,13 @@ const isLightColor = (hex) => {
       <!-- Footer Links -->
       <div class="mt-12 pt-10 border-t border-gray-100 pb-12">
         <div class="grid grid-cols-2 gap-x-8 gap-y-10 px-4">
-          <!-- Training Group -->
-          <div class="space-y-4">
-            <p class="text-[10px] font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Training</p>
-            <div class="flex flex-col space-y-3">
+          <!-- Service & Support Group -->
+          <div class="col-span-2 space-y-4">
+            <p class="text-[10px] font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Service & Support</p>
+            <div class="flex flex-wrap gap-x-8 gap-y-4">
               <router-link to="/test" class="text-xs text-blue-500 hover:text-blue-600 font-bold">和音テスト</router-link>
               <router-link to="/method" class="text-xs text-gray-500 hover:text-gray-900 font-medium">トレーニング方法</router-link>
               <router-link to="/subscription" class="text-xs text-amber-500 hover:text-amber-600 font-bold tracking-tight">料金プラン</router-link>
-            </div>
-          </div>
-
-          <!-- Support Group -->
-          <div class="space-y-4">
-            <p class="text-[10px] font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Support</p>
-            <div class="flex flex-col space-y-3">
               <router-link to="/about" class="text-xs text-gray-500 hover:text-gray-900 font-medium">サービス概要</router-link>
               <router-link to="/contact" class="text-xs text-gray-500 hover:text-gray-900 font-medium">お問い合わせ</router-link>
             </div>
