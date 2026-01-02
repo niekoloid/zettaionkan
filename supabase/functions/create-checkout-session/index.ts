@@ -69,6 +69,7 @@ serve(async (req) => {
       cancel_url: `${req.headers.get('origin')}/subscription`,
       allow_promotion_codes: true,
       subscription_data: {
+        trial_period_days: 30,
         metadata: {
           user_id: user.id,
           tier: tier

@@ -252,6 +252,19 @@ const playChord = async (notes) => {
   }
 }
 
+const playNote = async (note) => {
+  if (Tone.context.state !== 'running') await Tone.start()
+  
+  const currentSampler = samplers[selectedInstrument.value]
+
+  if (currentSampler && isSamplerLoaded.value) {
+    currentSampler.triggerAttackRelease(note, '2n')
+    console.log('Playing note:', note)
+  } else {
+    console.warn('Sampler not ready or missing:', selectedInstrument.value)
+  }
+}
+
   // 和音が制限されているか（音が出るか）の判定
   const isChordRestricted = (levelIdx, chordIdx) => {
     // 最初の和音 (Level 1 の index 0) は未ログインでも全員OK
@@ -464,7 +477,8 @@ const isLightColor = (hex) => {
             <div 
               v-for="note in whiteKeys" 
               :key="note"
-              class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm transition-colors duration-300"
+              @click="playNote(note)"
+              class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm transition-colors duration-300 cursor-pointer active:opacity-80"
               :class="[isNoteActive(note) ? '' : 'bg-white']"
               :style="isNoteActive(note) ? { backgroundColor: currentChord?.color } : {}"
             >
@@ -484,7 +498,8 @@ const isLightColor = (hex) => {
               >
                 <div 
                   v-if="hasBlackKey(note.note)"
-                  class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-colors duration-300 z-10"
+                  @click.stop="playNote(getBlackKeyNote(note.note))"
+                  class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-colors duration-300 z-20 cursor-pointer active:brightness-125 pointer-events-auto"
                   :class="[isNoteActive(getBlackKeyNote(note.note)) ? '' : 'bg-gray-800']"
                   :style="isNoteActive(getBlackKeyNote(note.note)) ? { backgroundColor: currentChord?.color, borderColor: 'white' } : {}"
                 ></div>
@@ -610,6 +625,7 @@ const isLightColor = (hex) => {
         <router-link to="/company" class="text-xs text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
         <router-link to="/privacy" class="text-xs text-gray-400 hover:text-gray-600 font-medium">プライバシーポリシー</router-link>
         <router-link to="/legal" class="text-xs text-gray-400 hover:text-gray-600 font-medium">特定商取引法に基づく表記</router-link>
+        <router-link to="/contact" class="text-xs text-gray-400 hover:text-gray-600 font-medium">お問い合わせ</router-link>
         <router-link to="/subscription" class="text-xs text-amber-500 hover:text-amber-600 font-bold">料金プラン</router-link>
         <footer class="text-center text-gray-300 text-[10px] pt-4 pb-8">
           &copy; 2026 Akatsuki Inc.
