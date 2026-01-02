@@ -59,15 +59,12 @@ const handleOAuthLogin = async (provider) => {
 <template>
   <div class="min-h-screen bg-white">
     <div class="min-h-screen flex flex-col items-center justify-center p-4 max-w-3xl mx-auto relative overflow-hidden font-['Noto_Sans_JP']">
-    <!-- Header -->
-    <header class="pt-12 pb-8 px-4 flex items-center justify-between relative shrink-0">
-      <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors group z-10">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </router-link>
-      <div class="w-10"></div>
-    </header>
+    <!-- Back Button -->
+    <router-link to="/" class="absolute top-8 left-4 p-2 hover:bg-gray-100 rounded-full transition-colors group z-20">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </router-link>
 
     <main class="flex-grow px-8 pb-20 overflow-y-auto">
       <div class="text-center mb-10">
