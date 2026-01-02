@@ -16,6 +16,7 @@ const userTier = ref('free') // 'free' | 'entry' | 'standard' | 'premium'
 const activeLevelIndex = ref(0)
 const loadingProgress = ref(0)
 const isLoading = ref(false)
+const selectedInstrument = ref('yamaha')
 
 const samplers = {} // Cache for Tone.Sampler instances
 
@@ -36,11 +37,42 @@ const getSampleMap = (extension) => {
   const map = {}
   ALL_NOTES.forEach(note => {
     map[note] = `${note}.${extension}`
+    
+    // Add aliases for sharps/flats to make it robust
+    if (note.includes('b')) {
+      const sharp = note.replace('Db', 'C#').replace('Eb', 'D#').replace('Gb', 'F#').replace('Ab', 'G#').replace('Bb', 'A#')
+      if (sharp !== note) map[sharp] = `${note}.${extension}`
+    } else if (note.includes('#')) {
+      const flat = note.replace('C#', 'Db').replace('D#', 'Eb').replace('F#', 'Gb').replace('G#', 'Ab').replace('A#', 'Bb')
+      if (flat !== note) map[flat] = `${note}.${extension}`
+    }
   })
   return map
 }
 
-const STEINWAY_MAP = getSampleMap('wav')
+const STEINWAY_SUBSET_NOTES = ["C", "Eb", "Gb", "A"]
+const isSubsetNote = (note) => {
+  if (["A0", "C1", "C8"].includes(note)) return true // Boundaries
+  const name = note.replace(/\d/, '').replace('♭', 'b').replace('♯', '#')
+  const aliases = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb', 'Db': 'Db', 'Eb': 'Eb', 'Gb': 'Gb', 'Ab': 'Ab', 'Bb': 'Bb' }
+  const normalized = aliases[name] || name
+  return STEINWAY_SUBSET_NOTES.includes(normalized) || STEINWAY_SUBSET_NOTES.includes(name)
+}
+
+const STEINWAY_MAP = {}
+ALL_NOTES.forEach(note => {
+  if (isSubsetNote(note)) {
+    STEINWAY_MAP[note] = `${note}.wav`
+  }
+})
+
+// Add aliases for Steinway to make it robust
+Object.keys(STEINWAY_MAP).forEach(note => {
+  if (note.includes('b')) {
+    const sharp = note.replace('Db', 'C#').replace('Eb', 'D#').replace('Gb', 'F#').replace('Ab', 'G#').replace('Bb', 'A#')
+    if (sharp !== note) STEINWAY_MAP[sharp] = STEINWAY_MAP[note]
+  }
+})
 const YAMAHA_MAP = {
   "A0": "A0.mp3", "C1": "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
   "A1": "A1.mp3", "C2": "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
@@ -51,18 +83,13 @@ const YAMAHA_MAP = {
   "A6": "A6.mp3", "C7": "C7.mp3", "D#7": "Ds7.mp3", "F#7": "Fs7.mp3",
   "A7": "A7.mp3", "C8": "C8.mp3"
 }
-
-// Yamaha C5 (Salamander) mapping
-const YAMAHA_C5_SAMPLES = {
-  "A0": "A0.mp3", "C1": "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
-  "A1": "A1.mp3", "C2": "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
-  "A2": "A2.mp3", "C3": "C3.mp3", "D#3": "Ds3.mp3", "F#3": "Fs3.mp3",
-  "A3": "A3.mp3", "C4": "C4.mp3", "D#4": "Ds4.mp3", "F#4": "Fs4.mp3",
-  "A4": "A4.mp3", "C5": "C5.mp3", "D#5": "Ds5.mp3", "F#5": "Fs5.mp3",
-  "A5": "A5.mp3", "C6": "C6.mp3", "D#6": "Ds6.mp3", "F#6": "Fs6.mp3",
-  "A6": "A6.mp3", "C7": "C7.mp3", "D#7": "Ds7.mp3", "F#7": "Fs7.mp3",
-  "A7": "A7.mp3", "C8": "C8.mp3"
-}
+// Add aliases for Yamaha
+Object.keys(YAMAHA_MAP).forEach(note => {
+  if (note.includes('#')) {
+    const flat = note.replace('C#', 'Db').replace('D#', 'Eb').replace('F#', 'Gb').replace('G#', 'Ab').replace('A#', 'Bb')
+    if (flat !== note) YAMAHA_MAP[flat] = YAMAHA_MAP[note]
+  }
+})
 
 // Xylophone samples from nbrosowsky/tonejs-instruments (as close to Kalimba as available in this library)
 const XYLOPHONE_SAMPLES = {
@@ -199,17 +226,26 @@ const renderScore = (abc) => {
   })
 }
 
-const playChord = (notes) => {
-  if (Tone.context.state !== 'running') Tone.start()
+const playChord = async (notes) => {
+  if (Tone.context.state !== 'running') await Tone.start()
   
   const currentSampler = samplers[selectedInstrument.value]
 
   if (currentSampler && isSamplerLoaded.value) {
-    // Explicitly play all notes in the array
-    notes.forEach(note => {
-      currentSampler.triggerAttackRelease(note, 3)
-    })
-    console.log('Playing notes:', notes)
+    // 1. Play original chord
+    currentSampler.triggerAttackRelease(notes, 3)
+    console.log('Playing chord:', notes)
+
+    // 2. Play individual notes after a short delay (for verification/training)
+    // We use a small delay between each note
+    setTimeout(() => {
+      notes.forEach((note, i) => {
+        setTimeout(() => {
+          currentSampler.triggerAttackRelease(note, 1.5, `+${0}`)
+          console.log('Playing individual note:', note)
+        }, i * 600) // 0.6s interval between notes
+      })
+    }, 2500) // Start individual notes after 2.5s (chord is 3s)
   } else {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
   }

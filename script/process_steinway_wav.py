@@ -11,11 +11,14 @@ BASE_INPUT_FOLDER = "Steinway_Raw"
 BASE_OUTPUT_FOLDER = "public/samples/steinway"
 DYNAMICS = ["ff", "mf", "pp"]
 SILENCE_THRESHOLD = 500  # Amplitude threshold for silence
+MAX_DURATION_SEC = 4.0   # Trim to 4 seconds for lightweight
+# Select subset of notes (minor 3rd spacing: C, Eb, Gb, A)
+SUBSET_NOTES = ["C", "Eb", "Gb", "A"]
 # ==========================================
 
 def trim_silence_and_save_as_wav(input_path, output_path):
     """
-    Reads AIFF, trims leading silence, and saves as WAV.
+    Reads AIFF, trims leading silence, limits duration, and saves as WAV.
     """
     try:
         if not os.path.exists(input_path):
@@ -39,7 +42,11 @@ def trim_silence_and_save_as_wav(input_path, output_path):
                 start_idx = i
                 break
         
-        trimmed_samples = samples[start_idx:]
+        # Limit duration
+        max_frames = int(MAX_DURATION_SEC * params.framerate)
+        end_idx = start_idx + (max_frames * channels)
+        
+        trimmed_samples = samples[start_idx:end_idx]
         
         with wave.open(output_path, 'wb') as wf:
             wf.setnchannels(params.nchannels)
@@ -52,6 +59,15 @@ def trim_silence_and_save_as_wav(input_path, output_path):
         print(f"Error processing {input_path}: {e}")
         return False
 
+def is_subset_note(note_name):
+    """Checks if a note like 'C4' or 'Eb2' is in our subset."""
+    # Special cases for boundaries
+    if note_name in ["A0", "C8"]:
+        return True
+    # Strip octave
+    name_only = "".join([c for c in note_name if not c.isdigit()])
+    return name_only in SUBSET_NOTES
+
 def process_all_dynamics():
     for dyn in DYNAMICS:
         input_dir = os.path.join(BASE_INPUT_FOLDER, dyn)
@@ -59,32 +75,32 @@ def process_all_dynamics():
         
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-            print(f"Created folder: {output_dir}")
 
         if not os.path.exists(input_dir):
-            print(f"Input folder not found: {input_dir}, skipping.")
             continue
 
         files = [f for f in os.listdir(input_dir) if f.endswith(('.aiff', '.AIFF'))]
-        print(f"[{dyn}] Found {len(files)} files. Processing...")
+        print(f"[{dyn}] Found {len(files)} files. Filtering for subset...")
 
         success_count = 0
         for filename in files:
-            # Piano.mf.C4.aiff -> C4.wav
             parts = filename.split('.')
             if len(parts) >= 3:
                 note_name = parts[2]
-                output_filename = f"{note_name}.wav"
             else:
-                output_filename = filename.replace('.aiff', '.wav').replace('.AIFF', '.wav')
+                continue
                 
+            if not is_subset_note(note_name):
+                continue
+                
+            output_filename = f"{note_name}.wav"
             input_path = os.path.join(input_dir, filename)
             output_path = os.path.join(output_dir, output_filename)
             
             if trim_silence_and_save_as_wav(input_path, output_path):
                 success_count += 1
                 
-        print(f"[{dyn}] Finished! Processed {success_count}/{len(files)} files.")
+        print(f"[{dyn}] Finished! Processed {success_count} subset files.")
 
 if __name__ == "__main__":
     process_all_dynamics()
