@@ -400,7 +400,7 @@ onUnmounted(() => {
                       color: isLightColor(chord.color) ? '#000' : '#fff' 
                     }"
                   >
-                    {{ chord.label }}
+                    {{ chord.sortOrder }}
                   </div>
 
                   <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
@@ -461,7 +461,7 @@ onUnmounted(() => {
                     color: isLightColor(chord.color) ? '#000' : '#fff' 
                   }"
                 >
-                  {{ chord.label }}
+                  {{ chord.sortOrder }}
                 </div>
 
                 <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
