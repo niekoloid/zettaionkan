@@ -294,7 +294,7 @@ const isLightColor = (hex) => {
     class="min-h-screen transition-colors duration-500 font-['Noto_Sans_JP']"
   >
     <div 
-      class="min-h-screen flex flex-col max-w-3xl mx-auto relative overflow-hidden shadow-2xl bg-white/80 backdrop-blur-sm"
+      class="min-h-screen flex flex-col max-w-3xl mx-auto relative overflow-hidden shadow-2xl"
     >
     <!-- Header -->
     <header class="pt-10 pb-6 px-4 flex items-center justify-between shrink-0">
