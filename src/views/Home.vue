@@ -8,7 +8,7 @@ import abcjs from 'abcjs'
 import { Levels } from '../constants/chords.js'
 
 const router = useRouter()
-const levels = ref(Levels)
+const levels = ref(Levels.filter(l => !['黒鍵 2', '黒鍵 3'].includes(l.shortName)))
 
 const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
@@ -543,12 +543,12 @@ const isLightColor = (hex) => {
             <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">{{ levels[activeLevelIndex].description }}</p>
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid gap-3" :class="activeLevelIndex === 0 ? 'grid-cols-1' : 'grid-cols-2'">
             <div 
               v-for="(chord, index) in levels[activeLevelIndex].chords" 
               :key="chord.id"
               @click="toggleChord(chord, index)"
-              class="flex items-center p-2 border-2 rounded-xl cursor-pointer transition-all duration-300 relative overflow-hidden"
+              class="flex items-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98]"
               :class="[
                 currentChord?.id === chord.id 
                   ? ('shadow-md border-transparent ' + (isLightColor(chord.color) ? 'text-gray-900' : 'text-white'))
@@ -568,7 +568,7 @@ const isLightColor = (hex) => {
               </div>
               <!-- Step Number Bubble -->
               <div 
-                class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black mr-2 shrink-0 border border-black/5"
+                class="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-black mr-3 shrink-0 border border-black/5"
                 :style="{ 
                   backgroundColor: chord.color, 
                   color: isLightColor(chord.color) ? '#000' : '#fff' 
@@ -577,8 +577,8 @@ const isLightColor = (hex) => {
                 {{ (activeLevelIndex === 0 ? 0 : levels.slice(0, activeLevelIndex).reduce((acc, l) => acc + l.chords.length, 0)) + index + 1 }}
               </div>
 
-              <div class="flex items-baseline space-x-1 overflow-hidden min-w-0">
-                <span class="font-bold text-[13px] leading-tight truncate" v-html="chord.name"></span>
+              <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
+                <span class="font-bold text-[17px] leading-tight truncate" v-html="chord.name"></span>
                 <span class="text-[8px] font-medium opacity-60 shrink-0">({{ chord.colorName }})</span>
               </div>
             </div>
