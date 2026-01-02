@@ -9,20 +9,20 @@ const router = useRouter()
 // === Constants & Data ===
 // ユーザー指定の順序とラベルでリスト化
 const TEST_CHORDS = [
-  { ...ChordDefinitions.DOMISO, label: '①', displayColor: '赤', sortOrder: 1 },
-  { ...ChordDefinitions.DOFARA, label: '②', displayColor: '黄色', sortOrder: 2 },
-  { ...ChordDefinitions.SHIRESO, label: '③', displayColor: '青', sortOrder: 3 },
-  { ...ChordDefinitions.RADOFA, label: '④', displayColor: '黒', sortOrder: 4 },
-  { ...ChordDefinitions.RESOSHI, label: '⑤', displayColor: '緑', sortOrder: 5 },
-  { ...ChordDefinitions.MISODO, label: '⑥', displayColor: 'オレンジ', sortOrder: 6 },
-  { ...ChordDefinitions.FARADO, label: '⑦', displayColor: '紫', sortOrder: 7 },
-  { ...ChordDefinitions.SOSHIRE, label: '⑧', displayColor: 'ピンク', sortOrder: 8 },
-  { ...ChordDefinitions.SODOMI, label: '⑨', displayColor: '茶色', sortOrder: 9 },
-  { ...ChordDefinitions.LA_CIS_MI, label: '❶', displayColor: '黄緑', sortOrder: 10 },
-  { ...ChordDefinitions.RE_FIS_LA, label: '❷', displayColor: '薄橙', sortOrder: 11 }, // colorNameは肌色だが表示は薄橙
-  { ...ChordDefinitions.MI_GIS_SI, label: '❸', displayColor: '藤色', sortOrder: 12 },
-  { ...ChordDefinitions.BE_RE_FA, label: '❹', displayColor: '灰色', sortOrder: 13 },
-  { ...ChordDefinitions.ES_SO_BE, label: '❺', displayColor: '水色', sortOrder: 14 },
+  { ...ChordDefinitions.DOMISO, label: '1', displayColor: 'あか', sortOrder: 1 },
+  { ...ChordDefinitions.DOFARA, label: '2', displayColor: 'きいろ', sortOrder: 2 },
+  { ...ChordDefinitions.SHIRESO, label: '3', displayColor: 'あお', sortOrder: 3 },
+  { ...ChordDefinitions.RADOFA, label: '4', displayColor: 'くろ', sortOrder: 4 },
+  { ...ChordDefinitions.RESOSHI, label: '5', displayColor: 'みどり', sortOrder: 5 },
+  { ...ChordDefinitions.MISODO, label: '6', displayColor: 'おれんじ', sortOrder: 6 },
+  { ...ChordDefinitions.FARADO, label: '7', displayColor: 'むらさき', sortOrder: 7 },
+  { ...ChordDefinitions.SOSHIRE, label: '8', displayColor: 'ぴんく', sortOrder: 8 },
+  { ...ChordDefinitions.SODOMI, label: '9', displayColor: 'ちゃいろ', sortOrder: 9 },
+  { ...ChordDefinitions.LA_CIS_MI, label: '10', displayColor: 'きみどり', sortOrder: 10 },
+  { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: 'うすだいだい', sortOrder: 11 }, // colorNameは肌色だが表示は薄橙
+  { ...ChordDefinitions.MI_GIS_SI, label: '12', displayColor: 'ふじいろ', sortOrder: 12 },
+  { ...ChordDefinitions.BE_RE_FA, label: '13', displayColor: 'はいいろ', sortOrder: 13 },
+  { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: 'みずいろ', sortOrder: 14 },
 ]
 
 // Comprehensive mapping for 88 keys
