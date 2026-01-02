@@ -471,7 +471,7 @@ const isLightColor = (hex) => {
     <main class="flex-grow px-4 pb-8 overflow-y-auto" style="scrollbar-gutter: stable;">
       <!-- Score Visualization -->
       <section class="flex flex-col items-center mb-2 text-center">
-        <div class="w-[160px] h-[200px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
+        <div class="w-[180px] h-[200px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
           <div id="chord-score" class="w-full flex justify-center items-center pointer-events-none"></div>
           <div v-if="currentChord" class="mt-2 text-[14px] font-bold text-gray-700 flex flex-col items-center">
             <span v-html="(namingConvention === 'german' ? currentChord.name : currentChord.nameIt) + ' (' + currentChord.colorName + ')'"></span>
