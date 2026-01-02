@@ -1,4 +1,12 @@
 <script setup>
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  const meta = document.createElement('meta')
+  meta.name = 'robots'
+  meta.content = 'noindex'
+  document.head.appendChild(meta)
+})
 </script>
 
 <template>
@@ -32,7 +40,7 @@
 
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">運営責任者</p>
-              <p class="text-sm text-gray-700 font-bold leading-relaxed">記載事項については「お問い合わせ」より請求があった場合、遅滞なく開示いたします。</p>
+              <p class="text-sm text-gray-700 font-bold leading-relaxed">司空 舜</p>
             </div>
 
             <div class="border-b border-gray-100 pb-4">
@@ -43,8 +51,7 @@
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">お問い合わせ先</p>
               <p class="text-sm text-gray-700 font-medium leading-relaxed">
-                メールアドレス: info@zettaionkan.jp<br>
-                ※電話番号については請求があった場合、遅滞なく開示いたします。
+                <router-link to="/contact" class="text-blue-500 hover:underline font-bold">お問い合わせフォーム</router-link>よりご連絡ください。
               </p>
             </div>
 

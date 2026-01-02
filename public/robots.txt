@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /legal
+Disallow: /privacy
+Disallow: /auth
+Disallow: /account
+Disallow: /subscription
 
 Sitemap: https://zettaionkan.jp/sitemap.xml

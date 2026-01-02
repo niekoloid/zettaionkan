@@ -14,6 +14,7 @@ const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
 const userTier = ref('free') // 'free' | 'entry' | 'standard' | 'premium'
 const activeLevelIndex = ref(0)
+const namingConvention = ref('german') // 'german' | 'italian'
 const loadingProgress = ref(0)
 const isLoading = ref(false)
 const selectedInstrument = ref('yamaha')
@@ -463,7 +464,7 @@ const isLightColor = (hex) => {
         <div class="w-full max-w-[150px] max-h-[400px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">
           <div id="chord-score" class="w-full flex justify-center items-center pointer-events-none"></div>
           <div v-if="currentChord" class="mt-2 text-[13px] font-bold text-gray-700 flex flex-col items-center">
-            <span v-html="currentChord.name + ' (' + currentChord.colorName + ')'"></span>
+            <span v-html="(namingConvention === 'german' ? currentChord.name : currentChord.nameIt) + ' (' + currentChord.colorName + ')'"></span>
             <span class="text-[10px] font-normal text-gray-400 mt-0.5">{{ currentChord.symbol }}</span>
           </div>
         </div>
@@ -578,7 +579,7 @@ const isLightColor = (hex) => {
               </div>
 
               <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
-                <span class="font-bold text-[17px] leading-tight truncate" v-html="chord.name"></span>
+                <span class="font-bold text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
                 <span class="text-[8px] font-medium opacity-60 shrink-0">({{ chord.colorName }})</span>
               </div>
             </div>
@@ -614,6 +615,27 @@ const isLightColor = (hex) => {
           <p v-if="isSamplerLoaded" class="text-[9px] text-gray-400 font-medium">
             READY: {{ selectedInstrument === 'steinway' ? 'Steinway & Sons Model B (ff)' : 'Yamaha C5 Grand Piano' }}
           </p>
+        </section>
+
+        <section class="flex flex-col items-center">
+          <p class="text-[10px] text-gray-400 font-bold mb-2 uppercase tracking-widest">Notation / Reading</p>
+          
+          <div class="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full max-w-[280px]">
+            <button 
+              @click="namingConvention = 'german'"
+              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
+              :class="namingConvention === 'german' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+            >
+              ドイツ音名
+            </button>
+            <button 
+              @click="namingConvention = 'italian'"
+              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
+              :class="namingConvention === 'italian' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+            >
+              イタリア音名
+            </button>
+          </div>
         </section>
       </div>
 
