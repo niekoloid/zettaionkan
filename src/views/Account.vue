@@ -122,7 +122,7 @@ const openCustomerPortal = async () => {
           <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">各種設定</p>
           
           <button 
-            v-if="hasCustomer"
+            v-if="userTier !== 'free' || hasCustomer"
             @click="openCustomerPortal"
             :disabled="isPortalLoading"
             class="w-full flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all group"
