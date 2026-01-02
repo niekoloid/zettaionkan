@@ -19,7 +19,7 @@ const TEST_CHORDS = [
   { ...ChordDefinitions.SOSHIRE, label: '8', displayColor: 'ぴんく', sortOrder: 8 },
   { ...ChordDefinitions.SODOMI, label: '9', displayColor: 'ちゃいろ', sortOrder: 9 },
   { ...ChordDefinitions.LA_CIS_MI, label: '10', displayColor: 'きみどり', sortOrder: 10 },
-  { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: 'うすだいだい', sortOrder: 11 }, // colorNameは肌色だが表示は薄橙
+  { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: 'はだいろ', sortOrder: 11 },
   { ...ChordDefinitions.MI_GIS_SI, label: '12', displayColor: 'ふじいろ', sortOrder: 12 },
   { ...ChordDefinitions.BE_RE_FA, label: '13', displayColor: 'はいいろ', sortOrder: 13 },
   { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: 'みずいろ', sortOrder: 14 },
@@ -407,6 +407,13 @@ onUnmounted(() => {
                     <span class="font-bold text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
                     <span class="text-[11px] font-medium opacity-70 shrink-0">({{ chord.displayColor }})</span>
                   </div>
+
+                  <!-- Selection Mark -->
+                  <div v-if="selectedChordIds.has(chord.id)" class="absolute top-2 right-2 w-5 h-5 bg-black/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :class="isLightColor(chord.color) ? 'text-black' : 'text-white'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
                 </div>
               </template>
             </div>
@@ -467,6 +474,13 @@ onUnmounted(() => {
                 <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
                   <span class="font-bold text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
                   <span class="text-[11px] font-medium opacity-70 shrink-0">({{ chord.displayColor }})</span>
+                </div>
+
+                <!-- Selection Mark -->
+                <div v-if="selectedChordIds.has(chord.id)" class="absolute top-2 right-2 w-5 h-5 bg-black/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :class="isLightColor(chord.color) ? 'text-black' : 'text-white'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
               </div>
           </div>
