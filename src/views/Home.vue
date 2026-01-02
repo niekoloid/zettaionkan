@@ -413,7 +413,8 @@ const isLightColor = (hex) => {
       '--chord-color': currentChord?.color || '#EF4444',
       backgroundColor: currentChord ? currentChord.color + '4D' : 'white'
     }"
-    class="min-h-screen transition-colors duration-500 font-['Noto_Sans_JP']"
+    class="min-h-screen transition-colors duration-500 font-['Noto_Sans_JP'] antialiased"
+    style="backface-visibility: hidden;"
   >
     <div 
       class="min-h-screen flex flex-col max-w-3xl mx-auto relative overflow-hidden"
@@ -459,7 +460,7 @@ const isLightColor = (hex) => {
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow px-4 pb-8 overflow-y-auto">
+    <main class="flex-grow px-4 pb-8 overflow-y-auto" style="scrollbar-gutter: stable;">
       <!-- Score Visualization -->
       <section class="flex flex-col items-center mb-2 text-center">
         <div class="w-[160px] h-[200px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden">

@@ -331,7 +331,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white font-['Noto_Sans_JP']">
+  <div class="min-h-screen bg-white font-['Noto_Sans_JP'] antialiased" style="backface-visibility: hidden;">
     <div class="min-h-screen flex flex-col items-center max-w-3xl mx-auto relative overflow-hidden">
       <!-- Loading Overlay -->
       <transition name="fade">
@@ -362,7 +362,7 @@ onUnmounted(() => {
       <div class="w-10"></div>
     </header>
 
-    <main class="w-full flex-grow overflow-y-auto px-4 py-6 scrollbar-hide">
+    <main class="w-full flex-grow overflow-y-auto px-4 py-6 scrollbar-hide" style="scrollbar-gutter: stable;">
       
       <!-- SETTINGS VIEW -->
       <div v-if="view === 'settings'" class="space-y-8 pb-20">
