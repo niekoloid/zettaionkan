@@ -55,15 +55,36 @@ ALL_NOTES.forEach(note => {
 
 export const STEINWAY_MAP = addAliases(rawSteinwayMap)
 
-const rawYamahaMap = {
-  "A0": "A0.mp3", "C1": "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3",
-  "A1": "A1.mp3", "C2": "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3",
-  "A2": "A2.mp3", "C3": "C3.mp3", "D#3": "Ds3.mp3", "F#3": "Fs3.mp3",
-  "A3": "A3.mp3", "C4": "C4.mp3", "D#4": "Ds4.mp3", "F#4": "Fs4.mp3",
-  "A4": "A4.mp3", "C5": "C5.mp3", "D#5": "Ds5.mp3", "F#5": "Fs5.mp3",
-  "A5": "A5.mp3", "C6": "C6.mp3", "D#6": "Ds6.mp3", "F#6": "Fs6.mp3",
-  "A6": "A6.mp3", "C7": "C7.mp3", "D#7": "Ds7.mp3", "F#7": "Fs7.mp3",
-  "A7": "A7.mp3", "C8": "C8.mp3"
+// Yamaha Logic (Salamander Grand Piano samples)
+const isYamahaSubsetNote = (note) => {
+  const match = note.match(/([A-G][b#]?|Ab|Bb|Db|Eb|Gb)(\d)/)
+  if (!match) return false
+  
+  const name = match[1].replace('♯', '#').replace('♭', 'b')
+  const octave = parseInt(match[2])
+  
+  const normalizedName = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' }[name] || name
+  
+  if (normalizedName === 'A') return octave >= 0 && octave <= 7
+  if (normalizedName === 'C') return octave >= 1 && octave <= 8
+  if (normalizedName === 'D#') return octave >= 1 && octave <= 7
+  if (normalizedName === 'F#') return octave >= 1 && octave <= 7
+  
+  return false
 }
+
+const rawYamahaMap = {}
+ALL_NOTES.forEach(note => {
+  if (isYamahaSubsetNote(note)) {
+    // Yamaha samples use 's' for sharps and specific names (A, C, Ds, Fs)
+    // Normalize to the sharp version for filename consistency
+    const name = note.match(/([A-G][b#]?|Ab|Bb|Db|Eb|Gb)/)[1].replace('♯', '#').replace('♭', 'b')
+    const octave = note.match(/\d/)[0]
+    const sharpName = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' }[name] || name
+    
+    const filename = sharpName.replace('#', 's') + octave + '.mp3'
+    rawYamahaMap[note] = filename
+  }
+})
 
 export const YAMAHA_MAP = addAliases(rawYamahaMap)
