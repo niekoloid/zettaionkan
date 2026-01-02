@@ -93,6 +93,7 @@ const questionCountPromise = ref(20)
 const questions = ref([])
 const currentQuestionIndex = ref(0)
 const score = ref(0)
+const testHistory = ref([]) // Array of { question, answer, isCorrect, isSkipped }
 const resultMessage = ref(null) // 'correct' | 'incorrect'
 const isSamplerLoaded = ref(false)
 const isLoading = ref(false)
@@ -235,6 +236,7 @@ const startTest = () => {
   questions.value = newQuestions.slice(0, count)
   currentQuestionIndex.value = 0
   score.value = 0
+  testHistory.value = []
   view.value = 'quiz'
   
   setTimeout(() => playCurrentQuestion(), 500)
@@ -255,6 +257,13 @@ const submitAnswer = (chord) => {
   const isCorrect = chord.id === currentQuestion.value.id
   if (isCorrect) score.value++
   
+  testHistory.value.push({
+    question: { ...currentQuestion.value },
+    answer: { ...chord },
+    isCorrect,
+    isSkipped: false
+  })
+
   resultMessage.value = isCorrect ? 'correct' : 'incorrect'
   
   setTimeout(() => {
@@ -270,6 +279,13 @@ const submitAnswer = (chord) => {
 const skipQuestion = () => {
   if (resultMessage.value) return
   
+  testHistory.value.push({
+    question: { ...currentQuestion.value },
+    answer: null,
+    isCorrect: false,
+    isSkipped: true
+  })
+
   if (currentQuestionIndex.value < questions.value.length - 1) {
     currentQuestionIndex.value++
     resultMessage.value = null
@@ -618,19 +634,73 @@ onUnmounted(() => {
       </div>
 
       <!-- RESULT VIEW -->
-      <div v-if="view === 'result'" class="h-full flex flex-col items-center justify-center text-center">
-        <div class="mb-8">
-          <p class="text-sm font-bold text-gray-400 mb-2">SCORE</p>
+      <div v-if="view === 'result'" class="h-full flex flex-col items-center">
+        <div class="mb-8 text-center pt-8">
+          <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Quiz Finished</p>
           <div class="text-6xl font-black text-gray-900 mb-2">
             <span class="text-blue-500">{{ score }}</span>
             <span class="text-gray-300 text-4xl">/{{ questions.length }}</span>
           </div>
-          <p class="text-lg font-bold text-gray-600">
+          <p class="text-lg font-bold text-gray-600 mb-6">
             {{ score === questions.length ? 'Perfect! 🎉' : score >= questions.length * 0.8 ? 'Great Job! 👍' : 'Keep Practicing! 💪' }}
           </p>
         </div>
 
-        <div class="w-full space-y-4 max-w-xs">
+        <!-- Result History List -->
+        <div class="w-full bg-gray-50 rounded-3xl border border-gray-100 mb-10 overflow-hidden flex flex-col max-h-[400px]">
+          <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white/50">
+            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">問題ごとの結果</span>
+            <span class="text-[10px] font-bold text-gray-900">{{ score }} / {{ questions.length }} 正解</span>
+          </div>
+          <div class="flex-grow overflow-y-auto px-4 py-2 space-y-2 scrollbar-hide">
+            <div 
+              v-for="(history, idx) in testHistory" 
+              :key="idx"
+              class="flex items-center space-x-4 p-3 rounded-2xl bg-white border border-gray-100"
+            >
+              <div class="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0">
+                {{ idx + 1 }}
+              </div>
+              
+              <!-- Correct Chord Color -->
+              <div class="flex-grow flex items-center space-x-3 min-w-0">
+                <div class="flex flex-col items-center space-y-1">
+                  <div class="w-10 h-10 rounded-lg shadow-sm shrink-0" :style="{ backgroundColor: history.question.color }"></div>
+                  <span class="text-[8px] font-bold text-gray-400 leading-none">正解</span>
+                </div>
+                
+                <div class="flex items-center text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+
+                <div class="flex flex-col items-center space-y-1">
+                  <div v-if="history.answer" class="w-10 h-10 rounded-lg shadow-sm shrink-0" :style="{ backgroundColor: history.answer.color }"></div>
+                  <div v-else class="w-10 h-10 rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center shrink-0">
+                    <span class="text-[8px] text-gray-300 font-bold">SKIP</span>
+                  </div>
+                  <span class="text-[8px] font-bold text-gray-400 leading-none">回答</span>
+                </div>
+              </div>
+
+              <!-- Status Mark -->
+              <div class="shrink-0 w-10 flex justify-center">
+                <div v-if="history.isCorrect" class="text-green-500 font-black text-xl">
+                  ○
+                </div>
+                <div v-else-if="history.isSkipped" class="text-gray-300 font-bold text-sm">
+                  −
+                </div>
+                <div v-else class="text-red-500 font-black text-xl">
+                  ×
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-full space-y-4 px-6 mb-20">
           <button 
             @click="startTest"
             class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-lg hover:bg-gray-800 transition-all active:scale-95"
