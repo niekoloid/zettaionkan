@@ -104,16 +104,20 @@ onMounted(async () => {
       urls: YAMAHA_C5_SAMPLES,
       baseUrl: "https://tonejs.github.io/audio/salamander/",
       onload: () => {
+        console.log('Yamaha Sampler Loaded')
         if (selectedInstrument.value === 'yamaha') isSamplerLoaded.value = true
-      }
+      },
+      onerror: (err) => console.error('Yamaha Sampler Error:', err)
     }).toDestination()
 
     steinwaySampler = new Tone.Sampler({
       urls: STEINWAY_SAMPLES,
       baseUrl: "/samples/steinway/",
       onload: () => {
+        console.log('Steinway Sampler Loaded')
         if (selectedInstrument.value === 'steinway') isSamplerLoaded.value = true
-      }
+      },
+      onerror: (err) => console.error('Steinway Sampler Error:', err)
     }).toDestination()
   } catch (err) {
     console.error('Tonejs initialization error:', err)
@@ -286,9 +290,12 @@ const isLightColor = (hex) => {
     :style="{ 
       '--chord-color': currentChord?.color || '#EF4444',
       backgroundColor: currentChord ? currentChord.color + '4D' : 'white'
-    }" 
-    class="min-h-screen bg-white flex flex-col font-['Noto_Sans_JP'] max-w-3xl mx-auto relative overflow-hidden shadow-2xl transition-colors duration-500"
+    }"
+    class="min-h-screen transition-colors duration-500 font-['Noto_Sans_JP']"
   >
+    <div 
+      class="min-h-screen flex flex-col max-w-3xl mx-auto relative overflow-hidden shadow-2xl bg-white/80 backdrop-blur-sm"
+    >
     <!-- Header -->
     <header class="pt-10 pb-6 px-4 flex items-center justify-between shrink-0">
       <div class="w-10"></div> <!-- Spacer -->
@@ -477,6 +484,7 @@ const isLightColor = (hex) => {
         </footer>
       </div>
     </main>
+    </div>
   </div>
 </template>
 
