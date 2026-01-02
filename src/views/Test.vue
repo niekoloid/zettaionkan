@@ -100,7 +100,7 @@ const loadingProgress = ref(0)
 const userTier = ref('free')
 const selectedInstrument = ref('yamaha')
 const samplers = {}
-const namingConvention = ref('german') // 'german' | 'italian'
+const namingConvention = ref('italian') // 'german' | 'italian'
 
 // === Computed ===
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
@@ -226,11 +226,6 @@ const selectInstrument = (instrumentId) => {
   }
 
   if (instrumentId === selectedInstrument.value) {
-    const s = samplers[instrumentId]
-    if (s && isSamplerLoaded.value) {
-      if (Tone.context.state !== 'running') Tone.start()
-      s.triggerAttackRelease('C4', '8n')
-    }
     return
   }
   
@@ -467,12 +462,30 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- Black Keys -->
-          <div>
-            <h3 class="text-xs font-bold text-gray-900 mb-3 flex items-center">
-              <span class="w-1 h-4 bg-gray-900 rounded-full mr-2"></span>
-              黒鍵の和音
-            </h3>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xs font-bold text-gray-900 flex items-center">
+                <span class="w-1 h-4 bg-gray-900 rounded-full mr-2"></span>
+                黒鍵の和音
+              </h3>
+              
+              <!-- Naming Convention Toggle (Compact) -->
+              <div class="flex bg-gray-100 p-0.5 rounded-lg border border-gray-200 shrink-0 shadow-inner scale-90 origin-right">
+                <button 
+                  @click="namingConvention = 'italian'"
+                  class="px-2.5 py-1 rounded-md text-[9px] font-bold transition-all"
+                  :class="namingConvention === 'italian' ? 'bg-white shadow-sm text-gray-900 border border-gray-100' : 'text-gray-400 hover:text-gray-500'"
+                >
+                  伊
+                </button>
+                <button 
+                  @click="namingConvention = 'german'"
+                  class="px-2.5 py-1 rounded-md text-[9px] font-bold transition-all"
+                  :class="namingConvention === 'german' ? 'bg-white shadow-sm text-gray-900 border border-gray-100' : 'text-gray-400 hover:text-gray-500'"
+                >
+                  独
+                </button>
+              </div>
+            </div>
             <div class="grid grid-cols-2 gap-3">
               <div 
                 v-for="chord in blackKeyChords" 
@@ -510,58 +523,36 @@ onUnmounted(() => {
                     <span v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
                   </p>
                 </div>
-              </div>
             </div>
           </div>
-
-          <!-- Common Settings -->
-          <div class="mt-8 pb-32 w-full border-t border-gray-100 pt-8 flex flex-col items-center space-y-8">
-            <!-- Naming Convention Selector -->
-            <section v-if="hasBlackKeysInSelection" class="flex flex-col items-center w-full px-4">
-              <p class="text-[10px] text-gray-400 font-bold mb-3 uppercase tracking-widest text-center">Notation / Reading</p>
-              <div class="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full max-w-[280px]">
-                <button 
-                  @click="namingConvention = 'german'"
-                  class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
-                  :class="namingConvention === 'german' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
-                >
-                  ドイツ音名
-                </button>
-                <button 
-                  @click="namingConvention = 'italian'"
-                  class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
-                  :class="namingConvention === 'italian' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
-                >
-                  イタリア音名
-                </button>
-              </div>
-            </section>
-
-            <!-- Instrument Selector -->
-            <section class="flex flex-col items-center w-full px-4">
-              <p class="text-[10px] text-gray-400 font-bold mb-3 uppercase tracking-widest text-center">Sound Source</p>
-              <div class="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full max-w-[280px]">
-                <button 
-                  @click="selectInstrument('yamaha')"
-                  class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
-                  :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
-                >
-                  YAMAHA C5
-                </button>
-                <button 
-                  @click="selectInstrument('steinway')"
-                  class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center flex items-center justify-center"
-                  :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
-                >
-                  <svg v-if="userTier !== 'premium'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                  </svg>
-                  STEINWAY B
-                </button>
-              </div>
-            </section>
-          </div>
         </section>
+
+        <!-- Common Settings -->
+        <div class="mt-8 pb-32 w-full border-t border-gray-100 pt-8 flex flex-col items-center space-y-8">
+          <!-- Instrument Selector -->
+          <section class="flex flex-col items-center w-full px-4">
+            <p class="text-[10px] text-gray-400 font-bold mb-3 uppercase tracking-widest text-center">Sound Source</p>
+            <div class="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full max-w-[280px]">
+              <button 
+                @click="selectInstrument('yamaha')"
+                class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
+                :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+              >
+                YAMAHA C5
+              </button>
+              <button 
+                @click="selectInstrument('steinway')"
+                class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center flex items-center justify-center"
+                :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
+              >
+                <svg v-if="userTier !== 'premium'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                </svg>
+                STEINWAY B
+              </button>
+            </div>
+          </section>
+        </div>
       </div>
 
       <!-- QUIZ VIEW -->

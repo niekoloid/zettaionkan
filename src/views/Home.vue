@@ -14,10 +14,11 @@ const currentChord = ref(null)
 const isSamplerLoaded = ref(false)
 const userTier = ref('free') // 'free' | 'entry' | 'standard' | 'premium'
 const activeLevelIndex = ref(0)
-const namingConvention = ref('german') // 'german' | 'italian'
+const namingConvention = ref('italian') // 'german' | 'italian'
 const loadingProgress = ref(0)
 const isLoading = ref(false)
 const selectedInstrument = ref('yamaha')
+const pressedNotes = ref(new Set())
 
 const samplers = {} // Cache for Tone.Sampler instances
 
@@ -247,6 +248,10 @@ const playChord = async (notes) => {
 
   if (currentSampler && isSamplerLoaded.value) {
     currentSampler.triggerAttackRelease(notes, 3)
+    notes.forEach(note => pressedNotes.value.add(note))
+    setTimeout(() => {
+      notes.forEach(note => pressedNotes.value.delete(note))
+    }, 3000)
     console.log('Playing chord:', notes)
   } else {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
@@ -260,6 +265,8 @@ const playNote = async (note) => {
 
   if (currentSampler && isSamplerLoaded.value) {
     currentSampler.triggerAttackRelease(note, '2n')
+    pressedNotes.value.add(note)
+    setTimeout(() => pressedNotes.value.delete(note), 1000) // Increased duration for more distinct visual feedback
     console.log('Playing note:', note)
   } else {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
@@ -324,12 +331,6 @@ const selectInstrument = (instrumentId) => {
   }
 
   if (instrumentId === selectedInstrument.value) {
-    // Already selected, just play a test note
-    const s = samplers[instrumentId]
-    if (s && isSamplerLoaded.value) {
-      if (Tone.context.state !== 'running') Tone.start()
-      s.triggerAttackRelease('C4', '8n')
-    }
     return
   }
   
@@ -479,8 +480,11 @@ const isLightColor = (hex) => {
               v-for="note in whiteKeys" 
               :key="note"
               @click="playNote(note)"
-              class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm transition-colors duration-300 cursor-pointer active:opacity-80"
-              :class="[isNoteActive(note) ? '' : 'bg-white']"
+              class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm transition-all duration-75 cursor-pointer active:opacity-90"
+              :class="[
+                isNoteActive(note) ? '' : 'bg-white',
+                pressedNotes.has(note) ? 'translate-y-1.5 shadow-[inset_0_4px_12px_rgba(0,0,0,0.2)] brightness-75 scale-[0.98] z-10' : ''
+              ]"
               :style="isNoteActive(note) ? { backgroundColor: currentChord?.color } : {}"
             >
               <span 
@@ -500,8 +504,11 @@ const isLightColor = (hex) => {
                 <div 
                   v-if="hasBlackKey(note.note)"
                   @click.stop="playNote(getBlackKeyNote(note.note))"
-                  class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-colors duration-300 z-20 cursor-pointer active:brightness-125 pointer-events-auto"
-                  :class="[isNoteActive(getBlackKeyNote(note.note)) ? '' : 'bg-gray-800']"
+                  class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-all duration-75 z-20 cursor-pointer pointer-events-auto"
+                  :class="[
+                    isNoteActive(getBlackKeyNote(note.note)) ? '' : 'bg-gray-800',
+                    pressedNotes.has(getBlackKeyNote(note.note)) ? 'translate-y-1 shadow-[0_0_15px_rgba(255,255,255,0.7)] brightness-150 scale-95 ring-2 ring-white z-30' : ''
+                  ]"
                   :style="isNoteActive(getBlackKeyNote(note.note)) ? { backgroundColor: currentChord?.color, borderColor: 'white' } : {}"
                 ></div>
               </div>
@@ -536,12 +543,32 @@ const isLightColor = (hex) => {
       <!-- Active Level Content -->
       <div class="mb-12 transition-all duration-300">
         <section class="space-y-4">
-          <div class="px-2">
-            <h2 class="text-sm font-bold text-gray-800 flex items-center">
-              <span class="w-1.5 h-4 bg-gray-900 rounded-full mr-2"></span>
-              {{ levels[activeLevelIndex].name }}
-            </h2>
-            <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">{{ levels[activeLevelIndex].description }}</p>
+          <div class="px-2 flex items-center justify-between">
+            <div class="flex-grow min-w-0">
+              <h2 class="text-sm font-bold text-gray-800 flex items-center">
+                <span v-if="activeLevelIndex !== 2" class="w-1.5 h-4 bg-gray-900 rounded-full mr-2"></span>
+                {{ levels[activeLevelIndex].name }}
+              </h2>
+              <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed truncate">{{ levels[activeLevelIndex].description }}</p>
+            </div>
+
+            <!-- Notation Toggle (Only for Black Key Level) -->
+            <div v-if="activeLevelIndex === 2" class="flex bg-gray-100 p-0.5 rounded-lg border border-gray-100 ml-4 shrink-0 shadow-inner">
+              <button 
+                @click="namingConvention = 'italian'"
+                class="px-2.5 py-1 rounded-md text-[9px] font-bold transition-all"
+                :class="namingConvention === 'italian' ? 'bg-white shadow-sm text-gray-900 border border-gray-100' : 'text-gray-400 hover:text-gray-500'"
+              >
+                伊
+              </button>
+              <button 
+                @click="namingConvention = 'german'"
+                class="px-2.5 py-1 rounded-md text-[9px] font-bold transition-all"
+                :class="namingConvention === 'german' ? 'bg-white shadow-sm text-gray-900 border border-gray-100' : 'text-gray-400 hover:text-gray-500'"
+              >
+                独
+              </button>
+            </div>
           </div>
 
           <div class="grid gap-3" :class="activeLevelIndex === 0 ? 'grid-cols-1' : 'grid-cols-2'">
@@ -617,26 +644,6 @@ const isLightColor = (hex) => {
           </p>
         </section>
 
-        <section v-if="activeLevelIndex === 2" class="flex flex-col items-center">
-          <p class="text-[10px] text-gray-400 font-bold mb-2 uppercase tracking-widest">Notation / Reading</p>
-          
-          <div class="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full max-w-[280px]">
-            <button 
-              @click="namingConvention = 'german'"
-              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
-              :class="namingConvention === 'german' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
-            >
-              ドイツ音名
-            </button>
-            <button 
-              @click="namingConvention = 'italian'"
-              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
-              :class="namingConvention === 'italian' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
-            >
-              イタリア音名
-            </button>
-          </div>
-        </section>
       </div>
 
       <!-- Footer Links -->
