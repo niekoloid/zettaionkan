@@ -43,7 +43,7 @@
             <div class="border-b border-gray-100 pb-4">
               <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">お問い合わせ先</p>
               <p class="text-sm text-gray-700 font-medium leading-relaxed">
-                メールアドレス: support@irooto.works<br>
+                メールアドレス: info@zettaionkan.jp<br>
                 ※電話番号については請求があった場合、遅滞なく開示いたします。
               </p>
             </div>
