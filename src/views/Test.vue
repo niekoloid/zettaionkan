@@ -376,33 +376,6 @@ onUnmounted(() => {
       
       <!-- SETTINGS VIEW -->
       <div v-if="view === 'settings'" class="space-y-8 pb-20">
-        <!-- Sound Source Selection -->
-        <section class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col items-center">
-          <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 w-full text-left">デモ音源を選択</label>
-          <div class="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full">
-            <button 
-              @click="selectInstrument('yamaha')"
-              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center"
-              :class="selectedInstrument === 'yamaha' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
-            >
-              YAMAHA C5
-            </button>
-            <button 
-              @click="selectInstrument('steinway')"
-              class="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all text-center flex items-center justify-center"
-              :class="selectedInstrument === 'steinway' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-600'"
-            >
-              <svg v-if="userTier !== 'premium'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-              </svg>
-              STEINWAY B
-            </button>
-          </div>
-          <p v-if="isSamplerLoaded" class="text-[9px] text-gray-400 font-medium mt-2 w-full text-center">
-            READY: {{ selectedInstrument === 'steinway' ? 'Steinway & Sons Model B (ff)' : 'Yamaha C5 Grand Piano' }}
-          </p>
-        </section>
-
         <!-- Number of Questions -->
         <section class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
           <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">問題数</label>
