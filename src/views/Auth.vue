@@ -66,14 +66,14 @@ const handleOAuthLogin = async (provider) => {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
       </router-link>
-      <div class="absolute left-1/2 transform -translate-x-1/2">
-        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-20 w-auto object-contain" />
-      </div>
       <div class="w-10"></div>
     </header>
 
     <main class="flex-grow px-8 pb-20 overflow-y-auto">
       <div class="text-center mb-10">
+        <div class="flex justify-center mb-8">
+          <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-32 w-auto object-contain" />
+        </div>
         <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Account</h1>
         <h2 class="text-xl font-bold text-gray-900 mb-2">{{ isSignUp ? '新規登録' : 'ログイン' }}</h2>
         <p class="text-xs text-gray-500">ログインして、<br>和音を奏でよう。</p>
