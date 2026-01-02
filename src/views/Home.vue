@@ -156,7 +156,11 @@ onMounted(async () => {
   })
 
   // Initial load
-  loadSampler('yamaha')
+  if (userTier.value === 'premium') {
+    loadSampler('steinway')
+  } else {
+    loadSampler('yamaha')
+  }
   
   // Render empty score initially
   nextTick(() => {
