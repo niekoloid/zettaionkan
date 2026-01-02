@@ -1,5 +1,12 @@
 <script setup>
-// No logic needed, but script tag helps with template globals and future-proofing
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  const meta = document.createElement('meta')
+  meta.name = 'robots'
+  meta.content = 'noindex'
+  document.head.appendChild(meta)
+})
 </script>
 
 <template>
@@ -33,18 +40,23 @@
           </div>
 
           <div class="border-b border-gray-100 pb-4">
-            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">事業内容</p>
-            <p class="text-sm text-gray-700 font-medium leading-relaxed">デジタルコンテンツの企画・制作・運営</p>
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">代表取締役</p>
+            <p class="text-sm text-gray-700 font-bold leading-relaxed">司空 舜</p>
+          </div>
+
+          <div class="border-b border-gray-100 pb-4">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">設立</p>
+            <p class="text-sm text-gray-700 font-medium leading-relaxed">2025年4月30日</p>
+          </div>
+
+          <div class="border-b border-gray-100 pb-4">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">資本金</p>
+            <p class="text-sm text-gray-700 font-medium leading-relaxed">300,000円</p>
           </div>
 
           <div class="pb-4">
-            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">公式サイト</p>
-            <a href="https://akatsuki.works" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-500 font-bold flex items-center hover:underline">
-              akatsuki.works
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">事業内容</p>
+            <p class="text-sm text-gray-700 font-medium leading-relaxed">デジタルコンテンツの企画・制作・運営</p>
           </div>
         </div>
       </div>
