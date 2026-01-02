@@ -9,16 +9,18 @@ const plans = [
     id: 'entry',
     name: 'エントリー',
     price: 100,
+    trial: '初月無料',
     description: '白鍵の和音をすべて学べる基本プラン。',
-    features: ['Level 2 (白鍵 2) の全開放', 'すべての基本機能へのアクセス'],
+    features: ['初月1ヶ月無料', 'Level 2 (白鍵 2) の全開放', 'すべての基本機能へのアクセス'],
     color: 'bg-blue-50 border-blue-100 text-blue-600'
   },
   {
     id: 'standard',
     name: 'スタンダード',
     price: 980,
+    trial: '初月無料',
     description: '黒鍵や転回形まで含めた完全版。',
-    features: ['Level 3〜5 (黒鍵) の全開放', 'すべてのアップデートへのアクセス'],
+    features: ['初月1ヶ月無料', 'Level 3〜5 (黒鍵) の全開放', 'すべてのアップデートへのアクセス'],
     color: 'bg-amber-50 border-amber-100 text-amber-600',
     popular: true
   },
@@ -26,8 +28,9 @@ const plans = [
     id: 'premium',
     name: 'プレミアム',
     price: 1980,
+    trial: '初月無料',
     description: 'プロ仕様のSTEINWAY B音源を利用できる最高峰プラン。',
-    features: ['STEINWAY B音源の利用可能', '最高の音質でのトレーニング', '全レベル・全機能の開放'],
+    features: ['初月1ヶ月無料', 'STEINWAY B音源の利用可能', '最高の音質でのトレーニング', '全レベル・全機能の開放'],
     color: 'bg-gray-900 border-gray-800 text-white',
     premium: true
   }
@@ -92,7 +95,7 @@ const handleSubscribe = async (tier) => {
       <div class="text-center mb-10">
         <h1 class="text-xs font-bold text-amber-500 uppercase tracking-[0.2em] mb-4">Pricing Plans</h1>
         <h2 class="text-2xl font-bold text-gray-900 mb-2">料金プラン</h2>
-        <p class="text-sm text-gray-500 leading-relaxed">全ての音を演奏するにはプランへの加入が必要です。</p>
+        <p class="text-sm text-gray-500 leading-relaxed">全ての音を演奏するにはプランへの加入が必要です。<br><span class="text-amber-500 font-bold">今ならすべてのプランが初月無料で始められます。</span></p>
       </div>
 
       <div class="space-y-6">
@@ -107,8 +110,12 @@ const handleSubscribe = async (tier) => {
           <h3 class="text-lg font-bold mb-1" :class="plan.premium ? 'text-white' : 'text-gray-900'">{{ plan.name }}</h3>
           <p class="text-[11px] mb-4 font-medium" :class="plan.premium ? 'text-gray-400' : 'text-gray-400'">{{ plan.description }}</p>
           
-          <div class="text-2xl font-black mb-6" :class="plan.premium ? 'text-white' : 'text-gray-900'">
-            ¥{{ plan.price.toLocaleString() }}<span class="text-xs font-normal ml-1 italic" :class="plan.premium ? 'text-gray-500' : 'text-gray-400'">/月</span>
+          <div class="flex items-baseline mb-6" :class="plan.premium ? 'text-white' : 'text-gray-900'">
+            <span class="text-2xl font-black">¥{{ plan.price.toLocaleString() }}</span>
+            <span class="text-xs font-normal ml-1 italic" :class="plan.premium ? 'text-gray-500' : 'text-gray-400'">/月</span>
+            <span v-if="plan.trial" class="ml-3 px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500 text-white animate-pulse">
+              {{ plan.trial }}
+            </span>
           </div>
           
           <ul class="space-y-3 mb-8">
