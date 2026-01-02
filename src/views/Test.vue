@@ -279,17 +279,18 @@ onUnmounted(() => {
     <div class="min-h-screen flex flex-col items-center max-w-3xl mx-auto relative overflow-hidden">
       <!-- Loading Overlay -->
       <transition name="fade">
-        <div v-if="isLoading" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm">
-          <div class="flex flex-col items-center">
-            <!-- Cute Bouncing Dots -->
-            <div class="flex space-x-3 mb-6">
-              <div class="w-4 h-4 bg-rose-400 rounded-full animate-bounce" style="animation-delay: 0s; animation-duration: 0.6s;"></div>
-              <div class="w-4 h-4 bg-amber-400 rounded-full animate-bounce" style="animation-delay: 0.1s; animation-duration: 0.6s;"></div>
-              <div class="w-4 h-4 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0.2s; animation-duration: 0.6s;"></div>
+        <div v-if="isLoading" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md">
+          <div class="w-64">
+            <div class="flex justify-between mb-2">
+              <span class="text-xs font-bold text-gray-700">音源を読み込み中...</span>
+              <span class="text-xs font-bold text-gray-900">{{ loadingProgress }}%</span>
             </div>
-            
-            <p class="text-sm font-bold text-gray-400 tracking-widest animate-pulse">LOADING</p>
-            <p class="text-[10px] text-gray-300 mt-2 font-medium">音源を準備しています...</p>
+            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+              <div 
+                class="bg-gray-900 h-full transition-all duration-300"
+                :style="{ width: loadingProgress + '%' }"
+              ></div>
+            </div>
           </div>
         </div>
       </transition>
@@ -347,7 +348,7 @@ onUnmounted(() => {
 
                   <!-- Number Indicator Circle -->
                   <div 
-                    class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 text-[11px] font-black shadow-sm"
+                    class="w-7 h-7 rounded-full flex items-center justify-center mr-2 shrink-0 text-[11px] font-black shadow-sm"
                     :style="{ 
                       backgroundColor: chord.color, 
                       color: isLightColor(chord.color) ? '#000' : '#fff' 
@@ -356,9 +357,9 @@ onUnmounted(() => {
                     {{ chord.sortOrder }}
                   </div>
 
-                  <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
-                    <span class="font-bold text-gray-900 text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
-                    <span class="text-[11px] font-medium text-gray-400 shrink-0">({{ chord.displayColor }})</span>
+                  <div class="flex flex-col items-start overflow-hidden min-w-0">
+                    <span class="font-bold text-gray-900 text-[15px] leading-tight truncate w-full" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
+                    <span class="text-[10px] font-medium text-gray-400 shrink-0 truncate w-full">{{ chord.displayColor }}</span>
                   </div>
 
                   <!-- Selection Mark -->
@@ -422,7 +423,7 @@ onUnmounted(() => {
 
                 <!-- Number Indicator Circle -->
                 <div 
-                  class="w-7 h-7 rounded-full flex items-center justify-center mr-3 shrink-0 text-[11px] font-black shadow-sm"
+                  class="w-7 h-7 rounded-full flex items-center justify-center mr-2 shrink-0 text-[11px] font-black shadow-sm"
                   :style="{ 
                     backgroundColor: chord.color, 
                     color: isLightColor(chord.color) ? '#000' : '#fff' 
@@ -431,9 +432,9 @@ onUnmounted(() => {
                   {{ chord.sortOrder }}
                 </div>
 
-                <div class="flex items-baseline space-x-2 overflow-hidden min-w-0">
-                  <span class="font-bold text-gray-900 text-[17px] leading-tight truncate" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
-                  <span class="text-[11px] font-medium text-gray-400 shrink-0">({{ chord.displayColor }})</span>
+                <div class="flex flex-col items-start overflow-hidden min-w-0">
+                  <span class="font-bold text-gray-900 text-[15px] leading-tight truncate w-full" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
+                  <span class="text-[10px] font-medium text-gray-400 shrink-0 truncate w-full">{{ chord.displayColor }}</span>
                 </div>
 
                 <!-- Selection Mark -->
