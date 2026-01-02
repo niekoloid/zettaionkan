@@ -571,8 +571,8 @@ const isLightColor = (hex) => {
                     </span>
                     <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Challenge</p>
                   </div>
-                  <h3 class="text-xl font-black text-gray-900 mb-1">和音テスト</h3>
-                  <p class="text-xs font-medium text-gray-500">あなたの絶対音感をチェック</p>
+                  <h3 class="text-xl font-black text-gray-900 mb-1">和音クイズ</h3>
+                  <p class="text-xs font-medium text-gray-500">お子様ひとりでも楽しくトレーニング</p>
                 </div>
                 
                 <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-400 transition-all duration-300 group-hover:bg-blue-600 group-hover:text-white">
