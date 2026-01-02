@@ -39,32 +39,64 @@
           </div>
         </section>
 
-        <section class="space-y-6">
-          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">特徴</h2>
+        <section class="space-y-8">
+          <div class="px-2">
+            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-2">Features</h2>
+            <h3 class="text-2xl font-bold text-gray-900">「いろおと」が選ばれる理由</h3>
+          </div>
           
-          <div class="grid gap-4">
-            <div class="bg-white p-6 rounded-2xl border border-gray-50 shadow-sm">
-              <h3 class="font-bold text-gray-800 mb-2">本物のグランドピアノ音源</h3>
-              <p class="text-xs text-gray-500 leading-relaxed">
-                世界中のコンサートホールで愛用されているヤマハのグランドピアノ「C5」を丁寧にサンプリングした高品質な音源を使用しています。
-              </p>
+          <div class="grid gap-6">
+            <!-- Feature 1: Sound -->
+            <div class="group relative bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
+              <div class="relative z-10">
+                <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 text-blue-500 group-hover:scale-110 transition-transform duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                  </svg>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mb-3">極上の音色、本物の響き</h4>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  ヤマハの銘器「C5」と、世界最高峰「スタインウェイ Model B」を丁寧にサンプリング。コンサートホールの空気感まで再現した豊かな響きが、お子様の耳を育てます。
+                </p>
+              </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl border border-gray-50 shadow-sm">
-              <h3 class="font-bold text-gray-800 mb-2">視覚的なフィードバック</h3>
-              <p class="text-xs text-gray-500 leading-relaxed">
-                音が鳴ると同時に、その和音が持つイメージカラーと譜面が表示され、聴覚と視覚を組み合わせて記憶を定着させます。
-              </p>
+            <!-- Feature 2: Visual -->
+            <div class="group relative bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
+              <div class="relative z-10">
+                <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center mb-6 text-amber-500 group-hover:scale-110 transition-transform duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mb-3">色で感じる、音の個性</h4>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  音と色を同時に経験することで、抽象的な音階を具体的なイメージとして定着させます。共感覚（シナスタジア）の力を引き出し、楽しく直感的な学習を実現しました。
+                </p>
+              </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl border border-gray-50 shadow-sm">
-              <h3 class="font-bold text-gray-800 mb-2">厳選された和音パターン</h3>
-              <p class="text-xs text-gray-500 leading-relaxed">
-                基本となる三和音から、トレーニングに適した多様なパターンを用意しています。
-              </p>
+            <!-- Feature 3: Curriculum -->
+            <div class="group relative bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
+              <div class="relative z-10">
+                <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 text-indigo-500 group-hover:scale-110 transition-transform duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mb-3">着実なステップ、一生の財産</h4>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  音楽理論に基づき厳選された和音パターンを、14のレベルで体系化。無理なく続けられる設計で、お子様に「絶対音感」という一生消えないギフトを届けます。
+                </p>
+              </div>
             </div>
           </div>
         </section>
+
+
 
         <section>
           <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
