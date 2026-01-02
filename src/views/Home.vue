@@ -609,6 +609,7 @@ const isLightColor = (hex) => {
         <router-link to="/about" class="text-xs text-gray-400 hover:text-gray-600 font-medium">サービス概要</router-link>
         <router-link to="/company" class="text-xs text-gray-400 hover:text-gray-600 font-medium">運営会社情報</router-link>
         <router-link to="/privacy" class="text-xs text-gray-400 hover:text-gray-600 font-medium">プライバシーポリシー</router-link>
+        <router-link to="/legal" class="text-xs text-gray-400 hover:text-gray-600 font-medium">特定商取引法に基づく表記</router-link>
         <router-link to="/subscription" class="text-xs text-amber-500 hover:text-amber-600 font-bold">料金プラン</router-link>
         <footer class="text-center text-gray-300 text-[10px] pt-4 pb-8">
           &copy; 2026 Akatsuki Inc.

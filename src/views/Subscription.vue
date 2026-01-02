@@ -140,7 +140,9 @@ const handleSubscribe = async (tier) => {
 
       <p class="text-[10px] text-gray-400 mt-12 text-center font-medium leading-relaxed">
         決済はStripeを通じて安全に行われます。<br>
-        いつでもマイページからキャンセル可能です。
+        いつでもマイページからキャンセル可能です。<br>
+        <router-link to="/privacy" class="hover:underline">プライバシーポリシー</router-link> | 
+        <router-link to="/legal" class="hover:underline">特定商取引法に基づく表記</router-link>
       </p>
     </main>
 

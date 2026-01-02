@@ -28,6 +28,11 @@ const routes = [
     component: () => import('../views/Privacy.vue')
   },
   {
+    path: '/legal',
+    name: 'Legal',
+    component: () => import('../views/Legal.vue')
+  },
+  {
     path: '/subscription',
     name: 'Subscription',
     component: () => import('../views/Subscription.vue')
