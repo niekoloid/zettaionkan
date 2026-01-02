@@ -557,18 +557,30 @@ const isLightColor = (hex) => {
       <div class="mt-20 border-t border-gray-100 pt-16 pb-12">
         <div class="px-6">
           <!-- Main Feature: Chord Test -->
-          <div class="mb-16 text-center">
-            <router-link to="/test" class="group block relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 to-blue-600 p-8 shadow-lg hover:shadow-xl transition-all duration-300">
-              <div class="relative z-10">
-                <p class="text-blue-100 text-xs font-bold tracking-widest uppercase mb-2">Try it now</p>
-                <h3 class="text-2xl font-black text-white mb-2">和音テストに挑戦</h3>
-                <p class="text-blue-100 text-sm font-medium mb-6">あなたの音感レベルをチェックしてみましょう</p>
-                <span class="inline-block bg-white text-blue-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm group-hover:bg-blue-50 transition-colors">
-                  テストを始める
-                </span>
+          <div class="mb-16">
+            <router-link to="/test" class="group relative block w-full overflow-hidden rounded-3xl bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg border border-gray-100">
+              <div class="absolute top-0 right-0 -mt-8 -mr-8 h-32 w-32 rounded-full bg-gradient-to-br from-blue-100 to-amber-50 opacity-50 blur-2xl transition-transform duration-500 group-hover:scale-150"></div>
+              
+              <div class="relative z-10 flex items-center justify-between">
+                <div>
+                  <div class="flex items-center space-x-2 mb-2">
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                    <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Challenge</p>
+                  </div>
+                  <h3 class="text-xl font-black text-gray-900 mb-1">和音テスト</h3>
+                  <p class="text-xs font-medium text-gray-500">あなたの絶対音感をチェック</p>
+                </div>
+                
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-400 transition-all duration-300 group-hover:bg-blue-600 group-hover:text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </div>
               </div>
-              <!-- Decorative Circle -->
-              <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-500"></div>
             </router-link>
           </div>
 
