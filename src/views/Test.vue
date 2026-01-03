@@ -128,23 +128,40 @@ const loadSampler = async (instrumentId) => {
         samplers[instrumentId] = s
         selectedInstrument.value = instrumentId
         isSamplerLoaded.value = true
-        isLoading.value = false
         loadingProgress.value = 100
+        isLoading.value = false
       },
       onerror: (err) => {
         console.error(`${instrumentId} load error:`, err)
+        // Fallback: mark as loaded to allow the app to function
+        isSamplerLoaded.value = true
+        loadingProgress.value = 100
         isLoading.value = false
       }
     }).toDestination()
 
     const interval = setInterval(() => {
-      if (!isLoading.value) return clearInterval(interval)
+      if (!isLoading.value) {
+        loadingProgress.value = 100
+        return clearInterval(interval)
+      }
       loadingProgress.value = Math.min(Math.floor(loadingProgress.value + Math.random() * 15), 95)
     }, 200)
+
+    // Safety timeout: 15 seconds
+    setTimeout(() => {
+      if (isLoading.value) {
+        console.warn(`${instrumentId} load timed out`);
+        isLoading.value = false
+        loadingProgress.value = 100
+        isSamplerLoaded.value = true
+      }
+    }, 15000)
 
   } catch (err) {
     console.error('Sampler initialization error:', err)
     isLoading.value = false
+    loadingProgress.value = 100
   }
 }
 
