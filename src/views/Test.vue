@@ -60,6 +60,7 @@ const autoPlayTimeout = ref(null)
 const isAutoPlayEnabled = ref(false)
 const isAutoPlayRevealed = ref(false) // Controls visibility in Auto-Play
 const isAutoPlayImmediate = ref(false)
+const autoPlayRevealType = ref('full') // 'full' | 'grid'
 
 const toggleAutoPlay = () => {
   isAutoPlayEnabled.value = !isAutoPlayEnabled.value
@@ -562,6 +563,31 @@ onUnmounted(() => {
                  </div>
              </section>
            </transition>
+
+           <!-- Reveal Style Selection -->
+           <transition name="fade">
+             <section v-if="isAutoPlayEnabled" class="flex flex-col items-center w-full px-4 -mt-4">
+                 <div class="w-full max-w-[280px] bg-gray-50 border border-gray-100 p-4 rounded-xl space-y-3">
+                   <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
+                   <div class="flex bg-gray-200/50 p-1 rounded-lg border border-gray-200">
+                     <button 
+                       @click="autoPlayRevealType = 'full'"
+                       class="flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all text-center"
+                       :class="autoPlayRevealType === 'full' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400'"
+                     >
+                       画面全体
+                     </button>
+                     <button 
+                       @click="autoPlayRevealType = 'grid'"
+                       class="flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all text-center"
+                       :class="autoPlayRevealType === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400'"
+                     >
+                       タイル
+                     </button>
+                   </div>
+                 </div>
+             </section>
+           </transition>
         </div>
       </div>
 
@@ -594,14 +620,28 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- Auto-Play Full Screen Reveal -->
+        <!-- Auto-Play Reveal -->
         <transition name="fade">
           <div 
             v-if="isAutoPlayEnabled && isAutoPlayRevealed" 
-            class="fixed inset-0 z-40 flex items-center justify-center transition-colors duration-500"
-            :style="{ backgroundColor: currentQuestion.color }"
+            class="fixed inset-0 z-40 flex items-center justify-center transition-all duration-500"
+            :class="autoPlayRevealType === 'grid' ? 'bg-white' : ''"
+            :style="autoPlayRevealType === 'full' ? { backgroundColor: currentQuestion.color } : {}"
           >
-            <!-- Revealed background only -->
+            <!-- Grid Style Reveal -->
+            <div v-if="autoPlayRevealType === 'grid'" class="grid grid-cols-4 gap-3 max-w-sm p-8">
+              <div 
+                v-for="chord in TEST_CHORDS" 
+                :key="chord.id"
+                class="aspect-square w-14 rounded-xl border border-gray-100 transition-all duration-500 shadow-sm"
+                :style="{ 
+                  backgroundColor: chord.id === currentQuestion.id ? chord.color : '#fff',
+                  opacity: chord.id === currentQuestion.id ? 1 : 0.8
+                }"
+              ></div>
+            </div>
+            
+            <!-- Full screen mode has no child content -->
           </div>
         </transition>
 
