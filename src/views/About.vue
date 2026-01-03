@@ -18,83 +18,112 @@
     </header>
 
     <main class="flex-grow px-6 pb-20 overflow-y-auto">
-      <div class="space-y-16">
+      <div class="space-y-12">
         <!-- Vision -->
-        <section class="text-center pt-8">
-          <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Our Mission</h1>
-          <h2 class="text-3xl font-black text-gray-900 leading-tight mb-6">
+        <section class="text-center pt-4">
+          <h1 class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em] mb-4">Our Mission</h1>
+          <h2 class="text-3xl font-black text-gray-900 leading-tight">
             「才能」は、本物の「音」と<br/>「習慣」で作られる。
           </h2>
-          <p class="text-sm text-gray-600 leading-relaxed max-w-sm mx-auto font-medium">
-            科学が証明したメソッドを、最高峰のピアノ音源で。<br/>すべての子供に、一生ものの「音」のギフトを。
+          <p class="mt-4 text-[13px] text-gray-500 font-medium">
+            科学が証明したメソッドを、世界最高峰の響きで。
           </p>
         </section>
 
-        <!-- What is Absolute Pitch? -->
-        <section class="bg-gray-900 rounded-[40px] p-10 text-white shadow-2xl relative overflow-hidden">
-          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
-          <h3 class="text-xl font-black mb-6 flex items-center">
-            <span class="w-2 h-8 bg-blue-500 rounded-full mr-4"></span>
-            絶対音感とは？
-          </h3>
-          <p class="text-sm text-gray-300 leading-relaxed space-y-4">
-            「才能」の一言で片付けられてきた絶対音感。実は、聴覚が発達する2歳〜6歳頃に適切なトレーニングを行えば、多くの子が技術として身につけることが可能です。<br/><br/>
-            いろおとは、曖昧な教育論ではなく、科学的エビデンスに基づくシステムで、確実なステップアップをサポートします。
-          </p>
+        <!-- Point Card -->
+        <section class="bg-gray-900 rounded-[32px] p-8 text-white shadow-xl relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+          <div class="relative z-10">
+            <h3 class="text-lg font-black mb-4 flex items-center">
+              <span class="w-1.5 h-6 bg-blue-500 rounded-full mr-3"></span>
+              絶対音感は「技術」です
+            </h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
+              聴覚が発達する2歳〜6歳の「黄金期」に適切な刺激を与えることで、どの子も一生ものの音感を身につけることが可能です。いろおとは、科学的根拠に基づき、最短のステップでその習得をサポートします。
+            </p>
+          </div>
         </section>
 
-        <!-- Features Grid -->
-        <section class="space-y-12">
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest text-center">サービスの特徴</h3>
-          <div class="space-y-12">
+        <!-- Features -->
+        <section class="space-y-4">
+          <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center mb-6">いろおとが選ばれる理由</h3>
+          
+          <div class="grid grid-cols-1 gap-4">
             <!-- Feature 1 -->
-            <div class="relative pl-6 border-l-2 border-blue-500">
-              <h4 class="text-gray-900 font-black text-xl mb-3">本物のグランドピアノの音源を使用</h4>
-              <p class="text-[13px] text-gray-600 leading-relaxed">
-                絶対音感の習得初期において、脳は音の高さだけでなく「音色（ねいろ）」を重要な手がかりとしています。だからこそ、電子的な合成音ではなく、本物のピアノの倍音成分を含んだ豊かな響きが必要です。<br/><br/>
-                世界中のコンサートホールで採用される最高峰グランドピアノ「スタインウェイ（D-274）」からサンプリングした音源を贅沢に使用。繊細な幼児の耳に、妥協のない「本物」の音を届けます。
-              </p>
+            <div class="bg-blue-50/50 rounded-3xl p-6 border border-blue-100/50">
+              <div class="flex items-center mb-3">
+                <span class="text-2xl mr-3">🎹</span>
+                <h4 class="font-black text-gray-900 text-sm">一生ものの耳を育てる「本物」の音</h4>
+              </div>
+              <ul class="text-[11px] text-gray-600 space-y-2 list-none pl-1">
+                <li class="flex items-start">
+                  <span class="text-blue-500 mr-2">●</span>
+                  世界唯一、スタインウェイD-274のフルサンプリング音源を採用
+                </li>
+                <li class="flex items-start">
+                  <span class="text-blue-500 mr-2">●</span>
+                  電子音では再現できない「豊かな倍音」が、脳の成長を促します
+                </li>
+              </ul>
             </div>
-            
+
             <!-- Feature 2 -->
-            <div class="relative pl-6 border-l-2 border-emerald-500">
-              <h4 class="text-gray-900 font-black text-xl mb-3">科学的に実証された習得プロセスを再現</h4>
-              <p class="text-[13px] text-gray-600 leading-relaxed">
-                「才能」の一言で片付けられてきた絶対音感を、誰もが習得可能な「技術」へ。本アプリは、絶対音感習得プロセスに関する縦断的研究（Sakakibara, 2014）に基づき設計されています。<br/><br/>
-                「和音と色の識別」から始まり、脳の認知プロセスに合わせた最適な順序で「単音」へと分化させていく――。学術的なエビデンス（根拠）に基づいたロジックが、確実なステップアップをサポートします。
-              </p>
+            <div class="bg-emerald-50/50 rounded-3xl p-6 border border-emerald-100/50">
+              <div class="flex items-center mb-3">
+                <span class="text-2xl mr-3">🔬</span>
+                <h4 class="font-black text-gray-900 text-sm">心理学論文に基づく確かなメソッド</h4>
+              </div>
+              <ul class="text-[11px] text-gray-600 space-y-2 list-none pl-1">
+                <li class="flex items-start">
+                  <span class="text-emerald-500 mr-2">●</span>
+                  Sakakibara (2014) の実証された習得プロセスをシステム化
+                </li>
+                <li class="flex items-start">
+                  <span class="text-emerald-500 mr-2">●</span>
+                  「和音から単音へ」脳の認知プロセスに合わせた最適な順序
+                </li>
+              </ul>
             </div>
 
             <!-- Feature 3 -->
-            <div class="relative pl-6 border-l-2 border-amber-500">
-              <h4 class="text-gray-900 font-black text-xl mb-3">1回1分の手軽な設計</h4>
-              <p class="text-[13px] text-gray-600 leading-relaxed">
-                絶対音感トレーニングの最大の敵は「親の負担」と「飽き」による挫折です。ピアノの前に座らせる必要も、楽器を用意する必要もありません。アプリを開けば、わずか2タップでトレーニング開始。<br/><br/>
-                隙間時間の1分間で完結するプログラム設計と、子供が自ら触りたくなる直感的な操作性により、最も難しい「毎日の継続」を強力にバックアップします。
-              </p>
+            <div class="bg-amber-50/50 rounded-3xl p-6 border border-amber-100/50">
+              <div class="flex items-center mb-3">
+                <span class="text-2xl mr-3">⏳</span>
+                <h4 class="font-black text-gray-900 text-sm">親子の負担をゼロにする「継続」の設計</h4>
+              </div>
+              <ul class="text-[11px] text-gray-600 space-y-2 list-none pl-1">
+                <li class="flex items-start">
+                  <span class="text-amber-500 mr-2">●</span>
+                  1回1分、スマホ1台。楽器の準備や送り迎えは必要ありません
+                </li>
+                <li class="flex items-start">
+                  <span class="text-amber-500 mr-2">●</span>
+                  遊び感覚で触りたくなるUIが、毎日の「習慣化」を助けます
+                </li>
+              </ul>
             </div>
           </div>
         </section>
 
         <!-- Disclaimer -->
-        <section class="bg-gray-50 rounded-3xl p-8 border border-gray-100">
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">免責事項・運営元について</h3>
-          <p class="text-[11px] text-gray-500 leading-relaxed font-medium">
-            本アプリケーションは、Sakakibara (2014) の研究論文等で提唱されている「和音聴音法（CIM）」の理論・メソッドを参考に、開発者が独自に設計・実装したものです。
-            特定の音楽教室、教育団体、またはメソッド考案者の管理する法人とは一切関係がございません。また、それらの公認・監修を受けたものではありません。
-            アプリに関するお問い合わせは、<router-link to="/contact" class="text-blue-500 hover:underline">お問い合わせフォーム</router-link>までお願いいたします。
-          </p>
+        <section class="border-t border-gray-100 pt-8 pb-4">
+          <div class="bg-gray-50 rounded-2xl p-6">
+            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">免責事項・運営について</h3>
+            <p class="text-[10px] text-gray-500 leading-relaxed font-medium">
+              本アプリは学術的研究を参考に独自開発されたものであり、特定の音楽教室や団体とは無関係です。監修・公認を受けたものでもありません。お問い合わせは<router-link to="/contact" class="text-blue-500 hover:underline">フォーム</router-link>よりお願いいたします。
+            </p>
+          </div>
         </section>
 
-        <div class="pt-8 text-center pb-20">
-          <router-link to="/test" class="bg-gray-900 text-white px-10 py-4 rounded-2xl font-black text-sm shadow-xl hover:bg-black transition-all inline-block active:scale-95">
-            まずは無料でお試し
+        <div class="pt-4 text-center pb-20">
+          <router-link to="/test" class="block w-full bg-gray-900 text-white px-10 py-5 rounded-3xl font-black text-sm shadow-xl hover:bg-black active:scale-[0.98] transition-all">
+            無料トレーニングを始める
           </router-link>
         </div>
       </div>
     </main>
 
-    <footer class="text-center text-gray-300 text-[10px] pb-8 shrink-0 border-t border-gray-50 pt-8">
+    <footer class="text-center text-gray-300 text-[10px] pb-8 shrink-0">
       &copy; 2026 Akatsuki Inc.
     </footer>
     </div>
