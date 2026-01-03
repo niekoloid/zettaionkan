@@ -1,10 +1,14 @@
 <script setup>
 import { useAuth } from '../composables/useAuth'
 
-defineProps({
+const props = defineProps({
   showBack: {
     type: Boolean,
     default: false
+  },
+  backTo: {
+    type: String,
+    default: '/'
   },
   transparent: {
     type: Boolean,
@@ -12,19 +16,22 @@ defineProps({
   }
 })
 
+defineEmits(['back'])
+
 const { user, userTier } = useAuth()
 </script>
 
 <template>
   <header 
-    class="w-full pt-10 pb-6 px-4 flex items-center justify-between shrink-0 relative z-20"
+    class="w-full pt-6 pb-2 px-4 flex items-center justify-between shrink-0 relative z-20"
     :class="{ 'bg-white/80 backdrop-blur-md': !transparent }"
   >
     <!-- Left side: Back Button or Spacer -->
     <div class="w-10 flex items-center">
       <router-link 
         v-if="showBack" 
-        to="/" 
+        :to="backTo" 
+        @click="$emit('back', $event)"
         class="p-2 -ml-2 hover:bg-black/5 rounded-full transition-colors group"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

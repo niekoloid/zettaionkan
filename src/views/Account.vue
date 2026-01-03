@@ -3,12 +3,18 @@ import { ref, onMounted } from 'vue'
 import { supabase, checkPremiumStatus } from '../lib/supabase'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
+import { useAudioSettings } from '../composables/useAudioSettings'
+import AppHeader from '../components/AppHeader.vue'
 const router = useRouter()
 const { user, userTier, refreshStatus } = useAuth()
+const { getPreferredInstrument, setPreferredInstrument } = useAudioSettings()
 const isLoading = ref(true)
 const isPortalLoading = ref(false)
 const trainingHistory = ref([])
 const expandedSessionId = ref(null)
+
+const selectedInstrument = ref('yamaha') // Default
+
 
 const hasCustomer = ref(false)
 
@@ -78,9 +84,23 @@ onMounted(async () => {
   if (history) {
     trainingHistory.value = history
   }
+  
+  // Load preferred instrument
+  selectedInstrument.value = getPreferredInstrument()
 
   isLoading.value = false
 })
+
+const updateInstrument = (instrument) => {
+    if (instrument === 'steinway' && userTier.value !== 'premium') {
+        if (confirm('STEINWAY B音源を利用するにはプレミアムプランの登録が必要です。プラン一覧を確認しますか？')) {
+            router.push('/subscription')
+        }
+        return
+    }
+    selectedInstrument.value = instrument
+    setPreferredInstrument(instrument)
+}
 
 const handleLogout = async () => {
   await supabase.auth.signOut()
@@ -141,6 +161,43 @@ const openCustomerPortal = async () => {
       </div>
 
       <div class="space-y-8">
+        <!-- Instrument Settings -->
+        <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100">
+           <div class="flex items-center space-x-2 mb-4">
+              <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+              </div>
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">使用するピアノ音源</p>
+           </div>
+           
+           <div class="flex bg-white p-1 rounded-xl border border-gray-200 w-full mb-2">
+              <button 
+                @click="updateInstrument('yamaha')"
+                class="flex-1 py-2.5 rounded-lg text-xs font-bold transition-all text-center"
+                :class="selectedInstrument === 'yamaha' ? 'bg-gray-900 shadow-md text-white' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'"
+              >
+                YAMAHA C5
+              </button>
+              <button 
+                @click="updateInstrument('steinway')"
+                class="flex-1 py-2.5 rounded-lg text-xs font-bold transition-all text-center flex items-center justify-center overflow-hidden relative"
+                :class="selectedInstrument === 'steinway' ? 'bg-gray-900 shadow-md text-white' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'"
+              >
+                <div v-if="userTier !== 'premium'" class="absolute inset-0 bg-gray-50/50 flex items-center justify-center z-10 backdrop-blur-[1px]">
+                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                   </svg>
+                 </div>
+                STEINWAY B
+              </button>
+            </div>
+            <p class="text-[10px] text-gray-400 font-medium pl-1">
+             {{ selectedInstrument === 'steinway' ? 'スタインウェイの重厚で煌びやかな音色' : 'ヤマハの明るくクリアで親しみやすい音色' }}
+            </p>
+        </div>
+
         <!-- User Info Card -->
         <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100">
           <div class="flex items-center space-x-4 mb-6">
@@ -320,6 +377,19 @@ const openCustomerPortal = async () => {
               <span class="text-sm font-bold text-gray-700 group-hover:text-red-600 transition-colors">ログアウト</span>
             </div>
           </button>
+        </div>
+
+        <!-- Back to Home Button -->
+        <div class="pt-10">
+          <router-link 
+            to="/" 
+            class="flex items-center justify-center space-x-2 py-4 text-gray-400 hover:text-gray-600 transition-colors group"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span class="text-sm font-bold">ホームに戻る</span>
+          </router-link>
         </div>
       </div>
     </main>

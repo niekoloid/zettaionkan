@@ -60,7 +60,12 @@ const routes = [
   {
     path: '/test',
     name: 'Test',
-    component: () => import('../views/Test.vue')
+    component: () => import('../views/ChordTest.vue')
+  },
+  {
+    path: '/autoplay',
+    name: 'AutoPlay',
+    component: () => import('../views/AutoPlay.vue')
   }
 ]
 

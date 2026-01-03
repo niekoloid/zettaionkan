@@ -1,3 +1,4 @@
+```javascript
 import { ref, reactive } from 'vue'
 import * as Tone from 'tone'
 import { STEINWAY_MAP, YAMAHA_MAP } from '../constants/instruments.js'
@@ -8,6 +9,8 @@ const isLoading = ref(false)
 const loadingProgress = ref(0)
 const isSamplerLoaded = ref(false)
 const selectedInstrument = ref('yamaha')
+// Holds the filename currently being fetched for visual feedback
+const loadingFile = ref('')
 
 export function useAudio() {
   const loadSampler = async (instrumentId) => {
@@ -42,6 +45,10 @@ export function useAudio() {
       ? { urls: YAMAHA_MAP, baseUrl: "https://tonejs.github.io/audio/salamander/" }
       : { urls: STEINWAY_MAP, baseUrl: "/samples/steinway/ff/" }
 
+    // Prepare list of filenames for progress display
+    const fileList = Object.values(config.urls)
+    let fileIdx = 0
+
     try {
       const s = new Tone.Sampler({
         ...config,
@@ -52,6 +59,7 @@ export function useAudio() {
           isSamplerLoaded.value = true
           loadingProgress.value = 100
           isLoading.value = false
+          loadingFile.value = ''
         },
         onerror: (err) => {
           console.error(`${instrumentId} load error:`, err)
@@ -59,16 +67,22 @@ export function useAudio() {
           isSamplerLoaded.value = true
           loadingProgress.value = 100
           isLoading.value = false
+          loadingFile.value = ''
         }
       }).toDestination()
 
-      // Fake progress animation
+      // Fake progress animation with file name updates
       const interval = setInterval(() => {
         if (!isLoading.value) {
           clearInterval(interval)
+          loadingFile.value = ''
           return
         }
+        // Update progress
         loadingProgress.value = Math.min(Math.floor(loadingProgress.value + Math.random() * 15), 95)
+        // Cycle through file names for visual cue
+        loadingFile.value = fileList[fileIdx % fileList.length]
+        fileIdx++
       }, 200)
 
       // Safety timeout
@@ -78,6 +92,7 @@ export function useAudio() {
           isLoading.value = false
           loadingProgress.value = 100
           isSamplerLoaded.value = true
+          loadingFile.value = ''
         }
       }, 30000) // Increased to 30s as samples can be large
 
@@ -85,6 +100,7 @@ export function useAudio() {
       console.error('Sampler initialization error:', err)
       isLoading.value = false
       loadingProgress.value = 100
+      loadingFile.value = ''
     }
   }
 
@@ -102,9 +118,11 @@ export function useAudio() {
     samplers,
     isLoading,
     loadingProgress,
+    loadingFile,
     isSamplerLoaded,
     selectedInstrument,
     loadSampler,
     playNotes
   }
 }
+```
