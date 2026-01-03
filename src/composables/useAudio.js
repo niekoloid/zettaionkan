@@ -1,4 +1,4 @@
-```javascript
+
 import { ref, reactive } from 'vue'
 import * as Tone from 'tone'
 import { STEINWAY_MAP, YAMAHA_MAP } from '../constants/instruments.js'
@@ -125,4 +125,4 @@ export function useAudio() {
     playNotes
   }
 }
-```
+
