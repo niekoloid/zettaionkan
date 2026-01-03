@@ -1,6 +1,7 @@
 
 import { ref, reactive } from 'vue'
 import * as Tone from 'tone'
+import { useAuth } from './useAuth'
 import { STEINWAY_MAP, YAMAHA_MAP } from '../constants/instruments.js'
 
 // Singleton state shared across all components
@@ -14,6 +15,9 @@ const loadingFile = ref('')
 
 export function useAudio() {
   const loadSampler = async (instrumentId) => {
+    const { user } = useAuth()
+    // If not logged in, always use Yamaha C5
+    if (!user.value) instrumentId = 'yamaha'
     // 1. If sampler already exists, just switch and return
     if (samplers[instrumentId]) {
       selectedInstrument.value = instrumentId
