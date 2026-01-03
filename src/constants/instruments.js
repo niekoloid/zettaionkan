@@ -31,7 +31,7 @@ const isSteinwaySubsetNote = (note) => {
 const rawSteinwayMap = {}
 ALL_NOTES.forEach(note => {
   if (isSteinwaySubsetNote(note)) {
-    rawSteinwayMap[note] = `${note}.wav`
+    rawSteinwayMap[note] = `${note}.mp3`
   }
 })
 
