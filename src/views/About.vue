@@ -12,51 +12,87 @@
         </svg>
       </router-link>
       <div class="absolute left-1/2 transform -translate-x-1/2">
-        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-20 w-auto object-contain" />
+        <img src="../assets/logo_irooto.png" alt="いろおと" class="h-20 w-auto object-contain" />
       </div>
-      <div class="w-10"></div> <!-- Spacer -->
+      <div class="w-10"></div>
     </header>
 
     <main class="flex-grow px-6 pb-20 overflow-y-auto">
-      <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
-        <div class="text-center mb-10">
-          <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">About Service</h1>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">サービスについて</h2>
-          <p class="text-xs text-gray-400 font-medium tracking-widest uppercase">Overview</p>
-        </div>
+      <div class="space-y-16">
+        <!-- Vision -->
+        <section class="text-center pt-8">
+          <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Our Vision</h1>
+          <h2 class="text-3xl font-black text-gray-900 leading-tight mb-6">
+            すべての子供に、<br/>一生ものの「音」のギフトを。
+          </h2>
+          <p class="text-sm text-gray-600 leading-relaxed max-w-sm mx-auto">
+            音楽は、言葉以上に感情を豊かにし、人生を彩ります。私たちは、テクノロジーの力で、世界中の子供たちが「絶対音感」という魔法を身につけられる未来を目指しています。
+          </p>
+        </section>
 
-        <div class="space-y-6">
-          <div class="prose prose-sm prose-blue max-w-none">
-            <p class="text-gray-600 leading-relaxed">
-              「いろおと」は、音と色を結びつけることで、楽しみながら絶対音感を養うトレーニングアプリです。
-            </p>
-            <p class="text-gray-600 leading-relaxed mt-4">
-              小さなお子様から大人まで、ゲーム感覚で毎日続けられるように設計されています。
-            </p>
-            <h3 class="font-bold text-gray-900 mt-6 mb-2">特徴</h3>
-            <ul class="list-disc list-inside text-gray-600 space-y-2">
-              <li>独自のカラーメソッドによる直感的な学習</li>
-              <li>プロ仕様のピアノ音源（Steinway & Sons Model B）を使用</li>
-              <li>段階的なレベル設定で無理なく上達</li>
-            </ul>
-             <h3 class="font-bold text-gray-900 mt-6 mb-2">推奨年齢</h3>
-            <p class="text-gray-600 leading-relaxed">
-              3歳〜6歳（聴覚が最も発達する時期）<br>
-              ※大人の方の音感トレーニングとしてもご利用いただけます。
-            </p>
+        <!-- What is Absolute Pitch? -->
+        <section class="bg-gray-900 rounded-[40px] p-10 text-white shadow-2xl relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
+          <h3 class="text-xl font-black mb-6 flex items-center">
+            <span class="w-2 h-8 bg-blue-500 rounded-full mr-4"></span>
+            絶対音感とは？
+          </h3>
+          <p class="text-sm text-gray-300 leading-relaxed space-y-4">
+            他の音と比較することなく、聞こえた音の高さを即座に認識できる能力のことです。<br/><br/>
+            これは「才能」だと思われがちですが、実は聴覚が発達する2歳〜6歳頃に適切なトレーニングを行えば、多くの子が身につけることができる「技術」です。
+          </p>
+        </section>
+
+        <!-- Features Grid -->
+        <section class="space-y-8">
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest text-center">サービスの特徴</h3>
+          <div class="grid grid-cols-1 gap-6">
+            <div class="flex items-center p-6 bg-blue-50 rounded-[2rem] border border-blue-100">
+              <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm mr-5 shrink-0">🎨</div>
+              <div>
+                <h4 class="font-bold text-gray-900 text-sm mb-1">音と色を同時に記憶</h4>
+                <p class="text-[11px] text-gray-500 leading-relaxed">抽象的な音を「色」という具体的な情報とセットにすることで、記憶を定着させます。</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center p-6 bg-pink-50 rounded-[2rem] border border-pink-100">
+              <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm mr-5 shrink-0">🎹</div>
+              <div>
+                <h4 class="font-bold text-gray-900 text-sm mb-1">世界最高峰の音色</h4>
+                <p class="text-[11px] text-gray-500 leading-relaxed">正確なピッチはもちろん、美しくリアルなピアノ音源に触れることで豊かな感性を育みます。</p>
+              </div>
+            </div>
+
+            <div class="flex items-center p-6 bg-amber-50 rounded-[2rem] border border-amber-100">
+              <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm mr-5 shrink-0">🎮</div>
+              <div>
+                <h4 class="font-bold text-gray-900 text-sm mb-1">遊びが学びに変わる</h4>
+                <p class="text-[11px] text-gray-500 leading-relaxed">クイズ形式のテストや、オートプレイ機能で、日常の中に自然に音楽を取り入れられます。</p>
+              </div>
+            </div>
           </div>
+        </section>
+
+        <!-- Message from Akatsuki -->
+        <section class="text-center py-10">
+          <div class="inline-block p-1 rounded-full bg-gray-100 mb-6">
+             <img src="../assets/logo_irooto.png" alt="Akatsuki Inc." class="w-12 h-12 rounded-full grayscale" />
+          </div>
+          <h3 class="font-bold text-gray-900 mb-4">運営チームより</h3>
+          <p class="text-[11px] text-gray-400 leading-relaxed max-w-sm mx-auto">
+            私たちが大切にしているのは、スキマ時間の1分を「ワクワク」に変えることです。お子様が「またやりたい！」と言えるような体験を、これからも追求し続けます。
+          </p>
+        </section>
+
+        <div class="pt-8 text-center pb-20">
+          <router-link to="/test" class="bg-gray-900 text-white px-10 py-4 rounded-2xl font-black text-sm shadow-xl hover:bg-black transition-all inline-block active:scale-95">
+            まずは無料でお試し
+          </router-link>
         </div>
       </div>
-      
-       <div class="mt-8 text-center">
-        <router-link to="/test" class="inline-block bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold py-3 px-8 rounded-full shadow-lg transition-colors">
-          まずは力試し（和音テスト）
-        </router-link>
-      </div>
-
     </main>
 
-    <footer class="text-center text-gray-300 text-[10px] pb-8 shrink-0">
+    <footer class="text-center text-gray-300 text-[10px] pb-8 shrink-0 border-t border-gray-50 pt-8">
       &copy; 2026 Akatsuki Inc.
     </footer>
     </div>
