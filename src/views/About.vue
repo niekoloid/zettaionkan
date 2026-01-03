@@ -49,7 +49,7 @@
           <div class="space-y-12">
             <!-- Feature 1 -->
             <div class="relative pl-6 border-l-2 border-blue-500">
-              <h4 class="text-gray-900 font-black text-xl mb-3">世界最高峰「スタインウェイ」の豊かな響きが、お子様の聴力と感性を正しく育てます。</h4>
+              <h4 class="text-gray-900 font-black text-xl mb-3">スタインウェイの豊かな響きが、お子様の正しい聴力を育てます。</h4>
               <p class="text-[13px] text-gray-600 leading-relaxed">
                 絶対音感の習得初期において、脳は音の高さだけでなく「音色（ねいろ）」を重要な手がかりとしています。だからこそ、電子的な合成音ではなく、本物のピアノの倍音成分を含んだ豊かな響きが必要なのです。<br/><br/>
                 本アプリでは、世界中のコンサートホールで採用される最高峰グランドピアノ「スタインウェイ（D-274）」からサンプリングした音源を贅沢に使用。繊細な幼児の耳に、妥協のない「本物」の音を届けます。
@@ -58,7 +58,7 @@
             
             <!-- Feature 2 -->
             <div class="relative pl-6 border-l-2 border-emerald-500">
-              <h4 class="text-gray-900 font-black text-xl mb-3">心理学論文に基づき実証された、科学的な習得プロセスをシステム上で完全に再現。</h4>
+              <h4 class="text-gray-900 font-black text-xl mb-3">科学的に実証された習得プロセスを、システム上で完全に再現。</h4>
               <p class="text-[13px] text-gray-600 leading-relaxed">
                 「才能」の一言で片付けられてきた絶対音感を、誰もが習得可能な「技術」へ。本アプリは、絶対音感習得プロセスに関する縦断的研究（Sakakibara, 2014）に基づき設計されています。<br/><br/>
                 「和音と色の識別」から始まり、脳の認知プロセスに合わせた最適な順序で「単音」へと分化させていく――。学術的なエビデンス（根拠）に基づいたロジックが、確実なステップアップをサポートします。
@@ -67,7 +67,7 @@
 
             <!-- Feature 3 -->
             <div class="relative pl-6 border-l-2 border-amber-500">
-              <h4 class="text-gray-900 font-black text-xl mb-3">1回2分、スマホをタップするだけのUI設計で、忙しい毎日でも無理なく継続が可能です。</h4>
+              <h4 class="text-gray-900 font-black text-xl mb-3">1回2分の手軽な設計で、忙しい毎日でも無理なく続けられます。</h4>
               <p class="text-[13px] text-gray-600 leading-relaxed">
                 絶対音感トレーニングの最大の敵は「親の負担」と「飽き」による挫折です。ピアノの前に座らせる必要も、楽器を用意する必要もありません。アプリを開けば、わずか2タップでトレーニング開始。<br/><br/>
                 隙間時間の2分間で完結するプログラム設計と、子供が自ら触りたくなる直感的な操作性により、最も難しい「毎日の継続」を強力にバックアップします。
