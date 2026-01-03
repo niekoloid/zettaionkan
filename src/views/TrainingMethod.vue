@@ -1,4 +1,5 @@
 <script setup>
+import AppHeader from '../components/AppHeader.vue'
 import InstallPwa from '../components/InstallPwa.vue'
 
 const getChordInfo = (num) => {
@@ -21,17 +22,7 @@ const getChordInfo = (num) => {
   <div class="min-h-screen bg-white font-['Noto_Sans_JP']">
     <div class="min-h-screen flex flex-col max-w-3xl mx-auto relative overflow-hidden">
     <!-- Header -->
-    <header class="pt-12 pb-8 px-4 flex items-center justify-between relative shrink-0">
-      <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors group z-10">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </router-link>
-      <div class="absolute left-1/2 transform -translate-x-1/2">
-        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-20 w-auto object-contain" />
-      </div>
-      <div class="w-10"></div> <!-- Spacer -->
-    </header>
+    <AppHeader showBack />
 
     <main class="flex-grow px-6 pb-20 overflow-y-auto">
       <div class="space-y-12">

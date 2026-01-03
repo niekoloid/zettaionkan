@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-import { supabase } from '../lib/supabase'
 import { useRouter } from 'vue-router'
 import * as Tone from 'tone'
 import abcjs from 'abcjs'
@@ -9,11 +8,13 @@ import { Levels } from '../constants/chords.js'
 
 import { useAudio } from '../composables/useAudio'
 
+import AppHeader from '../components/AppHeader.vue'
+import { useAuth } from '../composables/useAuth'
+
 const router = useRouter()
 const levels = ref(Levels.filter(l => !['STEP 4', 'STEP 5'].includes(l.shortName)))
 
 const currentChord = ref(null)
-const userTier = ref('free') // 'free' | 'entry' | 'standard' | 'premium'
 const activeLevelIndex = ref(0)
 const namingConvention = ref('italian') // 'german' | 'italian'
 const pressedNotes = ref(new Set())
@@ -27,32 +28,9 @@ const {
   loadSampler 
 } = useAudio()
 
-const user = ref(null)
+const { user, userTier } = useAuth()
 
 onMounted(async () => {
-  try {
-    const { data } = await supabase.auth.getUser()
-    user.value = data?.user || null
-    if (user.value) {
-      const { checkPremiumStatus } = await import('../lib/supabase')
-      const status = await checkPremiumStatus()
-      userTier.value = status.tier
-    }
-  } catch (err) {
-    console.error('Supabase auth error:', err)
-  }
-
-  supabase.auth.onAuthStateChange(async (_event, session) => {
-    user.value = session?.user ?? null
-    if (user.value) {
-      const { checkPremiumStatus } = await import('../lib/supabase')
-      const status = await checkPremiumStatus()
-      userTier.value = status.tier
-    } else {
-      userTier.value = 'free'
-    }
-  })
-
   // Initial load
   if (userTier.value === 'premium') {
     loadSampler('steinway')
@@ -285,27 +263,7 @@ const isLightColor = (hex) => {
         </div>
       </transition>
     <!-- Header -->
-    <header class="pt-10 pb-6 px-4 flex items-center justify-between shrink-0">
-      <div class="w-10"></div> <!-- Spacer -->
-      <div class="flex flex-col items-center">
-        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-20 w-auto object-contain" />
-      </div>
-      <router-link :to="user ? '/account' : '/auth'" class="p-2 hover:bg-black/5 rounded-full transition-colors group">
-        <svg v-if="!user" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-        </svg>
-        <div v-else 
-          class="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold uppercase border-2 transition-all"
-          :class="[
-            userTier === 'free' ? 'bg-black/5 text-gray-400 border-transparent' : 
-            userTier === 'entry' ? 'bg-blue-50 text-blue-500 border-blue-200' :
-            'bg-amber-50 text-amber-500 border-amber-200'
-          ]"
-        >
-          {{ user?.email?.charAt(0) || '?' }}
-        </div>
-      </router-link>
-    </header>
+    <AppHeader transparent />
 
     <!-- Main Content -->
     <main class="flex-grow px-4 pb-8 overflow-y-auto" style="scrollbar-gutter: stable;">

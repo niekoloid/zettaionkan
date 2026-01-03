@@ -5,6 +5,8 @@ import * as Tone from 'tone'
 import { ChordDefinitions } from '../constants/chords'
 import { supabase } from '../lib/supabase'
 import { useAudio } from '../composables/useAudio'
+import { useAuth } from '../composables/useAuth'
+import AppHeader from '../components/AppHeader.vue'
 
 const router = useRouter()
 
@@ -36,7 +38,6 @@ const DELAYS = {
 
 // === Reactive State ===
 const view = ref('settings')
-const userTier = ref('free')
 const score = ref(0)
 const isSaving = ref(false)
 const currentQuestionIndex = ref(0)
@@ -258,19 +259,10 @@ const resetTest = () => {
 }
 
 // === Lifecycle ===
+const { user, userTier } = useAuth()
+
 onMounted(async () => {
-  try {
-    const { data } = await supabase.auth.getUser()
-    if (data?.user) {
-      const { checkPremiumStatus } = await import('../lib/supabase')
-      const status = await checkPremiumStatus()
-      userTier.value = status.tier
-    }
-    loadSampler(userTier.value === 'premium' ? 'steinway' : 'yamaha')
-  } catch (err) {
-    console.error('onMounted error:', err)
-    loadSampler('yamaha')
-  }
+  loadSampler(userTier.value === 'premium' ? 'steinway' : 'yamaha')
 })
 
 onUnmounted(() => {
@@ -300,20 +292,7 @@ onUnmounted(() => {
       </transition>
 
     <!-- Header -->
-    <header v-if="!(view === 'quiz' && isAutoPlayEnabled)" class="w-full pt-10 pb-6 px-4 flex items-center justify-between border-b border-gray-100 bg-white z-10">
-      <button 
-        @click="router.push('/')" 
-        class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-      <div class="flex flex-col items-center">
-        <img src="../assets/logo_irooto.png" alt="いろおと" class="h-16 w-auto object-contain" />
-      </div>
-      <div class="w-10"></div>
-    </header>
+    <AppHeader v-if="!(view === 'quiz' && isAutoPlayEnabled)" showBack />
 
     <main class="w-full flex-grow overflow-y-auto px-4 py-6 scrollbar-hide" style="scrollbar-gutter: stable;">
       
