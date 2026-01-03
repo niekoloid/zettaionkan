@@ -3,15 +3,15 @@ import InstallPwa from '../components/InstallPwa.vue'
 
 const getChordInfo = (num) => {
   const chords = {
-    1: { color: '#FF0000', name: 'ドミソ', displayColor: 'あか' },
-    2: { color: '#FFFF00', name: 'ドファラ', displayColor: 'きいろ' },
-    3: { color: '#0000FF', name: 'シレソ', displayColor: 'あお' },
-    4: { color: '#000000', name: 'ラドファ', displayColor: 'くろ' },
-    5: { color: '#008000', name: 'レソシ', displayColor: 'みどり' },
-    6: { color: '#FFA500', name: 'ミソド', displayColor: 'おれんじ' },
-    7: { color: '#800080', name: 'ファラド', displayColor: 'むらさき' },
-    8: { color: '#FFC0CB', name: 'ソシレ', displayColor: 'ぴんく' },
-    9: { color: '#8B4513', name: 'ソドミ', displayColor: 'ちゃいろ' }
+    1: { color: '#FF0000', name: 'ドミソ', displayColor: '赤' },
+    2: { color: '#FFFF00', name: 'ドファラ', displayColor: '黄色' },
+    3: { color: '#0000FF', name: 'シレソ', displayColor: '青' },
+    4: { color: '#000000', name: 'ラドファ', displayColor: '黒' },
+    5: { color: '#008000', name: 'レソシ', displayColor: '緑' },
+    6: { color: '#FFA500', name: 'ミソド', displayColor: 'オレンジ' },
+    7: { color: '#800080', name: 'ファラド', displayColor: '紫' },
+    8: { color: '#FFC0CB', name: 'ソシレ', displayColor: 'ピンク' },
+    9: { color: '#8B4513', name: 'ソドミ', displayColor: '茶色' }
   }
   return chords[num]
 }
