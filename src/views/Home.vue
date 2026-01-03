@@ -558,19 +558,27 @@ const isLightColor = (hex) => {
       <!-- Footer Links -->
       <div class="mt-20 border-t border-gray-100 pt-16 pb-12">
         <div class="px-6">
-          <!-- Main Feature: Chord Test -->
-          <div class="mb-16 text-center">
-            <router-link to="/test" class="group block relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 to-blue-600 p-8 shadow-lg hover:shadow-xl transition-all duration-300">
-              <div class="relative z-10">
-                <p class="text-blue-100 text-xs font-bold tracking-widest uppercase mb-2">Try it now</p>
-                <h3 class="text-2xl font-black text-white mb-2">和音テストに挑戦</h3>
-                <p class="text-blue-100 text-sm font-medium mb-6">あなたの音感レベルをチェックしてみましょう</p>
-                <span class="inline-block bg-white text-blue-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm group-hover:bg-blue-50 transition-colors">
-                  テストを始める
-                </span>
+          <!-- Main Feature: Chord Training -->
+          <div class="mb-16">
+            <router-link to="/test" class="group relative block w-full overflow-hidden rounded-[2.5rem] bg-white p-12 shadow-[0_4px_20px_rgb(0,0,0,0.03)] ring-1 ring-gray-100 transition-all duration-500 hover:shadow-[0_15px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1">
+              <!-- Subtle Background Gradients -->
+              <div class="absolute top-0 right-0 -mt-20 -mr-20 h-80 w-80 rounded-full bg-gradient-to-br from-blue-50/50 to-indigo-50/50 blur-3xl opacity-50 transition-all duration-700 group-hover:opacity-100 group-hover:scale-110"></div>
+              
+              <!-- Content -->
+              <div class="relative z-10 flex flex-col items-center text-center">
+                <h3 class="mb-6 text-2xl font-black tracking-tighter text-gray-900 sm:text-3xl leading-none whitespace-nowrap">
+                  和音トレーニング
+                </h3>
+                
+                <div class="relative">
+                  <span class="inline-flex h-12 items-center justify-center rounded-full bg-gray-900 px-12 text-sm font-black text-white transition-all duration-300 group-hover:scale-105 group-hover:bg-black shadow-lg shadow-gray-200 whitespace-nowrap">
+                    開始する
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="ml-2 h-4 w-4">
+                      <path fill-rule="evenodd" d="M16.72 7.72a.75.75 0 011.06 0l3.75 3.75a.75.75 0 010 1.06l-3.75 3.75a.75.75 0 11-1.06-1.06l2.47-2.47H3a.75.75 0 010-1.5h16.19l-2.47-2.47a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                </div>
               </div>
-              <!-- Decorative Circle -->
-              <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-500"></div>
             </router-link>
           </div>
 

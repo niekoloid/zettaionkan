@@ -8,8 +8,52 @@ const user = ref(null)
 const userTier = ref('free')
 const isLoading = ref(true)
 const isPortalLoading = ref(false)
+const trainingHistory = ref([])
+const expandedSessionId = ref(null)
 
 const hasCustomer = ref(false)
+
+const formatDate = (dateString) => {
+  const d = new Date(dateString)
+  const year = d.getFullYear()
+  const month = (d.getMonth() + 1).toString().padStart(2, '0')
+  const day = d.getDate().toString().padStart(2, '0')
+  const weekDay = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()]
+  
+  let hours = d.getHours()
+  const minutes = d.getMinutes().toString().padStart(2, '0')
+  const ampm = hours >= 12 ? 'PM' : 'AM'
+  hours = hours % 12
+  hours = hours ? hours : 12
+  
+  return `${year}年${month}月${day}日（${weekDay}） ${hours}:${minutes} ${ampm}`
+}
+
+const toggleSession = (sessionId) => {
+  if (expandedSessionId.value === sessionId) {
+    expandedSessionId.value = null
+  } else {
+    expandedSessionId.value = sessionId
+  }
+}
+
+const deleteSession = async (sessionId) => {
+  if (!confirm('この履歴を削除してもよろしいですか？')) return
+
+  const { error } = await supabase
+    .from('training_sessions')
+    .delete()
+    .eq('id', sessionId)
+
+  if (error) {
+    console.error('Error deleting session:', error)
+    alert('削除に失敗しました')
+    return
+  }
+
+  // Remove from local list
+  trainingHistory.value = trainingHistory.value.filter(s => s.id !== sessionId)
+}
 
 onMounted(async () => {
   const { data } = await supabase.auth.getUser()
@@ -22,6 +66,19 @@ onMounted(async () => {
   const status = await checkPremiumStatus()
   userTier.value = status.tier
   hasCustomer.value = status.hasCustomer
+
+  // Fetch training history
+  const { data: history, error } = await supabase
+    .from('training_sessions')
+    .select('*')
+    .eq('user_id', user.value.id)
+    .order('created_at', { ascending: false })
+    .limit(10)
+    
+  if (history) {
+    trainingHistory.value = history
+  }
+
   isLoading.value = false
 })
 
@@ -113,6 +170,126 @@ const openCustomerPortal = async () => {
             </div>
             <router-link v-if="userTier === 'free'" to="/subscription" class="text-[10px] font-bold text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full hover:bg-amber-100 transition-colors">
               プラン一覧を見る
+            </router-link>
+          </div>
+        </div>
+        <!-- Training History -->
+        <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100">
+          <div class="flex items-center space-x-2 mb-6">
+             <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+               </svg>
+             </div>
+             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">トレーニング履歴</p>
+          </div>
+
+          <div v-if="trainingHistory.length > 0" class="space-y-3">
+            <div 
+              v-for="session in trainingHistory" 
+              :key="session.id"
+              class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+            >
+              <div 
+                @click="toggleSession(session.id)"
+                class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+              >
+                <div>
+                  <p class="text-[10px] text-gray-400 font-bold mb-1">{{ formatDate(session.created_at) }}</p>
+                  <div class="flex items-center space-x-2">
+                     <span class="text-sm font-bold text-gray-700">和音トレーニング</span>
+                     <span v-if="session.score === session.total_questions" class="text-[9px] bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full font-bold">PERFECT</span>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <div class="text-right">
+                    <span class="text-xl font-black text-gray-900">{{ session.score }}</span>
+                    <span class="text-xs font-bold text-gray-300">/{{ session.total_questions }}</span>
+                  </div>
+                  <button 
+                    @click.stop="deleteSession(session.id)"
+                    class="p-2 text-gray-300 hover:text-red-400 hover:bg-red-50 rounded-full transition-colors"
+                    title="削除"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    class="h-4 w-4 text-gray-300 transition-transform duration-200"
+                    :class="{ 'rotate-180': expandedSessionId === session.id }"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Detailed Log -->
+              <div v-if="expandedSessionId === session.id" class="border-t border-gray-100 bg-gray-50/50 p-4">
+                  <div v-if="['standard', 'premium'].includes(userTier)" class="space-y-2">
+                    <div 
+                      v-for="(log, idx) in session.details" 
+                      :key="idx"
+                      class="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-100"
+                    >
+                      <div class="flex items-center space-x-3">
+                        <span class="text-xs font-bold text-gray-300 w-4">{{ idx + 1 }}</span>
+                        
+                        <!-- Question Color -->
+                        <div 
+                          class="w-8 h-8 rounded-lg shadow-sm border border-gray-100"
+                          :style="{ backgroundColor: log.question.color }"
+                        ></div>
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+
+                        <!-- Answer Color or Skip -->
+                        <div v-if="!log.isSkipped && log.answer"
+                          class="w-8 h-8 rounded-lg shadow-sm border border-gray-100"
+                          :style="{ backgroundColor: log.answer.color }"
+                        ></div>
+                        <span v-else class="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded">SKIP</span>
+                      </div>
+
+                      <!-- Result Icon -->
+                      <div>
+                        <div v-if="log.isCorrect" class="text-green-500 bg-green-50 p-1 rounded-full">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <div v-else class="text-red-400 bg-red-50 p-1 rounded-full">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else class="text-center py-4">
+                    <div class="mb-2 text-gray-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                    <p class="text-[10px] font-bold text-gray-500 mb-3">詳細（どの音を間違えたか等）の閲覧は<br>スタンダードプラン以上の機能です</p>
+                    <router-link to="/subscription" class="inline-block text-[10px] font-bold text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full hover:bg-amber-100 transition-colors">
+                        プランを確認する
+                    </router-link>
+                  </div>
+              </div>
+            </div>
+            
+             <p class="text-center text-[10px] text-gray-400 mt-4">直近の10件を表示しています</p>
+          </div>
+          <div v-else class="text-center py-8">
+            <p class="text-sm text-gray-400 font-bold">履歴はまだありません</p>
+            <router-link to="/test" class="inline-block mt-4 text-xs font-bold text-blue-500 hover:text-blue-600">
+              トレーニングを開始する
             </router-link>
           </div>
         </div>

@@ -11,9 +11,6 @@ BASE_INPUT_FOLDER = "Steinway_Raw"
 BASE_OUTPUT_FOLDER = "public/samples/steinway"
 DYNAMICS = ["ff"]
 SILENCE_THRESHOLD = 500  # Amplitude threshold for silence
-MAX_DURATION_SEC = 4.0   # Trim to 4 seconds for lightweight
-# Select subset of notes (minor 3rd spacing: C, Eb, Gb, A)
-SUBSET_NOTES = ["C", "Eb", "Gb", "A"]
 # ==========================================
 
 def trim_silence_and_save_as_wav(input_path, output_path):
@@ -42,11 +39,8 @@ def trim_silence_and_save_as_wav(input_path, output_path):
                 start_idx = i
                 break
         
-        # Limit duration
-        max_frames = int(MAX_DURATION_SEC * params.framerate)
-        end_idx = start_idx + (max_frames * channels)
-        
-        trimmed_samples = samples[start_idx:end_idx]
+        # Use content from start_idx to end (no duration limit)
+        trimmed_samples = samples[start_idx:]
         
         with wave.open(output_path, 'wb') as wf:
             wf.setnchannels(params.nchannels)

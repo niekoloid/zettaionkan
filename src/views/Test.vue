@@ -3,11 +3,15 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import * as Tone from 'tone'
 import { ChordDefinitions } from '../constants/chords'
+import { supabase } from '../lib/supabase'
+import { 
+  STEINWAY_MAP, 
+  YAMAHA_MAP 
+} from '../constants/instruments.js'
 
 const router = useRouter()
 
-// === Constants & Data ===
-// ユーザー指定の順序とラベルでリスト化
+// === Constants ===
 const TEST_CHORDS = [
   { ...ChordDefinitions.DOMISO, label: '1', displayColor: 'あか', sortOrder: 1 },
   { ...ChordDefinitions.DOFARA, label: '2', displayColor: 'きいろ', sortOrder: 2 },
@@ -25,75 +29,83 @@ const TEST_CHORDS = [
   { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: 'みずいろ', sortOrder: 14 },
 ]
 
-import { 
-  ALL_NOTES, 
-  STEINWAY_MAP, 
-  YAMAHA_MAP 
-} from '../constants/instruments.js'
+const DELAYS = {
+  REVEAL: 3000,
+  NEXT_QUESTION: 2000,
+  PLAYBACK_START: 500,
+  TRANSITION: 300,
+  FEEDBACK: 1000
+}
 
-// === State ===
-const view = ref('settings') // 'settings' | 'quiz' | 'result'
-const selectedChordIds = ref(new Set()) // Default empty
-
-const whiteKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder <= 9))
-const blackKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder > 9))
-const questions = ref([])
-const currentQuestionIndex = ref(0)
-const score = ref(0)
-const testHistory = ref([]) // Array of { question, answer, isCorrect, isSkipped }
-const resultMessage = ref(null) // 'correct' | 'incorrect'
-const isSamplerLoaded = ref(false)
-const isLoading = ref(false)
-const loadingProgress = ref(0)
+// === Reactive State ===
+const view = ref('settings')
 const userTier = ref('free')
-const selectedInstrument = ref('yamaha')
+const score = ref(0)
+const isLoading = ref(false)
+const isSaving = ref(false)
+const loadingProgress = ref(0)
+const currentQuestionIndex = ref(0)
+const resultMessage = ref(null)
+
+const selectedChordIds = ref(new Set([TEST_CHORDS[0].id, TEST_CHORDS[1].id]))
+const questions = ref([])
+const testHistory = ref([])
+
 const samplers = {}
-const namingConvention = ref('italian') // 'german' | 'italian'
+const isSamplerLoaded = ref(false)
+const selectedInstrument = ref('yamaha')
+const voiceTimeout = ref(null)
+const autoPlayTimeout = ref(null)
+
+const isAutoPlayEnabled = ref(false)
+const isAutoPlayRevealed = ref(false) // Controls visibility in Auto-Play
+const isAutoPlayImmediate = ref(false)
+
+const toggleAutoPlay = () => {
+  isAutoPlayEnabled.value = !isAutoPlayEnabled.value
+  if (isAutoPlayEnabled.value) {
+    isAutoPlayImmediate.value = true
+  }
+}
 
 // === Computed ===
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 const currentQuestionCount = computed(() => currentQuestionIndex.value + 1)
 const isAllSelected = computed(() => selectedChordIds.value.size > 0)
+const whiteKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder <= 9))
+const blackKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder > 9))
+const currentLayoutChords = computed(() => TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id)))
 
-const currentLayoutChords = computed(() => {
-  return TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
-})
-
-const hasBlackKeysInSelection = computed(() => {
-  return Array.from(selectedChordIds.value).some(id => {
-    const chord = TEST_CHORDS.find(c => c.id === id)
-    return chord && chord.sortOrder > 9
-  })
-})
-
-// === Methods ===
-const toggleChordSelection = async (id) => {
-  // Find the selected chord and its sort order
-  const targetChord = TEST_CHORDS.find(c => c.id === id)
-  if (!targetChord) return
-
-  const targetOrder = targetChord.sortOrder
-
-  // Select all chords with sortOrder <= targetOrder
-  // Deselect all chords with sortOrder > targetOrder
-  selectedChordIds.value.clear()
-  TEST_CHORDS.forEach(c => {
-    if (c.sortOrder <= targetOrder) {
-      selectedChordIds.value.add(c.id)
-    }
-  })
+// === Helper Functions ===
+const cleanupSideEffects = () => {
+  if (voiceTimeout.value) clearTimeout(voiceTimeout.value)
+  if (autoPlayTimeout.value) clearTimeout(autoPlayTimeout.value)
+  window.speechSynthesis.cancel()
 }
 
-const toggleSelectAll = () => {
-  if (isAllSelected.value) {
-    selectedChordIds.value.clear()
-    // Keep at least one selected to avoid empty state issues, e.g., the first one
-    selectedChordIds.value.add(TEST_CHORDS[0].id)
-  } else {
-    TEST_CHORDS.forEach(c => selectedChordIds.value.add(c.id))
-  }
+const getRandomChord = () => {
+  const availableChords = TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
+  return availableChords[Math.floor(Math.random() * availableChords.length)]
 }
 
+const speakColor = (text) => {
+  if (!window.speechSynthesis) return
+  cleanupSideEffects()
+  const utterance = new SpeechSynthesisUtterance(text)
+  utterance.lang = 'ja-JP'
+  window.speechSynthesis.speak(utterance)
+}
+
+const isLightColor = (hex) => {
+  if (!hex) return false
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+  return brightness > 180
+}
+
+// === Core Logic ===
 const loadSampler = async (instrumentId) => {
   if (samplers[instrumentId]) {
     selectedInstrument.value = instrumentId
@@ -105,19 +117,13 @@ const loadSampler = async (instrumentId) => {
   loadingProgress.value = 0
   isSamplerLoaded.value = false
 
-  let urls, baseUrl
-  if (instrumentId === 'yamaha') {
-    urls = YAMAHA_MAP
-    baseUrl = "https://tonejs.github.io/audio/salamander/"
-  } else if (instrumentId === 'steinway') {
-    baseUrl = `/samples/steinway/ff/`
-    urls = STEINWAY_MAP
-  }
+  const config = instrumentId === 'yamaha' 
+    ? { urls: YAMAHA_MAP, baseUrl: "https://tonejs.github.io/audio/salamander/" }
+    : { urls: STEINWAY_MAP, baseUrl: "/samples/steinway/ff/" }
 
   try {
     const s = new Tone.Sampler({
-      urls,
-      baseUrl,
+      ...config,
       onload: () => {
         samplers[instrumentId] = s
         selectedInstrument.value = instrumentId
@@ -131,15 +137,9 @@ const loadSampler = async (instrumentId) => {
       }
     }).toDestination()
 
-    let fakeProgress = 0
     const interval = setInterval(() => {
-      if (!isLoading.value) {
-        clearInterval(interval)
-        return
-      }
-      fakeProgress += Math.random() * 15
-      if (fakeProgress > 95) fakeProgress = 95
-      loadingProgress.value = Math.floor(fakeProgress)
+      if (!isLoading.value) return clearInterval(interval)
+      loadingProgress.value = Math.min(Math.floor(loadingProgress.value + Math.random() * 15), 95)
     }, 200)
 
   } catch (err) {
@@ -148,44 +148,93 @@ const loadSampler = async (instrumentId) => {
   }
 }
 
-const selectInstrument = (instrumentId) => {
-  if (instrumentId === 'steinway' && userTier.value !== 'premium') {
-    if (confirm('STEINWAY B音源を利用するにはプレミアムプラン（月額1,980円）への登録が必要です。プラン一覧を確認しますか？')) {
-      router.push('/subscription')
-    }
-    return
-  }
-
-  if (instrumentId === selectedInstrument.value) {
-    return
-  }
-  
-  loadSampler(instrumentId)
-}
-const startTest = () => {
-  const availableChords = TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
-  if (availableChords.length === 0) return
-
-  questions.value = [availableChords[Math.floor(Math.random() * availableChords.length)]]
-  currentQuestionIndex.value = 0
-  score.value = 0
-  testHistory.value = []
-  view.value = 'quiz'
-  
-  setTimeout(() => playCurrentQuestion(), 500)
-}
-
 const playCurrentQuestion = async () => {
+  cleanupSideEffects()
   const s = samplers[selectedInstrument.value]
   if (!s || !isSamplerLoaded.value) return
   if (Tone.context.state !== 'running') await Tone.start()
   
   const chord = currentQuestion.value
+  // Reset reveal state only in delayed mode. In immediate mode, we keep the previous color until the sound starts.
+  if (!isAutoPlayImmediate.value) {
+    isAutoPlayRevealed.value = false
+  }
+  
   s.triggerAttackRelease(chord.notes, 2)
+
+  if (isAutoPlayEnabled.value) {
+    if (isAutoPlayImmediate.value) {
+      isAutoPlayRevealed.value = true
+      autoPlayTimeout.value = setTimeout(() => {
+        speakColor(chord.displayColor)
+        autoPlayTimeout.value = setTimeout(nextQuestionAuto, DELAYS.NEXT_QUESTION)
+      }, DELAYS.REVEAL)
+    } else {
+      autoPlayTimeout.value = setTimeout(() => {
+        isAutoPlayRevealed.value = true
+        speakColor(chord.displayColor)
+        autoPlayTimeout.value = setTimeout(nextQuestionAuto, DELAYS.NEXT_QUESTION)
+      }, DELAYS.REVEAL)
+    }
+  }
+}
+
+const toggleChordSelection = (id) => {
+  const targetChord = TEST_CHORDS.find(c => c.id === id)
+  if (!targetChord) return
+
+  selectedChordIds.value.clear()
+  TEST_CHORDS.forEach(c => {
+    if (c.sortOrder <= targetChord.sortOrder) selectedChordIds.value.add(c.id)
+  })
+}
+
+const selectInstrument = (id) => {
+  if (id === 'steinway' && userTier.value !== 'premium') {
+    if (confirm('STEINWAY B音源を利用するにはプレミアムプランの登録が必要です。プラン一覧を確認しますか？')) {
+      router.push('/subscription')
+    }
+    return
+  }
+  if (id !== selectedInstrument.value) loadSampler(id)
+}
+
+const startTest = () => {
+  const firstChord = getRandomChord()
+  if (!firstChord) return
+
+  questions.value = [firstChord]
+  currentQuestionIndex.value = 0
+  score.value = 0
+  testHistory.value = []
+  view.value = 'quiz'
+  
+  // In immediate mode, show the first color right away
+  isAutoPlayRevealed.value = isAutoPlayImmediate.value
+  
+  setTimeout(playCurrentQuestion, DELAYS.PLAYBACK_START)
+}
+
+const moveNext = () => {
+  questions.value.push(getRandomChord())
+  currentQuestionIndex.value++
+  resultMessage.value = null
+  
+  // In immediate mode, we keep the previous color visible during transition
+  if (!isAutoPlayImmediate.value) {
+    isAutoPlayRevealed.value = false
+  }
+  
+  setTimeout(playCurrentQuestion, DELAYS.TRANSITION)
+}
+
+const nextQuestionAuto = () => {
+  if (view.value === 'quiz') moveNext()
 }
 
 const submitAnswer = (chord) => {
   if (resultMessage.value) return 
+  cleanupSideEffects()
 
   const isCorrect = chord.id === currentQuestion.value.id
   if (isCorrect) score.value++
@@ -198,21 +247,13 @@ const submitAnswer = (chord) => {
   })
 
   resultMessage.value = isCorrect ? 'correct' : 'incorrect'
-  
-  setTimeout(() => {
-    // Generate next question
-    const availableChords = TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
-    const nextChord = availableChords[Math.floor(Math.random() * availableChords.length)]
-    questions.value.push(nextChord)
-    
-    currentQuestionIndex.value++
-    resultMessage.value = null
-    setTimeout(() => playCurrentQuestion(), 300)
-  }, 1000)
+  setTimeout(moveNext, DELAYS.FEEDBACK)
 }
+
 const skipQuestion = () => {
   if (resultMessage.value) return
-  
+  cleanupSideEffects()
+
   testHistory.value.push({
     question: { ...currentQuestion.value },
     answer: null,
@@ -220,56 +261,60 @@ const skipQuestion = () => {
     isSkipped: true
   })
 
-  const availableChords = TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
-  const nextChord = availableChords[Math.floor(Math.random() * availableChords.length)]
-  questions.value.push(nextChord)
-
-  currentQuestionIndex.value++
-  resultMessage.value = null
-  setTimeout(() => playCurrentQuestion(), 300)
+  moveNext()
 }
 
-const finishTest = () => {
+const finishTest = async () => {
+  cleanupSideEffects()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (user) {
+    isSaving.value = true
+    try {
+      await supabase.from('training_sessions').insert({
+        user_id: user.id,
+        score: score.value,
+        total_questions: testHistory.value.length,
+        details: testHistory.value,
+        settings: {
+           selected_chords: Array.from(selectedChordIds.value),
+           instrument: selectedInstrument.value
+        }
+      })
+    } catch (e) {
+      console.error('Failed to save session:', e)
+    } finally {
+      isSaving.value = false
+    }
+  }
   view.value = 'result'
 }
 
 const resetTest = () => {
+  cleanupSideEffects()
   view.value = 'settings'
   resultMessage.value = null
-}
-
-const isLightColor = (hex) => {
-  if (!hex) return false
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000
-  return brightness > 180
+  isAutoPlayRevealed.value = false
 }
 
 // === Lifecycle ===
 onMounted(async () => {
   try {
-    const { supabase } = await import('../lib/supabase')
     const { data } = await supabase.auth.getUser()
     if (data?.user) {
       const { checkPremiumStatus } = await import('../lib/supabase')
       const status = await checkPremiumStatus()
       userTier.value = status.tier
     }
-
-    if (userTier.value === 'premium') {
-      loadSampler('steinway')
-    } else {
-      loadSampler('yamaha')
-    }
+    loadSampler(userTier.value === 'premium' ? 'steinway' : 'yamaha')
   } catch (err) {
-    console.error('Test view onMounted error:', err)
+    console.error('onMounted error:', err)
     loadSampler('yamaha')
   }
 })
 
 onUnmounted(() => {
+  cleanupSideEffects()
   Object.values(samplers).forEach(s => s.dispose())
 })
 </script>
@@ -296,12 +341,15 @@ onUnmounted(() => {
       </transition>
 
     <!-- Header -->
-    <header class="w-full pt-10 pb-6 px-4 flex items-center justify-between border-b border-gray-100 bg-white z-10">
-      <router-link to="/" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
+    <header v-if="!(view === 'quiz' && isAutoPlayEnabled)" class="w-full pt-10 pb-6 px-4 flex items-center justify-between border-b border-gray-100 bg-white z-10">
+      <button 
+        @click="router.push('/')" 
+        class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400"
+      >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
-      </router-link>
+      </button>
       <div class="flex flex-col items-center">
         <img src="../assets/logo_irooto.png" alt="いろおと" class="h-16 w-auto object-contain" />
       </div>
@@ -312,8 +360,6 @@ onUnmounted(() => {
       
       <!-- SETTINGS VIEW -->
       <div v-if="view === 'settings'" class="space-y-8 pb-40">
-        <!-- Number of Questions (REMOVED) -->
-
         <!-- Chord Selection -->
         <section>
           <div class="flex items-center justify-between mb-4 px-1">
@@ -358,16 +404,16 @@ onUnmounted(() => {
                   </div>
 
                   <div class="flex flex-col items-start overflow-hidden min-w-0">
-                    <span class="font-bold text-gray-900 text-[15px] leading-tight truncate w-full" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
+                    <span class="font-bold text-gray-900 text-[15px] leading-tight truncate w-full">{{ chord.nameIt }}</span>
                     <span class="text-[10px] font-medium text-gray-400 shrink-0 truncate w-full">{{ chord.displayColor }}</span>
                   </div>
 
                   <!-- Selection Mark -->
                   <div 
                     v-if="selectedChordIds.has(chord.id)" 
-                    class="absolute top-2 right-2 w-5 h-5 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100 shadow-sm transition-all"
+                    class="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center border border-gray-100 shadow-sm transition-all"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :style="{ color: chord.color }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :style="{ color: isLightColor(chord.color) ? '#111827' : chord.color }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
@@ -381,24 +427,6 @@ onUnmounted(() => {
                 <span class="w-1 h-4 bg-gray-900 rounded-full mr-2"></span>
                 黒鍵の和音
               </h3>
-              
-              <!-- Naming Convention Toggle (Compact) -->
-              <div class="flex bg-gray-100 p-0.5 rounded-lg border border-gray-200 shrink-0 shadow-inner scale-90 origin-right">
-                <button 
-                  @click="namingConvention = 'italian'"
-                  class="px-2.5 py-1 rounded-md text-[9px] font-bold transition-all"
-                  :class="namingConvention === 'italian' ? 'bg-white shadow-sm text-gray-900 border border-gray-100' : 'text-gray-400 hover:text-gray-500'"
-                >
-                  伊
-                </button>
-                <button 
-                  @click="namingConvention = 'german'"
-                  class="px-2.5 py-1 rounded-md text-[9px] font-bold transition-all"
-                  :class="namingConvention === 'german' ? 'bg-white shadow-sm text-gray-900 border border-gray-100' : 'text-gray-400 hover:text-gray-500'"
-                >
-                  独
-                </button>
-              </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div 
@@ -433,16 +461,16 @@ onUnmounted(() => {
                 </div>
 
                 <div class="flex flex-col items-start overflow-hidden min-w-0">
-                  <span class="font-bold text-gray-900 text-[15px] leading-tight truncate w-full" v-html="namingConvention === 'german' ? chord.name : chord.nameIt"></span>
+                  <span class="font-bold text-gray-900 text-[15px] leading-tight truncate w-full">{{ chord.nameIt }}</span>
                   <span class="text-[10px] font-medium text-gray-400 shrink-0 truncate w-full">{{ chord.displayColor }}</span>
                 </div>
 
                 <!-- Selection Mark -->
                 <div 
                   v-if="selectedChordIds.has(chord.id)" 
-                  class="absolute top-2 right-2 w-5 h-5 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100 shadow-sm transition-all"
+                  class="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center border border-gray-100 shadow-sm transition-all"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :style="{ color: chord.color }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :style="{ color: isLightColor(chord.color) ? '#111827' : chord.color }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
@@ -475,6 +503,48 @@ onUnmounted(() => {
               </button>
             </div>
           </section>
+          
+           <section class="flex flex-col items-center w-full px-4">
+               <div 
+                 @click="toggleAutoPlay"
+                 class="flex items-center justify-between w-full max-w-[280px] bg-white border border-gray-100 p-4 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
+               >
+                 <span class="text-xs font-bold text-gray-700">オートプレイ</span>
+                 <div 
+                   class="w-10 h-6 bg-gray-200 rounded-full relative transition-colors duration-200"
+                   :class="{ 'bg-gray-900': isAutoPlayEnabled }"
+                 >
+                   <div 
+                     class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200"
+                     :class="{ 'translate-x-4': isAutoPlayEnabled }"
+                   ></div>
+                 </div>
+               </div>
+           </section>
+
+           <!-- Immediate Reveal Toggle (Sub-option) -->
+           <transition name="fade">
+             <section v-if="isAutoPlayEnabled" class="flex flex-col items-center w-full px-4 -mt-4">
+                 <div 
+                   @click="isAutoPlayImmediate = !isAutoPlayImmediate"
+                   class="flex items-center justify-between w-full max-w-[280px] bg-gray-50 border border-gray-100 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors"
+                 >
+                   <div class="flex flex-col">
+                     <span class="text-[11px] font-bold text-gray-700">答えをすぐに表示</span>
+                     <span class="text-[9px] text-gray-400">音がなると同時に色を見せる</span>
+                   </div>
+                   <div 
+                     class="w-8 h-5 bg-gray-200 rounded-full relative transition-colors duration-200"
+                     :class="{ 'bg-gray-600': isAutoPlayImmediate }"
+                   >
+                     <div 
+                       class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200"
+                       :class="{ 'translate-x-3': isAutoPlayImmediate }"
+                     ></div>
+                   </div>
+                 </div>
+             </section>
+           </transition>
         </div>
       </div>
 
@@ -485,6 +555,7 @@ onUnmounted(() => {
           <div class="flex justify-between items-end text-xs font-bold text-gray-400 mb-2">
             <span>Question {{ currentQuestionCount }}</span>
             <button 
+              v-if="!isAutoPlayEnabled"
               @click="finishTest"
               class="text-[10px] text-red-400 hover:text-red-500 font-black border border-red-100 rounded-lg px-3 py-1 bg-red-50/30"
             >
@@ -494,7 +565,9 @@ onUnmounted(() => {
           <div class="flex justify-end mt-2">
             <button 
               @click="playCurrentQuestion" 
+              :disabled="isAutoPlayEnabled"
               class="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center space-x-1"
+              :class="{ 'opacity-0' : isAutoPlayEnabled }"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -504,11 +577,20 @@ onUnmounted(() => {
           </div>
         </div>
 
+        <!-- Auto-Play Full Screen Reveal -->
+        <transition name="fade">
+          <div 
+            v-if="isAutoPlayEnabled && isAutoPlayRevealed" 
+            class="fixed inset-0 z-40 flex items-center justify-center transition-colors duration-500"
+            :style="{ backgroundColor: currentQuestion.color }"
+          >
+            <!-- Revealed background only -->
+          </div>
+        </transition>
+
         <!-- Feedback Overlay -->
         <div v-if="resultMessage" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div 
-            class="transform transition-all duration-300 scale-150 drop-shadow-2xl"
-          >
+          <div class="transform transition-all duration-300 scale-150 drop-shadow-2xl">
             <img 
               :src="resultMessage === 'correct' ? '/quiz_correct.png' : '/quiz_incorrect.png'" 
               alt="Result Feedback" 
@@ -519,7 +601,7 @@ onUnmounted(() => {
         </div>
 
         <!-- Answer Options -->
-        <div class="w-full grid grid-cols-2 gap-3 mb-8">
+        <div v-if="!isAutoPlayEnabled" class="w-full grid grid-cols-2 gap-3 mb-8">
             <template v-for="chord in currentLayoutChords" :key="chord.id">
               <button
                 @click="submitAnswer(chord)"
@@ -538,14 +620,27 @@ onUnmounted(() => {
             </template>
         </div>
 
-        <!-- Skip Button -->
+        <!-- Skip Button (Hidden in Auto-Play) -->
         <button 
+          v-if="!isAutoPlayEnabled"
           @click="skipQuestion"
           :disabled="!!resultMessage"
           class="w-full py-4 text-gray-400 font-bold hover:text-gray-600 transition-colors disabled:opacity-0"
         >
           この問題をスキップ
         </button>
+
+        <!-- Subtle Auto-Play Stop Button -->
+        <div v-if="isAutoPlayEnabled" class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
+          <button 
+            @click="resetTest"
+            class="px-6 py-2.5 bg-black/5 hover:bg-black/10 backdrop-blur-sm text-gray-400 hover:text-gray-600 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 border border-black/5"
+            :class="{ 'text-white/70 hover:text-white bg-white/10 border-white/10': isAutoPlayRevealed && !isLightColor(currentQuestion.color) }"
+          >
+            <div class="w-1.5 h-1.5 bg-current rounded-full"></div>
+            <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
+          </button>
+        </div>
       </div>
 
       <!-- RESULT VIEW -->
@@ -554,10 +649,10 @@ onUnmounted(() => {
           <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Quiz Finished</p>
           <div class="text-6xl font-black text-gray-900 mb-2">
             <span class="text-blue-500">{{ score }}</span>
-            <span class="text-gray-300 text-4xl">/{{ questions.length }}</span>
+            <span class="text-gray-300 text-4xl">/{{ testHistory.length }}</span>
           </div>
           <p class="text-lg font-bold text-gray-600 mb-6">
-            {{ score === questions.length ? 'Perfect! 🎉' : score >= questions.length * 0.8 ? 'Great Job! 👍' : 'Keep Practicing! 💪' }}
+            {{ score === testHistory.length ? 'Perfect! 🎉' : score >= testHistory.length * 0.8 ? 'Great Job! 👍' : 'Keep Practicing! 💪' }}
           </p>
         </div>
 
@@ -565,7 +660,7 @@ onUnmounted(() => {
         <div class="w-full bg-gray-50 rounded-3xl border border-gray-100 mb-10 overflow-hidden flex flex-col max-h-[400px]">
           <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white/50">
             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">問題ごとの結果</span>
-            <span class="text-[10px] font-bold text-gray-900">{{ score }} / {{ questions.length }} 正解</span>
+            <span class="text-[10px] font-bold text-gray-900">{{ score }} / {{ testHistory.length }} 正解</span>
           </div>
           <div class="flex-grow overflow-y-auto px-4 py-2 space-y-2 scrollbar-hide">
             <div 
