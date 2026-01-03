@@ -4,10 +4,7 @@ import { useRouter } from 'vue-router'
 import * as Tone from 'tone'
 import { ChordDefinitions } from '../constants/chords'
 import { supabase } from '../lib/supabase'
-import { 
-  STEINWAY_MAP, 
-  YAMAHA_MAP 
-} from '../constants/instruments.js'
+import { useAudio } from '../composables/useAudio'
 
 const router = useRouter()
 
@@ -41,9 +38,7 @@ const DELAYS = {
 const view = ref('settings')
 const userTier = ref('free')
 const score = ref(0)
-const isLoading = ref(false)
 const isSaving = ref(false)
-const loadingProgress = ref(0)
 const currentQuestionIndex = ref(0)
 const resultMessage = ref(null)
 
@@ -51,9 +46,15 @@ const selectedChordIds = ref(new Set([TEST_CHORDS[0].id, TEST_CHORDS[1].id]))
 const questions = ref([])
 const testHistory = ref([])
 
-const samplers = {}
-const isSamplerLoaded = ref(false)
-const selectedInstrument = ref('yamaha')
+const { 
+  samplers, 
+  isLoading, 
+  loadingProgress, 
+  isSamplerLoaded, 
+  selectedInstrument, 
+  loadSampler 
+} = useAudio()
+
 const voiceTimeout = ref(null)
 const autoPlayTimeout = ref(null)
 
@@ -107,65 +108,6 @@ const isLightColor = (hex) => {
 }
 
 // === Core Logic ===
-const loadSampler = async (instrumentId) => {
-  if (samplers[instrumentId]) {
-    selectedInstrument.value = instrumentId
-    isSamplerLoaded.value = true
-    return
-  }
-
-  isLoading.value = true
-  loadingProgress.value = 0
-  isSamplerLoaded.value = false
-
-  const config = instrumentId === 'yamaha' 
-    ? { urls: YAMAHA_MAP, baseUrl: "https://tonejs.github.io/audio/salamander/" }
-    : { urls: STEINWAY_MAP, baseUrl: "/samples/steinway/ff/" }
-
-  try {
-    const s = new Tone.Sampler({
-      ...config,
-      onload: () => {
-        samplers[instrumentId] = s
-        selectedInstrument.value = instrumentId
-        isSamplerLoaded.value = true
-        loadingProgress.value = 100
-        isLoading.value = false
-      },
-      onerror: (err) => {
-        console.error(`${instrumentId} load error:`, err)
-        // Fallback: mark as loaded to allow the app to function
-        isSamplerLoaded.value = true
-        loadingProgress.value = 100
-        isLoading.value = false
-      }
-    }).toDestination()
-
-    const interval = setInterval(() => {
-      if (!isLoading.value) {
-        loadingProgress.value = 100
-        return clearInterval(interval)
-      }
-      loadingProgress.value = Math.min(Math.floor(loadingProgress.value + Math.random() * 15), 95)
-    }, 200)
-
-    // Safety timeout: 15 seconds
-    setTimeout(() => {
-      if (isLoading.value) {
-        console.warn(`${instrumentId} load timed out`);
-        isLoading.value = false
-        loadingProgress.value = 100
-        isSamplerLoaded.value = true
-      }
-    }, 15000)
-
-  } catch (err) {
-    console.error('Sampler initialization error:', err)
-    isLoading.value = false
-    loadingProgress.value = 100
-  }
-}
-
 const playCurrentQuestion = async () => {
   cleanupSideEffects()
   const s = samplers[selectedInstrument.value]
@@ -333,7 +275,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
   cleanupSideEffects()
-  Object.values(samplers).forEach(s => s.dispose())
 })
 </script>
 

@@ -7,27 +7,25 @@ import abcjs from 'abcjs'
 
 import { Levels } from '../constants/chords.js'
 
+import { useAudio } from '../composables/useAudio'
+
 const router = useRouter()
 const levels = ref(Levels.filter(l => !['STEP 4', 'STEP 5'].includes(l.shortName)))
 
 const currentChord = ref(null)
-const isSamplerLoaded = ref(false)
 const userTier = ref('free') // 'free' | 'entry' | 'standard' | 'premium'
 const activeLevelIndex = ref(0)
 const namingConvention = ref('italian') // 'german' | 'italian'
-const loadingProgress = ref(0)
-const isLoading = ref(false)
-const selectedInstrument = ref('yamaha')
 const pressedNotes = ref(new Set())
 
-const samplers = {} // Cache for Tone.Sampler instances
-
-// Comprehensive mapping for 88 keys
-import { 
-  ALL_NOTES, 
-  STEINWAY_MAP, 
-  YAMAHA_MAP
-} from '../constants/instruments.js'
+const { 
+  samplers, 
+  isLoading, 
+  loadingProgress, 
+  isSamplerLoaded, 
+  selectedInstrument, 
+  loadSampler 
+} = useAudio()
 
 const user = ref(null)
 
@@ -76,64 +74,6 @@ onMounted(async () => {
   })
 })
 
-const loadSampler = async (instrumentId) => {
-  if (samplers[instrumentId]) {
-    selectedInstrument.value = instrumentId
-    isSamplerLoaded.value = true
-    return
-  }
-
-  isLoading.value = true
-  loadingProgress.value = 0
-  isSamplerLoaded.value = false
-
-  let urls, baseUrl
-  if (instrumentId === 'yamaha') {
-    urls = YAMAHA_MAP
-    baseUrl = "https://tonejs.github.io/audio/salamander/"
-  } else if (instrumentId === 'steinway') {
-    baseUrl = `/samples/steinway/ff/`
-    urls = STEINWAY_MAP
-  }
-
-  try {
-    const sampler = new Tone.Sampler({
-      urls,
-      baseUrl,
-      onload: () => {
-        console.log(`${instrumentId} loaded`)
-        samplers[instrumentId] = sampler
-        selectedInstrument.value = instrumentId
-        isSamplerLoaded.value = true
-        isLoading.value = false
-        loadingProgress.value = 100
-      },
-      onerror: (err) => {
-        console.error(`${instrumentId} load error:`, err)
-        isLoading.value = false
-      }
-    }).toDestination()
-
-    // Tone.js doesn't provide easy per-sampler progress, 
-    // but we can fake it or use a global listener if needed.
-    // Here we'll just show it's working.
-    let fakeProgress = 0
-    const interval = setInterval(() => {
-      if (!isLoading.value) {
-        clearInterval(interval)
-        return
-      }
-      fakeProgress += Math.random() * 15
-      if (fakeProgress > 95) fakeProgress = 95
-      loadingProgress.value = Math.floor(fakeProgress)
-    }, 200)
-
-  } catch (err) {
-    console.error('Sampler initialization error:', err)
-    isLoading.value = false
-  }
-}
-
 const renderScore = (abc) => {
   // Remove chord symbols (text in double quotes) from the ABC notation
   const cleanAbc = abc.replace(/"[^"]*"/g, "")
@@ -174,7 +114,7 @@ const playNote = async (note) => {
   if (currentSampler && isSamplerLoaded.value) {
     currentSampler.triggerAttackRelease(note, '2n')
     pressedNotes.value.add(note)
-    setTimeout(() => pressedNotes.value.delete(note), 1000) // Increased duration for more distinct visual feedback
+    setTimeout(() => pressedNotes.value.delete(note), 1000)
     console.log('Playing note:', note)
   } else {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
