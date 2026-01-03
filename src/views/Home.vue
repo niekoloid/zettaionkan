@@ -144,31 +144,8 @@ const playNote = async (note) => {
   }
 }
 
-  // 和音が制限されているか（音が出るか）の判定
+  // 全ての和音を制限なしで開放
   const isChordRestricted = (chord) => {
-    const levelIdx = chord.originalLevelIndex
-    const chordIdx = chord.originalChordIndex
-
-    // 最初の和音 (Level 1 の index 0) は未ログインでも全員OK
-    if (levelIdx === 0 && chordIdx === 0) return false
-    
-    // それ以外（Level 1の2つ目以降含む）は最低限ログインが必要
-    if (!user.value) return true
-
-    // ログイン済み無料ユーザー (free)
-    if (userTier.value === 'free') {
-      // Level 1 のみOK
-      return levelIdx > 0
-    }
-    
-    // エントリープラン (entry)
-    if (userTier.value === 'entry') {
-      // Level 2 までOK
-      return levelIdx > 1
-    }
-    
-    // スタンダードプラン以上 (standard, premium)
-    // 制限なし
     return false
   }
 
@@ -178,21 +155,7 @@ const playNote = async (note) => {
     await nextTick()
     renderScore(chord.abc)
 
-    if (isChordRestricted(chord)) {
-      if (!user.value) {
-        if (confirm('ドミソ以外の和音を鳴らすにはログインが必要です。ログイン画面に移動しますか？')) {
-          router.push('/auth')
-        }
-      } else {
-        const neededPlan = chord.originalLevelIndex === 1 ? 'エントリー' : 'スタンダード'
-        if (confirm(`この和音を鳴らすには${neededPlan}プラン以上への加入が必要です。プラン一覧を確認しますか？`)) {
-          router.push('/subscription')
-        }
-      }
-      return
-    }
-
-    // 条件クリアなら音を鳴らす
+    // 全ての和音を制限なしで再生
     playChord(chord.notes)
   }
 
@@ -372,12 +335,6 @@ const isLightColor = (hex) => {
               ]"
               :style="{ backgroundColor: chord.color }"
             >
-              <!-- Lock Icon -->
-              <div v-if="isChordRestricted(chord)" class="absolute top-0 right-0 w-full h-full flex items-start justify-end pr-2 pt-2 opacity-50 pointer-events-none md:pr-3 md:pt-3">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :class="isLightColor(chord.color) ? 'text-gray-900' : 'text-white'" viewBox="0 0 20 20" fill="currentColor">
-                   <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                 </svg>
-              </div>
 
               <!-- Mobile Content: Center Number -->
               <div class="absolute inset-0 flex items-center justify-center md:hidden">

@@ -1,21 +1,19 @@
 <script setup>
 import AppHeader from '../components/AppHeader.vue'
 import InstallPwa from '../components/InstallPwa.vue'
+import { ChordDefinitions } from '../constants/chords.js'
 
-const getChordInfo = (num) => {
-  const chords = {
-    1: { color: '#FF0000', name: 'ドミソ', displayColor: '赤' },
-    2: { color: '#FFFF00', name: 'ドファラ', displayColor: '黄色' },
-    3: { color: '#0000FF', name: 'シレソ', displayColor: '青' },
-    4: { color: '#000000', name: 'ラドファ', displayColor: '黒' },
-    5: { color: '#008000', name: 'レソシ', displayColor: '緑' },
-    6: { color: '#FFA500', name: 'ミソド', displayColor: 'オレンジ' },
-    7: { color: '#800080', name: 'ファラド', displayColor: '紫' },
-    8: { color: '#FFC0CB', name: 'ソシレ', displayColor: 'ピンク' },
-    9: { color: '#8B4513', name: 'ソドミ', displayColor: '茶色' }
-  }
-  return chords[num]
-}
+const mainChords = [
+  ChordDefinitions.DOMISO,
+  ChordDefinitions.DOFARA,
+  ChordDefinitions.SHIRESO,
+  ChordDefinitions.RADOFA,
+  ChordDefinitions.RESOSHI,
+  ChordDefinitions.MISODO,
+  ChordDefinitions.FARADO,
+  ChordDefinitions.SOSHIRE,
+  ChordDefinitions.SODOMI
+]
 </script>
 
 <template>
@@ -50,10 +48,10 @@ const getChordInfo = (num) => {
         <nav class="space-y-4">
           <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest text-center">基本の9つの和音</h3>
           <div class="grid grid-cols-3 gap-2">
-            <div v-for="i in 9" :key="i" class="flex flex-col items-center p-2 rounded-xl bg-gray-50 border border-gray-100">
-              <div class="w-8 h-8 rounded-full shadow-sm mb-1" :style="{ backgroundColor: getChordInfo(i).color }"></div>
-              <span class="text-[9px] font-bold text-gray-900">{{ getChordInfo(i).name }}</span>
-              <span class="text-[8px] text-gray-400">{{ getChordInfo(i).displayColor }}</span>
+            <div v-for="chord in mainChords" :key="chord.id" class="flex flex-col items-center p-3 rounded-2xl bg-gray-50 border border-gray-100 transition-transform hover:scale-105">
+              <div class="w-10 h-10 rounded-full shadow-sm mb-2" :style="{ backgroundColor: chord.color }"></div>
+              <span class="text-[10px] font-black text-gray-900 leading-tight mb-0.5">{{ chord.name }}</span>
+              <span class="text-[9px] font-bold text-gray-400 opacity-80 uppercase tracking-tighter">{{ chord.colorName }}</span>
             </div>
           </div>
         </nav>
@@ -103,6 +101,18 @@ const getChordInfo = (num) => {
                 履歴から日々の成長を確認できます
               </li>
             </ul>
+          </section>
+
+          <!-- Sound Quality -->
+          <section class="bg-indigo-50 rounded-[32px] p-8 border border-indigo-100 relative overflow-hidden group">
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl"></div>
+            <div class="flex items-start mb-4">
+              <span class="bg-indigo-500 text-white w-6 h-6 rounded-lg flex items-center justify-center font-black text-xs mr-3">✨</span>
+              <h4 class="font-black text-gray-900 text-lg">妥協のない「音」へのこだわり</h4>
+            </div>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              耳の黄金期に聴く音だからこそ、本物の音色を。世界最高峰のグランドピアノ「Steinway B」や「Yamaha C5」からサンプリングした高品位な音源を採用。豊かな倍音を含む本物の響きが、お子様の鋭い感性を育みます。
+            </p>
           </section>
         </div>
 
