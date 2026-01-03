@@ -620,28 +620,38 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- Auto-Play Reveal -->
-        <transition name="fade">
-          <div 
-            v-if="isAutoPlayEnabled && isAutoPlayRevealed" 
-            class="fixed inset-0 z-40 flex items-center justify-center transition-all duration-500"
-            :class="autoPlayRevealType === 'grid' ? 'bg-white' : ''"
-            :style="autoPlayRevealType === 'full' ? { backgroundColor: currentQuestion.color } : {}"
-          >
-            <!-- Grid Style Reveal -->
-            <div v-if="autoPlayRevealType === 'grid'" class="grid grid-cols-4 gap-3 max-w-sm p-8">
+        <!-- Auto-Play Reveal: Grid Style -->
+        <div 
+          v-if="isAutoPlayEnabled && autoPlayRevealType === 'grid'" 
+          class="fixed inset-0 z-40 bg-white flex flex-col pt-32 pb-40 overflow-hidden"
+        >
+          <div class="px-10 mb-4 flex justify-between items-end">
+            <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">和音の記録</span>
+            <span class="text-[10px] font-bold text-gray-200">{{ currentQuestionIndex + (isAutoPlayRevealed ? 1 : 0) }} 枚</span>
+          </div>
+          <div class="flex-grow overflow-y-auto px-10 pb-10">
+            <div class="flex flex-wrap gap-2 max-w-full justify-start w-full content-start">
               <div 
-                v-for="chord in TEST_CHORDS" 
-                :key="chord.id"
-                class="aspect-square w-14 rounded-xl border border-gray-100 transition-all duration-500 shadow-sm"
-                :style="{ 
-                  backgroundColor: chord.id === currentQuestion.id ? chord.color : '#fff',
-                  opacity: chord.id === currentQuestion.id ? 1 : 0.8
+                v-for="(q, idx) in questions.slice(0, currentQuestionIndex + (isAutoPlayRevealed ? 1 : 0))" 
+                :key="idx"
+                class="w-12 h-12 rounded-lg shadow-sm transition-all duration-300"
+                :class="{ 
+                  'animate-bounce-in border-2 border-white ring-2 ring-gray-100': idx === (currentQuestionIndex) && isAutoPlayRevealed,
+                  'opacity-40 scale-90': idx < currentQuestionIndex
                 }"
+                :style="{ backgroundColor: q.color }"
               ></div>
             </div>
-            
-            <!-- Full screen mode has no child content -->
+          </div>
+        </div>
+
+        <!-- Auto-Play Reveal: Full Screen Style -->
+        <transition name="fade">
+          <div 
+            v-if="isAutoPlayEnabled && autoPlayRevealType === 'full' && isAutoPlayRevealed" 
+            class="fixed inset-0 z-40 flex items-center justify-center transition-all duration-500"
+            :style="{ backgroundColor: currentQuestion.color }"
+          >
           </div>
         </transition>
 
