@@ -47,6 +47,7 @@ const resultMessage = ref(null)
 const selectedChordIds = ref(new Set([TEST_CHORDS[0].id, TEST_CHORDS[1].id]))
 const questions = ref([])
 const testHistory = ref([])
+const shuffledIds = ref([])
 
 const { 
   samplers, 
@@ -63,7 +64,33 @@ const currentQuestionCount = computed(() => currentQuestionIndex.value + 1)
 const isAllSelected = computed(() => selectedChordIds.value.size > 0)
 const whiteKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder <= 9))
 const blackKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder > 9))
-const currentLayoutChords = computed(() => TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id)))
+const currentLayoutChords = computed(() => {
+  if (view.value === 'quiz') {
+    return shuffledIds.value.map(id => TEST_CHORDS.find(c => c.id === id))
+  }
+  return TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
+})
+
+// Dynamic Grid Logic
+const gridCols = computed(() => {
+  const count = currentLayoutChords.value.length
+  if (count <= 3) return 1
+  if (count <= 8) return 2
+  return 3
+})
+
+const gridRows = computed(() => {
+  return Math.ceil(currentLayoutChords.value.length / gridCols.value)
+})
+
+const shuffleChords = () => {
+  const ids = Array.from(selectedChordIds.value)
+  for (let i = ids.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [ids[i], ids[j]] = [ids[j], ids[i]]
+  }
+  shuffledIds.value = ids
+}
 
 // === Helper Functions ===
 const cleanupSideEffects = () => {
@@ -115,6 +142,7 @@ const startTest = () => {
   currentQuestionIndex.value = 0
   score.value = 0
   testHistory.value = []
+  shuffleChords() // Initial shuffle
   view.value = 'quiz'
   
   setTimeout(playCurrentQuestion, DELAYS.PLAYBACK_START)
@@ -124,6 +152,7 @@ const moveNext = () => {
   questions.value.push(getRandomChord())
   currentQuestionIndex.value++
   resultMessage.value = null
+  shuffleChords() // Shuffle for each question
   
   setTimeout(playCurrentQuestion, DELAYS.TRANSITION)
 }
@@ -261,7 +290,11 @@ onUnmounted(() => {
       @back="handleHeaderBack"
     />
 
-    <main class="w-full flex-grow overflow-y-auto px-4 py-6 scrollbar-hide" style="scrollbar-gutter: stable;">
+    <main 
+      class="w-full flex-grow flex flex-col scrollbar-hide" 
+      :class="view === 'quiz' ? 'p-0 overflow-hidden' : 'px-4 py-6 overflow-y-auto'"
+      style="scrollbar-gutter: stable;"
+    >
       
       <!-- SETTINGS VIEW -->
       <div v-if="view === 'settings'" class="space-y-8 pb-40">
@@ -307,29 +340,18 @@ onUnmounted(() => {
       </div>
 
       <!-- QUIZ VIEW -->
-      <div v-if="view === 'quiz'" class="h-full flex flex-col items-center">
-        <!-- Progress & Replay -->
-        <div class="w-full mb-8">
-          <div class="flex justify-between items-end text-xs font-bold text-gray-400 mb-2">
-            <span>Question {{ currentQuestionCount }}</span>
-            <button 
-              @click="finishTest"
-              class="text-[10px] text-red-400 hover:text-red-500 font-black border border-red-100 rounded-lg px-3 py-1 bg-red-50/30"
-            >
-              トレーニングを終了する
-            </button>
+      <div v-if="view === 'quiz'" class="flex-grow w-full flex flex-col bg-white relative">
+        <!-- Minimal Top Info -->
+        <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
+          <div class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-lg">
+            <span class="text-[10px] text-white font-black uppercase tracking-widest drop-shadow-sm">Q.{{ currentQuestionCount }}</span>
           </div>
-          <div class="flex justify-end mt-2">
-            <button 
-              @click="playCurrentQuestion" 
-              class="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center space-x-1"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span>もう一度聞く</span>
-            </button>
-          </div>
+          <button 
+            @click="finishTest"
+            class="pointer-events-auto bg-black/40 backdrop-blur-md text-[10px] text-white font-black rounded-full px-4 py-1.5 hover:bg-black/50 transition-colors border border-white/20 shadow-lg drop-shadow-sm"
+          >
+            テストを終了
+          </button>
         </div>
 
         <!-- Feedback Overlay -->
@@ -344,34 +366,46 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- Answer Options -->
-        <div class="w-full flex-grow grid grid-cols-2 gap-3 mb-4 auto-rows-[minmax(80px,1fr)]">
+        <!-- Answer Options: Full Screen Grid -->
+        <div 
+          class="flex-grow grid gap-0.5 w-full h-full"
+          :style="{ 
+            gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+            gridTemplateRows: `repeat(${gridRows}, minmax(0, 1fr))`
+          }"
+        >
             <template v-for="chord in currentLayoutChords" :key="chord.id">
               <button
                 @click="submitAnswer(chord)"
                 :disabled="!!resultMessage"
-                class="relative w-full h-full rounded-2xl shadow-sm transition-all duration-200 active:scale-95 border-2"
+                class="relative w-full h-full transition-all duration-150 active:scale-95 flex items-center justify-center overflow-hidden"
                 :class="[
                   !!resultMessage 
                     ? (chord.id === currentQuestion.id 
-                        ? 'border-green-500 ring-4 ring-green-200 z-10 scale-105' 
-                        : 'opacity-20 border-transparent')
-                    : 'border-transparent hover:shadow-md hover:scale-[1.02]'
+                        ? 'z-10 ring-inset ring-8 ring-white/50' 
+                        : 'opacity-10')
+                    : 'hover:brightness-105 active:brightness-90'
                 ]"
                 :style="{ backgroundColor: chord.color }"
               >
+
               </button>
             </template>
         </div>
 
-        <!-- Skip Button -->
-        <button 
-          @click="skipQuestion"
-          :disabled="!!resultMessage"
-          class="w-full py-4 text-gray-400 font-bold hover:text-gray-600 transition-colors disabled:opacity-0"
-        >
-          この問題をスキップ
-        </button>
+        <!-- Bottom Controls Overlay -->
+        <div class="absolute bottom-8 left-0 right-0 z-50 flex flex-col items-center space-y-4 pointer-events-none">
+          <button 
+            v-if="!resultMessage"
+            @click="skipQuestion"
+            class="pointer-events-auto bg-black/40 backdrop-blur-md px-6 py-2.5 rounded-full text-white font-black hover:bg-black/50 transition-all flex items-center space-x-2 active:scale-95 border border-white/10 shadow-lg drop-shadow-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+            <span class="text-[10px] uppercase tracking-widest">スキップ</span>
+          </button>
+        </div>
       </div>
 
       <!-- RESULT VIEW -->

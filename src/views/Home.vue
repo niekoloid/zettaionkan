@@ -409,7 +409,7 @@ const isLightColor = (hex) => {
               <!-- Text Content -->
               <div class="ml-4 flex flex-col items-start justify-center flex-grow">
                 <h3 class="text-sm font-black text-indigo-900 tracking-wider">和音の聞き流し</h3>
-                <p class="text-[10px] font-bold text-indigo-400 mt-0.5">自動再生で耳を鍛える</p>
+                <p class="text-[10px] font-bold text-indigo-400 mt-0.5">自動で和音が出題され続けます</p>
               </div>
 
               <!-- Arrow -->
@@ -422,7 +422,7 @@ const isLightColor = (hex) => {
           </router-link>
 
           <!-- Chord Training -->
-          <router-link to="/test" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-amber-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+          <router-link to="/chordtest" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-amber-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
             <div class="relative z-10 flex items-center w-full px-6">
               <!-- Icon Container -->
               <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-50 text-amber-600 shrink-0 group-hover:scale-110 transition-transform duration-300">
@@ -434,8 +434,8 @@ const isLightColor = (hex) => {
 
               <!-- Text Content -->
               <div class="ml-4 flex flex-col items-start justify-center flex-grow">
-                <h3 class="text-sm font-black text-amber-900 tracking-wider">和音テストに挑戦</h3>
-                <p class="text-[10px] font-bold text-amber-500 mt-0.5">トレーニングでスコアアップ</p>
+                <h3 class="text-sm font-black text-amber-900 tracking-wider">和音クイズに挑戦</h3>
+                <p class="text-[10px] font-bold text-amber-500 mt-0.5">和音を色で認識できるかテスト</p>
               </div>
 
               <!-- Arrow -->

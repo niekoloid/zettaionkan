@@ -58,8 +58,8 @@ const routes = [
     component: () => import('../views/Account.vue')
   },
   {
-    path: '/test',
-    name: 'Test',
+    path: '/chordtest',
+    name: 'ChordTest',
     component: () => import('../views/ChordTest.vue')
   },
   {

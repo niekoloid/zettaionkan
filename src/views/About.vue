@@ -107,7 +107,7 @@ import AppHeader from '../components/AppHeader.vue'
         </section>
 
         <div class="pt-4 text-center pb-20">
-          <router-link to="/test" class="block w-full bg-gray-900 text-white px-10 py-5 rounded-3xl font-black text-sm shadow-xl hover:bg-black active:scale-[0.98] transition-all">
+          <router-link to="/chordtest" class="block w-full bg-gray-900 text-white px-10 py-5 rounded-3xl font-black text-sm shadow-xl hover:bg-black active:scale-[0.98] transition-all">
             無料トレーニングを始める
           </router-link>
         </div>

@@ -335,7 +335,7 @@ const openCustomerPortal = async () => {
           </div>
           <div v-else class="text-center py-8">
             <p class="text-sm text-gray-400 font-bold">履歴はまだありません</p>
-            <router-link to="/test" class="inline-block mt-4 text-xs font-bold text-blue-500 hover:text-blue-600">
+            <router-link to="/chordtest" class="inline-block mt-4 text-xs font-bold text-blue-500 hover:text-blue-600">
               トレーニングを開始する
             </router-link>
           </div>

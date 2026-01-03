@@ -52,8 +52,8 @@ const {
 } = useAudio()
 
 const autoPlayTimeout = ref(null)
-const isAutoPlayRevealed = ref(false)
-const isAutoPlayImmediate = ref(false)
+const isAutoPlayImmediate = ref(true)
+const isVoiceEnabled = ref(true)
 const autoPlayRevealType = ref('full') // 'full' | 'grid'
 
 // === Computed ===
@@ -109,13 +109,13 @@ const playCurrentQuestion = async () => {
 
   if (isAutoPlayImmediate.value) {
     autoPlayTimeout.value = setTimeout(() => {
-      speakColor(chord.displayColor)
+      if (isVoiceEnabled.value) speakColor(chord.displayColor)
       autoPlayTimeout.value = setTimeout(nextQuestion, DELAYS.NEXT_QUESTION)
     }, DELAYS.REVEAL)
   } else {
     autoPlayTimeout.value = setTimeout(() => {
       isAutoPlayRevealed.value = true
-      speakColor(chord.displayColor)
+      if (isVoiceEnabled.value) speakColor(chord.displayColor)
       autoPlayTimeout.value = setTimeout(nextQuestion, DELAYS.NEXT_QUESTION)
     }, DELAYS.REVEAL)
   }
@@ -229,8 +229,8 @@ onUnmounted(() => {
       <!-- SETTINGS VIEW -->
       <div v-if="view === 'settings'" class="space-y-8 pb-40">
         <div class="text-center mb-6">
-            <h2 class="text-xl font-black text-gray-900">和音オートプレイ</h2>
-            <p class="text-xs text-gray-400 mt-1 font-bold">自動で和音が出題され続けます</p>
+            <h2 class="text-xl font-black text-gray-900">和音の聞き流し</h2>
+            <p class="text-xs text-gray-400 mt-1 font-bold">色と和音の対応を反復トレーニング</p>
         </div>
 
         <!-- Chord Selection -->
@@ -278,7 +278,7 @@ onUnmounted(() => {
           <!-- Immediate Reveal Toggle -->
           
            <!-- Immediate Reveal Toggle -->
-           <section class="flex flex-col items-center w-full px-4">
+           <section class="flex flex-col items-center w-full px-4 space-y-3">
                <div 
                  @click="isAutoPlayImmediate = !isAutoPlayImmediate"
                  class="flex items-center justify-between w-full max-w-[280px] bg-white border border-gray-100 p-4 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
@@ -294,6 +294,26 @@ onUnmounted(() => {
                    <div 
                      class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200"
                      :class="{ 'translate-x-4': isAutoPlayImmediate }"
+                   ></div>
+                 </div>
+               </div>
+
+               <!-- Voice Toggle -->
+               <div 
+                 @click="isVoiceEnabled = !isVoiceEnabled"
+                 class="flex items-center justify-between w-full max-w-[280px] bg-white border border-gray-100 p-4 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
+               >
+                 <div class="flex flex-col">
+                   <span class="text-[11px] font-bold text-gray-700">色の名前を読み上げる</span>
+                   <span class="text-[9px] text-gray-400">正解の色を音声でガイド</span>
+                 </div>
+                 <div 
+                   class="w-10 h-6 bg-gray-200 rounded-full relative transition-colors duration-200"
+                   :class="{ 'bg-gray-900': isVoiceEnabled }"
+                 >
+                   <div 
+                     class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200"
+                     :class="{ 'translate-x-4': isVoiceEnabled }"
                    ></div>
                  </div>
                </div>
@@ -384,7 +404,7 @@ onUnmounted(() => {
         class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center space-x-2 border-b-4 border-gray-700"
       >
         <span v-if="!isSamplerLoaded">読み込み中...</span>
-        <span v-else>オートプレイを開始する</span>
+        <span v-else>自動再生を開始する</span>
       </button>
     </div>
 
