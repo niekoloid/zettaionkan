@@ -44,12 +44,12 @@ import AppHeader from '../components/AppHeader.vue'
             <div class="bg-blue-50/50 rounded-3xl p-6 border border-blue-100/50">
               <div class="flex items-center mb-3">
                 <span class="text-2xl mr-3">🎹</span>
-                <h4 class="font-black text-gray-900 text-sm">一生ものの耳を育てる「本物」の音</h4>
+                <h4 class="font-black text-gray-900 text-sm">本物の音色に対するこだわり</h4>
               </div>
               <ul class="text-[11px] text-gray-600 space-y-2 list-none pl-1">
                 <li class="flex items-start">
                   <span class="text-blue-500 mr-2">●</span>
-                  世界唯一、スタインウェイD-274のフルサンプリング音源を採用
+                  グランドピアノYamaha C5 / Steinway Bの高音質サンプリング音源を採用
                 </li>
                 <li class="flex items-start">
                   <span class="text-blue-500 mr-2">●</span>
@@ -62,12 +62,12 @@ import AppHeader from '../components/AppHeader.vue'
             <div class="bg-emerald-50/50 rounded-3xl p-6 border border-emerald-100/50">
               <div class="flex items-center mb-3">
                 <span class="text-2xl mr-3">🔬</span>
-                <h4 class="font-black text-gray-900 text-sm">心理学論文に基づく確かなメソッド</h4>
+                <h4 class="font-black text-gray-900 text-sm">科学的根拠に基づく確かなメソッド</h4>
               </div>
               <ul class="text-[11px] text-gray-600 space-y-2 list-none pl-1">
                 <li class="flex items-start">
                   <span class="text-emerald-500 mr-2">●</span>
-                  Sakakibara (2014) の実証された習得プロセスをシステム化
+                  再現性の高い絶対音感習得プロセスをシステム化
                 </li>
                 <li class="flex items-start">
                   <span class="text-emerald-500 mr-2">●</span>

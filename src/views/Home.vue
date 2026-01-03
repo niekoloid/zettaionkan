@@ -51,13 +51,26 @@ const {
 } = useAudio()
 
 const { user, userTier, authReady } = useAuth()
+const { getPreferredInstrument, setPreferredInstrument } = useAudioSettings()
+
+const handleInstrumentChange = (instrument) => {
+  if (instrument === selectedInstrument.value) return
+  
+  if (instrument === 'steinway' && userTier.value !== 'premium') {
+    // Optional: Show upgrade modal or alert
+    alert('Steinway B音源はプレミアムプラン限定です。')
+    return
+  }
+
+  loadSampler(instrument)
+  setPreferredInstrument(instrument)
+}
 
 onMounted(async () => {
   // Wait for auth state to be confirmed to avoid loading wrong instrument initially
   await authReady
   
   // Initial load
-  const { getPreferredInstrument } = useAudioSettings()
   const preferred = getPreferredInstrument()
   
   if (userTier.value === 'premium' && preferred === 'steinway') {
@@ -259,6 +272,8 @@ const isLightColor = (hex) => {
 
     <!-- Main Content -->
     <main class="flex-grow px-4 pb-8 overflow-y-auto" style="scrollbar-gutter: stable;">
+
+
       <!-- Score Visualization -->
       <section class="flex flex-col items-center mb-2 text-center">
         <div class="w-[150px] h-[155px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden relative">
@@ -431,6 +446,29 @@ const isLightColor = (hex) => {
               </div>
             </div>
           </router-link>
+        </div>
+      </section>
+
+      <!-- Instrument Toggle -->
+      <section class="flex flex-col items-center justify-center">
+        <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">グランドピアノ音源</h3>
+        <div class="bg-gray-100 p-1 rounded-full flex items-center shadow-inner">
+          <button 
+            @click="handleInstrumentChange('yamaha')"
+            class="px-5 py-2 rounded-full text-[11px] font-bold transition-all duration-300 active:scale-95"
+            :class="selectedInstrument === 'yamaha' ? 'bg-white text-gray-900 shadow-sm ring-1 ring-black/5' : 'text-gray-400 hover:text-gray-600'"
+          >
+            Yamaha C5
+          </button>
+          <div class="w-px h-4 bg-gray-200 mx-1"></div>
+          <button 
+            @click="handleInstrumentChange('steinway')"
+            class="px-5 py-2 rounded-full text-[11px] font-bold transition-all duration-300 flex items-center active:scale-95"
+            :class="selectedInstrument === 'steinway' ? 'bg-white text-gray-900 shadow-sm ring-1 ring-black/5' : 'text-gray-400 hover:text-gray-600'"
+          >
+            Steinway B
+            <span v-if="userTier !== 'premium'" class="ml-1.5 text-[10px] opacity-70">🔒</span>
+          </button>
         </div>
       </section>
 

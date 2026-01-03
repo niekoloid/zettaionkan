@@ -12,7 +12,12 @@ const mainChords = [
   ChordDefinitions.MISODO,
   ChordDefinitions.FARADO,
   ChordDefinitions.SOSHIRE,
-  ChordDefinitions.SODOMI
+  ChordDefinitions.SODOMI,
+  ChordDefinitions.LA_CIS_MI,
+  ChordDefinitions.RE_FIS_LA,
+  ChordDefinitions.MI_GIS_SI,
+  ChordDefinitions.BE_RE_FA,
+  ChordDefinitions.ES_SO_BE
 ]
 </script>
 
@@ -28,29 +33,17 @@ const mainChords = [
         <div class="text-center pt-4">
           <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-3">About Irooto</h1>
           <h2 class="text-2xl font-black text-gray-900 leading-tight">
-            音に「色」をつける<br/>新しい耳のトレーニング
+            和音に「色」をつける<br/>新感覚の絶対音感トレーニング
           </h2>
-          <p class="mt-4 text-sm text-gray-500 leading-relaxed max-w-xs mx-auto">
-            「いろおと」は、幼児期の黄金期に音と色を結びつけることで、絶対音感を楽しみながら身につけるための知育アプリです。
-          </p>
         </div>
-
-        <!-- The Power of Absolute Pitch -->
-        <section class="relative">
-          <div class="absolute -left-6 top-1/2 -translate-y-1/2 w-1 h-12 bg-blue-500 rounded-r-full"></div>
-          <h3 class="font-black text-gray-900 text-lg mb-3">なぜ「2歳から6歳」なの？</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            絶対音感は、聴覚が急激に発達する2歳〜6歳の間にしか身につかないと言われています。この時期に特定の音を「色」などの具体的なイメージと結びつけることで、脳に音の記憶を定着させやすくなります。
-          </p>
-        </section>
 
         <!-- The Methodology (Colors) -->
         <nav class="space-y-4">
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest text-center">基本の9つの和音</h3>
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest text-center">基本の14種類の和音</h3>
           <div class="grid grid-cols-3 gap-2">
             <div v-for="chord in mainChords" :key="chord.id" class="flex flex-col items-center p-3 rounded-2xl bg-gray-50 border border-gray-100 transition-transform hover:scale-105">
               <div class="w-10 h-10 rounded-full shadow-sm mb-2" :style="{ backgroundColor: chord.color }"></div>
-              <span class="text-[10px] font-black text-gray-900 leading-tight mb-0.5">{{ chord.name }}</span>
+              <span class="text-[10px] font-black text-gray-900 leading-tight mb-0.5" v-html="chord.nameIt"></span>
               <span class="text-[9px] font-bold text-gray-400 opacity-80 uppercase tracking-tighter">{{ chord.colorName }}</span>
             </div>
           </div>
