@@ -286,7 +286,7 @@ const finishTest = async () => {
   cleanupSideEffects()
   const { data: { user } } = await supabase.auth.getUser()
   
-  if (user) {
+  if (user && testHistory.value.length > 0) {
     isSaving.value = true
     try {
       await supabase.from('training_sessions').insert({
