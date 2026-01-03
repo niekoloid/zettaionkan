@@ -11,18 +11,25 @@ const selectedInstrument = ref('yamaha')
 
 export function useAudio() {
   const loadSampler = async (instrumentId) => {
-    // If sampler already exists, just switch and return
+    // 1. If sampler already exists, just switch and return
     if (samplers[instrumentId]) {
       selectedInstrument.value = instrumentId
       isSamplerLoaded.value = true
-      // Trigger a fake 100% progress for UI consistency
       loadingProgress.value = 100
       return
     }
 
-    // If already loading this specific instrument, ignore duplicate call
+    // 2. If already loading THIS specific instrument, ignore duplicate call
     if (isLoading.value && selectedInstrument.value === instrumentId) {
+      console.log(`Already loading ${instrumentId}, skipping...`)
       return
+    }
+
+    // 3. If loading something ELSE, we could either cancel or just wait.
+    // For now, we allow switching the TARGET instrument even if another is loading,
+    // but we reset the state for the new target.
+    if (isLoading.value) {
+      console.log(`Switching load target from ${selectedInstrument.value} to ${instrumentId}`)
     }
 
     // Set loading state

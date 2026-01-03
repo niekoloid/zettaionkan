@@ -28,9 +28,12 @@ const {
   loadSampler 
 } = useAudio()
 
-const { user, userTier } = useAuth()
+const { user, userTier, authReady } = useAuth()
 
 onMounted(async () => {
+  // Wait for auth state to be confirmed to avoid loading wrong instrument initially
+  await authReady
+  
   // Initial load
   if (userTier.value === 'premium') {
     loadSampler('steinway')

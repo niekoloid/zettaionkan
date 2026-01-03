@@ -259,9 +259,10 @@ const resetTest = () => {
 }
 
 // === Lifecycle ===
-const { user, userTier } = useAuth()
+const { user, userTier, authReady } = useAuth()
 
 onMounted(async () => {
+  await authReady
   loadSampler(userTier.value === 'premium' ? 'steinway' : 'yamaha')
 })
 

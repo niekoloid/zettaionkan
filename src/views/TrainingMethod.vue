@@ -56,7 +56,6 @@ const getChordInfo = (num) => {
               <span class="text-[8px] text-gray-400">{{ getChordInfo(i).displayColor }}</span>
             </div>
           </div>
-          <p class="text-[10px] text-gray-400 text-center italic mt-2">※江口式等で広く採用されている配色に基づいています</p>
         </nav>
 
         <!-- Training Patterns -->
