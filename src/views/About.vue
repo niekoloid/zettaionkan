@@ -18,83 +18,87 @@
     </header>
 
     <main class="flex-grow px-6 pb-20 overflow-y-auto">
-      <div class="space-y-16">
-        <!-- Vision -->
-        <section class="text-center pt-8">
+      <div class="space-y-12">
+        <!-- Key Message -->
+        <section class="text-center pt-4">
           <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Our Mission</h1>
-          <h2 class="text-3xl font-black text-gray-900 leading-tight mb-6">
+          <h2 class="text-3xl font-black text-gray-900 leading-tight">
             「才能」は、本物の「音」と<br/>「習慣」で作られる。
           </h2>
-          <p class="text-sm text-gray-600 leading-relaxed max-w-sm mx-auto font-medium">
-            科学が証明したメソッドを、最高峰のピアノ音源で。<br/>すべての子供に、一生ものの「音」のギフトを。
-          </p>
         </section>
 
-        <!-- What is Absolute Pitch? -->
-        <section class="bg-gray-900 rounded-[40px] p-10 text-white shadow-2xl relative overflow-hidden">
-          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
-          <h3 class="text-xl font-black mb-6 flex items-center">
-            <span class="w-2 h-8 bg-blue-500 rounded-full mr-4"></span>
-            絶対音感とは？
-          </h3>
-          <p class="text-sm text-gray-300 leading-relaxed space-y-4">
-            「才能」の一言で片付けられてきた絶対音感。実は、聴覚が発達する2歳〜6歳頃に適切なトレーニングを行えば、多くの子が技術として身につけることが可能です。<br/><br/>
-            いろおとは、曖昧な教育論ではなく、科学的エビデンスに基づくシステムで、確実なステップアップをサポートします。
-          </p>
+        <!-- 3 Points Summary -->
+        <section class="grid grid-cols-1 gap-4">
+          <div class="bg-gray-900 rounded-[32px] p-8 text-white shadow-xl">
+            <h3 class="text-lg font-black mb-6 flex items-center">
+              <span class="w-1.5 h-6 bg-blue-500 rounded-full mr-3"></span>
+              サクッとわかる「いろおと」
+            </h3>
+            <ul class="space-y-5">
+              <li class="flex items-start">
+                <span class="text-xl mr-3 mt-1">⏳</span>
+                <div>
+                  <p class="font-bold text-sm">2歳〜6歳が「黄金期」</p>
+                  <p class="text-[11px] text-gray-400 leading-relaxed">聴覚が最も発達する今しか身につかない「一生の技術」です。</p>
+                </div>
+              </li>
+              <li class="flex items-start">
+                <span class="text-xl mr-3 mt-1">🎹</span>
+                <div>
+                  <p class="font-bold text-sm">最高峰「スタインウェイ」音源</p>
+                  <p class="text-[11px] text-gray-400 leading-relaxed">脳が音を判断する手がかりとなる「本物の響き」を届けます。</p>
+                </div>
+              </li>
+              <li class="flex items-start">
+                <span class="text-xl mr-3 mt-1">🔬</span>
+                <div>
+                  <p class="font-bold text-sm">科学に基づいたステップ</p>
+                  <p class="text-[11px] text-gray-400 leading-relaxed">心理学の研究に基づき、和音から単音へ正しく導きます。</p>
+                </div>
+              </li>
+            </ul>
+          </div>
         </section>
 
-        <!-- Features Grid -->
-        <section class="space-y-12">
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest text-center">サービスの特徴</h3>
-          <div class="space-y-12">
-            <!-- Feature 1 -->
-            <div class="relative pl-6 border-l-2 border-blue-500">
-              <h4 class="text-gray-900 font-black text-xl mb-3">本物のグランドピアノの音源を使用</h4>
-              <p class="text-[13px] text-gray-600 leading-relaxed">
-                絶対音感の習得初期において、脳は音の高さだけでなく「音色（ねいろ）」を重要な手がかりとしています。だからこそ、電子的な合成音ではなく、本物のピアノの倍音成分を含んだ豊かな響きが必要です。<br/><br/>
-                世界中のコンサートホールで採用される最高峰グランドピアノ「スタインウェイ（D-274）」からサンプリングした音源を贅沢に使用。繊細な幼児の耳に、妥協のない「本物」の音を届けます。
-              </p>
-            </div>
-            
-            <!-- Feature 2 -->
-            <div class="relative pl-6 border-l-2 border-emerald-500">
-              <h4 class="text-gray-900 font-black text-xl mb-3">科学的に実証された習得プロセスを再現</h4>
-              <p class="text-[13px] text-gray-600 leading-relaxed">
-                「才能」の一言で片付けられてきた絶対音感を、誰もが習得可能な「技術」へ。本アプリは、絶対音感習得プロセスに関する縦断的研究（Sakakibara, 2014）に基づき設計されています。<br/><br/>
-                「和音と色の識別」から始まり、脳の認知プロセスに合わせた最適な順序で「単音」へと分化させていく――。学術的なエビデンス（根拠）に基づいたロジックが、確実なステップアップをサポートします。
-              </p>
+        <!-- Feature Points -->
+        <section class="space-y-8">
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest text-center">選ばれる理由</h3>
+          
+          <div class="space-y-6">
+            <div class="flex items-start group">
+              <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shrink-0 mr-4 font-black">01</div>
+              <div>
+                <h4 class="font-black text-gray-900 mb-1">本物のグランドピアノ音源</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">コンサートホールで使用されるスタインウェイD-274を贅沢にサンプリング。豊かな倍音が、耳を正しく育てます。</p>
+              </div>
             </div>
 
-            <!-- Feature 3 -->
-            <div class="relative pl-6 border-l-2 border-amber-500">
-              <h4 class="text-gray-900 font-black text-xl mb-3">1回1分の手軽な設計</h4>
-              <p class="text-[13px] text-gray-600 leading-relaxed">
-                絶対音感トレーニングの最大の敵は「親の負担」と「飽き」による挫折です。ピアノの前に座らせる必要も、楽器を用意する必要もありません。アプリを開けば、わずか2タップでトレーニング開始。<br/><br/>
-                隙間時間の1分間で完結するプログラム設計と、子供が自ら触りたくなる直感的な操作性により、最も難しい「毎日の継続」を強力にバックアップします。
-              </p>
+            <div class="flex items-start group">
+              <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 shrink-0 mr-4 font-black">02</div>
+              <div>
+                <h4 class="font-black text-gray-900 mb-1">効率的な1分トレーニング</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">準備不要、スマホ1台で完結。隙間時間の1分で、親子の負担なく毎日の「習慣」にできます。</p>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- Disclaimer -->
-        <section class="bg-gray-50 rounded-3xl p-8 border border-gray-100">
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">免責事項・運営元について</h3>
-          <p class="text-[11px] text-gray-500 leading-relaxed font-medium">
-            本アプリケーションは、Sakakibara (2014) の研究論文等で提唱されている「和音聴音法（CIM）」の理論・メソッドを参考に、開発者が独自に設計・実装したものです。
-            特定の音楽教室、教育団体、またはメソッド考案者の管理する法人とは一切関係がございません。また、それらの公認・監修を受けたものではありません。
-            アプリに関するお問い合わせは、<router-link to="/contact" class="text-blue-500 hover:underline">お問い合わせフォーム</router-link>までお願いいたします。
+        <!-- Disclaimer (Compact) -->
+        <section class="border-t border-gray-100 pt-8">
+          <p class="text-[10px] text-gray-400 leading-relaxed">
+            【免責事項】本アプリは Sakakibara (2014) の理論を参考に開発者が独自に実装したものであり、特定の音楽団体や公認施設とは関係ございません。お問い合わせは<router-link to="/contact" class="text-blue-500 hover:underline">こちら</router-link>まで。
           </p>
         </section>
 
-        <div class="pt-8 text-center pb-20">
-          <router-link to="/test" class="bg-gray-900 text-white px-10 py-4 rounded-2xl font-black text-sm shadow-xl hover:bg-black transition-all inline-block active:scale-95">
+        <div class="pt-4 text-center pb-20">
+          <router-link to="/test" class="w-full bg-gray-900 text-white px-10 py-4 rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all inline-block">
             まずは無料でお試し
           </router-link>
         </div>
       </div>
     </main>
 
-    <footer class="text-center text-gray-300 text-[10px] pb-8 shrink-0 border-t border-gray-50 pt-8">
+    <footer class="text-center text-gray-300 text-[10px] pb-8 shrink-0">
       &copy; 2026 Akatsuki Inc.
     </footer>
     </div>
