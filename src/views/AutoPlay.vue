@@ -55,6 +55,7 @@ const autoPlayTimeout = ref(null)
 const isAutoPlayRevealed = ref(false)
 const isAutoPlayImmediate = ref(true)
 const isVoiceEnabled = ref(true)
+const revealDelay = ref(2.5) // seconds before revealing/speaking
 const autoPlayRevealType = ref('full') // 'full' | 'grid'
 
 // === Computed ===
@@ -107,18 +108,20 @@ const playCurrentQuestion = async () => {
   }
   
   s.triggerAttackRelease(chord.notes, 2)
+  
+  const delayMs = revealDelay.value * 1000
 
   if (isAutoPlayImmediate.value) {
     autoPlayTimeout.value = setTimeout(() => {
       if (isVoiceEnabled.value) speakColor(chord.displayColor)
       autoPlayTimeout.value = setTimeout(nextQuestion, DELAYS.NEXT_QUESTION)
-    }, DELAYS.REVEAL)
+    }, delayMs)
   } else {
     autoPlayTimeout.value = setTimeout(() => {
       isAutoPlayRevealed.value = true
       if (isVoiceEnabled.value) speakColor(chord.displayColor)
       autoPlayTimeout.value = setTimeout(nextQuestion, DELAYS.NEXT_QUESTION)
-    }, DELAYS.REVEAL)
+    }, delayMs)
   }
 }
 
@@ -222,6 +225,20 @@ onUnmounted(() => {
             <p class="text-xs text-gray-400 mt-1 font-bold">色と和音の対応を反復トレーニング</p>
         </div>
 
+        <!-- Start Button at Top -->
+        <div class="px-2">
+          <button 
+            @click="startAutoPlay"
+            :disabled="selectedChordIds.size === 0"
+            class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center space-x-2 border-b-4 border-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+            </svg>
+            <span>自動再生を開始する</span>
+          </button>
+        </div>
+
         <!-- Chord Selection -->
         <section>
           <div class="flex items-center justify-between mb-4 px-1">
@@ -262,75 +279,97 @@ onUnmounted(() => {
             </div>
         </section>
 
-        <!-- Common Settings -->
-        <div class="mt-8 pb-32 w-full border-t border-gray-100 pt-8 flex flex-col items-center space-y-8">
-          <!-- Immediate Reveal Toggle -->
+        <!-- Options -->
+        <section class="space-y-4 pb-40 px-1">
+          <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-4 px-1">オプション</label>
           
-           <!-- Immediate Reveal Toggle -->
-           <section class="flex flex-col items-center w-full px-4 space-y-3">
-               <div 
-                 @click="isAutoPlayImmediate = !isAutoPlayImmediate"
-                 class="flex items-center justify-between w-full max-w-[280px] bg-white border border-gray-100 p-4 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
-               >
-                 <div class="flex flex-col">
-                   <span class="text-[11px] font-bold text-gray-700">答えをすぐに表示</span>
-                   <span class="text-[9px] text-gray-400">音がなると同時に色を見せる</span>
-                 </div>
-                 <div 
-                   class="w-10 h-6 bg-gray-200 rounded-full relative transition-colors duration-200"
-                   :class="{ 'bg-gray-900': isAutoPlayImmediate }"
-                 >
-                   <div 
-                     class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200"
-                     :class="{ 'translate-x-4': isAutoPlayImmediate }"
-                   ></div>
-                 </div>
-               </div>
+          <!-- Toggles Group -->
+          <div class="space-y-3">
+            <!-- Immediate Reveal Toggle -->
+            <div 
+              @click="isAutoPlayImmediate = !isAutoPlayImmediate"
+              class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-colors active:bg-gray-100"
+            >
+              <div>
+                <p class="text-sm font-black text-gray-900">答えをすぐに表示</p>
+                <p class="text-[10px] font-bold text-gray-400 mt-0.5">音がなると同時に色を見せる</p>
+              </div>
+              <div 
+                class="w-10 h-6 rounded-full transition-colors relative shrink-0"
+                :class="isAutoPlayImmediate ? 'bg-gray-900' : 'bg-gray-200'"
+              >
+                <div 
+                  class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
+                  :class="isAutoPlayImmediate ? 'translate-x-4' : ''"
+                ></div>
+              </div>
+            </div>
 
-               <!-- Voice Toggle -->
-               <div 
-                 @click="isVoiceEnabled = !isVoiceEnabled"
-                 class="flex items-center justify-between w-full max-w-[280px] bg-white border border-gray-100 p-4 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
-               >
-                 <div class="flex flex-col">
-                   <span class="text-[11px] font-bold text-gray-700">色の名前を読み上げる</span>
-                   <span class="text-[9px] text-gray-400">正解の色を音声でガイド</span>
-                 </div>
-                 <div 
-                   class="w-10 h-6 bg-gray-200 rounded-full relative transition-colors duration-200"
-                   :class="{ 'bg-gray-900': isVoiceEnabled }"
-                 >
-                   <div 
-                     class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200"
-                     :class="{ 'translate-x-4': isVoiceEnabled }"
-                   ></div>
-                 </div>
-               </div>
-           </section>
+            <!-- Voice Toggle -->
+            <div 
+              @click="isVoiceEnabled = !isVoiceEnabled"
+              class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-colors active:bg-gray-100"
+            >
+              <div>
+                <p class="text-sm font-black text-gray-900">色の名前を読み上げる</p>
+                <p class="text-[10px] font-bold text-gray-400 mt-0.5">正解の色を音声でガイド</p>
+              </div>
+              <div 
+                class="w-10 h-6 rounded-full transition-colors relative shrink-0"
+                :class="isVoiceEnabled ? 'bg-gray-900' : 'bg-gray-200'"
+              >
+                <div 
+                  class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
+                  :class="isVoiceEnabled ? 'translate-x-4' : ''"
+                ></div>
+              </div>
+            </div>
+          </div>
 
-           <!-- Reveal Style Selection -->
-           <section class="flex flex-col items-center w-full px-4 -mt-4">
-               <div class="w-full max-w-[280px] bg-white border border-gray-100 p-4 rounded-xl space-y-3">
-                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
-                 <div class="flex bg-gray-100 p-1 rounded-lg border border-gray-200">
-                   <button 
-                     @click="autoPlayRevealType = 'full'"
-                     class="flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all text-center"
-                     :class="autoPlayRevealType === 'full' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400'"
-                   >
-                     画面全体
-                   </button>
-                   <button 
-                     @click="autoPlayRevealType = 'grid'"
-                     class="flex-1 py-1.5 rounded-md text-[10px] font-bold transition-all text-center"
-                     :class="autoPlayRevealType === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400'"
-                   >
-                     タイル
-                   </button>
-                 </div>
-               </div>
-           </section>
-        </div>
+          <!-- Reveal Delay Slider -->
+          <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 space-y-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-sm font-black text-gray-900">回答までの時間</p>
+                <p class="text-[10px] font-bold text-gray-400 mt-0.5">音が鳴ってから正解を伝えるまで</p>
+              </div>
+              <span class="text-xs font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">{{ revealDelay }}s</span>
+            </div>
+            <input 
+              type="range" 
+              v-model.number="revealDelay" 
+              min="1.0" 
+              max="5.0" 
+              step="0.5"
+              class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-900"
+            >
+            <div class="flex justify-between text-[9px] font-bold text-gray-300 uppercase tracking-tighter">
+              <span>1.0s (速い)</span>
+              <span>5.0s (ゆっくり)</span>
+            </div>
+          </div>
+
+          <!-- Reveal Style Selection -->
+          <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 space-y-4">
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
+            <div class="flex bg-gray-200 p-1 rounded-xl border border-gray-200">
+              <button 
+                @click="autoPlayRevealType = 'full'"
+                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
+                :class="autoPlayRevealType === 'full' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
+              >
+                画面全体
+              </button>
+              <button 
+                @click="autoPlayRevealType = 'grid'"
+                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
+                :class="autoPlayRevealType === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
+              >
+                タイル
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
 
       <!-- PLAYING VIEW -->
@@ -382,18 +421,9 @@ onUnmounted(() => {
           </button>
         </div>
       </div>
-
     </main>
 
-    <div v-if="view === 'settings'" class="w-full p-6 bg-gradient-to-t from-white via-white to-white/0 shrink-0 z-20 box-border absolute bottom-0 pb-10">
-      <button 
-        @click="startAutoPlay"
-        :disabled="selectedChordIds.size === 0"
-        class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center space-x-2 border-b-4 border-gray-700"
-      >
-        <span>自動再生を開始する</span>
-      </button>
-    </div>
+
 
     </div>
   </div>

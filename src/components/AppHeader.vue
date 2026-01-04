@@ -1,5 +1,6 @@
 <script setup>
 import { useAuth } from '../composables/useAuth'
+import { useAudio } from '../composables/useAudio'
 
 const props = defineProps({
   showBack: {
@@ -19,6 +20,11 @@ const props = defineProps({
 defineEmits(['back'])
 
 const { user, userTier } = useAuth()
+const { selectedInstrument } = useAudio()
+const instrumentName = {
+  yamaha: 'Yamaha C5',
+  steinway: 'Steinway B'
+}
 </script>
 
 <template>
@@ -40,18 +46,24 @@ const { user, userTier } = useAuth()
       </router-link>
     </div>
 
-    <!-- Center: Logo -->
+    <!-- Center: Logo & Instrument -->
     <div class="flex flex-col items-center">
       <router-link to="/">
         <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-16 w-auto object-contain" />
       </router-link>
     </div>
 
-    <!-- Right side: Account Icon -->
-    <div class="w-10 flex items-center justify-end">
+    <!-- Right side: Account & Instrument Indicator -->
+    <div class="flex items-center space-x-3">
+      <!-- Instrument Badge -->
+      <div v-if="selectedInstrument" class="hidden sm:flex flex-col items-end">
+        <span class="text-[8px] font-black text-gray-300 uppercase tracking-tighter leading-none mb-0.5">Sound Source</span>
+        <span class="text-[9px] font-bold text-gray-400 leading-none whitespace-nowrap">{{ instrumentName[selectedInstrument] }}</span>
+      </div>
+
       <router-link 
         :to="user ? '/account' : '/auth'" 
-        class="p-2 -mr-2 hover:bg-black/5 rounded-full transition-colors group flex items-center justify-center"
+        class="p-2 -mr-2 hover:bg-black/5 rounded-full transition-colors group flex items-center justify-center shrink-0"
       >
         <svg v-if="!user" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />

@@ -71,6 +71,11 @@ const routes = [
     path: '/autoplay',
     name: 'AutoPlay',
     component: () => import('../views/AutoPlay.vue')
+  },
+  {
+    path: '/singlenotetest',
+    name: 'SingleNoteQuizz',
+    component: () => import('../views/SingleNoteQuizz.vue')
   }
 ]
 

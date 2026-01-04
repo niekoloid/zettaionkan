@@ -13,10 +13,13 @@ const { userTier } = useAuth()
 
 const selectedSong = ref(SONGS[0])
 const isPlaying = ref(false)
+const isPreparing = ref(false)
 const currentChordIndex = ref(-1)
 const playbackPart = ref(null)
 const playbackMode = ref('chord') // 'chord' | 'single'
 const singleNotePosition = ref('high') // 'low' | 'mid' | 'high'
+const isVoiceEnabled = ref(false)
+const pianoScrollContainer = ref(null)
 
 const CHORD_GROUPS = [
   ['domiso', 'misodo', 'sodomi'],
@@ -65,14 +68,73 @@ const currentChord = computed(() => {
   return getTransformedChord(base, singleNotePosition.value)
 })
 
+const activeNotes = computed(() => {
+  if (currentChordIndex.value === -1) return new Set()
+  const step = selectedSong.value.sequence[currentChordIndex.value]
+  if (!step) return new Set()
+  
+  if (step.notes) return new Set(step.notes)
+  
+  if (step.chord) {
+    const transformed = getTransformedChord(step.chord, singleNotePosition.value)
+    const noteIndex = singleNotePosition.value === 'high' ? 2 : (singleNotePosition.value === 'mid' ? 1 : 0)
+    const notesToPlay = playbackMode.value === 'single' 
+      ? [transformed.notes[noteIndex]] 
+      : transformed.notes
+    return new Set(notesToPlay)
+  }
+  return new Set()
+})
+
+const normalizeNote = (note) => {
+  return note.replace('C#', 'Db').replace('D#', 'Eb').replace('F#', 'Gb').replace('G#', 'Ab').replace('A#', 'Bb')
+}
+
+const pianoKeys = computed(() => {
+  const keys = []
+  // A0, Bb0, B0
+  keys.push({ id: 'A0', type: 'white' })
+  keys.push({ id: 'Bb0', type: 'black' })
+  keys.push({ id: 'B0', type: 'white' })
+  
+  const names = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
+  for (let oct = 1; oct <= 7; oct++) {
+    names.forEach(n => {
+      keys.push({ id: `${n}${oct}`, type: n.includes('b') ? 'black' : 'white' })
+    })
+  }
+  keys.push({ id: 'C8', type: 'white' })
+  return keys
+})
+
+// Scroll the piano to the average position of active notes
+watch(activeNotes, (notes) => {
+  if (notes.size > 0 && pianoScrollContainer.value) {
+    const noteArray = Array.from(notes)
+    const activeIndices = noteArray.map(n => pianoKeys.value.findIndex(k => k.id === n || normalizeNote(k.id) === n)).filter(i => i !== -1)
+    
+    if (activeIndices.length > 0) {
+      const avgIndex = activeIndices.reduce((a, b) => a + b, 0) / activeIndices.length
+      // Key width is approx 14px on wider screens, but we use clientWidth for better accuracy
+      const keyWidth = 12 // Reduced key width for better overview
+      const scrollPos = (avgIndex * keyWidth) - (pianoScrollContainer.value.clientWidth / 2)
+      
+      pianoScrollContainer.value.scrollTo({
+        left: Math.max(0, scrollPos),
+        behavior: 'smooth'
+      })
+    }
+  }
+})
+
 const stopPlayback = () => {
+  Tone.Transport.stop()
+  Tone.Transport.cancel()
   if (playbackPart.value) {
     playbackPart.value.stop()
     playbackPart.value.dispose()
     playbackPart.value = null
   }
-  Tone.Transport.stop()
-  Tone.Transport.cancel()
   if (window.speechSynthesis) window.speechSynthesis.cancel()
   isPlaying.value = false
   currentChordIndex.value = -1
@@ -84,66 +146,97 @@ const startPlayback = async () => {
     return
   }
 
+  // Always reset transport state before starting
+  Tone.Transport.stop()
+  Tone.Transport.cancel()
+
   if (Tone.context.state !== 'running') {
-    await Tone.start()
-  }
-
-  // Ensure sampler is loaded
-  if (!samplers[selectedInstrument.value]) {
-    await loadSampler(selectedInstrument.value)
-  }
-  
-  const s = samplers[selectedInstrument.value]
-  if (!s) return
-
-  isPlaying.value = true
-  Tone.Transport.bpm.value = selectedSong.value.bpm
-
-  const events = []
-  let totalTime = 0
-  
-  selectedSong.value.sequence.forEach((item, index) => {
-    events.push({
-      time: totalTime,
-      chord: item.chord,
-      index: index,
-      duration: item.duration
-    })
-    totalTime += Tone.Time(item.duration).toSeconds()
-  })
-
-  playbackPart.value = new Tone.Part((time, event) => {
-    currentChordIndex.value = event.index
-    if (event.chord) {
-      const transformed = getTransformedChord(event.chord, singleNotePosition.value)
-      const noteIndex = singleNotePosition.value === 'high' ? 2 : (singleNotePosition.value === 'mid' ? 1 : 0)
-      
-      const notesToPlay = playbackMode.value === 'single' 
-        ? [transformed.notes[noteIndex]] 
-        : transformed.notes
-      
-      try {
-        s.triggerAttackRelease(notesToPlay, event.duration, time)
-      } catch (err) {
-        console.error('Playback error:', err)
-      }
-
-      if (playbackMode.value === 'single' && isVoiceEnabled.value) {
-        Tone.Draw.schedule(() => {
-          speakColor(transformed.colorName)
-        }, time)
-      }
+    try {
+      await Tone.start()
+    } catch (e) {
+      console.error("Tone start failed", e)
     }
-  }, events).start(0)
+  }
 
-  Tone.Transport.start()
+  isPreparing.value = true
   
-  // Schedule the stop exactly at the end of the sequence
-  Tone.Transport.schedule(() => {
-    Tone.Draw.schedule(() => {
-      stopPlayback()
-    }, Tone.now())
-  }, totalTime + 0.5)
+  try {
+    // Ensure sampler is loaded
+    if (!samplers[selectedInstrument.value]) {
+      await loadSampler(selectedInstrument.value)
+    }
+    
+    // Check again after load
+    const s = samplers[selectedInstrument.value]
+    if (!s) {
+      console.error("Sampler not available after load")
+      isPreparing.value = false
+      return
+    }
+
+    // Wait a tiny bit for Tone.js to sync the sampler if it was just loaded
+    await new Promise(r => setTimeout(r, 100))
+
+    isPlaying.value = true
+    isPreparing.value = false
+    Tone.Transport.bpm.value = selectedSong.value.bpm
+
+    const events = []
+    let totalTime = 0
+    
+    selectedSong.value.sequence.forEach((item, index) => {
+      events.push({
+        time: totalTime,
+        chord: item.chord,
+        notes: item.notes,
+        index: index,
+        duration: item.duration
+      })
+      totalTime += Tone.Time(item.duration).toSeconds()
+    })
+
+    playbackPart.value = new Tone.Part((time, event) => {
+      currentChordIndex.value = event.index
+      
+      let notesToPlay = []
+      if (event.notes) {
+        notesToPlay = event.notes
+      } else if (event.chord) {
+        const transformed = getTransformedChord(event.chord, singleNotePosition.value)
+        const noteIndex = singleNotePosition.value === 'high' ? 2 : (singleNotePosition.value === 'mid' ? 1 : 0)
+        notesToPlay = playbackMode.value === 'single' 
+          ? [transformed.notes[noteIndex]] 
+          : transformed.notes
+        
+        if (playbackMode.value === 'single' && isVoiceEnabled.value) {
+          Tone.Draw.schedule(() => {
+            speakColor(transformed.colorName)
+          }, time)
+        }
+      }
+
+      if (notesToPlay.length > 0) {
+        try {
+          s.triggerAttackRelease(notesToPlay, event.duration, time)
+        } catch (err) {
+          console.error('Playback error:', err)
+        }
+      }
+    }, events).start(0)
+
+    Tone.Transport.start()
+    
+    // Schedule the stop exactly at the end of the sequence
+    Tone.Transport.schedule(() => {
+      Tone.Draw.schedule(() => {
+        stopPlayback()
+      }, Tone.now())
+    }, totalTime)
+  } catch (err) {
+    console.error("Playback start error", err)
+    isPreparing.value = false
+    isPlaying.value = false
+  }
 }
 
 const selectSong = (song) => {
@@ -214,9 +307,10 @@ const isLightColor = (hex) => {
             ></div>
           </transition>
 
-          <!-- Main Chord Card -->
+          <!-- Main Chord Card (Hidden when 88-key is playing complex song) -->
           <div 
-            class="w-full aspect-square max-w-[280px] rounded-[48px] shadow-2xl transition-all duration-300 flex flex-col items-center justify-center relative bg-white border border-gray-100"
+            v-if="!selectedSong.sequence[0].notes"
+            class="w-full aspect-square max-w-[280px] rounded-[48px] shadow-2xl transition-all duration-300 flex flex-col items-center justify-center relative bg-white border border-gray-100 mb-12"
             :class="{ 'scale-105': isPlaying && currentChord }"
           >
             <div 
@@ -233,12 +327,40 @@ const isLightColor = (hex) => {
                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ currentChord.colorName }}</span>
               </template>
               <template v-else-if="isPlaying">
-                <span class="text-lg font-black text-gray-200">...</span>
+                <span class="text-lg font-black text-gray-200">Playing...</span>
+              </template>
+              <template v-else-if="isPreparing">
+                <span class="text-sm font-bold text-blue-500 animate-pulse">音源を読み込み中...</span>
               </template>
               <template v-else>
                 <span class="text-sm font-bold text-gray-300">再生ボタンを押してください</span>
               </template>
             </div>
+          </div>
+
+          <!-- 88-Key Piano Keyboard -->
+          <div class="w-full flex flex-col items-center mb-10 overflow-hidden">
+            <div 
+              class="w-full max-w-xl overflow-x-auto pb-4 scrollbar-hide flex justify-start sm:justify-center px-1"
+              ref="pianoScrollContainer"
+            >
+              <div class="flex relative h-28 min-w-max bg-gray-950 p-2 rounded-xl border border-gray-800 shadow-2xl">
+                <div 
+                  v-for="key in pianoKeys" 
+                  :key="key.id"
+                  class="relative transition-all duration-75"
+                  :class="[
+                    key.type === 'white' ? 'w-[7px] sm:w-[9px] h-20 bg-white border-[0.1px] border-gray-200 rounded-b-[1px] z-10' : 'w-[5px] sm:w-[6px] h-12 bg-gray-900 rounded-b-[1px] z-20 -mx-[2.5px] sm:-mx-[3px]',
+                    activeNotes.has(key.id) || activeNotes.has(normalizeNote(key.id))
+                      ? (key.type === 'white' ? 'bg-blue-400 !border-blue-500 translate-y-[1px] shadow-inner' : 'bg-blue-500 translate-y-[1px] shadow-inner')
+                      : ''
+                  ]"
+                >
+                  <span v-if="key.id === 'C4'" class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[6px] font-black text-gray-500 whitespace-nowrap">C4</span>
+                </div>
+              </div>
+            </div>
+            <p class="text-[8px] font-black text-gray-400 mt-4 uppercase tracking-[0.4em]">Full Piano Range (88 Keys)</p>
           </div>
         </div>
 
@@ -299,7 +421,8 @@ const isLightColor = (hex) => {
           <!-- Main Play Button -->
           <button 
             @click="startPlayback"
-            class="w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-2xl hover:scale-110 active:scale-95 group"
+            :disabled="isPreparing"
+            class="w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-2xl hover:scale-110 active:scale-95 group disabled:opacity-50 disabled:scale-100"
             :class="[
               currentChord && !isLightColor(currentChord.color) 
                 ? 'bg-white text-gray-900' 
@@ -307,7 +430,8 @@ const isLightColor = (hex) => {
             ]"
           >
             <transition name="fade" mode="out-in">
-              <svg v-if="isPlaying" key="stop" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+              <div v-if="isPreparing" key="loading" class="w-8 h-8 border-4 border-current border-t-transparent rounded-full animate-spin"></div>
+              <svg v-else-if="isPlaying" key="stop" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                 <rect x="6" y="6" width="12" height="12" rx="2" />
               </svg>
               <svg v-else key="play" class="w-8 h-8 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">

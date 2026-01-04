@@ -48,7 +48,6 @@ const selectedChordIds = ref(new Set([QUIZZ_CHORDS[0].id, QUIZZ_CHORDS[1].id]))
 const questions = ref([])
 const quizzHistory = ref([])
 const shuffledIds = ref([])
-const isReplayEnabled = ref(true)
 
 const { 
   samplers, 
@@ -287,6 +286,24 @@ onUnmounted(() => {
       
       <!-- SETTINGS VIEW -->
       <div v-if="view === 'settings'" class="space-y-8 pb-40">
+        <div class="text-center mb-2">
+            <h2 class="text-xl font-black text-gray-900">和音クイズ</h2>
+            <p class="text-xs text-gray-400 mt-1 font-bold">覚えた色をテストしてみましょう</p>
+        </div>
+
+        <!-- Start Button at Top -->
+        <div class="px-2">
+          <button 
+            @click="startQuizz"
+            :disabled="selectedChordIds.size === 0"
+            class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center space-x-2 border-b-4 border-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+            </svg>
+            <span>テストを開始する</span>
+          </button>
+        </div>
         <!-- Chord Selection -->
         <section>
           <div class="flex items-center justify-between mb-4 px-1">
@@ -327,28 +344,7 @@ onUnmounted(() => {
             </div>
         </section>
 
-        <!-- Options -->
-        <section>
-          <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-4 px-1">オプション</label>
-          <div 
-            @click="isReplayEnabled = !isReplayEnabled"
-            class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-colors active:bg-gray-100"
-          >
-            <div>
-              <p class="text-sm font-black text-gray-900">音を再度聴く</p>
-              <p class="text-[10px] font-bold text-gray-400 mt-0.5">出題中に和音をもう一度鳴らすことができます</p>
-            </div>
-            <div 
-              class="w-10 h-6 rounded-full transition-colors relative"
-              :class="isReplayEnabled ? 'bg-gray-900' : 'bg-gray-200'"
-            >
-              <div 
-                class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
-                :class="isReplayEnabled ? 'translate-x-4' : ''"
-              ></div>
-            </div>
-          </div>
-        </section>
+
       </div>
 
       <!-- QUIZ VIEW -->
@@ -356,25 +352,20 @@ onUnmounted(() => {
         <!-- Minimal Top Info -->
         <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
           <div class="flex items-center space-x-2">
-            <div class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-lg">
-              <span class="text-[10px] text-white font-black uppercase tracking-widest drop-shadow-sm">Q.{{ currentQuestionCount }}</span>
+            <!-- Premium Question Indicator -->
+            <div class="flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-lg overflow-hidden ring-1 ring-black/5 h-8">
+              <div class="px-3 h-full flex items-center bg-white/10 border-r border-white/5">
+                <span class="text-[8px] text-gray-300 font-black uppercase tracking-widest leading-none">Question</span>
+              </div>
+              <div class="px-4 h-full flex items-center min-w-[3rem] justify-center">
+                <span class="text-[11px] text-white font-black leading-none">{{ currentQuestionCount }}</span>
+              </div>
             </div>
-            
-            <button 
-              v-if="isReplayEnabled && !resultMessage"
-              @click="playCurrentQuestion"
-              class="pointer-events-auto bg-white/20 backdrop-blur-md text-[10px] text-white font-black rounded-full px-3 py-1 hover:bg-white/30 transition-colors border border-white/20 shadow-lg drop-shadow-sm flex items-center space-x-1"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-              </svg>
-              <span>再再生</span>
-            </button>
           </div>
 
           <button 
             @click="finishQuizz"
-            class="pointer-events-auto bg-black/40 backdrop-blur-md text-[10px] text-white font-black rounded-full px-4 py-1.5 hover:bg-black/50 transition-colors border border-white/20 shadow-lg drop-shadow-sm"
+            class="pointer-events-auto bg-black/40 backdrop-blur-md text-[10px] text-white font-black rounded-full px-4 h-8 hover:bg-black/50 transition-colors border border-white/10 shadow-lg drop-shadow-sm flex items-center"
           >
             テストを終了
           </button>
@@ -420,7 +411,18 @@ onUnmounted(() => {
         </div>
 
         <!-- Bottom Controls Overlay -->
-        <div class="absolute bottom-8 left-0 right-0 z-50 flex flex-col items-center space-y-4 pointer-events-none">
+        <div class="absolute bottom-10 left-0 right-0 z-50 flex justify-center items-center space-x-4 pointer-events-none">
+          <button 
+            v-if="!resultMessage"
+            @click="playCurrentQuestion"
+            class="pointer-events-auto bg-black/40 backdrop-blur-md text-[10px] text-white font-black rounded-full px-6 py-2.5 hover:bg-black/50 transition-colors border border-white/20 shadow-lg drop-shadow-sm flex items-center space-x-2 active:scale-95"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+            </svg>
+            <span>再再生</span>
+          </button>
+
           <button 
             v-if="!resultMessage"
             @click="skipQuestion"
@@ -519,15 +521,7 @@ onUnmounted(() => {
 
     </main>
 
-    <div v-if="view === 'settings'" class="w-full p-6 bg-gradient-to-t from-white via-white to-white/0 shrink-0 z-20 box-border absolute bottom-0 pb-10">
-      <button 
-        @click="startQuizz"
-        :disabled="selectedChordIds.size === 0"
-        class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center space-x-2 border-b-4 border-gray-700"
-      >
-        <span>テストを開始する</span>
-      </button>
-    </div>
+
 
     </div>
   </div>

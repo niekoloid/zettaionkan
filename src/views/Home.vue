@@ -79,34 +79,13 @@ onMounted(async () => {
     loadSampler('yamaha')
   }
   
-  // Set initial chord and render its score
+  // Set initial chord
   if (allChords.value.length > 0) {
     currentChord.value = allChords.value[0]
   }
-
-  nextTick(() => {
-    if (currentChord.value) {
-      renderScore(currentChord.value.abc)
-    } else {
-      renderScore('y')
-    }
-  })
 })
 
-const renderScore = (abc) => {
-  // Remove chord symbols (text in double quotes) from the ABC notation
-  const cleanAbc = abc.replace(/"[^"]*"/g, "")
-  abcjs.renderAbc('chord-score', `L:1\nK:C\n${cleanAbc}`, {
-    responsive: 'resize',
-    scale: 1.5, 
-    paddingtop: 0,
-    paddingbottom: 0,
-    paddingleft: 0,
-    paddingright: 0,
-    staffwidth: 70, 
-    add_classes: true
-  })
-}
+
 
 const playChord = async (notes) => {
   if (Tone.context.state !== 'running') await Tone.start()
@@ -165,8 +144,6 @@ const playNote = async (note) => {
   const toggleChord = async (chord) => {
     // 視覚情報（楽譜、鍵盤の着色）は常に更新
     currentChord.value = chord
-    await nextTick()
-    renderScore(chord.abc)
 
     // 全ての和音を制限なしで再生
     playChord(chord.notes)
@@ -258,15 +235,15 @@ const isLightColor = (hex) => {
     <main class="flex-grow px-4 pb-8 overflow-y-auto" style="scrollbar-gutter: stable;">
 
 
-      <!-- Score Visualization -->
+      <!-- Score Visualization (Abstracted Component) -->
       <section class="flex flex-col items-center mb-2 text-center">
-        <div class="w-[150px] h-[155px] bg-gray-50 rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-inner overflow-hidden relative">
-          <div id="chord-score" class="w-full flex justify-center items-center pointer-events-none"></div>
-          
-          <div v-if="currentChord" class="mt-2 text-[14px] font-bold text-gray-700 flex flex-col items-center">
-            <span v-html="(namingConvention === 'german' ? currentChord.name : currentChord.nameIt) + ' (' + currentChord.colorName + ')'"></span>
-          </div>
-        </div>
+        <ScoreDisplay :abc="currentChord?.abc" :is-answered="true">
+          <template #footer v-if="currentChord">
+            <div class="mt-2 text-[14px] font-bold text-gray-700 flex flex-col items-center animate-bounce-in">
+              <span v-html="(namingConvention === 'german' ? currentChord.name : currentChord.nameIt) + ' (' + currentChord.colorName + ')'"></span>
+            </div>
+          </template>
+        </ScoreDisplay>
       </section>
 
       <!-- Keyboard Visualization -->
@@ -433,6 +410,29 @@ const isLightColor = (hex) => {
               </div>
             </div>
           </div>
+
+          <!-- Single Note Training -->
+          <router-link to="/singlenotetest" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-sky-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="relative z-10 flex items-center w-full px-6">
+              <!-- Icon Container -->
+              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-50 text-sky-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <span class="text-2xl font-black">?</span>
+              </div>
+
+              <!-- Text Content -->
+              <div class="ml-4 flex flex-col items-start justify-center flex-grow">
+                <h3 class="text-sm font-black text-sky-900 tracking-wider">単音テストに挑戦</h3>
+                <p class="text-[10px] font-bold text-sky-400 mt-0.5">ドレミの音を一つずつ当ててみましょう</p>
+              </div>
+
+              <!-- Arrow -->
+              <div class="text-sky-200 group-hover:text-sky-500 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </router-link>
 
           <!-- Song Playback -->
           <router-link to="/songs" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-emerald-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
