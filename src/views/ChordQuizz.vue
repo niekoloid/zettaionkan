@@ -14,7 +14,7 @@ import ChordSelectionButton from '../components/ChordSelectionButton.vue'
 const router = useRouter()
 
 // === Constants ===
-const TEST_CHORDS = [
+const QUIZZ_CHORDS = [
   { ...ChordDefinitions.DOMISO, label: '1', displayColor: '赤', sortOrder: 1 },
   { ...ChordDefinitions.DOFARA, label: '2', displayColor: '黄色', sortOrder: 2 },
   { ...ChordDefinitions.SHIRESO, label: '3', displayColor: '青', sortOrder: 3 },
@@ -44,10 +44,11 @@ const isSaving = ref(false)
 const currentQuestionIndex = ref(0)
 const resultMessage = ref(null)
 
-const selectedChordIds = ref(new Set([TEST_CHORDS[0].id, TEST_CHORDS[1].id]))
+const selectedChordIds = ref(new Set([QUIZZ_CHORDS[0].id, QUIZZ_CHORDS[1].id]))
 const questions = ref([])
-const testHistory = ref([])
+const quizzHistory = ref([])
 const shuffledIds = ref([])
+const isReplayEnabled = ref(true)
 
 const { 
   samplers, 
@@ -62,13 +63,13 @@ const {
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 const currentQuestionCount = computed(() => currentQuestionIndex.value + 1)
 const isAllSelected = computed(() => selectedChordIds.value.size > 0)
-const whiteKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder <= 9))
-const blackKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder > 9))
+const whiteKeyChords = computed(() => QUIZZ_CHORDS.filter(c => c.sortOrder <= 9))
+const blackKeyChords = computed(() => QUIZZ_CHORDS.filter(c => c.sortOrder > 9))
 const currentLayoutChords = computed(() => {
   if (view.value === 'quiz') {
-    return shuffledIds.value.map(id => TEST_CHORDS.find(c => c.id === id))
+    return shuffledIds.value.map(id => QUIZZ_CHORDS.find(c => c.id === id))
   }
-  return TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
+  return QUIZZ_CHORDS.filter(c => selectedChordIds.value.has(c.id))
 })
 
 // Dynamic Grid Logic
@@ -98,7 +99,7 @@ const cleanupSideEffects = () => {
 }
 
 const getRandomChord = () => {
-  const availableChords = TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
+  const availableChords = QUIZZ_CHORDS.filter(c => selectedChordIds.value.has(c.id))
   return availableChords[Math.floor(Math.random() * availableChords.length)]
 }
 
@@ -123,11 +124,11 @@ const playCurrentQuestion = async () => {
 }
 
 const toggleChordSelection = (id) => {
-  const targetChord = TEST_CHORDS.find(c => c.id === id)
+  const targetChord = QUIZZ_CHORDS.find(c => c.id === id)
   if (!targetChord) return
 
   const newSet = new Set()
-  TEST_CHORDS.forEach(c => {
+  QUIZZ_CHORDS.forEach(c => {
     if (c.sortOrder <= targetChord.sortOrder) newSet.add(c.id)
   })
   selectedChordIds.value = newSet
@@ -135,7 +136,7 @@ const toggleChordSelection = (id) => {
 
 
 
-const startTest = async () => {
+const startQuizz = async () => {
   const firstChord = getRandomChord()
   if (!firstChord) return
 
@@ -145,7 +146,7 @@ const startTest = async () => {
   questions.value = [firstChord]
   currentQuestionIndex.value = 0
   score.value = 0
-  testHistory.value = []
+  quizzHistory.value = []
   shuffleChords() // Initial shuffle
   view.value = 'quiz'
   
@@ -194,18 +195,18 @@ const skipQuestion = () => {
   moveNext()
 }
 
-const finishTest = async () => {
+const finishQuizz = async () => {
   cleanupSideEffects()
   const { data: { user } } = await supabase.auth.getUser()
   
-  if (user && testHistory.value.length > 0) {
+  if (user && quizzHistory.value.length > 0) {
     isSaving.value = true
     try {
       await supabase.from('training_sessions').insert({
         user_id: user.id,
         score: score.value,
-        total_questions: testHistory.value.length,
-        details: testHistory.value,
+        total_questions: quizzHistory.value.length,
+        details: quizzHistory.value,
         settings: {
            selected_chords: Array.from(selectedChordIds.value),
            instrument: selectedInstrument.value
@@ -220,7 +221,7 @@ const finishTest = async () => {
   view.value = 'result'
 }
 
-const resetTest = () => {
+const resetQuizz = () => {
   cleanupSideEffects()
   view.value = 'settings'
   resultMessage.value = null
@@ -229,14 +230,14 @@ const resetTest = () => {
 const handleHeaderBack = (e) => {
   if (view.value !== 'settings') {
     e.preventDefault()
-    resetTest()
+    resetQuizz()
   }
 }
 
 // Intercept browser back button
 onBeforeRouteLeave((to, from) => {
   if (view.value !== 'settings') {
-    resetTest()
+    resetQuizz()
     return false // Cancel navigation away from this page
   }
 })
@@ -341,17 +342,54 @@ onUnmounted(() => {
               />
             </div>
         </section>
+
+        <!-- Options -->
+        <section>
+          <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-4 px-1">オプション</label>
+          <div 
+            @click="isReplayEnabled = !isReplayEnabled"
+            class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-colors active:bg-gray-100"
+          >
+            <div>
+              <p class="text-sm font-black text-gray-900">音を再度聴く</p>
+              <p class="text-[10px] font-bold text-gray-400 mt-0.5">出題中に和音をもう一度鳴らすことができます</p>
+            </div>
+            <div 
+              class="w-10 h-6 rounded-full transition-colors relative"
+              :class="isReplayEnabled ? 'bg-gray-900' : 'bg-gray-200'"
+            >
+              <div 
+                class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
+                :class="isReplayEnabled ? 'translate-x-4' : ''"
+              ></div>
+            </div>
+          </div>
+        </section>
       </div>
 
       <!-- QUIZ VIEW -->
       <div v-if="view === 'quiz'" class="flex-grow w-full flex flex-col bg-white relative">
         <!-- Minimal Top Info -->
         <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
-          <div class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-lg">
-            <span class="text-[10px] text-white font-black uppercase tracking-widest drop-shadow-sm">Q.{{ currentQuestionCount }}</span>
+          <div class="flex items-center space-x-2">
+            <div class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-lg">
+              <span class="text-[10px] text-white font-black uppercase tracking-widest drop-shadow-sm">Q.{{ currentQuestionCount }}</span>
+            </div>
+            
+            <button 
+              v-if="isReplayEnabled && !resultMessage"
+              @click="playCurrentQuestion"
+              class="pointer-events-auto bg-white/20 backdrop-blur-md text-[10px] text-white font-black rounded-full px-3 py-1 hover:bg-white/30 transition-colors border border-white/20 shadow-lg drop-shadow-sm flex items-center space-x-1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+              </svg>
+              <span>再再生</span>
+            </button>
           </div>
+
           <button 
-            @click="finishTest"
+            @click="finishQuizz"
             class="pointer-events-auto bg-black/40 backdrop-blur-md text-[10px] text-white font-black rounded-full px-4 py-1.5 hover:bg-black/50 transition-colors border border-white/20 shadow-lg drop-shadow-sm"
           >
             テストを終了
@@ -418,10 +456,10 @@ onUnmounted(() => {
           <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Quiz Finished</p>
           <div class="text-6xl font-black text-gray-900 mb-2">
             <span class="text-blue-500">{{ score }}</span>
-            <span class="text-gray-300 text-4xl">/{{ testHistory.length }}</span>
+            <span class="text-gray-300 text-4xl">/{{ quizzHistory.length }}</span>
           </div>
           <p class="text-lg font-bold text-gray-600 mb-6">
-            {{ score === testHistory.length ? 'Perfect! 🎉' : score >= testHistory.length * 0.8 ? 'Great Job! 👍' : 'Keep Practicing! 💪' }}
+            {{ score === quizzHistory.length ? 'Perfect! 🎉' : score >= quizzHistory.length * 0.8 ? 'Great Job! 👍' : 'Keep Practicing! 💪' }}
           </p>
         </div>
 
@@ -429,11 +467,11 @@ onUnmounted(() => {
         <div class="w-full bg-gray-50 rounded-3xl border border-gray-100 mb-10 overflow-hidden flex flex-col max-h-[400px]">
           <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white/50">
             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">問題ごとの結果</span>
-            <span class="text-[10px] font-bold text-gray-900">{{ score }} / {{ testHistory.length }} 正解</span>
+            <span class="text-[10px] font-bold text-gray-900">{{ score }} / {{ quizzHistory.length }} 正解</span>
           </div>
           <div class="flex-grow overflow-y-auto px-4 py-2 space-y-2 scrollbar-hide">
             <div 
-              v-for="(history, idx) in testHistory" 
+              v-for="(history, idx) in quizzHistory" 
               :key="idx"
               class="flex items-center space-x-4 p-3 rounded-2xl bg-white border border-gray-100"
             >
@@ -481,13 +519,13 @@ onUnmounted(() => {
 
         <div class="w-full space-y-4 px-6 mb-20">
           <button 
-            @click="startTest"
+            @click="startQuizz"
             class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-lg hover:bg-gray-800 transition-all active:scale-95"
           >
             もう一度挑戦する
           </button>
           <button 
-            @click="resetTest"
+            @click="resetQuizz"
             class="w-full py-4 bg-white text-gray-900 font-bold rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all active:scale-95"
           >
             設定に戻る
@@ -500,7 +538,7 @@ onUnmounted(() => {
     <!-- Footer Action (Settings View Only) -->
     <div v-if="view === 'settings'" class="w-full p-6 bg-gradient-to-t from-white via-white to-white/0 shrink-0 z-20 box-border absolute bottom-0 pb-10">
       <button 
-        @click="startTest"
+        @click="startQuizz"
         :disabled="selectedChordIds.size === 0 || !isSamplerLoaded"
         class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center space-x-2 border-b-4 border-gray-700"
       >

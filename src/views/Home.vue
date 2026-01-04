@@ -422,19 +422,22 @@ const isLightColor = (hex) => {
           </router-link>
 
           <!-- Chord Training -->
-          <router-link to="/chordtest" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-amber-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+          <div 
+            @click="router.push('/chordquizz')" 
+            class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-amber-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+          >
             <div class="relative z-10 flex items-center w-full px-6">
               <!-- Icon Container -->
               <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-50 text-amber-600 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <!-- Bolt Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
-                  <path fill-rule="evenodd" d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3.375 3.375 0 0 1-3.375 3.375H4.875A3.375 3.375 0 0 1 1.5 18.75V9.375A3.375 3.375 0 0 1 4.875 6h.627m4.125-3.375a.375.375 0 0 1 .375-.375h1.5a.375.375 0 0 1 .375.375v3a.375.375 0 0 1-.375.375h-1.5a.375.375 0 0 1-.375-.375v-3Z" clip-rule="evenodd" />
-                  <path d="M6.15 13.106a.75.75 0 0 1 1.06 0l1.06 1.06 4.242-4.243a.75.75 0 1 1 1.06 1.06l-4.773 4.773a.75.75 0 0 1-1.06 0l-1.589-1.59a.75.75 0 0 1 0-1.06Z" />
+                  <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
                 </svg>
               </div>
 
               <!-- Text Content -->
               <div class="ml-4 flex flex-col items-start justify-center flex-grow">
-                <h3 class="text-sm font-black text-amber-900 tracking-wider">和音クイズに挑戦</h3>
+                <h3 class="text-sm font-black text-amber-900 tracking-wider">和音テストに挑戦</h3>
                 <p class="text-[10px] font-bold text-amber-500 mt-0.5">和音を色で認識できるかテスト</p>
               </div>
 
@@ -445,7 +448,7 @@ const isLightColor = (hex) => {
                 </svg>
               </div>
             </div>
-          </router-link>
+          </div>
         </div>
       </section>
 
