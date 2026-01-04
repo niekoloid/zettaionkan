@@ -128,12 +128,27 @@ describe('SingleNoteQuizz.vue', () => {
     const toggle = wrapper.findAll('div.cursor-pointer').find(d => d.text().includes('オクターブまで一致させる'))
     expect(toggle.exists()).toBe(true)
 
-    // Default is ON (bg-indigo-600)
-    expect(toggle.find('.bg-indigo-600').exists()).toBe(true)
+    // Default is OFF
+    expect(toggle.find('.bg-indigo-600').exists()).toBe(false)
 
     await toggle.trigger('click')
     await nextTick()
     
+    expect(toggle.find('.bg-indigo-600').exists()).toBe(true)
+  })
+
+  it('toggles all 88 keys test setting', async () => {
+    const wrapper = mount(SingleNoteQuizz)
+    
+    const toggle = wrapper.findAll('div.cursor-pointer').find(d => d.text().includes('全88鍵盤でテストする'))
+    expect(toggle.exists()).toBe(true)
+
+    // Default is OFF
     expect(toggle.find('.bg-indigo-600').exists()).toBe(false)
+
+    await toggle.trigger('click')
+    await nextTick()
+    
+    expect(toggle.find('.bg-indigo-600').exists()).toBe(true)
   })
 })

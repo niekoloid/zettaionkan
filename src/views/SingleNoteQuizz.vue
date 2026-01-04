@@ -94,9 +94,11 @@ const FULL_PIANO_NOTES = computed(() => {
   const names = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
   
   // A0, A#0, B0
-  ['A', 'A#', 'B'].forEach(n => {
+  const lowNotes = ['A', 'A#', 'B']
+  for (const n of lowNotes) {
     const noteName = `${n}0`
-    const jBase = J_NAMES[n[0]]
+    const baseChar = n[0]
+    const jBase = J_NAMES[baseChar] || ''
     const isSharp = n.includes('#')
     notes.push({
       id: noteName.toLowerCase().replace('#', 'is'),
@@ -108,12 +110,13 @@ const FULL_PIANO_NOTES = computed(() => {
       sortOrder: n === 'A' ? 1 : (n === 'A#' ? 2 : 3),
       clef: 'bass'
     })
-  })
+  }
 
   for (let oct = 1; oct <= 7; oct++) {
-    names.forEach((n, idx) => {
+    for (const n of names) {
       const noteName = `${n}${oct}`
-      const jBase = J_NAMES[n[0]]
+      const baseChar = n[0]
+      const jBase = J_NAMES[baseChar] || ''
       const isSharp = n.includes('#')
       
       // ABC notation logic
@@ -144,7 +147,7 @@ const FULL_PIANO_NOTES = computed(() => {
         sortOrder: notes.length + 1,
         clef: clef
       })
-    })
+    }
   }
 
   // C8
