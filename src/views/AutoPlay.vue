@@ -52,6 +52,7 @@ const {
 } = useAudio()
 
 const autoPlayTimeout = ref(null)
+const isAutoPlayRevealed = ref(false)
 const isAutoPlayImmediate = ref(true)
 const isVoiceEnabled = ref(true)
 const autoPlayRevealType = ref('full') // 'full' | 'grid'
@@ -136,17 +137,21 @@ const toggleChordSelection = (id) => {
   const targetChord = TEST_CHORDS.find(c => c.id === id)
   if (!targetChord) return
 
-  selectedChordIds.value.clear()
+  const newSet = new Set()
   TEST_CHORDS.forEach(c => {
-    if (c.sortOrder <= targetChord.sortOrder) selectedChordIds.value.add(c.id)
+    if (c.sortOrder <= targetChord.sortOrder) newSet.add(c.id)
   })
+  selectedChordIds.value = newSet
 }
 
 
 
-const startAutoPlay = () => {
+const startAutoPlay = async () => {
   const firstChord = getRandomChord()
   if (!firstChord) return
+
+  // Start Tone.js within user gesture
+  if (Tone.context.state !== 'running') await Tone.start()
 
   questions.value = [firstChord]
   currentQuestionIndex.value = 0
@@ -345,7 +350,7 @@ onUnmounted(() => {
       </div>
 
       <!-- PLAYING VIEW -->
-      <div v-if="view === 'playing'" class="h-full w-full">
+      <div v-if="view === 'playing'" class="z-40 h-full w-full">
         <!-- Auto-Play Reveal: Grid Style -->
         <div 
           v-if="autoPlayRevealType === 'grid'" 

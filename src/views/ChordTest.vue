@@ -126,17 +126,21 @@ const toggleChordSelection = (id) => {
   const targetChord = TEST_CHORDS.find(c => c.id === id)
   if (!targetChord) return
 
-  selectedChordIds.value.clear()
+  const newSet = new Set()
   TEST_CHORDS.forEach(c => {
-    if (c.sortOrder <= targetChord.sortOrder) selectedChordIds.value.add(c.id)
+    if (c.sortOrder <= targetChord.sortOrder) newSet.add(c.id)
   })
+  selectedChordIds.value = newSet
 }
 
 
 
-const startTest = () => {
+const startTest = async () => {
   const firstChord = getRandomChord()
   if (!firstChord) return
+
+  // Start Tone.js within user gesture
+  if (Tone.context.state !== 'running') await Tone.start()
 
   questions.value = [firstChord]
   currentQuestionIndex.value = 0
