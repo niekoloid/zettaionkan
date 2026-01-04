@@ -89,6 +89,10 @@ import AppHeader from '../components/AppHeader.vue'
                 </li>
                 <li class="flex items-start">
                   <span class="text-amber-500 mr-2">●</span>
+                  家にピアノを置くスペースがなくても、手軽にスマホ・タブレットからグランドピアノの本物の音源を利用できます
+                </li>
+                <li class="flex items-start">
+                  <span class="text-amber-500 mr-2">●</span>
                   遊び感覚で触りたくなるUIが、毎日の「習慣化」を助けます
                 </li>
               </ul>

@@ -106,6 +106,10 @@ const mainChords = [
             <p class="text-sm text-gray-600 leading-relaxed">
               耳の黄金期に聴く音だからこそ、本物の音色を。世界最高峰のグランドピアノ「Steinway B」や「Yamaha C5」からサンプリングした高品位な音源を採用。豊かな倍音を含む本物の響きが、お子様の鋭い感性を育みます。
             </p>
+            <p class="text-[11px] text-indigo-500 font-bold mt-4 flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              家にピアノを置くスペースがなくても、スマホ・タブレット・PCさえあればいつでも最高峰の音色を響かせることができます。
+            </p>
           </section>
         </div>
 

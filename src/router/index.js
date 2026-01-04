@@ -63,6 +63,11 @@ const routes = [
     component: () => import('../views/ChordQuizz.vue')
   },
   {
+    path: '/songs',
+    name: 'SongPlayback',
+    component: () => import('../views/SongPlayback.vue')
+  },
+  {
     path: '/autoplay',
     name: 'AutoPlay',
     component: () => import('../views/AutoPlay.vue')

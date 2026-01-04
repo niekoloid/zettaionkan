@@ -1,4 +1,17 @@
 <script setup>
+import { onMounted } from 'vue'
+import { useAudio } from './composables/useAudio'
+import { useAuth } from './composables/useAuth'
+
+const { preloadAll } = useAudio()
+const { authReady } = useAuth()
+
+onMounted(async () => {
+  // Wait for auth to be ready so we know user tier if needed, 
+  // but preloadAll handles both currently
+  await authReady
+  preloadAll()
+})
 </script>
 
 <template>

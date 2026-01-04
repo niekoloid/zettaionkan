@@ -1,117 +1,103 @@
 
-import { ref, reactive } from 'vue'
+import { ref, computed } from 'vue'
 import * as Tone from 'tone'
 import { useAuth } from './useAuth'
 import { STEINWAY_MAP, YAMAHA_MAP } from '../constants/instruments.js'
 
 // Singleton state shared across all components
 const samplers = {}
+const isLoaded = ref({
+  yamaha: false,
+  steinway: false
+})
 const isLoading = ref(false)
 const loadingProgress = ref(0)
-const isSamplerLoaded = ref(false)
 const selectedInstrument = ref('yamaha')
-// Holds the filename currently being fetched for visual feedback
 const loadingFile = ref('')
 
 export function useAudio() {
-  const loadSampler = async (instrumentId) => {
-    const { user } = useAuth()
-    // If not logged in, always use Yamaha C5
-    if (!user.value) instrumentId = 'yamaha'
+  const { user, userTier } = useAuth()
+
+  const loadSampler = async (instrumentId, isBackground = false) => {
     // 1. If sampler already exists, just switch and return
     if (samplers[instrumentId]) {
+      if (!isBackground) selectedInstrument.value = instrumentId
+      return
+    }
+
+    // 2. If already loading, ignore duplicate call
+    if (isBackground && isLoaded.value[instrumentId]) return
+
+    if (!isBackground) {
+      isLoading.value = true
+      loadingProgress.value = 0
       selectedInstrument.value = instrumentId
-      isSamplerLoaded.value = true
-      loadingProgress.value = 100
-      return
     }
-
-    // 2. If already loading THIS specific instrument, ignore duplicate call
-    if (isLoading.value && selectedInstrument.value === instrumentId) {
-      console.log(`Already loading ${instrumentId}, skipping...`)
-      return
-    }
-
-    // 3. If loading something ELSE, we could either cancel or just wait.
-    // For now, we allow switching the TARGET instrument even if another is loading,
-    // but we reset the state for the new target.
-    if (isLoading.value) {
-      console.log(`Switching load target from ${selectedInstrument.value} to ${instrumentId}`)
-    }
-
-    // Set loading state
-    selectedInstrument.value = instrumentId
-    isLoading.value = true
-    loadingProgress.value = 0
-    isSamplerLoaded.value = false
 
     const config = instrumentId === 'yamaha'
       ? { urls: YAMAHA_MAP, baseUrl: "https://tonejs.github.io/audio/salamander/" }
       : { urls: STEINWAY_MAP, baseUrl: "/samples/steinway/ff/" }
 
-    // Prepare list of filenames for progress display
     const fileList = Object.values(config.urls)
     let fileIdx = 0
 
-    try {
-      const s = new Tone.Sampler({
-        ...config,
-        onload: () => {
-          console.log(`${instrumentId} loaded and cached`)
-          samplers[instrumentId] = s
-          selectedInstrument.value = instrumentId
-          isSamplerLoaded.value = true
-          loadingProgress.value = 100
-          isLoading.value = false
-          loadingFile.value = ''
-        },
-        onerror: (err) => {
-          console.error(`${instrumentId} load error:`, err)
-          // Fallback logic if needed, but for now we follow the existing pattern
-          isSamplerLoaded.value = true
-          loadingProgress.value = 100
-          isLoading.value = false
-          loadingFile.value = ''
-        }
-      }).toDestination()
+    return new Promise((resolve) => {
+      try {
+        const s = new Tone.Sampler({
+          ...config,
+          onload: () => {
+            console.log(`${instrumentId} loaded and cached`)
+            samplers[instrumentId] = s
+            isLoaded.value[instrumentId] = true
+            if (!isBackground) {
+              isLoading.value = false
+              loadingProgress.value = 100
+              loadingFile.value = ''
+            }
+            resolve(true)
+          },
+          onerror: (err) => {
+            console.error(`${instrumentId} load error:`, err)
+            if (!isBackground) {
+              isLoading.value = false
+              loadingProgress.value = 100
+            }
+            resolve(false)
+          }
+        }).toDestination()
 
-      // Fake progress animation with file name updates
-      const interval = setInterval(() => {
-        if (!isLoading.value) {
-          clearInterval(interval)
-          loadingFile.value = ''
-          return
+        if (!isBackground) {
+          const interval = setInterval(() => {
+            if (!isLoading.value) {
+              clearInterval(interval)
+              return
+            }
+            loadingProgress.value = Math.min(Math.floor(loadingProgress.value + Math.random() * 15), 95)
+            loadingFile.value = fileList[fileIdx % fileList.length]
+            fileIdx++
+          }, 200)
         }
-        // Update progress
-        loadingProgress.value = Math.min(Math.floor(loadingProgress.value + Math.random() * 15), 95)
-        // Cycle through file names for visual cue
-        loadingFile.value = fileList[fileIdx % fileList.length]
-        fileIdx++
-      }, 200)
 
-      // Safety timeout
-      setTimeout(() => {
-        if (isLoading.value) {
-          console.warn(`${instrumentId} load timed out`)
-          isLoading.value = false
-          loadingProgress.value = 100
-          isSamplerLoaded.value = true
-          loadingFile.value = ''
-        }
-      }, 30000) // Increased to 30s as samples can be large
+      } catch (err) {
+        console.error('Sampler initialization error:', err)
+        if (!isBackground) isLoading.value = false
+        resolve(false)
+      }
+    })
+  }
 
-    } catch (err) {
-      console.error('Sampler initialization error:', err)
-      isLoading.value = false
-      loadingProgress.value = 100
-      loadingFile.value = ''
-    }
+  const preloadAll = async () => {
+    console.log('Preloading all audio samples in background...')
+    const p1 = loadSampler('yamaha', true)
+    const p2 = loadSampler('steinway', true)
+    await Promise.all([p1, p2])
+    console.log('All audio samples preloaded.')
   }
 
   const playNotes = async (notes, duration = 3) => {
     if (Tone.context.state !== 'running') await Tone.start()
     const s = samplers[selectedInstrument.value]
-    if (s && isSamplerLoaded.value) {
+    if (s && isLoaded.value[selectedInstrument.value]) {
       s.triggerAttackRelease(notes, duration)
       return true
     }
@@ -123,9 +109,11 @@ export function useAudio() {
     isLoading,
     loadingProgress,
     loadingFile,
-    isSamplerLoaded,
+    isSamplerLoaded: computed(() => isLoaded.value[selectedInstrument.value]),
+    isLoaded,
     selectedInstrument,
     loadSampler,
+    preloadAll,
     playNotes
   }
 }

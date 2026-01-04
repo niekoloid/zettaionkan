@@ -26,8 +26,8 @@ const QUIZZ_CHORDS = [
   { ...ChordDefinitions.SODOMI, label: '9', displayColor: '茶色', sortOrder: 9 },
   { ...ChordDefinitions.LA_CIS_MI, label: '10', displayColor: '黄緑', sortOrder: 10 },
   { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: '肌色', sortOrder: 11 },
-  { ...ChordDefinitions.MI_GIS_SI, label: '12', displayColor: '藤色', sortOrder: 12 },
-  { ...ChordDefinitions.BE_RE_FA, label: '13', displayColor: '灰色', sortOrder: 13 },
+  { ...ChordDefinitions.MI_GIS_SI, label: '12', displayColor: '薄紫', sortOrder: 12 },
+  { ...ChordDefinitions.BE_RE_FA, label: '13', displayColor: 'グレー', sortOrder: 13 },
   { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: '水色', sortOrder: 14 },
 ]
 
@@ -169,7 +169,7 @@ const submitAnswer = (chord) => {
   const isCorrect = chord.id === currentQuestion.value.id
   if (isCorrect) score.value++
   
-  testHistory.value.push({
+  quizzHistory.value.push({
     question: { ...currentQuestion.value },
     answer: { ...chord },
     isCorrect,
@@ -185,7 +185,7 @@ const skipQuestion = () => {
   if (resultMessage.value) return
   cleanupSideEffects()
 
-  testHistory.value.push({
+  quizzHistory.value.push({
     question: { ...currentQuestion.value },
     answer: null,
     isCorrect: false,
@@ -271,23 +271,7 @@ onUnmounted(() => {
 <template>
   <div class="min-h-screen bg-white font-['Noto_Sans_JP'] antialiased" style="backface-visibility: hidden;">
     <div class="min-h-screen flex flex-col items-center max-w-3xl mx-auto relative overflow-hidden">
-      <!-- Loading Overlay -->
-      <transition name="fade">
-        <div v-if="isLoading" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md">
-          <div class="w-64">
-            <div class="flex justify-between mb-2">
-              <span class="text-xs font-bold text-gray-700">音源を読み込み中...</span>
-              <span class="text-xs font-bold text-gray-900">{{ loadingProgress }}%</span>
-            </div>
-            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-              <div 
-                class="bg-gray-900 h-full transition-all duration-300"
-                :style="{ width: loadingProgress + '%' }"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </transition>
+
 
     <!-- Header -->
     <AppHeader 
@@ -535,15 +519,13 @@ onUnmounted(() => {
 
     </main>
 
-    <!-- Footer Action (Settings View Only) -->
     <div v-if="view === 'settings'" class="w-full p-6 bg-gradient-to-t from-white via-white to-white/0 shrink-0 z-20 box-border absolute bottom-0 pb-10">
       <button 
         @click="startQuizz"
-        :disabled="selectedChordIds.size === 0 || !isSamplerLoaded"
+        :disabled="selectedChordIds.size === 0"
         class="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center space-x-2 border-b-4 border-gray-700"
       >
-        <span v-if="!isSamplerLoaded">読み込み中...</span>
-        <span v-else>テストを開始する</span>
+        <span>テストを開始する</span>
       </button>
     </div>
 

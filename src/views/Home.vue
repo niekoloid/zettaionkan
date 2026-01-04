@@ -250,23 +250,7 @@ const isLightColor = (hex) => {
     <div 
       class="min-h-screen flex flex-col max-w-3xl mx-auto relative overflow-hidden"
     >
-      <!-- Loading Overlay -->
-      <transition name="fade">
-        <div v-if="isLoading" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md">
-          <div class="w-64">
-            <div class="flex justify-between mb-2">
-              <span class="text-xs font-bold text-gray-700">音源を読み込み中...</span>
-              <span class="text-xs font-bold text-gray-900">{{ loadingProgress }}%</span>
-            </div>
-            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-              <div 
-                class="bg-gray-900 h-full transition-all duration-300"
-                :style="{ width: loadingProgress + '%' }"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </transition>
+
     <!-- Header -->
     <AppHeader transparent />
 
@@ -449,6 +433,31 @@ const isLightColor = (hex) => {
               </div>
             </div>
           </div>
+
+          <!-- Song Playback -->
+          <router-link to="/songs" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-emerald-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="relative z-10 flex items-center w-full px-6">
+              <!-- Icon Container -->
+              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                  <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 01.298.599V16.303a3 3 0 01-2.176 2.884l-1.32.377a2.553 2.553 0 11-1.403-4.909l2.311-.66a1.5 1.5 0 001.088-1.442V6.994l-9 2.571v9.737a3 3 0 01-2.176 2.884l-1.32.377a2.553 2.553 0 11-1.402-4.909l2.31-.66a1.5 1.5 0 001.088-1.442V9.17a.75.75 0 01.546-.721l10.5-3a.75.75 0 01.836.202z" clip-rule="evenodd" />
+                </svg>
+              </div>
+
+              <!-- Text Content -->
+              <div class="ml-4 flex flex-col items-start justify-center flex-grow">
+                <h3 class="text-sm font-black text-emerald-900 tracking-wider">曲を聴いてみる</h3>
+                <p class="text-[10px] font-bold text-emerald-500 mt-0.5">名曲を14色の和音で奏でます</p>
+              </div>
+
+              <!-- Arrow -->
+              <div class="text-emerald-200 group-hover:text-emerald-400 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </router-link>
         </div>
       </section>
 
