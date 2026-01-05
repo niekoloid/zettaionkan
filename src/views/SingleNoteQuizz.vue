@@ -66,6 +66,7 @@ const isSaving = ref(false)
 const currentQuestionIndex = ref(0)
 const resultMessage = ref(null)
 const userAnswer = ref(null)
+const activeKeys = ref(new Set())
 
 const selectedNoteIds = ref(new Set(NOTE_DEFINITIONS.map(n => n.id)))
 const questions = ref([])
@@ -88,6 +89,12 @@ const toggleWhiteKeysOnly = () => {
 const toggleMatchOctave = () => {
   matchOctave.value = !matchOctave.value
 }
+
+watch(testAll88, (newVal) => {
+  if (newVal) {
+    whiteKeysOnly.value = false
+  }
+})
 
 const FULL_PIANO_NOTES = computed(() => {
   const notes = []
@@ -254,7 +261,31 @@ const playCurrentQuestion = async () => {
   if (Tone.context.state !== 'running') await Tone.start()
   
   const noteObj = currentQuestion.value
-  s.triggerAttackRelease(noteObj.notes, '1n')
+  const notes = noteObj.notes
+  
+  s.triggerAttackRelease(notes, '1n')
+}
+
+const playSingleNote = async (noteName) => {
+  const s = samplers[selectedInstrument.value]
+  if (!s || !isSamplerLoaded.value) return
+  if (Tone.context.state !== 'running') await Tone.start()
+  
+  const normalized = normalizeNote(noteName)
+  activeKeys.value.add(normalized)
+  s.triggerAttackRelease(noteName, '1n')
+  
+  // If in 88-key quiz mode, clicking a key acts as an answer submission
+  if (view.value === 'quiz' && testAll88.value && !resultMessage.value) {
+    const noteObj = FULL_PIANO_NOTES.value.find(n => normalizeNote(n.notes[0]) === normalized)
+    if (noteObj) {
+      submitAnswer(noteObj)
+    }
+  }
+
+  setTimeout(() => {
+    activeKeys.value.delete(normalized)
+  }, 300)
 }
 
 const shuffleNotes = () => {
@@ -422,9 +453,18 @@ const normalizeNote = (note) => {
 
 // Fixed range keyboard for standard mode
 const whiteNotesForKeyboard = computed(() => keyboardNotes.filter(n => n.type === 'white').map(n => n.note))
-const isNoteActiveOnKeyboard = (note) => {
+const isNotePressed = (note) => {
+  return activeKeys.value.has(normalizeNote(note))
+}
+
+const isNoteCorrect = (note) => {
   if (!resultMessage.value || !currentQuestion.value) return false
-  return currentQuestion.value.notes.includes(note)
+  const normalized = normalizeNote(note)
+  return currentQuestion.value.notes.some(n => normalizeNote(n) === normalized)
+}
+
+const isNoteActiveOnKeyboard = (note) => {
+  return isNotePressed(note) || isNoteCorrect(note)
 }
 const hasBlackKey = (whiteNote) => {
   const noteName = whiteNote.replace(/\d/, '')
@@ -465,10 +505,19 @@ const piano88Keys = computed(() => {
   return keys
 })
 
-const is88NoteActive = (keyId) => {
+const is88NotePressed = (keyId) => {
+  return activeKeys.value.has(normalizeNote(keyId))
+}
+
+const is88NoteCorrect = (keyId) => {
   if (!resultMessage.value || !currentQuestion.value) return false
+  const normalized = normalizeNote(keyId)
   const activeNote = currentQuestion.value.notes[0]
-  return normalizeNote(activeNote) === normalizeNote(keyId)
+  return normalizeNote(activeNote) === normalized
+}
+
+const is88NoteActive = (keyId) => {
+  return is88NotePressed(keyId) || is88NoteCorrect(keyId)
 }
 
 // Auto-scroll logic for 88-key piano
@@ -622,21 +671,31 @@ onMounted(async () => {
             <div class="w-full bg-white rounded-t-3xl p-5 border-y border-gray-100 flex flex-col items-center shadow-sm">
               
               <!-- Standard Piano (3 Octaves) -->
-              <div v-if="!testAll88" class="relative flex justify-center h-24 w-full bg-gray-50 p-1 rounded-xl shadow-inner border border-gray-200">
+              <div v-if="!testAll88" class="relative flex justify-center h-36 w-full bg-gray-50 p-1 rounded-xl shadow-inner border border-gray-200">
                 <!-- White Keys -->
                 <div 
                   v-for="note in whiteNotesForKeyboard" 
                   :key="note"
-                  class="relative flex-grow border-x-[0.1px] border-gray-100 first:border-l-0 last:border-r-0 rounded-b-sm transition-all duration-300"
-                  :class="[isNoteActiveOnKeyboard(note) ? 'bg-indigo-500 z-10 scale-y-[1.02] shadow-md' : 'bg-white']"
-                ></div>
+                  @click="playSingleNote(note)"
+                  class="relative flex-grow border-x-[0.1px] border-gray-100 first:border-l-0 last:border-r-0 rounded-b-sm transition-all duration-300 cursor-pointer hover:bg-gray-50 active:bg-gray-100"
+                  :class="[
+                    isNotePressed(note) ? 'bg-gray-200 z-10 scale-y-[1.02] shadow-sm' : 
+                    isNoteCorrect(note) ? 'bg-indigo-500 z-10 scale-y-[1.02] shadow-md' : 'bg-white'
+                  ]"
+                >
+                  <div v-if="note === 'C4'" class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[6px] font-black text-gray-400">C4</div>
+                </div>
                 <!-- Black Keys Overlay -->
-                <div class="absolute inset-x-1 top-1 h-14 pointer-events-none flex">
+                <div class="absolute inset-x-1 top-1 h-20 pointer-events-none flex">
                   <div v-for="(note, index) in keyboardNotes.filter(n => n.type === 'white')" :key="'gap-'+index" class="flex-grow relative h-full">
                     <div 
                       v-if="hasBlackKey(note.note)"
-                      class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-all duration-300 z-20"
-                      :class="[isNoteActiveOnKeyboard(getBlackKeyNote(note.note)) ? 'bg-amber-400 z-30 scale-[1.1] shadow-md' : 'bg-gray-800']"
+                      @click.stop="playSingleNote(getBlackKeyNote(note.note))"
+                      class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-all duration-300 z-20 pointer-events-auto cursor-pointer"
+                      :class="[
+                        isNotePressed(getBlackKeyNote(note.note)) ? 'bg-gray-600 scale-[1.05] z-30 shadow-sm' :
+                        isNoteCorrect(getBlackKeyNote(note.note)) ? 'bg-amber-400 z-30 scale-[1.1] shadow-md' : 'bg-gray-800'
+                      ]"
                     ></div>
                   </div>
                 </div>
@@ -644,23 +703,31 @@ onMounted(async () => {
 
               <!-- 88-Key Piano Visualization -->
               <div v-else class="w-full py-2 overflow-hidden px-1" ref="pianoScrollContainer">
-                <div class="relative flex h-32 w-full bg-gray-950 p-1 rounded-xl border border-gray-800 shadow-2xl overflow-hidden">
+                <div class="relative flex h-44 w-full bg-gray-950 p-1 rounded-xl border border-gray-800 shadow-2xl overflow-hidden">
                   <!-- White Keys (52 total) -->
                   <div class="absolute inset-0 flex px-1 py-1">
                     <div 
                       v-for="key in piano88Keys.filter(k => k.type === 'white')" 
                       :key="key.id"
-                      class="flex-grow h-full border-x-[0.1px] border-gray-800 first:border-l-0 last:border-r-0 rounded-b-[1px] transition-all duration-300"
-                      :class="[is88NoteActive(key.id) ? 'bg-blue-400 z-10 scale-y-[1.02] shadow-md' : 'bg-white']"
+                      @click="playSingleNote(key.id)"
+                      class="flex-grow h-full border-x-[0.1px] border-gray-800 first:border-l-0 last:border-r-0 rounded-b-[1px] transition-all duration-300 cursor-pointer hover:bg-gray-50 active:bg-gray-100"
+                      :class="[
+                        is88NotePressed(key.id) ? 'bg-gray-200 z-10 scale-y-[1.02] shadow-sm' :
+                        is88NoteCorrect(key.id) ? 'bg-blue-400 z-10 scale-y-[1.02] shadow-md' : 'bg-white'
+                      ]"
                     ></div>
                   </div>
                   <!-- Black Keys Overlay (36 total) -->
-                  <div class="absolute inset-x-0 top-1 h-20 pointer-events-none px-1 flex">
+                  <div class="absolute inset-x-0 top-1 h-28 pointer-events-none px-1 flex">
                     <div v-for="(key, index) in piano88Keys.filter(k => k.type === 'white')" :key="'gap-'+key.id" class="flex-grow relative h-full">
                       <div 
                         v-if="has88BlackKey(key.id)"
-                        class="absolute right-0 translate-x-1/2 w-[70%] h-full rounded-b-[1px] border-x border-b border-gray-900 transition-all duration-300 z-20"
-                        :class="[is88NoteActive(get88BlackKeyNote(key.id)) ? 'bg-blue-500 z-30 scale-[1.1] shadow-md' : 'bg-gray-900']"
+                        @click.stop="playSingleNote(get88BlackKeyNote(key.id))"
+                        class="absolute right-0 translate-x-1/2 w-[70%] h-full rounded-b-[1px] border-x border-b border-gray-900 transition-all duration-300 z-20 pointer-events-auto cursor-pointer"
+                        :class="[
+                          is88NotePressed(get88BlackKeyNote(key.id)) ? 'bg-gray-700 scale-[1.05] z-30 shadow-sm' :
+                          is88NoteCorrect(get88BlackKeyNote(key.id)) ? 'bg-blue-600 z-30 scale-[1.1] shadow-md' : 'bg-gray-900'
+                        ]"
                       ></div>
                     </div>
                   </div>
@@ -691,8 +758,8 @@ onMounted(async () => {
             </button>
           </div>
 
-          <!-- Answer Options (Connected directly to keyboard container) -->
-          <div class="flex-grow overflow-y-auto px-4 pb-44 space-y-6 pt-6 bg-white border-x border-gray-100">
+          <!-- Answer Options (Hidden in 88-key mode as keyboard is used) -->
+          <div v-if="!testAll88" class="flex-grow overflow-y-auto px-4 pb-44 space-y-6 pt-6 bg-white border-x border-gray-100">
             <template v-for="group in quizNotesByOctave" :key="group.octave">
               <div class="space-y-3">
                 <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest px-2">
@@ -738,6 +805,14 @@ onMounted(async () => {
                 </div>
               </div>
             </template>
+          </div>
+          <div v-else class="flex-grow flex items-center justify-center bg-white border-x border-gray-100">
+            <div class="text-center p-10">
+              <p class="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] mb-4">Keyboard Input Mode</p>
+              <p class="text-xs font-bold text-gray-400 leading-relaxed">
+                全88鍵盤モードでは、<br/>ピアノの鍵盤を直接タップして回答してください。
+              </p>
+            </div>
           </div>
 
           <div class="absolute bottom-10 left-0 right-0 z-50 flex justify-center items-center space-x-4 pointer-events-none">

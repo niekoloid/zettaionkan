@@ -9,7 +9,7 @@ import { useAuth } from '../composables/useAuth'
 import { useAudioSettings } from '../composables/useAudioSettings'
 import AppHeader from '../components/AppHeader.vue'
 
-const { samplers, selectedInstrument, isSamplerLoaded, loadSampler } = useAudio()
+const { samplers, selectedInstrument, isSamplerLoaded, loadSampler, playNarration } = useAudio()
 const { userTier } = useAuth()
 
 const selectedSong = ref(SONGS[0])
@@ -54,12 +54,7 @@ const getTransformedChord = (baseChord, position) => {
 }
 
 const speakColor = (text) => {
-  if (!window.speechSynthesis) return
-  window.speechSynthesis.cancel()
-  const utterance = new SpeechSynthesisUtterance(text)
-  utterance.lang = 'ja-JP'
-  utterance.rate = 1.2 // Slightly faster for music
-  window.speechSynthesis.speak(utterance)
+  playNarration(text)
 }
 
 const currentChord = computed(() => {
@@ -136,7 +131,6 @@ const stopPlayback = () => {
     playbackPart.value.dispose()
     playbackPart.value = null
   }
-  if (window.speechSynthesis) window.speechSynthesis.cancel()
   isPlaying.value = false
   currentChordIndex.value = -1
 }

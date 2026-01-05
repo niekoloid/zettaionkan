@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useRouter, onBeforeRouteLeave, useRoute } from 'vue-router'
 import * as Tone from 'tone'
 import { ChordDefinitions } from '../constants/chords'
 import { useAudio } from '../composables/useAudio'
@@ -11,6 +11,7 @@ import AppHeader from '../components/AppHeader.vue'
 import ChordSelectionButton from '../components/ChordSelectionButton.vue'
 
 const router = useRouter()
+const route = useRoute()
 
 // === Constants ===
 const TEST_CHORDS = [
@@ -48,7 +49,8 @@ const {
   loadingProgress, 
   isSamplerLoaded, 
   selectedInstrument, 
-  loadSampler 
+  loadSampler,
+  playNarration
 } = useAudio()
 
 const autoPlayTimeout = ref(null)
@@ -57,6 +59,8 @@ const isAutoPlayImmediate = ref(true)
 const isVoiceEnabled = ref(true)
 const revealDelay = ref(2.5) // seconds before revealing/speaking
 const autoPlayRevealType = ref('full') // 'full' | 'grid'
+const isRecordingMode = ref(false)
+const isDev = import.meta.env.DEV
 
 // === Computed ===
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
@@ -66,7 +70,6 @@ const blackKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder > 9))
 // === Helper Functions ===
 const cleanupSideEffects = () => {
   if (autoPlayTimeout.value) clearTimeout(autoPlayTimeout.value)
-  window.speechSynthesis.cancel()
 }
 
 const getRandomChord = () => {
@@ -75,11 +78,7 @@ const getRandomChord = () => {
 }
 
 const speakColor = (text) => {
-  if (!window.speechSynthesis) return
-  window.speechSynthesis.cancel()
-  const utterance = new SpeechSynthesisUtterance(text)
-  utterance.lang = 'ja-JP'
-  window.speechSynthesis.speak(utterance)
+  playNarration(text)
 }
 
 const isLightColor = (hex) => {
@@ -197,11 +196,45 @@ onMounted(async () => {
   }
   
   loadSampler(preferred)
+
+  window.addEventListener('keydown', handleKeyDown)
+
+  // Automation support via URL params
+  if (route.query.start === 'true') {
+    if (route.query.recording === 'true') isRecordingMode.value = true
+    if (route.query.delay) revealDelay.value = parseFloat(route.query.delay)
+    if (route.query.voice === 'false') isVoiceEnabled.value = false
+    if (route.query.type) autoPlayRevealType.value = route.query.type
+    
+    // Select all chords if requested
+    if (route.query.chords === 'all') {
+      selectedChordIds.value = new Set(TEST_CHORDS.map(c => c.id))
+    }
+
+    // Wait for sampler and interactions to be ready
+    setTimeout(async () => {
+      // For automated recording, try to resume context if suspended
+      if (Tone.context.state !== 'running') {
+        try {
+          await Tone.start()
+        } catch (e) { console.warn(e) }
+      }
+      startAutoPlay()
+    }, 2000)
+  }
 })
 
 onUnmounted(() => {
   cleanupSideEffects()
+  window.removeEventListener('keydown', handleKeyDown)
 })
+
+const handleKeyDown = (e) => {
+  if (e.key === 'Escape' && isRecordingMode.value) {
+    isRecordingMode.value = false
+    stopAutoPlay()
+  }
+}
 </script>
 
 <template>
@@ -369,6 +402,25 @@ onUnmounted(() => {
               </button>
             </div>
           </div>
+
+          <!-- Recording Mode (Dev Only) -->
+          <div v-if="isDev" class="p-5 bg-rose-50 rounded-2xl border border-rose-100 space-y-3">
+            <div @click="isRecordingMode = !isRecordingMode" class="flex items-center justify-between cursor-pointer">
+              <div>
+                <p class="text-xs font-black text-rose-900">録画専用モード (ローカル限定)</p>
+                <p class="text-[9px] font-bold text-rose-400 mt-0.5">UIをすべて非表示にします。解除はESCキー。</p>
+              </div>
+              <div 
+                class="w-10 h-6 rounded-full transition-colors relative shrink-0"
+                :class="isRecordingMode ? 'bg-rose-500' : 'bg-rose-200'"
+              >
+                <div 
+                  class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
+                  :class="isRecordingMode ? 'translate-x-4' : ''"
+                ></div>
+              </div>
+            </div>
+          </div>
         </section>
       </div>
 
@@ -379,7 +431,7 @@ onUnmounted(() => {
           v-if="autoPlayRevealType === 'grid'" 
           class="fixed inset-0 z-40 bg-white flex flex-col pt-32 pb-40 overflow-hidden"
         >
-          <div class="px-10 mb-4 flex justify-between items-end">
+          <div v-if="!isRecordingMode" class="px-10 mb-4 flex justify-between items-end">
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">和音の記録</span>
             <span class="text-[10px] font-bold text-gray-200">{{ currentQuestionIndex + (isAutoPlayRevealed ? 1 : 0) }} 枚</span>
           </div>
@@ -410,7 +462,7 @@ onUnmounted(() => {
         </transition>
 
         <!-- Stop Button -->
-        <div class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
+        <div v-if="!isRecordingMode" class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
           <button 
             @click="stopAutoPlay"
             class="px-6 py-2.5 bg-black/5 hover:bg-black/10 backdrop-blur-sm text-gray-400 hover:text-gray-600 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 border border-black/5"

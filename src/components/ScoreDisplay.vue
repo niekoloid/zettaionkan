@@ -67,7 +67,7 @@ watch(() => [props.abc, props.isAnswered, props.octave], () => {
 </script>
 
 <template>
-  <div class="w-[155px] h-[155px] bg-white rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-sm overflow-hidden relative">
+  <div class="w-[155px] h-[180px] bg-white rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-sm overflow-hidden relative">
     <!-- Placeholder mask when not answered -->
     <div v-if="!isAnswered" class="absolute inset-0 bg-gray-50/50 backdrop-blur-[1px] flex flex-col items-center justify-center z-20">
       <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-2 border border-gray-100">
