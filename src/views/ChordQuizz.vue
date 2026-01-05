@@ -247,13 +247,13 @@ const { user, userTier, authReady } = useAuth()
 onMounted(async () => {
   await authReady
   const { getPreferredInstrument } = useAudioSettings()
-  const preferred = getPreferredInstrument()
+  let preferred = getPreferredInstrument(userTier.value)
   
-  if (userTier.value === 'premium' && preferred === 'steinway') {
-    loadSampler('steinway')
-  } else {
-    loadSampler('yamaha')
+  if (preferred === 'steinway' && userTier.value !== 'premium') {
+    preferred = 'yamaha'
   }
+  
+  loadSampler(preferred)
   
   // Preload feedback images
   const img1 = new Image()

@@ -492,12 +492,14 @@ onMounted(async () => {
   // Initial sampler load
   await authReady
   const { getPreferredInstrument } = useAudioSettings()
-  const preferred = getPreferredInstrument()
-  if (userTier.value === 'premium' && preferred === 'steinway') {
-    loadSampler('steinway')
-  } else {
-    loadSampler('yamaha')
+  let preferred = getPreferredInstrument(userTier.value)
+
+  // Safeguard
+  if (preferred === 'steinway' && userTier.value !== 'premium') {
+    preferred = 'yamaha'
   }
+  
+  loadSampler(preferred)
 })
 
 </script>
@@ -642,7 +644,7 @@ onMounted(async () => {
 
               <!-- 88-Key Piano Visualization -->
               <div v-else class="w-full py-2 overflow-hidden px-1" ref="pianoScrollContainer">
-                <div class="relative flex h-24 w-full bg-gray-950 p-1 rounded-xl border border-gray-800 shadow-2xl overflow-hidden">
+                <div class="relative flex h-32 w-full bg-gray-950 p-1 rounded-xl border border-gray-800 shadow-2xl overflow-hidden">
                   <!-- White Keys (52 total) -->
                   <div class="absolute inset-0 flex px-1 py-1">
                     <div 
@@ -653,7 +655,7 @@ onMounted(async () => {
                     ></div>
                   </div>
                   <!-- Black Keys Overlay (36 total) -->
-                  <div class="absolute inset-x-0 top-1 h-14 pointer-events-none px-1 flex">
+                  <div class="absolute inset-x-0 top-1 h-20 pointer-events-none px-1 flex">
                     <div v-for="(key, index) in piano88Keys.filter(k => k.type === 'white')" :key="'gap-'+key.id" class="flex-grow relative h-full">
                       <div 
                         v-if="has88BlackKey(key.id)"

@@ -1,8 +1,12 @@
 export const useAudioSettings = () => {
     // Determine the user's preferred instrument setting from localStorage
     // Default is 'yamaha' if not set
-    const getPreferredInstrument = () => {
-        return localStorage.getItem('preferred_instrument') || 'yamaha';
+    const getPreferredInstrument = (tier = 'free') => {
+        const stored = localStorage.getItem('preferred_instrument');
+        if (stored) return stored;
+        
+        // If no preference stored, default based on tier
+        return tier === 'premium' ? 'steinway' : 'yamaha';
     };
 
     const setPreferredInstrument = (instrument) => {

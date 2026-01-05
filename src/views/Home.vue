@@ -71,13 +71,14 @@ onMounted(async () => {
   await authReady
   
   // Initial load
-  const preferred = getPreferredInstrument()
+  let preferred = getPreferredInstrument(userTier.value)
   
-  if (userTier.value === 'premium' && preferred === 'steinway') {
-    loadSampler('steinway')
-  } else {
-    loadSampler('yamaha')
+  // Safeguard: If steinway is preferred but user is not premium, force yamaha
+  if (preferred === 'steinway' && userTier.value !== 'premium') {
+    preferred = 'yamaha'
   }
+  
+  loadSampler(preferred)
   
   // Set initial chord
   if (allChords.value.length > 0) {

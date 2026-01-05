@@ -6,6 +6,7 @@ import { SONGS } from '../constants/songs'
 import { ChordDefinitions } from '../constants/chords'
 import { useAudio } from '../composables/useAudio'
 import { useAuth } from '../composables/useAuth'
+import { useAudioSettings } from '../composables/useAudioSettings'
 import AppHeader from '../components/AppHeader.vue'
 
 const { samplers, selectedInstrument, isSamplerLoaded, loadSampler } = useAudio()
@@ -244,8 +245,18 @@ const selectSong = (song) => {
   selectedSong.value = song
 }
 
-onMounted(() => {
-  // Sampler should be preloaded by App.vue, but we ensure it's selected
+onMounted(async () => {
+  const { authReady } = useAuth()
+  const { getPreferredInstrument } = useAudioSettings()
+  
+  await authReady
+  let preferred = getPreferredInstrument(userTier.value)
+  
+  if (preferred === 'steinway' && userTier.value !== 'premium') {
+    preferred = 'yamaha'
+  }
+  
+  loadSampler(preferred)
 })
 
 onUnmounted(() => {
