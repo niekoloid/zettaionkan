@@ -102,7 +102,7 @@ const FULL_PIANO_NOTES = computed(() => {
     const isSharp = n.includes('#')
     notes.push({
       id: noteName.toLowerCase().replace('#', 'is'),
-      name: isSharp ? `${jBase}# (${n}#)` : `${jBase} (${n})`,
+      name: isSharp ? `${jBase}# (${n})` : `${jBase} (${n})`,
       octave: 0,
       notes: [noteName],
       label: n,
@@ -139,7 +139,7 @@ const FULL_PIANO_NOTES = computed(() => {
 
       notes.push({
         id: noteName.toLowerCase().replace('#', 'is'),
-        name: isSharp ? `${jBase}# (${n}#)` : `${jBase} (${n})`,
+        name: isSharp ? `${jBase}# (${n})` : `${jBase} (${n})`,
         octave: oct,
         notes: [noteName],
         label: n,
