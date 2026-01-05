@@ -106,7 +106,7 @@ const FULL_PIANO_NOTES = computed(() => {
       octave: 0,
       notes: [noteName],
       label: n,
-      abc: n === 'A' ? 'A,,' : (n === 'A#' ? '^A,,' : 'B,,'),
+      abc: n === 'A' ? 'A,,,,' : (n === 'A#' ? '^A,,,,' : 'B,,,,'),
       sortOrder: n === 'A' ? 1 : (n === 'A#' ? 2 : 3),
       clef: 'bass'
     })
@@ -120,14 +120,16 @@ const FULL_PIANO_NOTES = computed(() => {
       const isSharp = n.includes('#')
       
       // ABC notation logic
+      const accidental = isSharp ? '^' : ''
+      const letter = baseChar
       let abc = ''
-      if (oct === 1) abc = n.replace('#', '^') + ',,,'
-      else if (oct === 2) abc = n.replace('#', '^') + ',,'
-      else if (oct === 3) abc = n.replace('#', '^') + ','
-      else if (oct === 4) abc = n.replace('#', '^')
-      else if (oct === 5) abc = n.replace('#', '^').toLowerCase()
-      else if (oct === 6) abc = n.replace('#', '^').toLowerCase() + "'"
-      else if (oct === 7) abc = n.replace('#', '^').toLowerCase() + "''"
+      if (oct === 1) abc = accidental + letter + ',,,'
+      else if (oct === 2) abc = accidental + letter + ',,'
+      else if (oct === 3) abc = accidental + letter + ','
+      else if (oct === 4) abc = accidental + letter
+      else if (oct === 5) abc = accidental + letter.toLowerCase()
+      else if (oct === 6) abc = accidental + letter.toLowerCase() + "'"
+      else if (oct === 7) abc = accidental + letter.toLowerCase() + "''"
 
       // Clef logic: Low Range up to G#3 (ソ#) is Bass Clef, A3 (ラ) and above is Treble Clef
       let clef = 'treble'
@@ -502,7 +504,8 @@ onMounted(async () => {
 
 <template>
   <div class="min-h-screen bg-white font-['Noto_Sans_JP'] antialiased" style="backface-visibility: hidden;">
-    <div class="min-h-screen flex flex-col items-center max-w-3xl mx-auto relative overflow-hidden">
+    <div class="min-h-screen flex flex-col items-center mx-auto relative overflow-hidden transition-all duration-500"
+         :class="testAll88 && view === 'quiz' ? 'max-w-none w-full' : 'max-w-3xl'">
 
       <AppHeader showBack @back="handleHeaderBack" />
 
@@ -613,8 +616,8 @@ onMounted(async () => {
           </div>
 
           <!-- 2. Piano Visualization -->
-          <div class="w-full px-4">
-            <div class="w-full bg-white rounded-t-3xl p-5 border border-gray-100 border-b-0 flex flex-col items-center">
+          <div class="w-full" :class="testAll88 ? 'px-0' : 'px-4'">
+            <div class="w-full bg-white rounded-t-3xl p-5 border-y border-gray-100 flex flex-col items-center shadow-sm">
               
               <!-- Standard Piano (3 Octaves) -->
               <div v-if="!testAll88" class="relative flex justify-center h-24 w-full bg-gray-50 p-1 rounded-xl shadow-inner border border-gray-200">
