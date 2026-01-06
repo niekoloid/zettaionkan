@@ -16,22 +16,60 @@ import AppHeader from '../components/AppHeader.vue'
           <h2 class="text-3xl font-black text-gray-900 leading-tight">
             「才能」は、本物の「音」と<br/>「習慣」で作られる。
           </h2>
-          <p class="mt-4 text-[13px] text-gray-500 font-medium">
-            科学が証明したメソッドを、世界最高峰の響きで。
+          <p class="mt-4 text-[13px] text-gray-500 font-medium leading-relaxed max-w-sm mx-auto">
+            すべての子供に、一生ものの「音の感性」を。科学が証明したメソッドを、世界最高峰の響きで提供します。
           </p>
         </section>
 
         <!-- Point Card -->
-        <section class="bg-gray-900 rounded-[32px] p-8 text-white shadow-xl relative overflow-hidden">
-          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <section class="bg-gray-900 rounded-[40px] p-10 text-white shadow-xl relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
+          <div class="absolute -left-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
           <div class="relative z-10">
-            <h3 class="text-lg font-black mb-4 flex items-center">
-              <span class="w-1.5 h-6 bg-blue-500 rounded-full mr-3"></span>
+            <h3 class="text-xl font-black mb-6 flex items-center">
+              <span class="w-2 h-8 bg-blue-500 rounded-full mr-4"></span>
               絶対音感は「技術」です
             </h3>
-            <p class="text-xs text-gray-400 leading-relaxed">
-              聴覚が発達する2歳〜6歳の「黄金期」に適切な刺激を与えることで、どの子も一生ものの音感を身につけることが可能です。いろおとは、科学的根拠に基づき、最短のステップでその習得をサポートします。
+            <p class="text-sm text-gray-300 leading-relaxed mb-6">
+              絶対音感は、決して選ばれた人だけの特殊能力ではありません。聴覚が急速に発達する2歳〜6歳の「黄金期」に適切な刺激を与えることで、どの子も一生ものの音感を身につけることが可能です。
             </p>
+            <p class="text-sm text-gray-400 leading-relaxed">
+              「いろおと」は、この貴重な時期を逃さず、家庭で手軽に、かつ科学的根拠に基づいた本格的なトレーニングができるように設計されました。
+            </p>
+          </div>
+        </section>
+
+        <!-- Benefits Grid -->
+        <section class="space-y-6">
+          <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">絶対音感がもたらす3つのメリット</h3>
+          <div class="grid grid-cols-1 gap-4">
+            <div class="flex items-start space-x-4 p-4">
+              <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0">
+                <span class="text-xl">🎨</span>
+              </div>
+              <div>
+                <h4 class="font-black text-gray-900 text-sm mb-1">感性と表現力を育む</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">音を瞬時に理解できることで、楽器演奏や歌唱において、より自由で深い表現が可能になります。</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4 p-4">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center shrink-0">
+                <span class="text-xl">🧠</span>
+              </div>
+              <div>
+                <h4 class="font-black text-gray-900 text-sm mb-1">言語能力・脳の発達</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">音の微細な違いを聞き分ける能力は、語学学習（特に発音）や数学的思考の土台となると言われています。</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4 p-4">
+              <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0">
+                <span class="text-xl">✨</span>
+              </div>
+              <div>
+                <h4 class="font-black text-gray-900 text-sm mb-1">自信と成功体験</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">「聞こえる！」「正解した！」という日々の小さな成功体験が、お子様の自己肯定感を大きく育てます。</p>
+              </div>
+            </div>
           </div>
         </section>
 

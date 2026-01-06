@@ -43,7 +43,7 @@ const NOTE_DEFINITIONS = [
   { id: 'cis5', name: 'ド# (C#)', octave: 3, notes: ['C#5'], label: 'C#', abc: '^c', sortOrder: 26, clef: 'treble' },
   { id: 'd5', name: 'レ (D)', octave: 3, notes: ['D5'], label: 'D', abc: 'd', sortOrder: 27, clef: 'treble' },
   { id: 'dis5', name: 'レ# (D#)', octave: 3, notes: ['D#5'], label: 'D#', abc: '^d', sortOrder: 28, clef: 'treble' },
-  { id: 'e5', name: 'ミ (E)', octave: 3, notes: ['e5'], label: 'E', abc: 'e', sortOrder: 29, clef: 'treble' },
+  { id: 'e5', name: 'ミ (E)', octave: 3, notes: ['E5'], label: 'E', abc: 'e', sortOrder: 29, clef: 'treble' },
   { id: 'f5', name: 'ファ (F)', octave: 3, notes: ['F5'], label: 'F', abc: 'f', sortOrder: 30, clef: 'treble' },
   { id: 'fis5', name: 'ファ# (F#)', octave: 3, notes: ['F#5'], label: 'F#', abc: '^f', sortOrder: 31, clef: 'treble' },
   { id: 'g5', name: 'ソ (G)', octave: 3, notes: ['G5'], label: 'G', abc: 'g', sortOrder: 32, clef: 'treble' },
@@ -275,9 +275,10 @@ const playSingleNote = async (noteName) => {
   activeKeys.value.add(normalized)
   s.triggerAttackRelease(noteName, '1n')
   
-  // If in 88-key quiz mode, clicking a key acts as an answer submission
-  if (view.value === 'quiz' && testAll88.value && !resultMessage.value) {
-    const noteObj = FULL_PIANO_NOTES.value.find(n => normalizeNote(n.notes[0]) === normalized)
+  // Quiz mode: Submit answer via keyboard
+  if (view.value === 'quiz' && !resultMessage.value) {
+    const pool = testAll88.value ? FULL_PIANO_NOTES.value : NOTE_DEFINITIONS
+    const noteObj = pool.find(n => normalizeNote(n.notes[0]) === normalized)
     if (noteObj) {
       submitAnswer(noteObj)
     }
@@ -460,11 +461,35 @@ const isNotePressed = (note) => {
 const isNoteCorrect = (note) => {
   if (!resultMessage.value || !currentQuestion.value) return false
   const normalized = normalizeNote(note)
-  return currentQuestion.value.notes.some(n => normalizeNote(n) === normalized)
+  const questionNote = currentQuestion.value.notes[0]
+  
+  if (matchOctave.value) {
+    return normalizeNote(questionNote) === normalized
+  } else {
+    // Check pitch class only (remove any trailing digits for octave)
+    const qPc = normalizeNote(questionNote).replace(/\d+$/, '')
+    const nPc = normalized.replace(/\d+$/, '')
+    return qPc === nPc
+  }
+}
+
+const isNoteWrong = (note) => {
+  if (resultMessage.value !== 'incorrect' || !userAnswer.value) return false
+  const normalized = normalizeNote(note)
+  const answerNote = userAnswer.value.notes[0]
+  
+  if (matchOctave.value) {
+    return normalizeNote(answerNote) === normalized
+  } else {
+    const aPc = normalizeNote(answerNote).replace(/\d+$/, '')
+    const nPc = normalized.replace(/\d+$/, '')
+    // Wrong if pitch class matches the user's answer but is not actually correct
+    return aPc === nPc && !isNoteCorrect(note)
+  }
 }
 
 const isNoteActiveOnKeyboard = (note) => {
-  return isNotePressed(note) || isNoteCorrect(note)
+  return isNotePressed(note) || isNoteCorrect(note) || isNoteWrong(note)
 }
 const hasBlackKey = (whiteNote) => {
   const noteName = whiteNote.replace(/\d/, '')
@@ -509,15 +534,11 @@ const is88NotePressed = (keyId) => {
   return activeKeys.value.has(normalizeNote(keyId))
 }
 
-const is88NoteCorrect = (keyId) => {
-  if (!resultMessage.value || !currentQuestion.value) return false
-  const normalized = normalizeNote(keyId)
-  const activeNote = currentQuestion.value.notes[0]
-  return normalizeNote(activeNote) === normalized
-}
+const is88NoteCorrect = (keyId) => isNoteCorrect(keyId)
+const is88NoteWrong = (keyId) => isNoteWrong(keyId)
 
 const is88NoteActive = (keyId) => {
-  return is88NotePressed(keyId) || is88NoteCorrect(keyId)
+  return is88NotePressed(keyId) || is88NoteCorrect(keyId) || is88NoteWrong(keyId)
 }
 
 // Auto-scroll logic for 88-key piano
@@ -680,7 +701,8 @@ onMounted(async () => {
                   class="relative flex-grow border-x-[0.1px] border-gray-100 first:border-l-0 last:border-r-0 rounded-b-sm transition-all duration-300 cursor-pointer hover:bg-gray-50 active:bg-gray-100"
                   :class="[
                     isNotePressed(note) ? 'bg-gray-200 z-10 scale-y-[1.02] shadow-sm' : 
-                    isNoteCorrect(note) ? 'bg-indigo-500 z-10 scale-y-[1.02] shadow-md' : 'bg-white'
+                    isNoteCorrect(note) ? 'bg-indigo-500 z-10 scale-y-[1.02] shadow-md' : 
+                    isNoteWrong(note) ? 'bg-rose-500 z-10 scale-y-[1.02] shadow-md' : 'bg-white'
                   ]"
                 >
                   <div v-if="note === 'C4'" class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[6px] font-black text-gray-400">C4</div>
@@ -694,7 +716,8 @@ onMounted(async () => {
                       class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-all duration-300 z-20 pointer-events-auto cursor-pointer"
                       :class="[
                         isNotePressed(getBlackKeyNote(note.note)) ? 'bg-gray-600 scale-[1.05] z-30 shadow-sm' :
-                        isNoteCorrect(getBlackKeyNote(note.note)) ? 'bg-amber-400 z-30 scale-[1.1] shadow-md' : 'bg-gray-800'
+                        isNoteCorrect(getBlackKeyNote(note.note)) ? 'bg-amber-400 z-30 scale-[1.1] shadow-md' : 
+                        isNoteWrong(getBlackKeyNote(note.note)) ? 'bg-rose-400 z-30 scale-[1.1] shadow-md' : 'bg-gray-800'
                       ]"
                     ></div>
                   </div>
@@ -713,7 +736,8 @@ onMounted(async () => {
                       class="flex-grow h-full border-x-[0.1px] border-gray-800 first:border-l-0 last:border-r-0 rounded-b-[1px] transition-all duration-300 cursor-pointer hover:bg-gray-50 active:bg-gray-100"
                       :class="[
                         is88NotePressed(key.id) ? 'bg-gray-200 z-10 scale-y-[1.02] shadow-sm' :
-                        is88NoteCorrect(key.id) ? 'bg-blue-400 z-10 scale-y-[1.02] shadow-md' : 'bg-white'
+                        is88NoteCorrect(key.id) ? 'bg-blue-400 z-10 scale-y-[1.02] shadow-md' : 
+                        is88NoteWrong(key.id) ? 'bg-rose-500 z-10 scale-y-[1.02] shadow-md' : 'bg-white'
                       ]"
                     ></div>
                   </div>
@@ -726,7 +750,8 @@ onMounted(async () => {
                         class="absolute right-0 translate-x-1/2 w-[70%] h-full rounded-b-[1px] border-x border-b border-gray-900 transition-all duration-300 z-20 pointer-events-auto cursor-pointer"
                         :class="[
                           is88NotePressed(get88BlackKeyNote(key.id)) ? 'bg-gray-700 scale-[1.05] z-30 shadow-sm' :
-                          is88NoteCorrect(get88BlackKeyNote(key.id)) ? 'bg-blue-600 z-30 scale-[1.1] shadow-md' : 'bg-gray-900'
+                          is88NoteCorrect(get88BlackKeyNote(key.id)) ? 'bg-blue-600 z-30 scale-[1.1] shadow-md' : 
+                          is88NoteWrong(get88BlackKeyNote(key.id)) ? 'bg-rose-400 z-30 scale-[1.1] shadow-md' : 'bg-gray-900'
                         ]"
                       ></div>
                     </div>

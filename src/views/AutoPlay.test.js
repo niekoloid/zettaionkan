@@ -17,6 +17,9 @@ vi.mock('vue-router', () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
+  useRoute: () => ({
+    query: {},
+  }),
   onBeforeRouteLeave: vi.fn(),
 }))
 

@@ -90,13 +90,13 @@ async function generate() {
 
     const silenceFreeStreams = audioInputs.map((_, i) => `[${i}:a]silenceremove=start_periods=1:start_threshold=-50dB[a${i}]`).join('; ');
     const mixStreams = audioInputs.map((_, i) => `[a${i}]`).join('');
-    const filterComplexAudio = `${silenceFreeStreams}; ${mixStreams}amix=inputs=${audioInputs.length}:duration=first,volume=1.2`;
+    const filterComplexAudio = `${silenceFreeStreams}; ${mixStreams}amix=inputs=${audioInputs.length}:duration=first,volume=1.8`;
 
     const mixCmd = `ffmpeg -y ${audioInputs.map(i => `-i "${i}"`).join(' ')} -filter_complex "${filterComplexAudio}" -t ${CONFIG.durationPerChord} "${chordAudioPath}"`;
     execSync(mixCmd, { stdio: 'ignore' });
 
     // 2. 和音とナレーションをミックス (2.5秒後に再生)
-    const overlayAudioCmd = `ffmpeg -y -i "${chordAudioPath}" -i "${narrationWavPath}" -filter_complex "[0:a]volume=1.0[p]; [1:a]adelay=2500|2500,volume=0.3[n]; [p][n]amix=inputs=2:duration=first:dropout_transition=0:normalize=0" -t ${CONFIG.durationPerChord} "${finalAudioPath}"`;
+    const overlayAudioCmd = `ffmpeg -y -i "${chordAudioPath}" -i "${narrationWavPath}" -filter_complex "[0:a]volume=1.0[p]; [1:a]adelay=2500|2500,volume=0.42[n]; [p][n]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,volume=1.5" -t ${CONFIG.durationPerChord} "${finalAudioPath}"`;
     execSync(overlayAudioCmd, { stdio: 'ignore' });
 
     // 3. 背景色 + QR + テキスト を結合

@@ -5,13 +5,23 @@ import { useAudio } from './useAudio'
 // Mock Tone.js at the top level
 vi.mock('tone', () => {
   return {
-    Sampler: vi.fn().mockImplementation((config) => {
-      // Use setImmediate or similar to ensure it's async enough
-      // but here we just manually trigger for tests
-      return {
-        toDestination: vi.fn().mockReturnThis(),
-        triggerAttackRelease: vi.fn(),
-      }
+    Sampler: vi.fn().mockImplementation(function(config) {
+      this.toDestination = vi.fn().mockReturnThis()
+      this.triggerAttackRelease = vi.fn()
+      // Simulate onload being called soon
+      if (config.onload) setTimeout(config.onload, 10)
+      return this
+    }),
+    Players: vi.fn().mockImplementation(function(config) {
+      this.toDestination = vi.fn().mockReturnThis()
+      this.has = vi.fn().mockReturnValue(true)
+      this.player = vi.fn().mockReturnValue({
+        state: 'stopped',
+        start: vi.fn(),
+        stop: vi.fn()
+      })
+      if (config.onload) setTimeout(config.onload, 10)
+      return this
     }),
     context: {
       state: 'suspended',
