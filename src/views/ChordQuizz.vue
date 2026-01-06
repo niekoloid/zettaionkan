@@ -45,6 +45,7 @@ const score = ref(0)
 const isSaving = ref(false)
 const currentQuestionIndex = ref(0)
 const resultMessage = ref(null)
+const userAnswer = ref(null)
 
 const selectedChordIds = ref(new Set([QUIZZ_CHORDS[0].id, QUIZZ_CHORDS[1].id]))
 const questions = ref([])
@@ -154,6 +155,7 @@ const startQuizz = async () => {
   currentQuestionIndex.value = 0
   score.value = 0
   quizzHistory.value = []
+  userAnswer.value = null
   shuffleChords() // Initial shuffle
   view.value = 'quiz'
   
@@ -184,9 +186,13 @@ const submitAnswer = (chord) => {
   })
 
   if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
-    currentQuestionIndex.value++
-    shuffleChords()
-    setTimeout(playCurrentQuestion, DELAYS.TRANSITION)
+    userAnswer.value = chord
+    setTimeout(() => {
+      currentQuestionIndex.value++
+      userAnswer.value = null
+      shuffleChords()
+      playCurrentQuestion()
+    }, DELAYS.TRANSITION)
   } else {
     finishQuizz()
   }
@@ -204,11 +210,14 @@ const skipQuestion = () => {
   })
 
   if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
-    currentQuestionIndex.value++
-    shuffleChords()
-    setTimeout(playCurrentQuestion, DELAYS.TRANSITION)
+    setTimeout(() => {
+      currentQuestionIndex.value++
+      userAnswer.value = null
+      shuffleChords()
+      playCurrentQuestion()
+    }, DELAYS.TRANSITION)
   } else {
-    finishQuizz()
+    setTimeout(finishQuizz, DELAYS.TRANSITION)
   }
 }
 
@@ -367,6 +376,12 @@ onUnmounted(() => {
 
       <!-- QUIZ VIEW -->
       <div v-if="view === 'quiz'" class="flex-grow w-full flex flex-col bg-white relative">
+        <!-- Top Progress Bar -->
+        <div class="fixed top-0 left-0 right-0 z-[60] h-1.5 bg-gray-100/50 backdrop-blur-sm">
+          <div class="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-500 ease-out"
+               :style="{ width: `${(currentQuestionCount / QUIZ_LENGTH) * 100}%` }"></div>
+        </div>
+
         <!-- Minimal Top Info -->
         <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
           <div class="flex items-center space-x-2">
@@ -391,32 +406,27 @@ onUnmounted(() => {
 
         <!-- Feedback Overlay (Removed during quiz) -->
 
-        <!-- Answer Options: Full Screen Grid -->
-        <div 
-          class="flex-grow grid gap-0.5 w-full h-full"
-          :style="{ 
-            gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
-            gridTemplateRows: `repeat(${gridRows}, minmax(0, 1fr))`
-          }"
-        >
-            <template v-for="chord in currentLayoutChords" :key="chord.id">
-              <button
-                @click="submitAnswer(chord)"
-                :disabled="!!resultMessage"
-                class="relative w-full h-full transition-all duration-150 active:scale-95 flex items-center justify-center overflow-hidden"
-                :class="[
-                  !!resultMessage 
-                    ? (chord.id === currentQuestion.id 
-                        ? 'z-10 ring-inset ring-8 ring-white/50' 
-                        : 'opacity-10')
-                    : 'hover:brightness-105 active:brightness-90'
-                ]"
-                :style="{ backgroundColor: chord.color }"
-              >
-
-              </button>
-            </template>
-        </div>
+        <Transition name="slide-fade" mode="out-in">
+          <div :key="currentQuestionIndex" class="flex-grow grid gap-0.5 w-full h-full"
+            :style="{ 
+              gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+              gridTemplateRows: `repeat(${gridRows}, minmax(0, 1fr))`
+            }"
+          >
+              <template v-for="chord in currentLayoutChords" :key="chord.id">
+                <button
+                  @click="submitAnswer(chord)"
+                  :disabled="!!userAnswer"
+                  class="relative w-full h-full transition-all duration-150 active:scale-95 flex items-center justify-center overflow-hidden"
+                  :class="[
+                    userAnswer ? (userAnswer.id === chord.id ? 'z-10 ring-inset ring-8 ring-white/50' : 'opacity-20') : 'hover:brightness-105 active:brightness-90'
+                  ]"
+                  :style="{ backgroundColor: chord.color }"
+                >
+                </button>
+              </template>
+          </div>
+        </Transition>
 
         <!-- Bottom Controls Overlay -->
         <div class="absolute bottom-10 left-0 right-0 z-50 flex justify-center items-center space-x-4 pointer-events-none">
@@ -544,11 +554,19 @@ onUnmounted(() => {
     scrollbar-width: none;
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease;
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.slide-fade-enter-active, .slide-fade-leave-active { 
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.fade-enter-from, .fade-leave-to {
+.slide-fade-enter-from { 
   opacity: 0;
+  transform: translateX(10px);
+}
+.slide-fade-leave-to { 
+  opacity: 0;
+  transform: translateX(-10px);
 }
 
 .animate-bounce-in {
