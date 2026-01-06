@@ -14,7 +14,7 @@ const VOICE_CONFIG = {
 // 14種類の色の名前（ナレーション用）
 const COLORS_TO_GENERATE = [
   '赤', '青', '黄色', '黒', '緑', 'オレンジ', '紫', 'ピンク', '茶色',
-  '黄緑', '肌色', '薄紫', 'グレー', '水色'
+  '黄緑', 'ベージュ', '薄紫', 'グレー', '水色'
 ];
 
 if (!fs.existsSync(OUTPUT_DIR)) {
@@ -22,7 +22,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 }
 
 async function generateNarration(text) {
-  const fileName = `${text}.wav`;
+  const fileName = `${text}.mp3`;
   const filePath = path.join(OUTPUT_DIR, fileName);
 
   if (fs.existsSync(filePath)) {
@@ -34,7 +34,7 @@ async function generateNarration(text) {
   const request = {
     input: { text: text },
     voice: VOICE_CONFIG,
-    audioConfig: { audioEncoding: 'LINEAR16' }, 
+    audioConfig: { audioEncoding: 'MP3' }, 
   };
 
   try {

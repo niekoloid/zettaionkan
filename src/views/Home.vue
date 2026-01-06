@@ -44,8 +44,7 @@ const {
   loadingProgress, 
   isSamplerLoaded, 
   selectedInstrument, 
-  loadSampler,
-  playNarration
+  loadSampler
 } = useAudio()
 
 const { user, userTier, authReady } = useAuth()
@@ -146,9 +145,6 @@ const playNote = async (note) => {
 
     // 全ての和音を制限なしで再生
     playChord(chord.notes)
-    
-    // 高品質ナレーションを再生
-    playNarration(chord.colorName)
   }
 
 // Piano Keyboard Logic
@@ -242,7 +238,7 @@ const isLightColor = (hex) => {
         <ScoreDisplay :abc="currentChord?.abc" :is-answered="true">
           <template #footer v-if="currentChord">
             <div class="mt-4 text-[14px] font-bold text-gray-700 flex flex-col items-center animate-bounce-in">
-              <span v-html="(namingConvention === 'german' ? currentChord.name : currentChord.nameIt) + ' (' + currentChord.colorName + ')'"></span>
+              <span class="whitespace-nowrap" v-html="(namingConvention === 'german' ? currentChord.name : currentChord.nameIt) + ' (' + currentChord.colorName + ')'"></span>
             </div>
           </template>
         </ScoreDisplay>

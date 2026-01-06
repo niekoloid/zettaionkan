@@ -25,7 +25,7 @@ const TEST_CHORDS = [
   { ...ChordDefinitions.SOSHIRE, label: '8', displayColor: 'ピンク', sortOrder: 8 },
   { ...ChordDefinitions.SODOMI, label: '9', displayColor: '茶色', sortOrder: 9 },
   { ...ChordDefinitions.LA_CIS_MI, label: '10', displayColor: '黄緑', sortOrder: 10 },
-  { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: '肌色', sortOrder: 11 },
+  { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: 'ベージュ', sortOrder: 11 },
   { ...ChordDefinitions.MI_GIS_SI, label: '12', displayColor: '薄紫', sortOrder: 12 },
   { ...ChordDefinitions.BE_RE_FA, label: '13', displayColor: 'グレー', sortOrder: 13 },
   { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: '水色', sortOrder: 14 },
@@ -50,6 +50,7 @@ const {
   isSamplerLoaded, 
   selectedInstrument, 
   loadSampler,
+  loadNarration,
   playNarration
 } = useAudio()
 
@@ -75,8 +76,8 @@ const getRandomChord = () => {
   return availableChords[Math.floor(Math.random() * availableChords.length)]
 }
 
-const speakColor = (text) => {
-  playNarration(text)
+const speakColor = async (text) => {
+  await playNarration(text)
 }
 
 const isLightColor = (hex) => {
@@ -91,9 +92,32 @@ const isLightColor = (hex) => {
 // === Core Logic ===
 const playCurrentQuestion = async () => {
   cleanupSideEffects()
+  
+  // Wait for samplers if they are still loading (max 5s)
+  let waitAttempts = 0
+  const checkLoaded = () => samplers[selectedInstrument.value] && isSamplerLoaded.value
+  
+  while (!checkLoaded() && waitAttempts < 50) {
+    console.log('Waiting for sampler to load...')
+    await new Promise(r => setTimeout(r, 100))
+    waitAttempts++
+  }
+
   const s = samplers[selectedInstrument.value]
-  if (!s || !isSamplerLoaded.value) return
-  if (Tone.context.state !== 'running') await Tone.start()
+  if (!s || !isSamplerLoaded.value) {
+    console.error('Sampler failed to load in time')
+    stopAutoPlay()
+    return
+  }
+
+  if (Tone.context.state !== 'running') {
+    await Tone.start()
+    try {
+      await Tone.context.resume()
+    } catch (e) {
+      console.warn('Context resume failed:', e)
+    }
+  }
   
   const chord = currentQuestion.value
   
@@ -150,8 +174,19 @@ const startAutoPlay = async () => {
   const firstChord = getRandomChord()
   if (!firstChord) return
 
-  // Start Tone.js within user gesture
-  if (Tone.context.state !== 'running') await Tone.start()
+  // IMPORTANT: Tone.start() must be awaited inside user gesture to unlock audio
+  try {
+    await Tone.start()
+    await Tone.context.resume()
+    console.log('Audio context started/resumed successfully')
+  } catch (e) {
+    console.error('Failed to start audio context:', e)
+  }
+  
+  // Load narration in background (non-blocking for UI)
+  if (isVoiceEnabled.value) {
+    loadNarration().catch(console.error)
+  }
 
   questions.value = [firstChord]
   currentQuestionIndex.value = 0
@@ -194,6 +229,7 @@ onMounted(async () => {
   }
   
   loadSampler(preferred)
+  loadNarration()
 
   // Automation support via URL params
   if (route.query.start === 'true') {

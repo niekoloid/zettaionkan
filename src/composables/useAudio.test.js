@@ -2,31 +2,43 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as Tone from 'tone'
 import { useAudio } from './useAudio'
 
-// Mock Tone.js at the top level
+// Mock Tone.js
 vi.mock('tone', () => {
+  const mockBuffer = {
+    duration: 1.0,
+    loaded: true
+  }
+  
+  const mockBufferSource = {
+    toDestination: vi.fn().mockReturnThis(),
+    start: vi.fn(),
+    stop: vi.fn(),
+    fadeIn: 0,
+    fadeOut: 0
+  }
+
   return {
     Sampler: vi.fn().mockImplementation(function(config) {
       this.toDestination = vi.fn().mockReturnThis()
       this.triggerAttackRelease = vi.fn()
-      // Simulate onload being called soon
       if (config.onload) setTimeout(config.onload, 10)
       return this
     }),
-    Players: vi.fn().mockImplementation(function(config) {
-      this.toDestination = vi.fn().mockReturnThis()
-      this.has = vi.fn().mockReturnValue(true)
-      this.player = vi.fn().mockReturnValue({
-        state: 'stopped',
-        start: vi.fn(),
-        stop: vi.fn()
-      })
-      if (config.onload) setTimeout(config.onload, 10)
-      return this
+    ToneAudioBuffer: {
+      fromUrl: vi.fn().mockResolvedValue(mockBuffer)
+    },
+    BufferSource: vi.fn().mockImplementation(function() {
+      return mockBufferSource
+    }),
+    getContext: vi.fn().mockReturnValue({
+      decodeAudioData: vi.fn().mockResolvedValue(mockBuffer)
     }),
     context: {
       state: 'suspended',
+      resume: vi.fn().mockResolvedValue(),
     },
     start: vi.fn().mockResolvedValue(),
+    now: vi.fn().mockReturnValue(100),
   }
 })
 
@@ -34,39 +46,61 @@ vi.mock('tone', () => {
 vi.mock('./useAuth', () => ({
   useAuth: () => ({
     user: { value: { id: 'test' } },
-    userTier: { value: 'free' }
+    userTier: { value: 'premium' }
   })
 }))
 
-describe('useAudio.js', () => {
+describe('useAudio.js (Stateless Playback Implementation)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    // We cannot easily reset the singleton state of useAudio because it's in the module scope
-    // So we just have to be aware of it or accept it for now.
   })
 
-  it('initializes with default values', () => {
-    const { selectedInstrument, isLoading } = useAudio()
-    expect(selectedInstrument.value).toBe('yamaha')
-    // isLoading might be true or false depending on other tests because of the singleton
+  it('loadNarration should use ToneAudioBuffer.fromUrl', async () => {
+    const { loadNarration, isLoaded } = useAudio()
+    
+    // Clear previous state if possible (though it's a singleton)
+    const success = await loadNarration()
+    
+    expect(success).toBe(true)
+    expect(Tone.ToneAudioBuffer.fromUrl).toHaveBeenCalled()
+    expect(isLoaded.value.narration).toBe(true)
   })
 
-  it('loadSampler set active instrument', async () => {
-    const { loadSampler, selectedInstrument } = useAudio()
+  it('playNarration should create and start a BufferSource', async () => {
+    const { playNarration, loadNarration } = useAudio()
     
-    // Use a unique name if possible or just assume it works
-    await loadSampler('yamaha')
-    expect(selectedInstrument.value).toBe('yamaha')
+    await loadNarration()
+    const result = await playNarration('赤')
     
-    await loadSampler('steinway')
-    expect(selectedInstrument.value).toBe('steinway')
+    expect(result).toBe(true)
+    expect(Tone.BufferSource).toHaveBeenCalled()
+    
+    // Verify properties were set on the mock source
+    const mockSource = vi.mocked(Tone.BufferSource).mock.results[0].value
+    expect(mockSource.toDestination).toHaveBeenCalled()
+    expect(mockSource.start).toHaveBeenCalled()
   })
 
-  it('playNotes starts Tone if needed', async () => {
-    const { playNotes } = useAudio()
+  it('playEffect should also use BufferSource', async () => {
+    const { playEffect, loadEffects } = useAudio()
     
-    // This will probably fail if samplers is empty, but we can check if Tone.start was called
-    await playNotes(['C4'])
-    expect(Tone.start).toHaveBeenCalled()
+    await loadEffects()
+    const result = await playEffect('correct')
+    
+    expect(result).toBe(true)
+    expect(Tone.BufferSource).toHaveBeenCalled()
+    
+    const mockSource = vi.mocked(Tone.BufferSource).mock.results[0].value
+    expect(mockSource.start).toHaveBeenCalled()
+  })
+
+  it('should resume context if it is suspended', async () => {
+    const { playNarration, loadNarration } = useAudio()
+    Tone.context.state = 'suspended'
+    
+    await loadNarration()
+    await playNarration('青')
+    
+    expect(Tone.context.resume).toHaveBeenCalled()
   })
 })

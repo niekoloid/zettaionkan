@@ -30,20 +30,20 @@ const CONFIG = {
   fontFile: '/System/Library/Fonts/Supplemental/Arial.ttf',
   audioBitrate: '384k', // 最高品質
   chords: [
-    { id: 'domiso', name: '赤', notes: ['C4', 'E4', 'G4'], color: '#EF4444', narrationFile: "赤.wav" },
-    { id: 'shireso', name: '青', notes: ['B3', 'D4', 'G4'], color: '#3B82F6', narrationFile: "青.wav" },
-    { id: 'dofara', name: '黄色', notes: ['C4', 'F4', 'A4'], color: '#FFFF00', narrationFile: "黄色.wav" },
-    { id: 'radofa', name: '黒', notes: ['A3', 'C4', 'F4'], color: '#000000', narrationFile: "黒.wav" },
-    { id: 'resoshi', name: '緑', notes: ['D4', 'G4', 'B4'], color: '#16a34a', narrationFile: "緑.wav" },
-    { id: 'misodo', name: 'オレンジ', notes: ['E4', 'G4', 'C5'], color: '#F97316', narrationFile: "オレンジ.wav" },
-    { id: 'farado', name: '紫', notes: ['F4', 'A4', 'C5'], color: '#9333ea', narrationFile: "紫.wav" },
-    { id: 'soshire', name: 'ピンク', notes: ['G4', 'B4', 'D5'], color: '#fbcfe8', narrationFile: "ピンク.wav" },
-    { id: 'sodomi', name: '茶色', notes: ['G4', 'C5', 'E5'], color: '#713F12', narrationFile: "茶色.wav" },
-    { id: 'lacismi', name: '黄緑', notes: ['A3', 'C#4', 'E4'], color: '#84cc16', narrationFile: "黄緑.wav" },
-    { id: 'refisla', name: '肌色', notes: ['D4', 'F#4', 'A4'], color: '#FFCC99', narrationFile: "肌色.wav" },
-    { id: 'migissi', name: '薄紫', notes: ['E4', 'G#4', 'B4'], color: '#c4b5fd', narrationFile: "薄紫.wav" },
-    { id: 'berefa', name: 'グレー', notes: ['Bb3', 'D4', 'F4'], color: '#6B7280', narrationFile: "グレー.wav" },
-    { id: 'essobe', name: '水色', notes: ['Eb4', 'G4', 'Bb4'], color: '#7FDBFF', narrationFile: "水色.wav" }
+    { id: 'domiso', name: '赤', notes: ['C4', 'E4', 'G4'], color: '#EF4444', narrationFile: "赤.mp3" },
+    { id: 'shireso', name: '青', notes: ['B3', 'D4', 'G4'], color: '#3B82F6', narrationFile: "青.mp3" },
+    { id: 'dofara', name: '黄色', notes: ['C4', 'F4', 'A4'], color: '#FFFF00', narrationFile: "黄色.mp3" },
+    { id: 'radofa', name: '黒', notes: ['A3', 'C4', 'F4'], color: '#000000', narrationFile: "黒.mp3" },
+    { id: 'resoshi', name: '緑', notes: ['D4', 'G4', 'B4'], color: '#16a34a', narrationFile: "緑.mp3" },
+    { id: 'misodo', name: 'オレンジ', notes: ['E4', 'G4', 'C5'], color: '#F97316', narrationFile: "オレンジ.mp3" },
+    { id: 'farado', name: '紫', notes: ['F4', 'A4', 'C5'], color: '#9333ea', narrationFile: "紫.mp3" },
+    { id: 'soshire', name: 'ピンク', notes: ['G4', 'B4', 'D5'], color: '#fbcfe8', narrationFile: "ピンク.mp3" },
+    { id: 'sodomi', name: '茶色', notes: ['G4', 'C5', 'E5'], color: '#713F12', narrationFile: "茶色.mp3" },
+    { id: 'lacismi', name: '黄緑', notes: ['A3', 'C#4', 'E4'], color: '#84cc16', narrationFile: "黄緑.mp3" },
+    { id: 'refisla', name: 'ベージュ', notes: ['D4', 'F#4', 'A4'], color: '#F5DEB3', narrationFile: "ベージュ.mp3" },
+    { id: 'migissi', name: '薄紫', notes: ['E4', 'G#4', 'B4'], color: '#c4b5fd', narrationFile: "薄紫.mp3" },
+    { id: 'berefa', name: 'グレー', notes: ['Bb3', 'D4', 'F4'], color: '#6B7280', narrationFile: "グレー.mp3" },
+    { id: 'essobe', name: '水色', notes: ['Eb4', 'G4', 'Bb4'], color: '#7FDBFF', narrationFile: "水色.mp3" }
   ]
 };
 
@@ -112,7 +112,7 @@ async function generate() {
     console.log(`✅ 素材生成完了: ${chord.name}`);
   }
 
-  // --- 和音の導入順序 (赤, 黄色, 青, 黒, 緑, オレンジ, 紫, ピンク, 茶色, 黄緑, 肌色, 薄紫, グレー, 水色) ---
+  // --- 和音の導入順序 (赤, 黄色, 青, 黒, 緑, オレンジ, 紫, ピンク, 茶色, 黄緑, ベージュ, 薄紫, グレー, 水色) ---
   const levelOrder = [0, 2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
   for (let L = 1; L <= 14; L++) {

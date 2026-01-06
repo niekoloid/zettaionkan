@@ -12,21 +12,21 @@ export const ChordDefinitions = {
 
   // --- 黒鍵の和音：基本形 ---
   LA_CIS_MI: { id: 'lacismi', name: 'ラ<u>チス</u>ミ', nameIt: 'ラド♯ミ', symbol: 'A', colorName: '黄緑', color: '#84cc16', notes: ['A3', 'C#4', 'E4'], abc: '[A,^CE]' },
-  RE_FIS_LA: { id: 'refisla', name: 'レ<u>フィス</u>ラ', nameIt: 'レファ♯ラ', symbol: 'D', colorName: '肌色', color: '#FFCC99', notes: ['D4', 'F#4', 'A4'], abc: '[D^FA]' },
+  RE_FIS_LA: { id: 'refisla', name: 'レ<u>フィス</u>ラ', nameIt: 'レファ♯ラ', symbol: 'D', colorName: 'ベージュ', color: '#F5DEB3', notes: ['D4', 'F#4', 'A4'], abc: '[D^FA]' },
   MI_GIS_SI: { id: 'migissi', name: 'ミ<u>ギス</u>シ', nameIt: 'ミソ♯シ', symbol: 'E', colorName: '薄紫', color: '#c4b5fd', notes: ['E4', 'G#4', 'B4'], abc: '[E^GB]' },
   BE_RE_FA: { id: 'berefa', name: '<u>ベー</u>レファ', nameIt: 'シ♭レファ', symbol: 'B♭', colorName: 'グレー', color: '#6B7280', notes: ['Bb3', 'D4', 'F4'], abc: '[_B,DF]' },
   ES_SO_BE: { id: 'essobe', name: '<u>エス</u>ソ<u>ベー</u>', nameIt: 'ミ♭ソシ♭', symbol: 'E♭', colorName: '水色', color: '#7FDBFF', notes: ['Eb4', 'G4', 'Bb4'], abc: '[_EG_B]' },
 
   // --- 黒鍵の和音：第1転回形 ---
   CIS_MI_LA: { id: 'cismila', name: '<u>チス</u>ミラ', nameIt: 'ド♯ミラ', symbol: 'A/C#', colorName: '黄緑', color: '#84cc16', notes: ['C#4', 'E4', 'A4'], abc: '[^CEA]' },
-  FIS_LA_RE: { id: 'fislare', name: '<u>フィス</u>ラレ', nameIt: 'ファ♯ラレ', symbol: 'D/F#', colorName: '肌色', color: '#FFCC99', notes: ['F#4', 'A4', 'D5'], abc: '[^FAd]' },
+  FIS_LA_RE: { id: 'fislare', name: '<u>フィス</u>ラレ', nameIt: 'ファ♯ラレ', symbol: 'D/F#', colorName: 'ベージュ', color: '#F5DEB3', notes: ['F#4', 'A4', 'D5'], abc: '[^FAd]' },
   GIS_SI_MI: { id: 'gissimi', name: '<u>ギス</u>シミ', nameIt: 'ソ♯シミ', symbol: 'E/G#', colorName: '薄紫', color: '#c4b5fd', notes: ['G#4', 'B4', 'E5'], abc: '[^GBe]' },
   RE_FA_BE: { id: 'refabe', name: 'レファ<u>ベー</u>', nameIt: 'レファシ♭', symbol: 'B♭/D', colorName: 'グレー', color: '#6B7280', notes: ['D4', 'F4', 'Bb4'], abc: '[DF_B]' },
   SO_BE_ES: { id: 'sobees', name: 'ソ<u>ベー</u><u>エス</u>', nameIt: 'ソシ♭ミ♭', symbol: 'E♭/G', colorName: '水色', color: '#06B6D4', notes: ['G4', 'Bb4', 'Eb5'], abc: '[G_B_e]' },
 
   // --- 黒鍵の和音：第2転回形 ---
   MI_LA_CIS: { id: 'milacis', name: 'ミラ<u>チス</u>', nameIt: 'ミラド♯', symbol: 'A/E', colorName: '黄緑', color: '#84cc16', notes: ['E4', 'A4', 'C#5'], abc: '[EA^c]' },
-  LA_RE_FIS: { id: 'larefis', name: 'ラレ<u>フィス</u>', nameIt: 'ラレファ♯', symbol: 'D/A', colorName: '肌色', color: '#FFCC99', notes: ['A3', 'D4', 'F#4'], abc: '[A,D^F]' },
+  LA_RE_FIS: { id: 'larefis', name: 'ラレ<u>フィス</u>', nameIt: 'ラレファ♯', symbol: 'D/A', colorName: 'ベージュ', color: '#F5DEB3', notes: ['A3', 'D4', 'F#4'], abc: '[A,D^F]' },
   SI_MI_GIS: { id: 'simigis', name: 'シミ<u>ギス</u>', nameIt: 'シミソ♯', symbol: 'E/B', colorName: '薄紫', color: '#c4b5fd', notes: ['B3', 'E4', 'G#4'], abc: '[B,E^G]' },
   FA_BE_RE: { id: 'fabere', name: 'ファ<u>ベー</u>レ', nameIt: 'ファシ♭レ', symbol: 'B♭/F', colorName: 'グレー', color: '#6B7280', notes: ['F4', 'Bb4', 'D5'], abc: '[F_Bd]' },
   BE_ES_SO: { id: 'beesso', name: '<u>ベー</u><u>エス</u>ソ', nameIt: 'シ♭ミ♭ソ', symbol: 'E♭/B♭', colorName: '水色', color: '#06B6D4', notes: ['Bb3', 'Eb4', 'G4'], abc: '[_B,_EG]' }

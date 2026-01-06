@@ -9,29 +9,33 @@ const samplers = {}
 const isLoaded = ref({
   yamaha: false,
   steinway: false,
-  narration: false
+  narration: false,
+  effects: false
 })
 const isLoading = ref(false)
 const loadingProgress = ref(0)
 const selectedInstrument = ref('yamaha')
 const loadingFile = ref('')
-const narrationPlayer = ref(null)
+const narrationBuffers = {}
+const effectBuffers = {}
+let narrationLoadingPromise = null
+let effectsLoadingPromise = null
 
 const NARRATION_FILES = {
-  '赤': '/narration/google/赤.wav',
-  '青': '/narration/google/青.wav',
-  '黄色': '/narration/google/黄色.wav',
-  '黒': '/narration/google/黒.wav',
-  '緑': '/narration/google/緑.wav',
-  'オレンジ': '/narration/google/オレンジ.wav',
-  '紫': '/narration/google/紫.wav',
-  'ピンク': '/narration/google/ピンク.wav',
-  '茶色': '/narration/google/茶色.wav',
-  '黄緑': '/narration/google/黄緑.wav',
-  '肌色': '/narration/google/肌色.wav',
-  '薄紫': '/narration/google/薄紫.wav',
-  'グレー': '/narration/google/グレー.wav',
-  '水色': '/narration/google/水色.wav'
+  '赤': '/narration/google/赤.mp3',
+  '青': '/narration/google/青.mp3',
+  '黄色': '/narration/google/黄色.mp3',
+  '黒': '/narration/google/黒.mp3',
+  '緑': '/narration/google/緑.mp3',
+  'オレンジ': '/narration/google/オレンジ.mp3',
+  '紫': '/narration/google/紫.mp3',
+  'ピンク': '/narration/google/ピンク.mp3',
+  '茶色': '/narration/google/茶色.mp3',
+  '黄緑': '/narration/google/黄緑.mp3',
+  'ベージュ': '/narration/google/ベージュ.mp3',
+  '薄紫': '/narration/google/薄紫.mp3',
+  'グレー': '/narration/google/グレー.mp3',
+  '水色': '/narration/google/水色.mp3'
 }
 
 export function useAudio() {
@@ -107,22 +111,65 @@ export function useAudio() {
 
   const loadNarration = async () => {
     if (isLoaded.value.narration) return true
-    
-    return new Promise((resolve) => {
-      const players = new Tone.Players({
-        urls: NARRATION_FILES,
-        onload: () => {
-          console.log('Narration samples loaded')
-          narrationPlayer.value = players
-          isLoaded.value.narration = true
-          resolve(true)
-        },
-        onerror: (err) => {
-          console.error('Narration load error:', err)
-          resolve(false)
-        }
-      }).toDestination()
-    })
+    if (narrationLoadingPromise) return narrationLoadingPromise
+
+    narrationLoadingPromise = (async () => {
+      console.log('Starting narration buffer load...')
+      try {
+        const promises = Object.entries(NARRATION_FILES).map(async ([name, url]) => {
+          if (!narrationBuffers[name]) {
+            narrationBuffers[name] = await Tone.ToneAudioBuffer.fromUrl(url)
+          }
+        })
+        await Promise.all(promises)
+        console.log('Narration buffers loaded successfully')
+        isLoaded.value.narration = true
+        narrationLoadingPromise = null
+        
+        // Also trigger effect loading in background
+        loadEffects().catch(console.error)
+        
+        return true
+      } catch (err) {
+        console.error('Narration load error:', err)
+        narrationLoadingPromise = null
+        return false
+      }
+    })()
+
+    return narrationLoadingPromise
+  }
+
+  const loadEffects = async () => {
+    if (isLoaded.value.effects) return true
+    if (effectsLoadingPromise) return effectsLoadingPromise
+
+    effectsLoadingPromise = (async () => {
+      console.log('Starting effect buffer load...')
+      const effectFiles = {
+        'correct': '/audio/effects/correct.mp3',
+        'incorrect': '/audio/effects/incorrect.mp3'
+      }
+
+      try {
+        const promises = Object.entries(effectFiles).map(async ([name, url]) => {
+          if (!effectBuffers[name]) {
+            effectBuffers[name] = await Tone.ToneAudioBuffer.fromUrl(url)
+          }
+        })
+        await Promise.all(promises)
+        console.log('Effect buffers loaded')
+        isLoaded.value.effects = true
+        effectsLoadingPromise = null
+        return true
+      } catch (err) {
+        console.error('Effect load error:', err)
+        effectsLoadingPromise = null
+        return false
+      }
+    })()
+
+    return effectsLoadingPromise
   }
 
   const preloadAll = async () => {
@@ -145,17 +192,58 @@ export function useAudio() {
   }
 
   const playNarration = async (colorName) => {
-    if (Tone.context.state !== 'running') await Tone.start()
-    
-    if (!isLoaded.value.narration) {
-      await loadNarration()
+    // 1. Ensure context is running
+    if (Tone.context.state !== 'running') {
+      try {
+        await Tone.context.resume()
+      } catch (e) {
+        console.warn('Silent context resume failed')
+      }
     }
     
-    if (narrationPlayer.value && narrationPlayer.value.has(colorName)) {
-      const player = narrationPlayer.value.player(colorName)
-      if (player.state === 'started') player.stop()
-      player.start()
-      return true
+    // 2. Ensure loaded
+    if (!isLoaded.value.narration) {
+      const success = await loadNarration()
+      if (!success) return false
+    }
+    
+    // 3. Play using BufferSource (stateless)
+    const buffer = narrationBuffers[colorName]
+    if (buffer) {
+      try {
+        const source = new Tone.BufferSource(buffer).toDestination()
+        source.fadeIn = 0.05
+        source.fadeOut = 0.1
+        source.start()
+        console.log(`Stateless Play: ${colorName}`)
+        return true
+      } catch (e) {
+        console.error(`Stateless Play Error (${colorName}):`, e)
+      }
+    } else {
+      console.warn(`Buffer missing for ${colorName}`)
+    }
+    return false
+  }
+
+  const playEffect = async (effectName) => {
+    if (Tone.context.state !== 'running') {
+      await Tone.context.resume()
+    }
+
+    if (!isLoaded.value.effects) {
+      await loadEffects()
+    }
+
+    const buffer = effectBuffers[effectName]
+    if (buffer) {
+      try {
+        const source = new Tone.BufferSource(buffer).toDestination()
+        source.start()
+        return true
+      } catch (e) {
+        console.error(`Effect Play Error (${effectName}):`, e)
+      }
     }
     return false
   }
@@ -170,9 +258,11 @@ export function useAudio() {
     selectedInstrument,
     loadSampler,
     loadNarration,
+    loadEffects,
     preloadAll,
     playNotes,
-    playNarration
+    playNarration,
+    playEffect
   }
 }
 

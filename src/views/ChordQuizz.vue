@@ -25,13 +25,13 @@ const QUIZZ_CHORDS = [
   { ...ChordDefinitions.SOSHIRE, label: '8', displayColor: 'ピンク', sortOrder: 8 },
   { ...ChordDefinitions.SODOMI, label: '9', displayColor: '茶色', sortOrder: 9 },
   { ...ChordDefinitions.LA_CIS_MI, label: '10', displayColor: '黄緑', sortOrder: 10 },
-  { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: '肌色', sortOrder: 11 },
+  { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: 'ベージュ', sortOrder: 11 },
   { ...ChordDefinitions.MI_GIS_SI, label: '12', displayColor: '薄紫', sortOrder: 12 },
   { ...ChordDefinitions.BE_RE_FA, label: '13', displayColor: 'グレー', sortOrder: 13 },
   { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: '水色', sortOrder: 14 },
 ]
 
-const QUIZ_LENGTH = 5
+// const QUIZ_LENGTH = 5 (Endless mode)
 
 const DELAYS = {
   PLAYBACK_START: 500,
@@ -59,7 +59,8 @@ const {
   loadingProgress, 
   isSamplerLoaded, 
   selectedInstrument, 
-  loadSampler 
+  loadSampler,
+  playEffect
 } = useAudio()
 
 // === Computed ===
@@ -140,19 +141,7 @@ const toggleChordSelection = (id) => {
 
 
 const startQuizz = async () => {
-  // Pick 5 random chords
-  const quizSet = []
-  for (let i = 0; i < QUIZ_LENGTH; i++) {
-    const chord = getRandomChord()
-    if (chord) quizSet.push(chord)
-  }
-  
-  if (quizSet.length === 0) return
-
-  // Start Tone.js within user gesture
-  if (Tone.context.state !== 'running') await Tone.start()
-
-  questions.value = quizSet
+  questions.value = [getRandomChord()]
   currentQuestionIndex.value = 0
   score.value = 0
   quizzHistory.value = []
@@ -177,7 +166,12 @@ const submitAnswer = (chord) => {
   cleanupSideEffects()
 
   const isCorrect = chord.id === currentQuestion.value.id
-  if (isCorrect) score.value++
+  if (isCorrect) {
+    score.value++
+    playEffect('correct')
+  } else {
+    playEffect('incorrect')
+  }
   
   quizzHistory.value.push({
     question: { ...currentQuestion.value },
@@ -186,19 +180,16 @@ const submitAnswer = (chord) => {
     isSkipped: false
   })
 
-  if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
-    userAnswer.value = chord
-    isQuestionChanging.value = true
-    setTimeout(() => {
-      currentQuestionIndex.value++
-      userAnswer.value = null
-      isQuestionChanging.value = false
-      shuffleChords()
-      playCurrentQuestion()
-    }, DELAYS.TRANSITION)
-  } else {
-    setTimeout(finishQuizz, DELAYS.TRANSITION)
-  }
+  userAnswer.value = chord
+  isQuestionChanging.value = true
+  setTimeout(() => {
+    questions.value.push(getRandomChord())
+    currentQuestionIndex.value++
+    userAnswer.value = null
+    isQuestionChanging.value = false
+    shuffleChords()
+    playCurrentQuestion()
+  }, DELAYS.TRANSITION)
 }
 
 const skipQuestion = () => {
@@ -212,18 +203,15 @@ const skipQuestion = () => {
     isSkipped: true
   })
 
-  if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
-    isQuestionChanging.value = true
-    setTimeout(() => {
-      currentQuestionIndex.value++
-      userAnswer.value = null
-      isQuestionChanging.value = false
-      shuffleChords()
-      playCurrentQuestion()
-    }, DELAYS.TRANSITION)
-  } else {
-    setTimeout(finishQuizz, DELAYS.TRANSITION)
-  }
+  isQuestionChanging.value = true
+  setTimeout(() => {
+    questions.value.push(getRandomChord())
+    currentQuestionIndex.value++
+    userAnswer.value = null
+    isQuestionChanging.value = false
+    shuffleChords()
+    playCurrentQuestion()
+  }, DELAYS.TRANSITION)
 }
 
 const finishQuizz = async () => {
@@ -385,7 +373,7 @@ onUnmounted(() => {
         <div class="fixed top-0 left-0 right-0 z-[60] h-1.5 bg-gray-100/50 backdrop-blur-sm">
           <div class="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-500 ease-out"
                :class="{ 'brightness-150 h-2': isQuestionChanging }"
-               :style="{ width: `${(currentQuestionCount / QUIZ_LENGTH) * 100}%` }"></div>
+               :style="{ width: '100%' }"></div>
         </div>
 
         <!-- Minimal Top Info -->
@@ -398,7 +386,7 @@ onUnmounted(() => {
                 <span class="text-[8px] text-gray-300 font-black uppercase tracking-widest leading-none">Question</span>
               </div>
               <div class="px-4 h-full flex items-center min-w-[3rem] justify-center text-white text-[11px] font-black">
-                {{ currentQuestionCount }} / {{ QUIZ_LENGTH }}
+                Q {{ currentQuestionCount }}
               </div>
             </div>
           </div>
