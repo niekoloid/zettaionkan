@@ -53,9 +53,11 @@ const NOTE_DEFINITIONS = [
   { id: 'b5', name: 'シ (B)', octave: 3, notes: ['B5'], label: 'B', abc: 'b', sortOrder: 36, clef: 'treble' },
 ]
 
+const QUIZ_LENGTH = 5
+
 const DELAYS = {
   PLAYBACK_START: 500,
-  TRANSITION: 300,
+  TRANSITION: 400,
   FEEDBACK: 1000
 }
 
@@ -313,15 +315,17 @@ const startQuizz = async () => {
     }
   }
 
-  // Pick first note from the CURRENTLY available notes
-  const firstNote = notes[Math.floor(Math.random() * notes.length)]
+  // Pre-pick 5 questions
+  const quizSet = []
+  for (let i = 0; i < QUIZ_LENGTH; i++) {
+    quizSet.push(notes[Math.floor(Math.random() * notes.length)])
+  }
   
-  questions.value = [firstNote]
+  questions.value = quizSet
   currentQuestionIndex.value = 0
   score.value = 0
   quizzHistory.value = []
   
-  // Re-shuffle based on CURRENT available notes
   shuffleNotes()
   
   resultMessage.value = null
@@ -359,7 +363,14 @@ const submitAnswer = (note) => {
     isSkipped: false
   })
 
-  resultMessage.value = isCorrect ? 'correct' : 'incorrect'
+  // Provide haptic-like short feedback wait or move instantly
+  if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
+    currentQuestionIndex.value++
+    userAnswer.value = null
+    setTimeout(playCurrentQuestion, DELAYS.TRANSITION)
+  } else {
+    finishQuizz()
+  }
 }
 
 const skipQuestion = () => {
@@ -372,7 +383,13 @@ const skipQuestion = () => {
     isSkipped: true
   })
 
-  moveNext()
+  if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
+    currentQuestionIndex.value++
+    userAnswer.value = null
+    setTimeout(playCurrentQuestion, DELAYS.TRANSITION)
+  } else {
+    finishQuizz()
+  }
 }
 
 const finishQuizz = async () => {
@@ -667,8 +684,8 @@ onMounted(async () => {
                 <div class="px-3 h-full flex items-center bg-white/10 border-r border-white/5">
                   <span class="text-[8px] text-gray-300 font-black uppercase tracking-widest leading-none">Question</span>
                 </div>
-                <div class="px-4 h-full flex items-center min-w-[3rem] justify-center">
-                  <span class="text-[11px] text-white font-black leading-none">{{ currentQuestionCount }}</span>
+                <div class="px-4 h-full flex items-center min-w-[3rem] justify-center text-white text-[11px] font-black">
+                  {{ currentQuestionCount }} / {{ QUIZ_LENGTH }}
                 </div>
               </div>
             </div>
@@ -772,16 +789,7 @@ onMounted(async () => {
             </div>
           </div>
 
-          <!-- Feedback Overlay (Simplified) -->
-          <div v-if="resultMessage" class="fixed inset-x-0 bottom-40 z-50 flex flex-col items-center pointer-events-none px-6">
-            <button @click="moveNext"
-                    class="pointer-events-auto bg-gray-900 text-white px-10 py-5 rounded-[2rem] font-black text-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:bg-gray-800 transition-all active:scale-95 flex items-center space-x-4 border-b-4 border-gray-700">
-              <span>次の問題へ</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
+          <!-- Feedback Overlay (Removed during quiz) -->
 
           <!-- Answer Options (Hidden in 88-key mode as keyboard is used) -->
           <div v-if="!testAll88" class="flex-grow overflow-y-auto px-4 pb-44 space-y-6 pt-6 bg-white border-x border-gray-100">

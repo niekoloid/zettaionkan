@@ -31,9 +31,11 @@ const QUIZZ_CHORDS = [
   { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: '水色', sortOrder: 14 },
 ]
 
+const QUIZ_LENGTH = 5
+
 const DELAYS = {
   PLAYBACK_START: 500,
-  TRANSITION: 300,
+  TRANSITION: 400,
   FEEDBACK: 1000
 }
 
@@ -136,13 +138,19 @@ const toggleChordSelection = (id) => {
 
 
 const startQuizz = async () => {
-  const firstChord = getRandomChord()
-  if (!firstChord) return
+  // Pick 5 random chords
+  const quizSet = []
+  for (let i = 0; i < QUIZ_LENGTH; i++) {
+    const chord = getRandomChord()
+    if (chord) quizSet.push(chord)
+  }
+  
+  if (quizSet.length === 0) return
 
   // Start Tone.js within user gesture
   if (Tone.context.state !== 'running') await Tone.start()
 
-  questions.value = [firstChord]
+  questions.value = quizSet
   currentQuestionIndex.value = 0
   score.value = 0
   quizzHistory.value = []
@@ -175,9 +183,13 @@ const submitAnswer = (chord) => {
     isSkipped: false
   })
 
-  // Preload feedback images is optional as browser likely caches them
-  resultMessage.value = isCorrect ? 'correct' : 'incorrect'
-  setTimeout(moveNext, DELAYS.FEEDBACK)
+  if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
+    currentQuestionIndex.value++
+    shuffleChords()
+    setTimeout(playCurrentQuestion, DELAYS.TRANSITION)
+  } else {
+    finishQuizz()
+  }
 }
 
 const skipQuestion = () => {
@@ -191,7 +203,13 @@ const skipQuestion = () => {
     isSkipped: true
   })
 
-  moveNext()
+  if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
+    currentQuestionIndex.value++
+    shuffleChords()
+    setTimeout(playCurrentQuestion, DELAYS.TRANSITION)
+  } else {
+    finishQuizz()
+  }
 }
 
 const finishQuizz = async () => {
@@ -357,8 +375,8 @@ onUnmounted(() => {
               <div class="px-3 h-full flex items-center bg-white/10 border-r border-white/5">
                 <span class="text-[8px] text-gray-300 font-black uppercase tracking-widest leading-none">Question</span>
               </div>
-              <div class="px-4 h-full flex items-center min-w-[3rem] justify-center">
-                <span class="text-[11px] text-white font-black leading-none">{{ currentQuestionCount }}</span>
+              <div class="px-4 h-full flex items-center min-w-[3rem] justify-center text-white text-[11px] font-black">
+                {{ currentQuestionCount }} / {{ QUIZ_LENGTH }}
               </div>
             </div>
           </div>
@@ -371,17 +389,7 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <!-- Feedback Overlay -->
-        <div v-if="resultMessage" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div class="transform transition-all duration-300 scale-150 drop-shadow-2xl">
-            <img 
-              :src="resultMessage === 'correct' ? '/quiz_correct.png' : '/quiz_incorrect.png'" 
-              alt="Result Feedback" 
-              class="w-96 max-w-full h-auto object-contain"
-              :class="resultMessage === 'incorrect' ? 'animate-shake' : 'animate-bounce-in'"
-            />
-          </div>
-        </div>
+        <!-- Feedback Overlay (Removed during quiz) -->
 
         <!-- Answer Options: Full Screen Grid -->
         <div 
