@@ -713,17 +713,8 @@ onMounted(async () => {
           </div>
 
           <Transition name="slide-fade" mode="out-in">
-            <div :key="currentQuestionIndex" class="flex-grow flex flex-col overflow-hidden">
-              <!-- 1. Musical Staff (Score) - Unified with Home -->
-              <div class="w-full flex justify-center mb-4">
-                <ScoreDisplay 
-                  :abc="currentQuestion?.abc" 
-                  :clef="currentQuestion?.clef"
-                  :is-answered="!!userAnswer"
-                />
-              </div>
-
-              <!-- 2. Piano Visualization -->
+            <div :key="currentQuestionIndex" class="flex-grow flex flex-col overflow-hidden pt-12">
+              <!-- 1. Piano Visualization -->
               <div class="w-full" :class="testAll88 ? 'px-0' : 'px-4'">
                 <div class="w-full bg-white rounded-t-3xl p-5 border-y border-gray-100 flex flex-col items-center shadow-sm">
                   
@@ -801,9 +792,8 @@ onMounted(async () => {
                     </div>
                   </div>
 
-                  <div class="mt-4 flex items-center space-x-2">
-                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{{ resultMessage ? 'Answer:' : 'Note Position' }}</span>
-                    <span v-if="resultMessage" class="text-xs font-black text-indigo-600 animate-bounce-in">{{ currentQuestion.name }}</span>
+                  <div class="mt-4 h-4">
+                    <!-- Space for feedback or markers if needed -->
                   </div>
                 </div>
               </div>
