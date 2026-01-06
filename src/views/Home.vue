@@ -3,7 +3,7 @@ import { ref, onMounted, nextTick, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import * as Tone from 'tone'
 
-import { Levels } from '../constants/chords.js'
+import { ChordDefinitions } from '../constants/chords.js'
 
 import { useAudio } from '../composables/useAudio'
 import { useAudioSettings } from '../composables/useAudioSettings'
@@ -13,9 +13,6 @@ import ScoreDisplay from '../components/ScoreDisplay.vue'
 import { useAuth } from '../composables/useAuth'
 
 const router = useRouter()
-// Filter out unnecessary levels
-const rawLevels = Levels.filter(l => !['STEP 4', 'STEP 5'].includes(l.shortName))
-
 const currentChord = ref(null)
 const pressedNotes = ref(new Set())
 const isChordPlaying = ref(false)
@@ -23,22 +20,22 @@ const playbackTimeout = ref(null)
 const namingConvention = ref('italian') // 'german' | 'italian'
 
 // === Single List Logic ===
-// Flatten all chords into a single list with metadata
+// Flatten all 14 basic chords into a single list with metadata
 const allChords = computed(() => {
-  const result = []
-  rawLevels.forEach((level, levelIdx) => {
-    level.chords.forEach((chord, chordIdx) => {
-      // Calculate global index (1-based)
-      const globalIndex = result.length + 1
-      result.push({
-        ...chord,
-        originalLevelIndex: levelIdx,
-        originalChordIndex: chordIdx,
-        globalIndex
-      })
-    })
-  })
-  return result
+  const basicChords = [
+    // White keys (9)
+    ChordDefinitions.DOMISO, ChordDefinitions.DOFARA, ChordDefinitions.SHIRESO,
+    ChordDefinitions.RADOFA, ChordDefinitions.RESOSHI, ChordDefinitions.MISODO,
+    ChordDefinitions.FARADO, ChordDefinitions.SOSHIRE, ChordDefinitions.SODOMI,
+    // Black keys (5)
+    ChordDefinitions.LA_CIS_MI, ChordDefinitions.RE_FIS_LA, ChordDefinitions.MI_GIS_SI,
+    ChordDefinitions.BE_RE_FA, ChordDefinitions.ES_SO_BE
+  ]
+  
+  return basicChords.map((chord, index) => ({
+    ...chord,
+    globalIndex: index + 1
+  }))
 })
 
 const { 
@@ -505,6 +502,7 @@ const isLightColor = (hex) => {
           <div class="border-t border-gray-100 pt-8">
             <div class="flex flex-wrap justify-center gap-x-6 gap-y-4 mb-8">
               <router-link to="/company" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">運営会社</router-link>
+              <router-link to="/terms" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">利用規約</router-link>
               <router-link to="/privacy" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">プライバシーポリシー</router-link>
               <router-link to="/legal" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">特定商取引法に基づく表記</router-link>
             </div>

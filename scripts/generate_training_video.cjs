@@ -38,11 +38,11 @@ const CONFIG = {
     { id: 'misodo', name: 'オレンジ', notes: ['E4', 'G4', 'C5'], color: '#F97316', narrationFile: "オレンジ.wav" },
     { id: 'farado', name: '紫', notes: ['F4', 'A4', 'C5'], color: '#9333ea', narrationFile: "紫.wav" },
     { id: 'soshire', name: 'ピンク', notes: ['G4', 'B4', 'D5'], color: '#fbcfe8', narrationFile: "ピンク.wav" },
-    { id: 'sodomi', name: '茶色', notes: ['G4', 'C5', 'E5'], color: '#A3744D', narrationFile: "茶色.wav" },
-    { id: 'lacismi', name: '黄緑', notes: ['A3', 'C#4', 'E4'], color: '#a3e635', narrationFile: "黄緑.wav" },
+    { id: 'sodomi', name: '茶色', notes: ['G4', 'C5', 'E5'], color: '#713F12', narrationFile: "茶色.wav" },
+    { id: 'lacismi', name: '黄緑', notes: ['A3', 'C#4', 'E4'], color: '#84cc16', narrationFile: "黄緑.wav" },
     { id: 'refisla', name: '肌色', notes: ['D4', 'F#4', 'A4'], color: '#FFCC99', narrationFile: "肌色.wav" },
     { id: 'migissi', name: '薄紫', notes: ['E4', 'G#4', 'B4'], color: '#c4b5fd', narrationFile: "薄紫.wav" },
-    { id: 'berefa', name: 'グレー', notes: ['Bb3', 'D4', 'F4'], color: '#d1d5db', narrationFile: "グレー.wav" },
+    { id: 'berefa', name: 'グレー', notes: ['Bb3', 'D4', 'F4'], color: '#6B7280', narrationFile: "グレー.wav" },
     { id: 'essobe', name: '水色', notes: ['Eb4', 'G4', 'Bb4'], color: '#7FDBFF', narrationFile: "水色.wav" }
   ]
 };
@@ -96,7 +96,7 @@ async function generate() {
     execSync(mixCmd, { stdio: 'ignore' });
 
     // 2. 和音とナレーションをミックス (2.5秒後に再生)
-    const overlayAudioCmd = `ffmpeg -y -i "${chordAudioPath}" -i "${narrationWavPath}" -filter_complex "[0:a]volume=1.0[p]; [1:a]adelay=2500|2500,volume=0.42[n]; [p][n]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,volume=1.5" -t ${CONFIG.durationPerChord} "${finalAudioPath}"`;
+    const overlayAudioCmd = `ffmpeg -y -i "${chordAudioPath}" -i "${narrationWavPath}" -filter_complex "[0:a]volume=1.0[p]; [1:a]adelay=2500|2500,volume=0.42[n]; [p][n]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,volume=1.8" -t ${CONFIG.durationPerChord} "${finalAudioPath}"`;
     execSync(overlayAudioCmd, { stdio: 'ignore' });
 
     // 3. 背景色 + QR + テキスト を結合

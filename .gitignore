@@ -28,3 +28,7 @@ dist-ssr
 Steinway_Raw/
 zettaionkan-f7a4e8d24e46.json
 /videos/outputs/
+scripts/client_secrets.json
+scripts/token.pickle
+__pycache__/
+*.pickle

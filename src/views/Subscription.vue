@@ -11,7 +11,7 @@ const plans = [
     price: 100,
     trial: '初月無料',
     description: '白鍵の和音をすべて学べる基本プラン。',
-    features: ['初月1ヶ月無料', 'Level 2 (白鍵 2) の全開放', 'すべての基本機能へのアクセス'],
+    features: ['初月1ヶ月無料', '白鍵の和音を全開放', 'すべての基本機能へのアクセス'],
     color: 'bg-blue-50 border-blue-100 text-blue-600'
   },
   {
@@ -20,7 +20,7 @@ const plans = [
     price: 980,
     trial: '初月無料',
     description: '黒鍵や転回形まで含めた完全版。',
-    features: ['初月1ヶ月無料', 'Level 3〜5 (黒鍵) の全開放', 'すべてのアップデートへのアクセス'],
+    features: ['初月1ヶ月無料', '黒鍵・転回形を全開放', 'すべてのアップデートへのアクセス'],
     color: 'bg-amber-50 border-amber-100 text-amber-600',
     popular: true
   },
@@ -141,6 +141,7 @@ const handleSubscribe = async (tier) => {
       <p class="text-[10px] text-gray-400 mt-12 text-center font-medium leading-relaxed">
         決済はStripeを通じて安全に行われます。<br>
         いつでもマイページからキャンセル可能です。<br>
+        <router-link to="/terms" class="hover:underline">利用規約</router-link> | 
         <router-link to="/privacy" class="hover:underline">プライバシーポリシー</router-link> | 
         <router-link to="/legal" class="hover:underline">特定商取引法に基づく表記</router-link>
       </p>
