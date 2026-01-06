@@ -77,6 +77,7 @@ const shuffledIds = ref([])
 const matchOctave = ref(false)
 const whiteKeysOnly = ref(true)
 const testAll88 = ref(false)
+const isQuestionChanging = ref(false)
 
 const J_NAMES = { 'C': 'ド', 'D': 'レ', 'E': 'ミ', 'F': 'ファ', 'G': 'ソ', 'A': 'ラ', 'B': 'シ' }
 
@@ -365,9 +366,11 @@ const submitAnswer = (note) => {
 
   // Provide haptic-like short feedback wait
   if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
+    isQuestionChanging.value = true
     setTimeout(() => {
       currentQuestionIndex.value++
       userAnswer.value = null
+      isQuestionChanging.value = false
       playCurrentQuestion()
     }, DELAYS.TRANSITION)
   } else {
@@ -386,9 +389,11 @@ const skipQuestion = () => {
   })
 
   if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
+    isQuestionChanging.value = true
     setTimeout(() => {
       currentQuestionIndex.value++
       userAnswer.value = null
+      isQuestionChanging.value = false
       playCurrentQuestion()
     }, DELAYS.TRANSITION)
   } else {
@@ -685,12 +690,14 @@ onMounted(async () => {
           <!-- Top Progress Bar -->
           <div class="fixed top-0 left-0 right-0 z-[60] h-1.5 bg-gray-200/50 backdrop-blur-sm">
             <div class="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-500 ease-out"
+                 :class="{ 'brightness-150 h-2': isQuestionChanging }"
                  :style="{ width: `${(currentQuestionCount / QUIZ_LENGTH) * 100}%` }"></div>
           </div>
 
           <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
             <div class="flex items-center space-x-2">
-              <div class="flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-lg overflow-hidden h-8">
+              <div class="flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-lg overflow-hidden h-8 transition-all duration-300"
+                   :class="{ 'scale-125 ring-4 ring-indigo-500/50 bg-indigo-900/60': isQuestionChanging }">
                 <div class="px-3 h-full flex items-center bg-white/10 border-r border-white/5">
                   <span class="text-[8px] text-gray-300 font-black uppercase tracking-widest leading-none">Question</span>
                 </div>

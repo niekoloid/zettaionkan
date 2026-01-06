@@ -46,6 +46,7 @@ const isSaving = ref(false)
 const currentQuestionIndex = ref(0)
 const resultMessage = ref(null)
 const userAnswer = ref(null)
+const isQuestionChanging = ref(false)
 
 const selectedChordIds = ref(new Set([QUIZZ_CHORDS[0].id, QUIZZ_CHORDS[1].id]))
 const questions = ref([])
@@ -187,14 +188,16 @@ const submitAnswer = (chord) => {
 
   if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
     userAnswer.value = chord
+    isQuestionChanging.value = true
     setTimeout(() => {
       currentQuestionIndex.value++
       userAnswer.value = null
+      isQuestionChanging.value = false
       shuffleChords()
       playCurrentQuestion()
     }, DELAYS.TRANSITION)
   } else {
-    finishQuizz()
+    setTimeout(finishQuizz, DELAYS.TRANSITION)
   }
 }
 
@@ -210,9 +213,11 @@ const skipQuestion = () => {
   })
 
   if (currentQuestionIndex.value < QUIZ_LENGTH - 1) {
+    isQuestionChanging.value = true
     setTimeout(() => {
       currentQuestionIndex.value++
       userAnswer.value = null
+      isQuestionChanging.value = false
       shuffleChords()
       playCurrentQuestion()
     }, DELAYS.TRANSITION)
@@ -379,6 +384,7 @@ onUnmounted(() => {
         <!-- Top Progress Bar -->
         <div class="fixed top-0 left-0 right-0 z-[60] h-1.5 bg-gray-100/50 backdrop-blur-sm">
           <div class="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-500 ease-out"
+               :class="{ 'brightness-150 h-2': isQuestionChanging }"
                :style="{ width: `${(currentQuestionCount / QUIZ_LENGTH) * 100}%` }"></div>
         </div>
 
@@ -386,7 +392,8 @@ onUnmounted(() => {
         <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
           <div class="flex items-center space-x-2">
             <!-- Premium Question Indicator -->
-            <div class="flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-lg overflow-hidden ring-1 ring-black/5 h-8">
+            <div class="flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-lg overflow-hidden ring-1 ring-black/5 h-8 transition-all duration-300"
+                 :class="{ 'scale-125 ring-4 ring-indigo-500/50 bg-indigo-900/60': isQuestionChanging }">
               <div class="px-3 h-full flex items-center bg-white/10 border-r border-white/5">
                 <span class="text-[8px] text-gray-300 font-black uppercase tracking-widest leading-none">Question</span>
               </div>
