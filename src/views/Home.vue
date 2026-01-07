@@ -32,10 +32,35 @@ const allChords = computed(() => {
     ChordDefinitions.BE_RE_FA, ChordDefinitions.ES_SO_BE
   ]
   
-  return basicChords.map((chord, index) => ({
-    ...chord,
-    globalIndex: index + 1
-  }))
+  return basicChords.map((chord, index) => {
+    // Pre-calculate lightness to avoid repeated calls in template
+    const r = parseInt(chord.color.slice(1, 3), 16)
+    const g = parseInt(chord.color.slice(3, 5), 16)
+    const b = parseInt(chord.color.slice(5, 7), 16)
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000
+    const isLight = brightness > 180
+
+    return {
+      ...chord,
+      globalIndex: index + 1,
+      isLight
+    }
+  })
+})
+
+const activeNotesSet = computed(() => {
+  if (!currentChord.value) return new Set()
+  
+  const toSharp = (n) => {
+    const map = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' }
+    let clean = n.replace('♭', 'b')
+    for (const [flat, sharp] of Object.entries(map)) {
+      if (clean.startsWith(flat)) return clean.replace(flat, sharp)
+    }
+    return clean
+  }
+
+  return new Set(currentChord.value.notes.map(toSharp))
 })
 
 const { 
@@ -98,12 +123,11 @@ const playChord = async (notes) => {
 
     currentSampler.releaseAll()
     pressedNotes.value.clear()
-    isChordPlaying.value = false
-
-    // Give a clearer reset state before starting next
-    await nextTick()
-
+    
+    // Set state immediately for UI responsiveness
     isChordPlaying.value = true
+
+    // Audio trigger - remove nextTick to keep user gesture context strong if possible
     currentSampler.triggerAttackRelease(notes, 6)
     notes.forEach(note => pressedNotes.value.add(note))
     
@@ -171,25 +195,16 @@ const keyboardLayout = [
 const isNoteActive = (note) => {
   if (!currentChord.value) return false
   
-  // Normalize checking note to sharp if it's flat (though keyboard layout uses sharps)
   const toSharp = (n) => {
-    // Handle special replacements for flats to sharps
     const map = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' }
-    // Replace traditional flat symbol first
     let clean = n.replace('♭', 'b')
-    // Replace note name part
     for (const [flat, sharp] of Object.entries(map)) {
-      if (clean.startsWith(flat)) {
-        return clean.replace(flat, sharp)
-      }
+      if (clean.startsWith(flat)) return clean.replace(flat, sharp)
     }
     return clean
   }
 
-  const normalizedChordNotes = currentChord.value.notes.map(toSharp)
-  const targetNote = toSharp(note)
-
-  return normalizedChordNotes.includes(targetNote)
+  return activeNotesSet.value.has(toSharp(note))
 }
 
 const hasBlackKey = (whiteNote) => {
@@ -202,28 +217,24 @@ const getBlackKeyNote = (whiteNote) => {
   const octave = whiteNote.match(/\d/)[0]
   return `${noteName}#${octave}`
 }
-const isLightColor = (hex) => {
-  if (!hex) return false
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  // Contrast formula
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000
-  return brightness > 180 // Threshold for bright colors
-}
 </script>
 
 <template>
   <div 
-    :style="{ 
-      '--chord-color': currentChord?.color || '#EF4444',
-      backgroundColor: isChordPlaying && currentChord ? currentChord.color : 'white'
-    }"
-    class="min-h-screen transition-colors duration-500 font-['Noto_Sans_JP'] antialiased"
-    style="backface-visibility: hidden;"
+    class="min-h-screen font-['Noto_Sans_JP'] antialiased relative overflow-hidden"
   >
+    <!-- Background Layer (Optimized for Performance) -->
     <div 
-      class="min-h-screen flex flex-col max-w-3xl mx-auto relative overflow-hidden"
+      class="fixed inset-0 transition-colors duration-700 pointer-events-none"
+      :style="{ 
+        backgroundColor: isChordPlaying && currentChord ? currentChord.color : 'white',
+        transform: 'translateZ(0)',
+        willChange: 'background-color'
+      }"
+    ></div>
+
+    <div 
+      class="min-h-screen flex flex-col max-w-3xl mx-auto relative z-10"
     >
 
     <!-- Header -->
@@ -253,16 +264,16 @@ const isLightColor = (hex) => {
               v-for="note in whiteKeys" 
               :key="note"
               @click="playNote(note)"
-              class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm transition-all duration-75 cursor-pointer active:opacity-90"
+              class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm cursor-pointer active:opacity-90 overflow-hidden"
+              style="transition: transform 0.075s, background-color 0.1s; will-change: transform, background-color;"
               :class="[
-                isNoteActive(note) ? '' : 'bg-white',
-                pressedNotes.has(note) ? 'translate-y-1.5 shadow-[inset_0_4px_12px_rgba(0,0,0,0.2)] brightness-75 scale-[0.98] z-10' : ''
+                pressedNotes.has(note) ? 'translate-y-1 shadow-[inset_0_4px_12px_rgba(0,0,0,0.2)] brightness-75 scale-[0.98] z-10' : ''
               ]"
-              :style="isNoteActive(note) ? { backgroundColor: currentChord?.color } : {}"
+              :style="isNoteActive(note) ? { backgroundColor: currentChord?.color } : { backgroundColor: '#fff' }"
             >
               <span 
-                class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[6px] font-bold uppercase transition-colors duration-300"
-                :class="[isNoteActive(note) ? (isLightColor(currentChord?.color) ? 'text-black/40' : 'text-white/60') : 'text-gray-300']"
+                class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[6px] font-bold uppercase"
+                :class="[isNoteActive(note) ? (currentChord?.isLight ? 'text-black/40' : 'text-white/60') : 'text-gray-300']"
               >
                 {{ note.replace(/\d/, '') }}
                 <span v-if="note === 'C4'" class="block text-[5px] opacity-70 mt-0.5 font-black text-indigo-400">Mid</span>
@@ -278,10 +289,11 @@ const isLightColor = (hex) => {
                 <div 
                   v-if="hasBlackKey(note.note)"
                   @click.stop="playNote(getBlackKeyNote(note.note))"
-                  class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 transition-all duration-75 z-20 cursor-pointer pointer-events-auto"
+                  class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 z-20 cursor-pointer pointer-events-auto"
+                  style="transition: transform 0.075s, background-color 0.1s; will-change: transform, background-color;"
                   :class="[
                     isNoteActive(getBlackKeyNote(note.note)) ? '' : 'bg-gray-800',
-                    pressedNotes.has(getBlackKeyNote(note.note)) ? 'translate-y-1.5 shadow-[inset_0_4px_12px_rgba(0,0,0,0.2)] brightness-75 scale-95 z-30' : ''
+                    pressedNotes.has(getBlackKeyNote(note.note)) ? 'translate-y-1 shadow-[inset_0_4px_12px_rgba(0,0,0,0.2)] brightness-75 scale-95 z-30' : ''
                   ]"
                   :style="isNoteActive(getBlackKeyNote(note.note)) ? { backgroundColor: currentChord?.color } : {}"
                 ></div>
@@ -300,23 +312,22 @@ const isLightColor = (hex) => {
               v-for="(chord) in allChords" 
               :key="chord.id"
               @click="toggleChord(chord)"
-              class="relative cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm group
-                     aspect-square rounded-full
-                     md:aspect-auto md:rounded-2xl md:h-20"
+              class="relative cursor-pointer shadow-sm group aspect-square rounded-full md:aspect-auto md:rounded-2xl md:h-20 overflow-hidden"
+              style="transition: transform 0.2s, box-shadow 0.2s; will-change: transform;"
               :class="[
                  currentChord?.id === chord.id 
                     ? 'ring-4 ring-offset-2 ring-gray-200 z-10 scale-105 shadow-md' 
-                    : 'hover:shadow-md'
+                    : 'hover:scale-105 active:scale-95 hover:shadow-md'
               ]"
               :style="{ backgroundColor: chord.color }"
             >
 
               <!-- Mobile Content: Center Number -->
               <div class="absolute inset-0 flex items-center justify-center md:hidden">
-                 <span 
-                   class="text-lg font-black"
-                   :style="{ color: isLightColor(chord.color) ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.9)' }"
-                 >
+                  <span 
+                    class="text-lg font-black"
+                    :style="{ color: chord.isLight ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.9)' }"
+                  >
                    {{ chord.globalIndex }}
                  </span>
               </div>
@@ -328,7 +339,7 @@ const isLightColor = (hex) => {
                   class="w-10 h-10 rounded-full flex items-center justify-center mr-3 shrink-0 text-Base font-black shadow-sm border-2 border-white/20"
                   :style="{ 
                     backgroundColor: 'rgba(255,255,255,0.2)',
-                    color: isLightColor(chord.color) ? '#1f2937' : 'white'
+                    color: chord.isLight ? '#1f2937' : 'white'
                   }"
                 >
                   {{ chord.globalIndex }}
@@ -338,13 +349,13 @@ const isLightColor = (hex) => {
                 <div class="flex flex-col text-left overflow-hidden justify-center h-full">
                   <span 
                     class="font-black text-[15px] leading-tight"
-                    :class="isLightColor(chord.color) ? 'text-gray-900' : 'text-white'"
+                    :class="chord.isLight ? 'text-gray-900' : 'text-white'"
                   >
                     {{ namingConvention === 'german' ? chord.name : chord.nameIt }}
                   </span>
                   <span 
                     class="text-[10px] font-bold leading-none mt-1 opacity-90"
-                    :class="isLightColor(chord.color) ? 'text-gray-600' : 'text-white'"
+                    :class="chord.isLight ? 'text-gray-600' : 'text-white'"
                   >
                     {{ chord.colorName }}
                   </span>
@@ -489,6 +500,10 @@ const isLightColor = (hex) => {
                 <router-link to="/contact" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
                   <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
                   お問い合わせ
+                </router-link>
+                <router-link to="/faq" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
+                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
+                  よくあるご質問 (Q&A)
                 </router-link>
               </div>
             </div>

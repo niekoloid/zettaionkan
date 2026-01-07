@@ -94,5 +94,6 @@ watch(() => [props.abc, props.isAnswered, props.octave], () => {
 }
 .animate-bounce-in {
   animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  will-change: transform, opacity;
 }
 </style>
