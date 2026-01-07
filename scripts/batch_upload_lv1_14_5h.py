@@ -29,20 +29,20 @@ def main():
 
     # Level titles mapping
     titles = {
-        1: "【赤】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        2: "【黄色】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        3: "【青】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        4: "【黒】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        5: "【緑】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        6: "【オレンジ】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        7: "【紫】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        8: "【ピンク】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        9: "【茶色】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        10: "【黄緑】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        11: "【ベージュ】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        12: "【薄紫】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        13: "【グレー】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
-        14: "【水色】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        1: "【赤】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        2: "【黄色】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        3: "【青】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        4: "【黒】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        5: "【緑】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        6: "【オレンジ】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        7: "【紫】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        8: "【ピンク】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        9: "【茶色】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        10: "【黄緑】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        11: "【ベージュ】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        12: "【薄紫】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        13: "【グレー】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
+        14: "【水色】絶対音感トレーニング｜ 5時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録",
     }
 
     video_dir = "videos/outputs_5h"

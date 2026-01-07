@@ -58,7 +58,7 @@ const QUIZ_LENGTH = 5
 const DELAYS = {
   PLAYBACK_START: 500,
   TRANSITION: 400,
-  FEEDBACK: 1000
+  FEEDBACK: 800
 }
 
 // === Reactive State ===
@@ -372,9 +372,9 @@ const submitAnswer = (note) => {
       userAnswer.value = null
       isQuestionChanging.value = false
       playCurrentQuestion()
-    }, DELAYS.TRANSITION)
+    }, DELAYS.FEEDBACK)
   } else {
-    setTimeout(finishQuizz, DELAYS.TRANSITION)
+    setTimeout(finishQuizz, DELAYS.FEEDBACK)
   }
 }
 
@@ -712,6 +712,20 @@ onMounted(async () => {
             </button>
           </div>
 
+          <!-- Feedback Overlay -->
+          <Transition name="feedback-pop">
+            <div v-if="userAnswer" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+              <div v-if="matchOctave ? userAnswer.id === currentQuestion.id : userAnswer.name === currentQuestion.name" 
+                   class="text-[250px] sm:text-[350px] font-black text-blue-500 drop-shadow-[0_0_20px_rgba(59,130,246,0.6)] select-none leading-none">
+                ◯
+              </div>
+              <div v-else 
+                   class="text-[250px] sm:text-[350px] font-black text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.6)] select-none leading-none">
+                ×
+              </div>
+            </div>
+          </Transition>
+
           <Transition name="slide-fade" mode="out-in">
             <div :key="currentQuestionIndex" class="flex-grow flex flex-col overflow-hidden pt-12">
               <!-- 1. Piano Visualization -->
@@ -948,6 +962,27 @@ onMounted(async () => {
 }
 .animate-bounce-in { animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
 .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+.feedback-pop-enter-active {
+  animation: feedback-pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.feedback-pop-leave-active {
+  transition: opacity 0.2s ease;
+}
+.feedback-pop-enter-from, .feedback-pop-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+@keyframes feedback-pop-in {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-fade-in {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
 @keyframes bounce-in {
   0% { transform: scale(0); opacity: 0; }
   60% { transform: scale(1.1); opacity: 1; }

@@ -36,7 +36,7 @@ const QUIZZ_CHORDS = [
 const DELAYS = {
   PLAYBACK_START: 500,
   TRANSITION: 400,
-  FEEDBACK: 1000
+  FEEDBACK: 800
 }
 
 // === Reactive State ===
@@ -189,7 +189,7 @@ const submitAnswer = (chord) => {
     isQuestionChanging.value = false
     shuffleChords()
     playCurrentQuestion()
-  }, DELAYS.TRANSITION)
+  }, DELAYS.FEEDBACK)
 }
 
 const skipQuestion = () => {
@@ -399,7 +399,19 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <!-- Feedback Overlay (Removed during quiz) -->
+        <!-- Feedback Overlay -->
+        <Transition name="feedback-pop">
+          <div v-if="userAnswer" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+            <div v-if="userAnswer.id === currentQuestion.id" 
+                 class="text-[250px] sm:text-[350px] font-black text-blue-500 drop-shadow-[0_0_20px_rgba(59,130,246,0.6)] select-none leading-none">
+              ◯
+            </div>
+            <div v-else 
+                 class="text-[250px] sm:text-[350px] font-black text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.6)] select-none leading-none">
+              ×
+            </div>
+          </div>
+        </Transition>
 
         <Transition name="slide-fade" mode="out-in">
           <div :key="currentQuestionIndex" class="flex-grow grid gap-0.5 w-full h-full"
@@ -564,12 +576,21 @@ onUnmounted(() => {
   transform: translateX(-10px);
 }
 
-.animate-bounce-in {
-  animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+.feedback-pop-enter-active {
+  animation: feedback-pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.feedback-pop-leave-active {
+  transition: opacity 0.2s ease;
+}
+.feedback-pop-enter-from, .feedback-pop-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
 }
 
-.animate-shake {
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+@keyframes feedback-pop-in {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes bounce-in {

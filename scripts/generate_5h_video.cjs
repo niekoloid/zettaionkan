@@ -104,8 +104,10 @@ async function generate() {
   }
 
   const levelOrder = [0, 2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+  const targetLevel = process.argv[2] ? parseInt(process.argv[2]) : null;
+  const levels = targetLevel ? [targetLevel] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
-  for (let L = 1; L <= 14; L++) {
+  for (let L of levels) {
     console.log(`\n🚀 Level ${L} (5時間版) の動画を生成開始...`);
     
     const currentLevelIndices = levelOrder.slice(0, L);

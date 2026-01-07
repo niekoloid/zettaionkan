@@ -18,6 +18,7 @@ const selectedInstrument = ref('yamaha')
 const loadingFile = ref('')
 const narrationBuffers = {}
 const effectBuffers = {}
+let samplerLoadingPromises = {} // Track sampler loading per instrument
 let narrationLoadingPromise = null
 let effectsLoadingPromise = null
 
@@ -44,28 +45,59 @@ export function useAudio() {
   const loadSampler = async (instrumentId, isBackground = false) => {
     // 1. If sampler already exists, just switch and return
     if (samplers[instrumentId]) {
-      if (!isBackground) selectedInstrument.value = instrumentId
+      if (!isBackground) {
+        selectedInstrument.value = instrumentId
+        // NEW: Dispose other samplers to save memory when switching
+        Object.keys(samplers).forEach(id => {
+          if (id !== instrumentId && samplers[id]) {
+            try {
+              samplers[id].dispose()
+              delete samplers[id]
+              isLoaded.value[id] = false
+              console.log(`Disposed idle sampler: ${id}`)
+            } catch (e) {
+              console.error(`Error disposing ${id}:`, e)
+            }
+          }
+        })
+      }
       return
     }
 
-    // 2. If already loading, ignore duplicate call
-    if (isBackground && isLoaded.value[instrumentId]) return
+    // 2. If already loading, return existing promise
+    if (samplerLoadingPromises[instrumentId]) {
+      return samplerLoadingPromises[instrumentId]
+    }
 
     if (!isBackground) {
       isLoading.value = true
       loadingProgress.value = 0
       selectedInstrument.value = instrumentId
+
+      // NEW: Clear other samplers before starting new load to prevent memory spikes
+      Object.keys(samplers).forEach(id => {
+        if (id !== instrumentId && samplers[id]) {
+          try {
+            samplers[id].dispose()
+            delete samplers[id]
+            isLoaded.value[id] = false
+            console.log(`Disposed idle sampler before load: ${id}`)
+          } catch (e) {
+            console.error(e)
+          }
+        }
+      })
     }
 
-    const config = instrumentId === 'yamaha'
-      ? { urls: YAMAHA_MAP, baseUrl: "https://tonejs.github.io/audio/salamander/" }
-      : { urls: STEINWAY_MAP, baseUrl: "/samples/steinway/ff/" }
-
-    const fileList = Object.values(config.urls)
-    let fileIdx = 0
-
-    return new Promise((resolve) => {
+    samplerLoadingPromises[instrumentId] = new Promise((resolve) => {
       try {
+        const config = instrumentId === 'yamaha'
+          ? { urls: YAMAHA_MAP, baseUrl: "https://tonejs.github.io/audio/salamander/" }
+          : { urls: STEINWAY_MAP, baseUrl: "/samples/steinway/ff/" }
+
+        const fileList = Object.values(config.urls)
+        let fileIdx = 0
+
         const s = new Tone.Sampler({
           ...config,
           onload: () => {
@@ -77,6 +109,7 @@ export function useAudio() {
               loadingProgress.value = 100
               loadingFile.value = ''
             }
+            samplerLoadingPromises[instrumentId] = null
             resolve(true)
           },
           onerror: (err) => {
@@ -85,6 +118,7 @@ export function useAudio() {
               isLoading.value = false
               loadingProgress.value = 100
             }
+            samplerLoadingPromises[instrumentId] = null
             resolve(false)
           }
         }).toDestination()
@@ -104,9 +138,12 @@ export function useAudio() {
       } catch (err) {
         console.error('Sampler initialization error:', err)
         if (!isBackground) isLoading.value = false
+        samplerLoadingPromises[instrumentId] = null
         resolve(false)
       }
     })
+
+    return samplerLoadingPromises[instrumentId]
   }
 
   const loadNarration = async () => {
@@ -116,17 +153,19 @@ export function useAudio() {
     narrationLoadingPromise = (async () => {
       console.log('Starting narration buffer load...')
       try {
-        const promises = Object.entries(NARRATION_FILES).map(async ([name, url]) => {
+        // Load sequentially to avoid memory spikes on tablets
+        const entries = Object.entries(NARRATION_FILES)
+        for (const [name, url] of entries) {
           if (!narrationBuffers[name]) {
             narrationBuffers[name] = await Tone.ToneAudioBuffer.fromUrl(url)
           }
-        })
-        await Promise.all(promises)
+        }
+        
         console.log('Narration buffers loaded successfully')
         isLoaded.value.narration = true
         narrationLoadingPromise = null
         
-        // Also trigger effect loading in background
+        // Also trigger effect loading sequentially in background
         loadEffects().catch(console.error)
         
         return true
@@ -152,12 +191,12 @@ export function useAudio() {
       }
 
       try {
-        const promises = Object.entries(effectFiles).map(async ([name, url]) => {
+        const entries = Object.entries(effectFiles)
+        for (const [name, url] of entries) {
           if (!effectBuffers[name]) {
             effectBuffers[name] = await Tone.ToneAudioBuffer.fromUrl(url)
           }
-        })
-        await Promise.all(promises)
+        }
         console.log('Effect buffers loaded')
         isLoaded.value.effects = true
         effectsLoadingPromise = null
@@ -173,11 +212,11 @@ export function useAudio() {
   }
 
   const preloadAll = async () => {
-    console.log('Preloading all audio samples in background...')
-    const p1 = loadSampler('yamaha', true)
-    const p2 = loadSampler('steinway', true)
-    const p3 = loadNarration()
-    await Promise.all([p1, p2, p3])
+    console.log('Preloading all audio samples sequentially...')
+    // Load Yamaha first, then Steinway, then Narration
+    await loadSampler('yamaha', true)
+    await loadSampler('steinway', true)
+    await loadNarration()
     console.log('All audio samples preloaded.')
   }
 

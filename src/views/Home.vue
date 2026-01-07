@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick, computed } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import * as Tone from 'tone'
 
@@ -105,6 +105,12 @@ onMounted(async () => {
   // Set initial chord
   if (allChords.value.length > 0) {
     currentChord.value = allChords.value[0]
+  }
+})
+
+onUnmounted(() => {
+  if (playbackTimeout.value) {
+    clearTimeout(playbackTimeout.value)
   }
 })
 
