@@ -3,14 +3,13 @@ from PIL import Image, ImageDraw, ImageFont
 
 # Path configuration
 INPUT_DIR = './videos/outputs/thumbnails'
-OUTPUT_DIR = './videos/outputs/thumbnails_10h'
+OUTPUT_DIR = './videos/outputs/thumbnails_5h'
 FONT_PATH = '/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc'
 
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # List of files to process
-# Note: Filenames are based on actual files in the directory
 FILES = [
     'Lv1_thumbnail_compressed.jpg',
     'Lv2.png',
@@ -38,12 +37,11 @@ def add_badge(img_path, output_path):
             width, height = img.size
             
             # Badge text
-            text = "10時間ぶっ続け"
+            text = "5時間連続再生"
             
             # Dynamically calc font size based on image width
             font_size = int(width * 0.04) 
             try:
-                # Use index 0 for TTC files (usually the first face)
                 font = ImageFont.truetype(FONT_PATH, font_size, index=0)
             except Exception as fe:
                 print(f"Font error: {fe}. Using default.")
@@ -62,19 +60,19 @@ def add_badge(img_path, output_path):
             bw = tw + padx * 2
             bh = th + pady * 2
             
-            # Top-right position
-            margin = int(width * 0.04)
-            bx = width - bw - margin
-            by = margin
+            # Position
+            margin_right = int(width * 0.04)
+            margin_top = int(height * 0.08) # Shifted down (was width * 0.04 ~= height * 0.07 on 16:9)
+            bx = width - bw - margin_right
+            by = margin_top 
             
-            # Draw badge background (Red with some transparency maybe? No, opaque is better for visibility)
+            # Draw badge background 
             badge_color = (220, 20, 60, 255) # Crimson red
             
             # Rounded rectangle
             draw.rounded_rectangle([bx, by, bx+bw, by+bh], radius=int(bh/4), fill=badge_color)
             
             # Draw text (White)
-            # Center text in badge
             tx = bx + padx
             ty = by + pady - bbox[1]
             draw.text((tx, ty), text, font=font, fill=(255, 255, 255, 255))
@@ -90,13 +88,12 @@ if __name__ == "__main__":
     # Process files
     for i, filename in enumerate(FILES):
         input_path = os.path.join(INPUT_DIR, filename)
-        target_name = f"Lv{i+1}_10h_thumbnail.jpg"
+        target_name = f"Lv{i+1}_5h_thumbnail.jpg"
         output_path = os.path.join(OUTPUT_DIR, target_name)
         
         if os.path.exists(input_path):
             add_badge(input_path, output_path)
         else:
-            # Try to find file if Level mismatch
             print(f"Warning: File not found: {input_path}")
 
     # Success message
