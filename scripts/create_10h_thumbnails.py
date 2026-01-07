@@ -37,7 +37,7 @@ def add_badge(img_path, output_path):
             width, height = img.size
             
             # Badge text
-            text = "5時間連続再生"
+            text = "5h連続再生"
             
             # Dynamically calc font size based on image width
             font_size = int(width * 0.04) 
@@ -62,20 +62,20 @@ def add_badge(img_path, output_path):
             
             # Position
             margin_right = int(width * 0.04)
-            margin_top = int(height * 0.08) # Shifted down (was width * 0.04 ~= height * 0.07 on 16:9)
+            margin_top = int(height * 0.08) 
             bx = width - bw - margin_right
             by = margin_top 
             
-            # Draw badge background 
-            badge_color = (220, 20, 60, 255) # Crimson red
+            # Draw badge background (White)
+            badge_color = (255, 255, 255, 255) 
             
             # Rounded rectangle
             draw.rounded_rectangle([bx, by, bx+bw, by+bh], radius=int(bh/4), fill=badge_color)
             
-            # Draw text (White)
+            # Draw text (Black)
             tx = bx + padx
             ty = by + pady - bbox[1]
-            draw.text((tx, ty), text, font=font, fill=(255, 255, 255, 255))
+            draw.text((tx, ty), text, font=font, fill=(0, 0, 0, 255))
             
             # Save as JPEG for YouTube
             img.convert('RGB').save(output_path, 'JPEG', quality=95)
