@@ -16,20 +16,20 @@
 
 ## 📺 Title List (Optimized for Search & CTR)
 
-- Lv.1：【赤】絶対音感トレーニング｜ 10 分リピート - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.2：【黄色】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.3：【青】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.4：【黒】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.5：【緑】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.6：【オレンジ】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.7：【紫】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.8：【ピンク】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.9：【茶色】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.10：【黄緑】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.11：【ベージュ】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.12：【薄紫】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.13：【グレー】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
-- Lv.14：【水色】絶対音感トレーニング｜混合リピート 10 分 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.1：【赤】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.2：【黄色】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.3：【青】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.4：【黒】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.5：【緑】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.6：【オレンジ】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.7：【紫】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.8：【ピンク】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.9：【茶色】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.10：【黄緑】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.11：【ベージュ】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.12：【薄紫】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.13：【グレー】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
+- Lv.14：【水色】絶対音感トレーニング｜ 5 時間連続再生 - Steinway Model B / 44.1kHz 16bit 高精度収録
 
 ---
 
@@ -41,7 +41,7 @@
 
 ---
 
-絶対音感を身につけるため、和音の響きと色のイメージを脳に定着させるトレーニング動画（10 分間）です。
+絶対音感を身につけるため、和音の響きと色のイメージを脳に定着させるトレーニング動画（5 時間連続再生）です。
 
 ### この動画の学習メソッド
 

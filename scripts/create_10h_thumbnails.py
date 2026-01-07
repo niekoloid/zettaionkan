@@ -62,7 +62,7 @@ def add_badge(img_path, output_path):
             
             # Position
             margin_right = int(width * 0.04)
-            margin_top = int(height * 0.15) 
+            margin_top = int(height * 0.12) 
             bx = width - bw - margin_right
             by = margin_top 
             
