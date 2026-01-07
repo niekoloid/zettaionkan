@@ -44,14 +44,14 @@ const render = () => {
   const clefStr = props.clef === 'bass' ? 'clef=bass' : ''
   
   abcjs.renderAbc(uniqueId, `L:1\nK:C ${clefStr}\n${cleanAbc}`, {
-    responsive: 'resize',
+    responsive: null,
     scale: props.scale,
     paddingtop: 0,
     paddingbottom: 0,
     paddingleft: 0,
     paddingright: 0,
     staffwidth: 70,
-    add_classes: true
+    add_classes: false
   })
 }
 
@@ -94,6 +94,5 @@ watch(() => [props.abc, props.isAnswered, props.octave], () => {
 }
 .animate-bounce-in {
   animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-  will-change: transform, opacity;
 }
 </style>

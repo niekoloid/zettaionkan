@@ -127,7 +127,7 @@ const playChord = async (notes) => {
     // Set state immediately for UI responsiveness
     isChordPlaying.value = true
 
-    // Audio trigger - remove nextTick to keep user gesture context strong if possible
+    // Audio trigger
     currentSampler.triggerAttackRelease(notes, 6)
     notes.forEach(note => pressedNotes.value.add(note))
     
@@ -136,8 +136,6 @@ const playChord = async (notes) => {
       isChordPlaying.value = false
       playbackTimeout.value = null
     }, 6000)
-    
-    console.log('Playing chord:', notes)
   } else {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
   }
@@ -152,7 +150,6 @@ const playNote = async (note) => {
     currentSampler.triggerAttackRelease(note, '2n')
     pressedNotes.value.add(note)
     setTimeout(() => pressedNotes.value.delete(note), 1000)
-    console.log('Playing note:', note)
   } else {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
   }
@@ -223,13 +220,15 @@ const getBlackKeyNote = (whiteNote) => {
   <div 
     class="min-h-screen font-['Noto_Sans_JP'] antialiased relative overflow-hidden"
   >
-    <!-- Background Layer (Optimized for Performance) -->
+    <!-- Background Layer (Optimized with Opacity) -->
     <div 
-      class="fixed inset-0 transition-colors duration-700 pointer-events-none"
+      class="fixed inset-0 bg-white pointer-events-none"
+    ></div>
+    <div 
+      class="fixed inset-0 pointer-events-none transition-opacity duration-700"
+      :class="isChordPlaying && currentChord ? 'opacity-100' : 'opacity-0'"
       :style="{ 
-        backgroundColor: isChordPlaying && currentChord ? currentChord.color : 'white',
-        transform: 'translateZ(0)',
-        willChange: 'background-color'
+        backgroundColor: currentChord?.color || 'transparent'
       }"
     ></div>
 
@@ -248,7 +247,7 @@ const getBlackKeyNote = (whiteNote) => {
       <section class="flex flex-col items-center mb-2 text-center">
         <ScoreDisplay :abc="currentChord?.abc" :is-answered="true">
           <template #footer v-if="currentChord">
-            <div class="mt-4 text-[14px] font-bold text-gray-700 flex flex-col items-center animate-bounce-in">
+            <div class="mt-4 text-[14px] font-bold text-gray-700 flex flex-col items-center">
               <span class="whitespace-nowrap" v-html="(namingConvention === 'german' ? currentChord.name : currentChord.nameIt) + ' (' + currentChord.colorName + ')'"></span>
             </div>
           </template>
@@ -264,8 +263,7 @@ const getBlackKeyNote = (whiteNote) => {
               v-for="note in whiteKeys" 
               :key="note"
               @click="playNote(note)"
-              class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm cursor-pointer active:opacity-90 overflow-hidden"
-              style="transition: transform 0.075s, background-color 0.1s; will-change: transform, background-color;"
+              class="relative flex-grow border-x-[0.5px] border-gray-200 first:border-l-0 last:border-r-0 rounded-b-sm cursor-pointer active:opacity-90 overflow-hidden transition-colors duration-150"
               :class="[
                 pressedNotes.has(note) ? 'translate-y-1 shadow-[inset_0_4px_12px_rgba(0,0,0,0.2)] brightness-75 scale-[0.98] z-10' : ''
               ]"
@@ -289,8 +287,7 @@ const getBlackKeyNote = (whiteNote) => {
                 <div 
                   v-if="hasBlackKey(note.note)"
                   @click.stop="playNote(getBlackKeyNote(note.note))"
-                  class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 z-20 cursor-pointer pointer-events-auto"
-                  style="transition: transform 0.075s, background-color 0.1s; will-change: transform, background-color;"
+                  class="absolute right-0 translate-x-1/2 w-3/5 h-full rounded-b-sm border-x border-b border-gray-800 z-20 cursor-pointer pointer-events-auto transition-colors duration-150"
                   :class="[
                     isNoteActive(getBlackKeyNote(note.note)) ? '' : 'bg-gray-800',
                     pressedNotes.has(getBlackKeyNote(note.note)) ? 'translate-y-1 shadow-[inset_0_4px_12px_rgba(0,0,0,0.2)] brightness-75 scale-95 z-30' : ''
@@ -313,7 +310,6 @@ const getBlackKeyNote = (whiteNote) => {
               :key="chord.id"
               @click="toggleChord(chord)"
               class="relative cursor-pointer shadow-sm group aspect-square rounded-full md:aspect-auto md:rounded-2xl md:h-20 overflow-hidden"
-              style="transition: transform 0.2s, box-shadow 0.2s; will-change: transform;"
               :class="[
                  currentChord?.id === chord.id 
                     ? 'ring-4 ring-offset-2 ring-gray-200 z-10 scale-105 shadow-md' 
