@@ -10,26 +10,27 @@ import { useAuth } from '../composables/useAuth'
 
 import AppHeader from '../components/AppHeader.vue'
 import ChordSelectionButton from '../components/ChordSelectionButton.vue'
+import FrequencySettings from '../components/FrequencySettings.vue'
+import { useChordFrequency } from '../composables/useChordFrequency'
+import { useChordSettings } from '../composables/useChordSettings'
+import { useAppSettings } from '../composables/useAppSettings'
+
 
 const router = useRouter()
 
 // === Constants ===
-const QUIZZ_CHORDS = [
-  { ...ChordDefinitions.DOMISO, label: '1', displayColor: '赤', sortOrder: 1 },
-  { ...ChordDefinitions.DOFARA, label: '2', displayColor: '黄色', sortOrder: 2 },
-  { ...ChordDefinitions.SHIRESO, label: '3', displayColor: '青', sortOrder: 3 },
-  { ...ChordDefinitions.RADOFA, label: '4', displayColor: '黒', sortOrder: 4 },
-  { ...ChordDefinitions.RESOSHI, label: '5', displayColor: '緑', sortOrder: 5 },
-  { ...ChordDefinitions.MISODO, label: '6', displayColor: 'オレンジ', sortOrder: 6 },
-  { ...ChordDefinitions.FARADO, label: '7', displayColor: '紫', sortOrder: 7 },
-  { ...ChordDefinitions.SOSHIRE, label: '8', displayColor: 'ピンク', sortOrder: 8 },
-  { ...ChordDefinitions.SODOMI, label: '9', displayColor: '茶色', sortOrder: 9 },
-  { ...ChordDefinitions.LA_CIS_MI, label: '10', displayColor: '黄緑', sortOrder: 10 },
-  { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: 'ベージュ', sortOrder: 11 },
-  { ...ChordDefinitions.MI_GIS_SI, label: '12', displayColor: '薄紫', sortOrder: 12 },
-  { ...ChordDefinitions.BE_RE_FA, label: '13', displayColor: 'グレー', sortOrder: 13 },
-  { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: '水色', sortOrder: 14 },
-]
+const { allChords: customChords } = useChordSettings()
+const { namingConvention } = useAppSettings()
+
+const QUIZZ_CHORDS = computed(() => {
+  return customChords.value.slice(0, 14).map((c, index) => ({
+    ...c,
+    label: (index + 1).toString(),
+    displayColor: c.colorName,
+    displayColorFormatted: c.colorName,
+    sortOrder: index + 1
+  }))
+})
 
 // const QUIZ_LENGTH = 5 (Endless mode)
 
@@ -48,10 +49,32 @@ const resultMessage = ref(null)
 const userAnswer = ref(null)
 const isQuestionChanging = ref(false)
 
-const selectedChordIds = ref(new Set([QUIZZ_CHORDS[0].id, QUIZZ_CHORDS[1].id]))
+const selectedChordIds = ref(new Set())
+// Initialize default chords on mount
+onMounted(() => {
+  if (selectedChordIds.value.size === 0 && QUIZZ_CHORDS.value.length >= 2) {
+    selectedChordIds.value.add(QUIZZ_CHORDS.value[0].id)
+    selectedChordIds.value.add(QUIZZ_CHORDS.value[1].id)
+  }
+})
 const questions = ref([])
 const quizzHistory = ref([])
 const shuffledIds = ref([])
+
+const selectedChords = computed(() => {
+  return QUIZZ_CHORDS.value.filter(c => selectedChordIds.value.has(c.id))
+})
+
+const {
+  parentChordRatio,
+  isReviewWeighted,
+  parentChord,
+  otherChords,
+  otherChordsDisplay,
+  otherChordsWithWeights,
+  getRandomChord
+} = useChordFrequency(selectedChords)
+
 
 const { 
   samplers, 
@@ -67,13 +90,13 @@ const {
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 const currentQuestionCount = computed(() => currentQuestionIndex.value + 1)
 const isAllSelected = computed(() => selectedChordIds.value.size > 0)
-const whiteKeyChords = computed(() => QUIZZ_CHORDS.filter(c => c.sortOrder <= 9))
-const blackKeyChords = computed(() => QUIZZ_CHORDS.filter(c => c.sortOrder > 9))
+const whiteKeyChords = computed(() => QUIZZ_CHORDS.value.filter(c => c.sortOrder <= 9))
+const blackKeyChords = computed(() => QUIZZ_CHORDS.value.filter(c => c.sortOrder > 9))
 const currentLayoutChords = computed(() => {
   if (view.value === 'quiz') {
-    return shuffledIds.value.map(id => QUIZZ_CHORDS.find(c => c.id === id))
+    return shuffledIds.value.map(id => QUIZZ_CHORDS.value.find(c => c.id === id))
   }
-  return QUIZZ_CHORDS.filter(c => selectedChordIds.value.has(c.id))
+  return QUIZZ_CHORDS.value.filter(c => selectedChordIds.value.has(c.id))
 })
 
 // Dynamic Grid Logic
@@ -102,11 +125,6 @@ const cleanupSideEffects = () => {
   // No specific timeouts or intervals to clear for now unrelated to auto-play
 }
 
-const getRandomChord = () => {
-  const availableChords = QUIZZ_CHORDS.filter(c => selectedChordIds.value.has(c.id))
-  return availableChords[Math.floor(Math.random() * availableChords.length)]
-}
-
 const isLightColor = (hex) => {
   if (!hex) return false
   const r = parseInt(hex.slice(1, 3), 16)
@@ -128,11 +146,11 @@ const playCurrentQuestion = async () => {
 }
 
 const toggleChordSelection = (id) => {
-  const targetChord = QUIZZ_CHORDS.find(c => c.id === id)
+  const targetChord = QUIZZ_CHORDS.value.find(c => c.id === id)
   if (!targetChord) return
 
   const newSet = new Set()
-  QUIZZ_CHORDS.forEach(c => {
+  QUIZZ_CHORDS.value.forEach(c => {
     if (c.sortOrder <= targetChord.sortOrder) newSet.add(c.id)
   })
   selectedChordIds.value = newSet
@@ -227,6 +245,7 @@ const finishQuizz = async () => {
         total_questions: quizzHistory.value.length,
         details: quizzHistory.value,
         settings: {
+           mode: 'chord_quizz',
            selected_chords: Array.from(selectedChordIds.value),
            instrument: selectedInstrument.value
         }
@@ -363,6 +382,18 @@ onUnmounted(() => {
               />
             </div>
         </section>
+
+        <!-- Frequency Settings -->
+        <FrequencySettings 
+          v-model:parentChordRatio="parentChordRatio"
+          v-model:isReviewWeighted="isReviewWeighted"
+          :parentChord="parentChord"
+          :otherChords="otherChords"
+          :otherChordsDisplay="otherChordsDisplay"
+          :otherChordsWithWeights="otherChordsWithWeights"
+          :selectedCount="selectedChords.length"
+        />
+
 
 
       </div>

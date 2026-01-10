@@ -3,33 +3,34 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, onBeforeRouteLeave, useRoute } from 'vue-router'
 import * as Tone from 'tone'
 import { ChordDefinitions } from '../constants/chords'
+import { supabase } from '../lib/supabase'
 import { useAudio } from '../composables/useAudio'
 import { useAuth } from '../composables/useAuth'
 import { useAudioSettings } from '../composables/useAudioSettings'
 
 import AppHeader from '../components/AppHeader.vue'
 import ChordSelectionButton from '../components/ChordSelectionButton.vue'
+import FrequencySettings from '../components/FrequencySettings.vue'
+import { useChordFrequency } from '../composables/useChordFrequency'
+import { useChordSettings } from '../composables/useChordSettings'
+import { useAppSettings } from '../composables/useAppSettings'
+
 
 const router = useRouter()
 const route = useRoute()
 
 // === Constants ===
-const TEST_CHORDS = [
-  { ...ChordDefinitions.DOMISO, label: '1', displayColor: '赤', sortOrder: 1 },
-  { ...ChordDefinitions.DOFARA, label: '2', displayColor: '黄色', sortOrder: 2 },
-  { ...ChordDefinitions.SHIRESO, label: '3', displayColor: '青', sortOrder: 3 },
-  { ...ChordDefinitions.RADOFA, label: '4', displayColor: '黒', sortOrder: 4 },
-  { ...ChordDefinitions.RESOSHI, label: '5', displayColor: '緑', sortOrder: 5 },
-  { ...ChordDefinitions.MISODO, label: '6', displayColor: 'オレンジ', sortOrder: 6 },
-  { ...ChordDefinitions.FARADO, label: '7', displayColor: '紫', sortOrder: 7 },
-  { ...ChordDefinitions.SOSHIRE, label: '8', displayColor: 'ピンク', sortOrder: 8 },
-  { ...ChordDefinitions.SODOMI, label: '9', displayColor: '茶色', sortOrder: 9 },
-  { ...ChordDefinitions.LA_CIS_MI, label: '10', displayColor: '黄緑', sortOrder: 10 },
-  { ...ChordDefinitions.RE_FIS_LA, label: '11', displayColor: 'ベージュ', sortOrder: 11 },
-  { ...ChordDefinitions.MI_GIS_SI, label: '12', displayColor: '薄紫', sortOrder: 12 },
-  { ...ChordDefinitions.BE_RE_FA, label: '13', displayColor: 'グレー', sortOrder: 13 },
-  { ...ChordDefinitions.ES_SO_BE, label: '14', displayColor: '水色', sortOrder: 14 },
-]
+const { allChords: customChords } = useChordSettings()
+const { namingConvention } = useAppSettings()
+
+const TEST_CHORDS = computed(() => {
+  return customChords.value.slice(0, 14).map((c, index) => ({
+    ...c,
+    label: (index + 1).toString(),
+    displayColor: c.colorName,
+    sortOrder: index + 1
+  }))
+})
 
 const DELAYS = {
   REVEAL: 3000,
@@ -40,8 +41,20 @@ const DELAYS = {
 // === Reactive State ===
 const view = ref('settings')
 const currentQuestionIndex = ref(0)
-const selectedChordIds = ref(new Set([TEST_CHORDS[0].id, TEST_CHORDS[1].id]))
+const selectedChordIds = ref(new Set())
+// Initialize default chords on mount
+onMounted(() => {
+  if (selectedChordIds.value.size === 0 && TEST_CHORDS.value.length >= 2) {
+    selectedChordIds.value.add(TEST_CHORDS.value[0].id)
+    selectedChordIds.value.add(TEST_CHORDS.value[1].id)
+  }
+})
 const questions = ref([])
+const isSaving = ref(false)
+const playedCount = computed(() => {
+  if (view.value !== 'playing') return 0
+  return isAutoPlayRevealed.value ? currentQuestionIndex.value + 1 : currentQuestionIndex.value
+})
 
 const { 
   samplers, 
@@ -61,20 +74,37 @@ const isVoiceEnabled = ref(true)
 const revealDelay = ref(2.5) // seconds before revealing/speaking
 const autoPlayRevealType = ref('full') // 'full' | 'grid'
 
-// === Computed ===
-const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
-const whiteKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder <= 9))
-const blackKeyChords = computed(() => TEST_CHORDS.filter(c => c.sortOrder > 9))
+const selectedChords = computed(() => {
+  return TEST_CHORDS.value.filter(c => selectedChordIds.value.has(c.id))
+})
+
+const {
+  parentChordRatio,
+  isReviewWeighted,
+  parentChord,
+  otherChords,
+  otherChordsDisplay,
+  otherChordsWithWeights,
+  getRandomChord
+} = useChordFrequency(selectedChords)
+
+
+
+
+
+const whiteKeyChords = computed(() => TEST_CHORDS.value.filter(c => c.sortOrder <= 9))
+const blackKeyChords = computed(() => TEST_CHORDS.value.filter(c => c.sortOrder > 9))
+
+
 
 // === Helper Functions ===
 const cleanupSideEffects = () => {
   if (autoPlayTimeout.value) clearTimeout(autoPlayTimeout.value)
 }
 
-const getRandomChord = () => {
-  const availableChords = TEST_CHORDS.filter(c => selectedChordIds.value.has(c.id))
-  return availableChords[Math.floor(Math.random() * availableChords.length)]
-}
+const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
+
+
 
 const speakColor = async (text) => {
   await playNarration(text)
@@ -158,14 +188,54 @@ const nextQuestion = () => {
 }
 
 const toggleChordSelection = (id) => {
-  const targetChord = TEST_CHORDS.find(c => c.id === id)
+  const targetChord = TEST_CHORDS.value.find(c => c.id === id)
   if (!targetChord) return
 
   const newSet = new Set()
-  TEST_CHORDS.forEach(c => {
+  TEST_CHORDS.value.forEach(c => {
     if (c.sortOrder <= targetChord.sortOrder) newSet.add(c.id)
   })
   selectedChordIds.value = newSet
+}
+
+const saveSession = async () => {
+  if (isSaving.value || questions.value.length === 0) return
+  
+  const currentCount = playedCount.value
+  if (currentCount === 0) return
+
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  if (!currentUser) return
+
+  isSaving.value = true
+  try {
+    const sessionDetails = questions.value.slice(0, currentCount).map(q => ({
+      question: { ...q },
+      answer: { ...q },
+      isCorrect: true,
+      isSkipped: false,
+      mode: 'autoplay'
+    }))
+
+    await supabase.from('training_sessions').insert({
+      user_id: currentUser.id,
+      score: currentCount,
+      total_questions: currentCount,
+      details: sessionDetails,
+      settings: {
+        mode: 'autoplay',
+        instrument: selectedInstrument.value,
+        voice: isVoiceEnabled.value,
+        delay: revealDelay.value,
+        reveal_type: autoPlayRevealType.value,
+        selected_chords: Array.from(selectedChordIds.value)
+      }
+    })
+  } catch (e) {
+    console.error('Failed to save autoplay session:', e)
+  } finally {
+    isSaving.value = false
+  }
 }
 
 
@@ -195,24 +265,28 @@ const startAutoPlay = async () => {
   setTimeout(playCurrentQuestion, DELAYS.PLAYBACK_START)
 }
 
-const stopAutoPlay = () => {
+const stopAutoPlay = async () => {
+  const currentCount = playedCount.value
   cleanupSideEffects()
+  if (currentCount > 0) {
+    await saveSession()
+  }
   view.value = 'settings'
   isAutoPlayRevealed.value = false
 }
 
-const handleHeaderBack = (e) => {
+const handleHeaderBack = async (e) => {
   if (view.value !== 'settings') {
     e.preventDefault()
-    stopAutoPlay()
+    await stopAutoPlay()
   }
 }
 
 // Intercept browser back button
-onBeforeRouteLeave((to, from) => {
+onBeforeRouteLeave(async (to, from) => {
   if (view.value !== 'settings') {
-    stopAutoPlay()
-    return false
+    await stopAutoPlay()
+    return true
   }
 })
 
@@ -236,10 +310,11 @@ onMounted(async () => {
     if (route.query.delay) revealDelay.value = parseFloat(route.query.delay)
     if (route.query.voice === 'false') isVoiceEnabled.value = false
     if (route.query.type) autoPlayRevealType.value = route.query.type
+    if (route.query.ratio) parentChordRatio.value = parseFloat(route.query.ratio)
     
     // Select all chords if requested
     if (route.query.chords === 'all') {
-      selectedChordIds.value = new Set(TEST_CHORDS.map(c => c.id))
+      selectedChordIds.value = new Set(TEST_CHORDS.value.map(c => c.id))
     }
 
     // Wait for sampler and interactions to be ready
@@ -404,6 +479,18 @@ onUnmounted(() => {
               <span>5.0s (ゆっくり)</span>
             </div>
           </div>
+
+          <!-- Frequency Settings -->
+          <FrequencySettings 
+            v-model:parentChordRatio="parentChordRatio"
+            v-model:isReviewWeighted="isReviewWeighted"
+            :parentChord="parentChord"
+            :otherChords="otherChords"
+            :otherChordsDisplay="otherChordsDisplay"
+            :otherChordsWithWeights="otherChordsWithWeights"
+            :selectedCount="selectedChords.length"
+          />
+
 
           <!-- Reveal Style Selection -->
           <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 space-y-4">

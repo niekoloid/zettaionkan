@@ -86,6 +86,16 @@ const routes = [
     path: '/singlenotetest',
     name: 'SingleNoteQuizz',
     component: () => import('../views/SingleNoteQuizz.vue')
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('../views/Settings.vue')
+  },
+  {
+    path: '/history',
+    name: 'History',
+    component: () => import('../views/History.vue')
   }
 ]
 

@@ -412,7 +412,7 @@ const finishQuizz = async () => {
         total_questions: quizzHistory.value.length,
         details: quizzHistory.value,
         settings: {
-           type: 'single_note',
+           mode: 'single_note_quizz',
            selected_notes: Array.from(selectedNoteIds.value),
            instrument: selectedInstrument.value
         }

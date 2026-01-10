@@ -7,10 +7,12 @@ import { ChordDefinitions } from '../constants/chords'
 import { useAudio } from '../composables/useAudio'
 import { useAuth } from '../composables/useAuth'
 import { useAudioSettings } from '../composables/useAudioSettings'
+import { useAppSettings } from '../composables/useAppSettings'
 import AppHeader from '../components/AppHeader.vue'
 
 const { samplers, selectedInstrument, isSamplerLoaded, loadSampler, playNarration } = useAudio()
 const { userTier } = useAuth()
+const { namingConvention, formatChordName } = useAppSettings()
 
 const selectedSong = ref(SONGS[0])
 const isPlaying = ref(false)
@@ -328,7 +330,9 @@ const isLightColor = (hex) => {
             
             <div class="mt-8 text-center h-12">
               <template v-if="currentChord">
-                <span class="text-lg font-black text-gray-900 block leading-tight">{{ currentChord.nameIt }}</span>
+                <span class="text-lg font-black text-gray-900 block leading-tight">
+                  {{ formatChordName(currentChord) }}
+                </span>
                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ currentChord.colorName }}</span>
               </template>
               <template v-else-if="isPlaying">

@@ -3,7 +3,8 @@ import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import * as Tone from 'tone'
 
-import { ChordDefinitions } from '../constants/chords.js'
+import { useChordSettings } from '../composables/useChordSettings'
+import { useAppSettings } from '../composables/useAppSettings'
 
 import { useAudio } from '../composables/useAudio'
 import { useAudioSettings } from '../composables/useAudioSettings'
@@ -17,22 +18,14 @@ const currentChord = ref(null)
 const pressedNotes = ref(new Set())
 const isChordPlaying = ref(false)
 const playbackTimeout = ref(null)
-const namingConvention = ref('italian') // 'german' | 'italian'
 
 // === Single List Logic ===
 // Flatten all 14 basic chords into a single list with metadata
+const { allChords: customChords } = useChordSettings()
+const { namingConvention, formatChordName } = useAppSettings()
+
 const allChords = computed(() => {
-  const basicChords = [
-    // White keys (9)
-    ChordDefinitions.DOMISO, ChordDefinitions.DOFARA, ChordDefinitions.SHIRESO,
-    ChordDefinitions.RADOFA, ChordDefinitions.RESOSHI, ChordDefinitions.MISODO,
-    ChordDefinitions.FARADO, ChordDefinitions.SOSHIRE, ChordDefinitions.SODOMI,
-    // Black keys (5)
-    ChordDefinitions.LA_CIS_MI, ChordDefinitions.RE_FIS_LA, ChordDefinitions.MI_GIS_SI,
-    ChordDefinitions.BE_RE_FA, ChordDefinitions.ES_SO_BE
-  ]
-  
-  return basicChords.map((chord, index) => {
+  return customChords.value.slice(0, 14).map((chord, index) => {
     // Pre-calculate lightness to avoid repeated calls in template
     const r = parseInt(chord.color.slice(1, 3), 16)
     const g = parseInt(chord.color.slice(3, 5), 16)
@@ -73,20 +66,7 @@ const {
 } = useAudio()
 
 const { user, userTier, authReady } = useAuth()
-const { getPreferredInstrument, setPreferredInstrument } = useAudioSettings()
-
-const handleInstrumentChange = (instrument) => {
-  if (instrument === selectedInstrument.value) return
-  
-  if (instrument === 'steinway' && userTier.value !== 'premium') {
-    // Optional: Show upgrade modal or alert
-    alert('Steinway B音源はプレミアムプラン限定です。')
-    return
-  }
-
-  loadSampler(instrument)
-  setPreferredInstrument(instrument)
-}
+const { getPreferredInstrument } = useAudioSettings()
 
 onMounted(async () => {
   // Wait for auth state to be confirmed to avoid loading wrong instrument initially
@@ -254,7 +234,7 @@ const getBlackKeyNote = (whiteNote) => {
         <ScoreDisplay :abc="currentChord?.abc" :is-answered="true">
           <template #footer v-if="currentChord">
             <div class="mt-4 text-[14px] font-bold text-gray-700 flex flex-col items-center">
-              <span class="whitespace-nowrap" v-html="(namingConvention === 'german' ? currentChord.name : currentChord.nameIt) + ' (' + currentChord.colorName + ')'"></span>
+              <span class="whitespace-nowrap">{{ formatChordName(currentChord) }} ({{ currentChord.colorName }})</span>
             </div>
           </template>
         </ScoreDisplay>
@@ -353,7 +333,7 @@ const getBlackKeyNote = (whiteNote) => {
                     class="font-black text-[15px] leading-tight"
                     :class="chord.isLight ? 'text-gray-900' : 'text-white'"
                   >
-                    {{ namingConvention === 'german' ? chord.name : chord.nameIt }}
+                    {{ formatChordName(chord) }}
                   </span>
                   <span 
                     class="text-[10px] font-bold leading-none mt-1 opacity-90"
@@ -422,7 +402,6 @@ const getBlackKeyNote = (whiteNote) => {
               </div>
             </div>
           </div>
-
           <!-- Single Note Training -->
           <router-link to="/singlenotetest" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-sky-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
             <div class="relative z-10 flex items-center w-full px-6">
@@ -430,13 +409,11 @@ const getBlackKeyNote = (whiteNote) => {
               <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-50 text-sky-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <span class="text-2xl font-black">?</span>
               </div>
-
               <!-- Text Content -->
               <div class="ml-4 flex flex-col items-start justify-center flex-grow">
                 <h3 class="text-sm font-black text-sky-900 tracking-wider">単音テストに挑戦</h3>
                 <p class="text-[10px] font-bold text-sky-400 mt-0.5">ドレミの音を一つずつ当ててみましょう</p>
               </div>
-
               <!-- Arrow -->
               <div class="text-sky-200 group-hover:text-sky-500 transition-colors duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -446,31 +423,55 @@ const getBlackKeyNote = (whiteNote) => {
             </div>
           </router-link>
 
+          <!-- Learning History -->
+          <router-link to="/history" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-indigo-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="relative z-10 flex items-center w-full px-6">
+              <!-- Icon Container -->
+              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                  <path d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                  <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm2.25 0c0 4.142 3.358 7.5 7.5 7.5s7.5-3.358 7.5-7.5-3.358-7.5-7.5-7.5-7.5 3.358-7.5 7.5Z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <!-- Text Content -->
+              <div class="ml-4 flex flex-col items-start justify-center flex-grow">
+                <h3 class="text-sm font-black text-indigo-900 tracking-wider">学習履歴を確認</h3>
+                <p class="text-[10px] font-bold text-indigo-400 mt-0.5">これまでのトレーニング成果を見返します</p>
+              </div>
+              <!-- Arrow -->
+              <div class="text-indigo-200 group-hover:text-indigo-500 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </router-link>
+
+          <!-- Settings -->
+          <router-link to="/settings" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-gray-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="relative z-10 flex items-center w-full px-6">
+              <!-- Icon Container -->
+              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                  <path fill-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.349l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.115-.26.297-.348.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.282-.819l.922-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.431l.84-.692a1.875 1.875 0 00.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.844zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <!-- Text Content -->
+              <div class="ml-4 flex flex-col items-start justify-center flex-grow">
+                <h3 class="text-sm font-black text-gray-900 tracking-wider">各種設定</h3>
+                <p class="text-[10px] font-bold text-gray-400 mt-0.5">音源の切り替えやアプリの設定</p>
+              </div>
+              <!-- Arrow -->
+              <div class="text-gray-200 group-hover:text-gray-400 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </router-link>
         </div>
       </section>
 
-      <!-- Instrument Toggle -->
-      <section class="flex flex-col items-center justify-center">
-        <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">グランドピアノ音源</h3>
-        <div class="bg-gray-100 p-1 rounded-full flex items-center shadow-inner">
-          <button 
-            @click="handleInstrumentChange('yamaha')"
-            class="px-5 py-2 rounded-full text-[11px] font-bold transition-all duration-300 active:scale-95"
-            :class="selectedInstrument === 'yamaha' ? 'bg-white text-gray-900 shadow-sm ring-1 ring-black/5' : 'text-gray-400 hover:text-gray-600'"
-          >
-            Yamaha C5
-          </button>
-          <div class="w-px h-4 bg-gray-200 mx-1"></div>
-          <button 
-            @click="handleInstrumentChange('steinway')"
-            class="px-5 py-2 rounded-full text-[11px] font-bold transition-all duration-300 flex items-center active:scale-95"
-            :class="selectedInstrument === 'steinway' ? 'bg-white text-gray-900 shadow-sm ring-1 ring-black/5' : 'text-gray-400 hover:text-gray-600'"
-          >
-            Steinway B
-            <span v-if="userTier !== 'premium'" class="ml-1.5 text-[10px] opacity-70">🔒</span>
-          </button>
-        </div>
-      </section>
 
       <!-- Footer Links -->
       <div class="mt-20 border-t border-gray-100 pt-16 pb-12">

@@ -30,6 +30,14 @@ const props = defineProps({
   id: {
     type: String,
     default: 'score-display'
+  },
+  compact: {
+    type: Boolean,
+    default: false
+  },
+  scale: {
+    type: Number,
+    default: 1
   }
 })
 
@@ -45,12 +53,12 @@ const render = () => {
   
   abcjs.renderAbc(uniqueId, `L:1\nK:C ${clefStr}\n${cleanAbc}`, {
     responsive: null,
-    scale: props.scale,
-    paddingtop: 0,
-    paddingbottom: 0,
+    scale: props.scale * (props.compact ? 0.7 : 1),
+    paddingtop: props.compact ? 0 : 15,
+    paddingbottom: props.compact ? 0 : 15,
     paddingleft: 0,
     paddingright: 0,
-    staffwidth: 70,
+    staffwidth: props.compact ? 50 : 70,
     add_classes: false
   })
 }
@@ -67,7 +75,14 @@ watch(() => [props.abc, props.isAnswered, props.octave], () => {
 </script>
 
 <template>
-  <div class="w-[155px] h-[180px] bg-white rounded-3xl p-4 flex flex-col items-center justify-center border border-gray-100 shadow-sm overflow-hidden relative">
+  <div 
+    :class="[
+      compact 
+        ? 'w-20 h-16 bg-gray-50/50 rounded-xl' 
+        : 'w-[155px] h-[180px] bg-white rounded-3xl p-4 shadow-sm border border-gray-100'
+    ]"
+    class="flex flex-col items-center justify-center overflow-hidden relative"
+  >
     <!-- Placeholder mask when not answered -->
     <div v-if="!isAnswered" class="absolute inset-0 bg-gray-50/50 backdrop-blur-[1px] flex flex-col items-center justify-center z-20">
       <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-2 border border-gray-100">
@@ -79,9 +94,9 @@ watch(() => [props.abc, props.isAnswered, props.octave], () => {
     </div>
 
     <!-- Staff Area -->
-    <div v-show="isAnswered" :id="uniqueId" class="w-full flex justify-center items-center pointer-events-none animate-bounce-in scale-110"></div>
+    <div v-show="isAnswered" :id="uniqueId" class="w-full flex justify-center items-center pointer-events-none animate-bounce-in" :class="{'scale-125': !compact}"></div>
     
-    <slot name="footer"></slot>
+    <slot name="footer" v-if="!compact"></slot>
   </div>
 </template>
 

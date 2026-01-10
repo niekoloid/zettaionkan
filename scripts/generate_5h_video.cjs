@@ -30,20 +30,20 @@ const CONFIG = {
   fontFile: '/System/Library/Fonts/Supplemental/Arial.ttf',
   audioBitrate: '384k',
   chords: [
-    { id: 'domiso', name: '赤', notes: ['C4', 'E4', 'G4'], color: '#EF4444', narrationFile: "赤.mp3" },
-    { id: 'shireso', name: '青', notes: ['B3', 'D4', 'G4'], color: '#3B82F6', narrationFile: "青.mp3" },
+    { id: 'domiso', name: '赤', notes: ['C4', 'E4', 'G4'], color: '#FF0000', narrationFile: "赤.mp3" },
+    { id: 'shireso', name: '青', notes: ['B3', 'D4', 'G4'], color: '#0000FF', narrationFile: "青.mp3" },
     { id: 'dofara', name: '黄色', notes: ['C4', 'F4', 'A4'], color: '#FFFF00', narrationFile: "黄色.mp3" },
     { id: 'radofa', name: '黒', notes: ['A3', 'C4', 'F4'], color: '#000000', narrationFile: "黒.mp3" },
-    { id: 'resoshi', name: '緑', notes: ['D4', 'G4', 'B4'], color: '#16a34a', narrationFile: "緑.mp3" },
-    { id: 'misodo', name: 'オレンジ', notes: ['E4', 'G4', 'C5'], color: '#F97316', narrationFile: "オレンジ.mp3" },
-    { id: 'farado', name: '紫', notes: ['F4', 'A4', 'C5'], color: '#9333ea', narrationFile: "紫.mp3" },
-    { id: 'soshire', name: 'ピンク', notes: ['G4', 'B4', 'D5'], color: '#fbcfe8', narrationFile: "ピンク.mp3" },
-    { id: 'sodomi', name: '茶色', notes: ['G4', 'C5', 'E5'], color: '#713F12', narrationFile: "茶色.mp3" },
-    { id: 'lacismi', name: '黄緑', notes: ['A3', 'C#4', 'E4'], color: '#84cc16', narrationFile: "黄緑.mp3" },
-    { id: 'refisla', name: 'ベージュ', notes: ['D4', 'F#4', 'A4'], color: '#F5DEB3', narrationFile: "ベージュ.mp3" },
-    { id: 'migissi', name: '薄紫', notes: ['E4', 'G#4', 'B4'], color: '#c4b5fd', narrationFile: "薄紫.mp3" },
-    { id: 'berefa', name: 'グレー', notes: ['Bb3', 'D4', 'F4'], color: '#6B7280', narrationFile: "グレー.mp3" },
-    { id: 'essobe', name: '水色', notes: ['Eb4', 'G4', 'Bb4'], color: '#7FDBFF', narrationFile: "水色.mp3" }
+    { id: 'resoshi', name: '緑', notes: ['D4', 'G4', 'B4'], color: '#00FF00', narrationFile: "緑.mp3" },
+    { id: 'misodo', name: 'オレンジ', notes: ['E4', 'G4', 'C5'], color: '#FF8000', narrationFile: "オレンジ.mp3" },
+    { id: 'farado', name: '紫', notes: ['F4', 'A4', 'C5'], color: '#800080', narrationFile: "紫.mp3" },
+    { id: 'soshire', name: 'ピンク', notes: ['G4', 'B4', 'D5'], color: '#FF69B4', narrationFile: "ピンク.mp3" },
+    { id: 'sodomi', name: '茶色', notes: ['G4', 'C5', 'E5'], color: '#8B4513', narrationFile: "茶色.mp3" },
+    { id: 'lacismi', name: '黄緑', notes: ['A3', 'C#4', 'E4'], color: '#7FFF00', narrationFile: "黄緑.mp3" },
+    { id: 'refisla', name: '薄橙', notes: ['D4', 'F#4', 'A4'], color: '#F5DEB3', narrationFile: "薄橙.mp3" },
+    { id: 'migissi', name: '藤色', notes: ['E4', 'G#4', 'B4'], color: '#DDA0DD', narrationFile: "藤色.mp3" },
+    { id: 'berefa', name: '灰色', notes: ['Bb3', 'D4', 'F4'], color: '#808080', narrationFile: "灰色.mp3" },
+    { id: 'essobe', name: '水色', notes: ['Eb4', 'G4', 'Bb4'], color: '#00FFFF', narrationFile: "水色.mp3" }
   ]
 };
 
@@ -139,30 +139,31 @@ async function generate() {
       targetCounts[idx] = countOld;
     });
 
-    // プレイリスト構築
+    // プレイリスト構築（同じ色の連続も許可、完全ランダム）
     const pool = [];
-    const counts = { ...targetCounts };
-    let lastIdx = -1;
 
     for (let i = 0; i < totalRepeats; i++) {
-      let candidates = currentLevelIndices.filter(idx => counts[idx] > 0 && idx !== lastIdx);
-      if (i === 0 && L > 1 && counts[newChordIdx] > 0) candidates = [newChordIdx];
-      if (candidates.length === 0) candidates = currentLevelIndices.filter(idx => counts[idx] > 0);
+      let selectedIdx;
       
-      const totalWeight = candidates.reduce((sum, idx) => sum + counts[idx], 0);
-      let r = Math.random() * totalWeight;
-      let selectedIdx = candidates[candidates.length - 1];
-      for (const idx of candidates) {
-        r -= counts[idx];
-        if (r <= 0) {
-          selectedIdx = idx;
-          break;
+      if (i === 0 && L > 1) {
+        // 最初の1問は必ず新出の色
+        selectedIdx = newChordIdx;
+      } else if (L === 1) {
+        // Lv1は赤のみ
+        selectedIdx = newChordIdx;
+      } else {
+        // 2問目以降：新出40% vs 既出60% の完全ランダム（連続も許可）
+        const isNewChord = Math.random() < 0.4;
+        if (isNewChord) {
+          selectedIdx = newChordIdx;
+        } else {
+          // 既出からランダムに選択
+          const randomOldIdx = Math.floor(Math.random() * oldChordIndices.length);
+          selectedIdx = oldChordIndices[randomOldIdx];
         }
       }
       
       pool.push(selectedIdx);
-      counts[selectedIdx]--;
-      lastIdx = selectedIdx;
     }
 
     const listPath = path.join(tempDir, `concat_list_lv${L}_5h.txt`);

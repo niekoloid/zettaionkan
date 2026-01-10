@@ -29,8 +29,12 @@
     </div>
 
     <div class="flex flex-col items-start overflow-hidden min-w-0">
-      <span class="font-bold text-gray-900 text-[15px] leading-tight truncate w-full">{{ chord.nameIt }}</span>
-      <span class="text-[10px] font-medium text-gray-400 shrink-0 truncate w-full">{{ chord.displayColor }}</span>
+      <span class="font-bold text-gray-900 text-[15px] leading-tight truncate w-full">
+        {{ formatChordName(chord) }}
+      </span>
+      <span class="text-[10px] font-medium text-gray-400 shrink-0 truncate w-full">
+        {{ chord.displayColor }}
+      </span>
     </div>
 
     <!-- Selection Mark -->
@@ -46,6 +50,9 @@
 </template>
 
 <script setup>
+import { useAppSettings } from '../composables/useAppSettings'
+
+const { namingConvention, formatChordName } = useAppSettings()
 const props = defineProps({
   chord: {
     type: Object,

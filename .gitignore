@@ -25,9 +25,9 @@ dist-ssr
 *.sw?
 
 # Data
-Steinway_Raw/
-zettaionkan-f7a4e8d24e46.json
-/videos/outputs/
+/videos/
+/public/videos/
+ Steinway_Raw/
 scripts/client_secrets.json
 scripts/token.pickle
 __pycache__/

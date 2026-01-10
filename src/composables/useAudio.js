@@ -34,9 +34,14 @@ const NARRATION_FILES = {
   '茶色': '/narration/google/茶色.mp3',
   '黄緑': '/narration/google/黄緑.mp3',
   'ベージュ': '/narration/google/ベージュ.mp3',
+  '薄橙': '/narration/google/薄橙.mp3',
+  '肌色': '/narration/google/肌色.mp3',
   '薄紫': '/narration/google/薄紫.mp3',
+  '藤色': '/narration/google/藤色.mp3',
   'グレー': '/narration/google/グレー.mp3',
-  '水色': '/narration/google/水色.mp3'
+  '灰色': '/narration/google/灰色.mp3',
+  '水色': '/narration/google/水色.mp3',
+  '空色': '/narration/google/空色.mp3'
 }
 
 export function useAudio() {
