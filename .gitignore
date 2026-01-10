@@ -27,7 +27,7 @@ dist-ssr
 # Data
 /videos/
 /public/videos/
- Steinway_Raw/
+Steinway_Raw/
 scripts/client_secrets.json
 scripts/token.pickle
 __pycache__/
