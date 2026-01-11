@@ -110,6 +110,9 @@ export function useAppSettings() {
     if (settings.value.namingConvention === 'german') {
       return chord.symbol || stripTags(chord.name)
     }
+    if (settings.value.namingConvention === 'hybrid') {
+      return stripTags(chord.name)
+    }
     return chord.nameIt || stripTags(chord.name)
   }
 

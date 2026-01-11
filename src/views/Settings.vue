@@ -209,16 +209,31 @@ const handleReset = () => {
             <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">音名の表示形式</h3>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-3 gap-3">
             <!-- Italian (Do-Mi-So) -->
             <div 
               @click="updateNamingConvention('italian')"
-              class="relative p-4 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-2"
-              :class="namingConvention === 'italian' ? 'border-indigo-500 ring-4 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
+              class="relative p-2 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-1 h-24"
+              :class="namingConvention === 'italian' ? 'border-indigo-500 ring-2 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
             >
-              <span class="text-xl font-black text-gray-900">ドレミ</span>
-              <p class="text-[9px] font-bold text-gray-400">イタリア音式</p>
+              <span class="text-sm font-black text-gray-900">ド・ミ・ソ</span>
+              <p class="text-[8px] font-bold text-gray-400">標準的</p>
               <div v-if="namingConvention === 'italian'" class="absolute -top-2 -right-2 bg-indigo-500 text-white rounded-full p-1 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Hybrid (Do-Mi-So + German Accidental) -->
+            <div 
+              @click="updateNamingConvention('hybrid')"
+              class="relative p-2 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-1 h-24"
+              :class="namingConvention === 'hybrid' ? 'border-indigo-500 ring-2 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
+            >
+              <span class="text-sm font-black text-gray-900">ラ・チス・ミ</span>
+              <p class="text-[8px] font-bold text-gray-400">半音は独語読み</p>
+              <div v-if="namingConvention === 'hybrid'" class="absolute -top-2 -right-2 bg-indigo-500 text-white rounded-full p-1 shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                 </svg>
@@ -228,11 +243,11 @@ const handleReset = () => {
             <!-- German (C-E-G) -->
             <div 
               @click="updateNamingConvention('german')"
-              class="relative p-4 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-2"
-              :class="namingConvention === 'german' ? 'border-indigo-500 ring-4 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
+              class="relative p-2 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-1 h-24"
+              :class="namingConvention === 'german' ? 'border-indigo-500 ring-2 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
             >
-              <span class="text-xl font-black text-gray-900">C-D-E</span>
-              <p class="text-[9px] font-bold text-gray-400">ドイツ音式（英語式）</p>
+              <span class="text-sm font-black text-gray-900">C - E - G</span>
+              <p class="text-[8px] font-bold text-gray-400">コード名</p>
               <div v-if="namingConvention === 'german'" class="absolute -top-2 -right-2 bg-indigo-500 text-white rounded-full p-1 shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
