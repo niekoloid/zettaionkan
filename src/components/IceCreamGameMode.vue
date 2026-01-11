@@ -1,6 +1,12 @@
 <template>
-  <div class="absolute inset-0 flex flex-col bg-sky-100 overflow-hidden font-['Noto_Sans_JP']">
-    
+  <div class="absolute inset-0 flex flex-col bg-white overflow-hidden font-['Noto_Sans_JP']">
+    <!-- Dynamic Background Layer -->
+    <div 
+      class="absolute inset-0 transition-colors duration-1000"
+      :class="!userAnswer ? 'bg-sky-100' : ''"
+      :style="userAnswer ? { backgroundColor: userAnswer.color, opacity: 0.2 } : {}"
+    ></div>
+
     <!-- Background Clouds (Decorations) -->
     <div class="absolute top-10 left-10 text-white/40 opacity-50"><svg width="60" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M18.5,12c-1.1,0-2.1,0.3-2.9,0.9c-0.6-2.5-2.9-4.4-5.6-4.4c-3.1,0-5.6,2.3-5.9,5.2C3.9,13.9,4,14,4,14H3 c-1.7,0-3,1.3-3,3s1.3,3,3,3h15.5c1.9,0,3.5-1.6,3.5-3.5S20.4,12,18.5,12z"/></svg></div>
     <div class="absolute top-20 right-10 text-white/40 opacity-40"><svg width="80" height="50" viewBox="0 0 24 24" fill="currentColor"><path d="M18.5,12c-1.1,0-2.1,0.3-2.9,0.9c-0.6-2.5-2.9-4.4-5.6-4.4c-3.1,0-5.6,2.3-5.9,5.2C3.9,13.9,4,14,4,14H3 c-1.7,0-3,1.3-3,3s1.3,3,3,3h15.5c1.9,0,3.5-1.6,3.5-3.5S20.4,12,18.5,12z"/></svg></div>

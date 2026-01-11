@@ -1,5 +1,11 @@
 <template>
-  <div class="absolute inset-0 flex flex-col bg-sky-200 overflow-hidden font-['Noto_Sans_JP']">
+  <div class="absolute inset-0 flex flex-col bg-white overflow-hidden font-['Noto_Sans_JP']">
+    <!-- Dynamic Background Layer -->
+    <div 
+      class="absolute inset-0 transition-colors duration-1000"
+      :class="!userAnswer ? 'bg-sky-200' : ''"
+      :style="userAnswer ? { backgroundColor: userAnswer.color, opacity: 0.2 } : {}"
+    ></div>
     
     <!-- Background: Sun, Clouds, Hills -->
     <div class="absolute top-8 left-8 text-yellow-500 animate-pulse-slow">
@@ -43,7 +49,7 @@
            This feels like a train getting longer.
       -->
       <div class="relative w-full h-40 flex items-end z-20 overflow-visible mb-10 px-4">
-        <TransitionGroup name="train-car" tag="div" class="flex flex-row items-end gap-1 w-full justify-start overflow-x-auto scrollbar-hide pr-20">
+        <TransitionGroup ref="trainContainerRef" name="train-car" tag="div" class="flex flex-row items-end gap-1 w-full justify-start overflow-x-auto scrollbar-hide pr-[50vw]">
             
             <!-- Engine (Static Leader) -->
             <div key="engine" class="relative shrink-0 w-32 h-28 z-30 train-engine filter drop-shadow-xl mr-1">
@@ -163,7 +169,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
   currentQuestion: Object,
@@ -184,6 +190,44 @@ const props = defineProps({
 })
 
 defineEmits(['answer', 'play'])
+
+const trainContainerRef = ref(null)
+
+const scrollToNewestCar = async () => {
+    if (!trainContainerRef.value) return
+    
+    // Wait for DOM updates and a bit of transition
+    await nextTick()
+    await new Promise(r => setTimeout(r, 50))
+    
+    // TransitionGroup with tag="div" will have the div as $el or the ref itself
+    const container = trainContainerRef.value.$el || trainContainerRef.value
+    if (!container || !container.querySelectorAll) return
+
+    const cars = container.querySelectorAll('.train-car')
+    if (cars.length > 0) {
+        const lastCar = cars[cars.length - 1]
+        lastCar.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+        })
+    } else {
+        // Scroll to engine if it's the first thing
+        const engine = container.querySelector('.train-engine')
+        if (engine) {
+            engine.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'center'
+            })
+        }
+    }
+}
+
+watch(() => props.correctHistory.length, () => {
+    scrollToNewestCar()
+})
 
 const gridColsClass = computed(() => {
   const count = props.choices.length
