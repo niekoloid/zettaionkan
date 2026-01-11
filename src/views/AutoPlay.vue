@@ -11,12 +11,14 @@ import { useAudioSettings } from '../composables/useAudioSettings'
 import AppHeader from '../components/AppHeader.vue'
 import ChordSelectionButton from '../components/ChordSelectionButton.vue'
 import FrequencySettings from '../components/FrequencySettings.vue'
+import IceCreamGameMode from '../components/IceCreamGameMode.vue'
 import { useChordFrequency } from '../composables/useChordFrequency'
 import { useChordSettings } from '../composables/useChordSettings'
 import { useAppSettings } from '../composables/useAppSettings'
 
 
 const router = useRouter()
+// ... existing code ...
 const route = useRoute()
 
 // === Constants ===
@@ -72,7 +74,7 @@ const isAutoPlayRevealed = ref(false)
 const isAutoPlayImmediate = ref(true)
 const isVoiceEnabled = ref(true)
 const revealDelay = ref(2.5) // seconds before revealing/speaking
-const autoPlayRevealType = ref('full') // 'full' | 'grid'
+const autoPlayRevealType = ref('full') // 'full' | 'grid' | 'icecream'
 
 const selectedChords = computed(() => {
   return TEST_CHORDS.value.filter(c => selectedChordIds.value.has(c.id))
@@ -104,7 +106,31 @@ const cleanupSideEffects = () => {
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 
+const iceCreamHistory = computed(() => {
+  if (view.value !== 'playing') return []
+  
+  // Create history entries for all PAST questions + current if revealed
+  const history = []
+  
+  // Past questions are always in history
+  for (let i = 0; i < currentQuestionIndex.value; i++) {
+    history.push({
+      question: questions.value[i],
+      // Emulate answer format if needed, but IceCreamGameMode mainly uses question.color
+      answer: questions.value[i] 
+    })
+  }
 
+  // Current question added ONLY if revealed
+  if (isAutoPlayRevealed.value && currentQuestion.value) {
+    history.push({
+      question: currentQuestion.value,
+      answer: currentQuestion.value
+    })
+  }
+  
+  return history
+})
 
 const speakColor = async (text) => {
   await playNarration(text)
@@ -342,7 +368,7 @@ onUnmounted(() => {
 
     <!-- Header -->
     <AppHeader 
-      v-if="view !== 'playing'" 
+      v-if="view !== 'settings'" 
       showBack 
       @back="handleHeaderBack"
     />
@@ -368,6 +394,36 @@ onUnmounted(() => {
             </svg>
             <span>自動再生を開始する</span>
           </button>
+        </div>
+
+        <!-- Reveal Style Selection (Moved to Top) -->
+        <div class="px-2">
+          <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
+            <div class="flex bg-gray-200 p-1 rounded-xl border border-gray-200">
+              <button 
+                @click="autoPlayRevealType = 'full'"
+                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
+                :class="autoPlayRevealType === 'full' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
+              >
+                画面全体
+              </button>
+              <button 
+                @click="autoPlayRevealType = 'grid'"
+                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
+                :class="autoPlayRevealType === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
+              >
+                タイル
+              </button>
+              <button 
+                @click="autoPlayRevealType = 'icecream'"
+                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
+                :class="autoPlayRevealType === 'icecream' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
+              >
+                アイス
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Chord Selection -->
@@ -492,26 +548,6 @@ onUnmounted(() => {
           />
 
 
-          <!-- Reveal Style Selection -->
-          <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 space-y-4">
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
-            <div class="flex bg-gray-200 p-1 rounded-xl border border-gray-200">
-              <button 
-                @click="autoPlayRevealType = 'full'"
-                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
-                :class="autoPlayRevealType === 'full' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
-              >
-                画面全体
-              </button>
-              <button 
-                @click="autoPlayRevealType = 'grid'"
-                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
-                :class="autoPlayRevealType === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
-              >
-                タイル
-              </button>
-            </div>
-          </div>
         </section>
       </div>
 
@@ -552,8 +588,36 @@ onUnmounted(() => {
           </div>
         </transition>
 
-        <!-- Stop Button -->
-        <div class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
+        <!-- Auto-Play Reveal: Ice Cream Mode -->
+        <transition name="fade">
+          <div 
+            v-if="autoPlayRevealType === 'icecream'" 
+            class="fixed inset-0 z-40 bg-white"
+          >
+             <IceCreamGameMode 
+               :currentQuestion="currentQuestion"
+               :choices="selectedChords"
+               :correctHistory="iceCreamHistory"
+               :userAnswer="isAutoPlayRevealed ? currentQuestion : null"
+               :isQuestionChanging="false"
+               :isAutoPlay="true"
+             />
+             
+             <!-- Overlay Stop Button (custom for Ice Cream mode since it has its own UI) -->
+             <div class="absolute bottom-12 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+                <button 
+                  @click="stopAutoPlay"
+                  class="pointer-events-auto px-6 py-2.5 bg-white/80 backdrop-blur-md text-gray-400 hover:text-red-500 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-lg hover:shadow-xl border border-white/20"
+                >
+                  <div class="w-1.5 h-1.5 bg-current rounded-full"></div>
+                  <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
+                </button>
+             </div>
+          </div>
+        </transition>
+
+        <!-- Stop Button (Standard) -->
+        <div v-if="autoPlayRevealType !== 'icecream'" class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
           <button 
             @click="stopAutoPlay"
             class="px-6 py-2.5 bg-black/5 hover:bg-black/10 backdrop-blur-sm text-gray-400 hover:text-gray-600 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 border border-black/5"
@@ -565,9 +629,6 @@ onUnmounted(() => {
         </div>
       </div>
     </main>
-
-
-
     </div>
   </div>
 </template>
