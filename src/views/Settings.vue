@@ -10,7 +10,10 @@ import ScoreDisplay from '../components/ScoreDisplay.vue'
 
 const { 
   selectedInstrument, 
-  loadSampler 
+  loadSampler,
+  preloadAll,
+  isPreloading,
+  isLoaded
 } = useAudio()
 
 const { setPreferredInstrument } = useAudioSettings()
@@ -95,6 +98,37 @@ const handleReset = () => {
           <h2 class="text-2xl font-black text-gray-900 mb-2">各種設定</h2>
           <p class="text-sm text-gray-400 font-bold">アプリの表示や音源の設定を変更できます</p>
         </div>
+
+        <!-- Preload Section -->
+        <section class="mb-12 p-6 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-3xl border border-indigo-100/50">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-2">
+              <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                  <span class="text-sm">⚡️</span>
+                </div>
+                <h3 class="text-sm font-black text-indigo-900">音源の先行ダウンロード</h3>
+              </div>
+              <p class="text-[10px] font-bold text-indigo-400 leading-relaxed max-w-sm">
+                タブレットや低速なネットワーク環境でお使いの場合、あらかじめ全ての音源をダウンロードしておくことで、スムーズに学習を開始できます。
+              </p>
+            </div>
+            
+            <button 
+              @click="preloadAll"
+              :disabled="isPreloading"
+              class="relative px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs shadow-xl shadow-indigo-200 hover:bg-indigo-700 active:scale-95 disabled:opacity-50 disabled:scale-100 transition-all flex items-center justify-center space-x-2 group overflow-hidden"
+            >
+              <div v-if="isPreloading" class="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full"></div>
+              <span v-else>
+                {{ isLoaded.steinway && isLoaded.yamaha ? '音源を再読込する' : '全ての音源を準備する' }}
+              </span>
+              
+              <!-- Shimmer effect -->
+              <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+            </button>
+          </div>
+        </section>
 
         <!-- Instrument Settings -->
         <section class="space-y-6 mb-12">

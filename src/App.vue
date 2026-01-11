@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import { useAudio } from './composables/useAudio'
 import { useAuth } from './composables/useAuth'
+import AudioLoadingStatus from './components/AudioLoadingStatus.vue'
 
 const { preloadAll } = useAudio()
 const { authReady } = useAuth()
@@ -13,11 +14,16 @@ onMounted(async () => {
 </script>
 
 <template>
-  <router-view v-slot="{ Component }">
-    <transition name="page" mode="out-in">
-      <component :is="Component" />
-    </transition>
-  </router-view>
+  <div class="relative min-h-screen">
+    <router-view v-slot="{ Component }">
+      <transition name="page" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
+
+    <!-- Global Audio Loading Status -->
+    <AudioLoadingStatus />
+  </div>
 </template>
 
 <style>

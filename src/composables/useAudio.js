@@ -13,6 +13,7 @@ const isLoaded = ref({
   effects: false
 })
 const isLoading = ref(false)
+const isPreloading = ref(false)
 const loadingProgress = ref(0)
 const selectedInstrument = ref('yamaha')
 const loadingFile = ref('')
@@ -52,19 +53,6 @@ export function useAudio() {
     if (samplers[instrumentId]) {
       if (!isBackground) {
         selectedInstrument.value = instrumentId
-        // NEW: Dispose other samplers to save memory when switching
-        Object.keys(samplers).forEach(id => {
-          if (id !== instrumentId && samplers[id]) {
-            try {
-              samplers[id].dispose()
-              delete samplers[id]
-              isLoaded.value[id] = false
-              console.log(`Disposed idle sampler: ${id}`)
-            } catch (e) {
-              console.error(`Error disposing ${id}:`, e)
-            }
-          }
-        })
       }
       return
     }
@@ -76,22 +64,8 @@ export function useAudio() {
 
     if (!isBackground) {
       isLoading.value = true
-      loadingProgress.value = 0
+      if (!isPreloading.value) loadingProgress.value = 0
       selectedInstrument.value = instrumentId
-
-      // NEW: Clear other samplers before starting new load to prevent memory spikes
-      Object.keys(samplers).forEach(id => {
-        if (id !== instrumentId && samplers[id]) {
-          try {
-            samplers[id].dispose()
-            delete samplers[id]
-            isLoaded.value[id] = false
-            console.log(`Disposed idle sampler before load: ${id}`)
-          } catch (e) {
-            console.error(e)
-          }
-        }
-      })
     }
 
     samplerLoadingPromises[instrumentId] = new Promise((resolve) => {
@@ -110,9 +84,11 @@ export function useAudio() {
             samplers[instrumentId] = s
             isLoaded.value[instrumentId] = true
             if (!isBackground) {
-              isLoading.value = false
-              loadingProgress.value = 100
-              loadingFile.value = ''
+              if (!isPreloading.value) {
+                isLoading.value = false
+                loadingProgress.value = 100
+                loadingFile.value = ''
+              }
             }
             samplerLoadingPromises[instrumentId] = null
             resolve(true)
@@ -120,8 +96,10 @@ export function useAudio() {
           onerror: (err) => {
             console.error(`${instrumentId} load error:`, err)
             if (!isBackground) {
-              isLoading.value = false
-              loadingProgress.value = 100
+              if (!isPreloading.value) {
+                isLoading.value = false
+                loadingProgress.value = 100
+              }
             }
             samplerLoadingPromises[instrumentId] = null
             resolve(false)
@@ -217,11 +195,28 @@ export function useAudio() {
   }
 
   const preloadAll = async () => {
+    if (isPreloading.value) return
+    isPreloading.value = true
+    isLoading.value = true
+    loadingProgress.value = 0
+    
     console.log('Preloading all audio samples sequentially...')
-    // Load Yamaha first, then Steinway, then Narration
-    await loadSampler('yamaha', true)
-    await loadSampler('steinway', true)
+    
+    loadingFile.value = 'Yamaha Piano'
+    await loadSampler('yamaha', false)
+    loadingProgress.value = 33
+    
+    loadingFile.value = 'Steinway Piano'
+    await loadSampler('steinway', false)
+    loadingProgress.value = 66
+    
+    loadingFile.value = 'Narration & Effects'
     await loadNarration()
+    await loadEffects()
+    
+    loadingProgress.value = 100
+    isLoading.value = false
+    isPreloading.value = false
     console.log('All audio samples preloaded.')
   }
 
@@ -295,6 +290,7 @@ export function useAudio() {
   return {
     samplers,
     isLoading,
+    isPreloading,
     loadingProgress,
     loadingFile,
     isSamplerLoaded: computed(() => isLoaded.value[selectedInstrument.value]),
