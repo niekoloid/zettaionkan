@@ -400,27 +400,29 @@ onUnmounted(() => {
         <div class="px-2">
           <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
-            <div class="flex bg-gray-200 p-1 rounded-xl border border-gray-200">
+            <div class="grid grid-cols-2 gap-3">
+              <!-- Full Screen Option -->
               <button 
                 @click="autoPlayRevealType = 'full'"
-                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
-                :class="autoPlayRevealType === 'full' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
+                class="flex flex-col items-center justify-center py-4 rounded-xl border-2 transition-all duration-200"
+                :class="autoPlayRevealType === 'full' 
+                  ? 'bg-white border-gray-900 shadow-md transform scale-[1.02]' 
+                  : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
               >
-                画面全体
+                <div class="text-2xl mb-1">📱</div>
+                <span class="text-xs font-black" :class="autoPlayRevealType === 'full' ? 'text-gray-900' : 'text-gray-400'">画面全体</span>
               </button>
-              <button 
-                @click="autoPlayRevealType = 'grid'"
-                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
-                :class="autoPlayRevealType === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
-              >
-                タイル
-              </button>
+
+              <!-- Ice Cream Option -->
               <button 
                 @click="autoPlayRevealType = 'icecream'"
-                class="flex-1 py-2 rounded-lg text-[10px] font-black transition-all text-center"
-                :class="autoPlayRevealType === 'icecream' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400 hover:text-gray-500'"
+                class="flex flex-col items-center justify-center py-4 rounded-xl border-2 transition-all duration-200"
+                :class="autoPlayRevealType === 'icecream' 
+                  ? 'bg-white border-pink-400 shadow-md transform scale-[1.02]' 
+                  : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
               >
-                アイス
+                <div class="text-2xl mb-1">🍦</div>
+                <span class="text-xs font-black" :class="autoPlayRevealType === 'icecream' ? 'text-pink-500' : 'text-gray-400'">アイス</span>
               </button>
             </div>
           </div>
@@ -553,30 +555,6 @@ onUnmounted(() => {
 
       <!-- PLAYING VIEW -->
       <div v-if="view === 'playing'" class="z-40 h-full w-full">
-        <!-- Auto-Play Reveal: Grid Style -->
-        <div 
-          v-if="autoPlayRevealType === 'grid'" 
-          class="fixed inset-0 z-40 bg-white flex flex-col pt-32 pb-40 overflow-hidden"
-        >
-          <div class="px-10 mb-4 flex justify-between items-end">
-            <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">和音の記録</span>
-            <span class="text-[10px] font-bold text-gray-200">{{ currentQuestionIndex + (isAutoPlayRevealed ? 1 : 0) }} 枚</span>
-          </div>
-          <div class="flex-grow overflow-y-auto px-10 pb-10">
-            <div class="flex flex-wrap gap-2 max-w-full justify-start w-full content-start">
-              <div 
-                v-for="(q, idx) in questions.slice(0, currentQuestionIndex + (isAutoPlayRevealed ? 1 : 0))" 
-                :key="idx"
-                class="w-12 h-12 rounded-lg shadow-sm transition-all duration-300"
-                :class="{ 
-                  'animate-bounce-in border-2 border-white ring-2 ring-gray-100': idx === (currentQuestionIndex) && isAutoPlayRevealed,
-                  'opacity-40 scale-90': idx < currentQuestionIndex
-                }"
-                :style="{ backgroundColor: q.color }"
-              ></div>
-            </div>
-          </div>
-        </div>
 
         <!-- Auto-Play Reveal: Full Screen Style -->
         <transition name="fade">
