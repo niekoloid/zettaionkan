@@ -11,7 +11,12 @@ import { useAudioSettings } from '../composables/useAudioSettings'
 import AppHeader from '../components/AppHeader.vue'
 import ChordSelectionButton from '../components/ChordSelectionButton.vue'
 import FrequencySettings from '../components/FrequencySettings.vue'
+// ... imports
 import IceCreamGameMode from '../components/IceCreamGameMode.vue'
+import TrainGameMode from '../components/TrainGameMode.vue'
+// ...
+
+
 import { useChordFrequency } from '../composables/useChordFrequency'
 import { useChordSettings } from '../composables/useChordSettings'
 import { useAppSettings } from '../composables/useAppSettings'
@@ -400,7 +405,7 @@ onUnmounted(() => {
         <div class="px-2">
           <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-3 gap-3">
               <!-- Full Screen Option -->
               <button 
                 @click="autoPlayRevealType = 'full'"
@@ -423,6 +428,18 @@ onUnmounted(() => {
               >
                 <div class="text-2xl mb-1">🍦</div>
                 <span class="text-xs font-black" :class="autoPlayRevealType === 'icecream' ? 'text-pink-500' : 'text-gray-400'">アイス</span>
+              </button>
+
+              <!-- Train Option -->
+              <button 
+                @click="autoPlayRevealType = 'train'"
+                class="flex flex-col items-center justify-center py-4 rounded-xl border-2 transition-all duration-200"
+                :class="autoPlayRevealType === 'train' 
+                  ? 'bg-white border-green-500 shadow-md transform scale-[1.02]' 
+                  : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
+              >
+                <div class="text-2xl mb-1">🚃</div>
+                <span class="text-xs font-black" :class="autoPlayRevealType === 'train' ? 'text-green-600' : 'text-gray-400'">電車</span>
               </button>
             </div>
           </div>
@@ -594,8 +611,36 @@ onUnmounted(() => {
           </div>
         </transition>
 
+        <!-- AutoPlay Reveal: Train Mode -->
+        <transition name="fade">
+          <div 
+            v-if="autoPlayRevealType === 'train'" 
+            class="fixed inset-0 z-40 bg-white"
+          >
+             <TrainGameMode 
+               :currentQuestion="currentQuestion"
+               :choices="selectedChords"
+               :correctHistory="iceCreamHistory"
+               :userAnswer="isAutoPlayRevealed ? currentQuestion : null"
+               :isQuestionChanging="false"
+               :isAutoPlay="true"
+             />
+             
+             <!-- Overlay Stop Button (custom for Train mode) -->
+             <div class="absolute bottom-12 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+                <button 
+                  @click="stopAutoPlay"
+                  class="pointer-events-auto px-6 py-2.5 bg-white/80 backdrop-blur-md text-gray-400 hover:text-red-500 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-lg hover:shadow-xl border border-white/20"
+                >
+                  <div class="w-1.5 h-1.5 bg-current rounded-full"></div>
+                  <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
+                </button>
+             </div>
+          </div>
+        </transition>
+
         <!-- Stop Button (Standard) -->
-        <div v-if="autoPlayRevealType !== 'icecream'" class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
+        <div v-if="autoPlayRevealType !== 'icecream' && autoPlayRevealType !== 'train'" class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
           <button 
             @click="stopAutoPlay"
             class="px-6 py-2.5 bg-black/5 hover:bg-black/10 backdrop-blur-sm text-gray-400 hover:text-gray-600 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 border border-black/5"

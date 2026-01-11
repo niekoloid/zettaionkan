@@ -185,7 +185,7 @@ const props = defineProps({
 defineEmits(['answer', 'play'])
 
 const FLAVOR_MAP = {
-  '赤': 'ストロベリー',
+  '赤': 'いちご',
   '黄色': 'バナナ',
   '青': 'ブルーベリー',
   '黒': 'コーラ',
