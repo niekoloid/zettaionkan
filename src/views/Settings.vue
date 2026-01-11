@@ -16,7 +16,7 @@ const {
 const { setPreferredInstrument } = useAudioSettings()
 const { userTier, authReady } = useAuth()
 const { allChords, saveSingleMapping, syncWithDb: syncChords, resetAll: resetGlobal } = useChordSettings()
-const { namingConvention, updateNamingConvention, instrument, updateInstrument, syncWithDb: syncApp } = useAppSettings()
+const { namingConvention, updateNamingConvention, instrument, updateInstrument, syncWithDb: syncApp, formatColorName, formatChordName, colorFormat, updateColorFormat } = useAppSettings()
 
 const NARRATION_PRESETS = [
   '赤', '黄色', '青', '黒', '緑', 'オレンジ', '紫', 'ピンク', '茶色', '黄緑', 'ベージュ', '薄橙', '肌色', '薄紫', '藤色', 'グレー', '灰色', '水色', '空色'
@@ -161,6 +161,46 @@ const handleReset = () => {
           </div>
         </section>
 
+
+        <!-- Color Name Format Settings -->
+        <section class="space-y-6 mb-12">
+          <div class="flex items-center space-x-2">
+            <span class="w-1 h-5 bg-indigo-500 rounded-full"></span>
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">色の表示形式</h3>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Standard (Kanji/Katakana) -->
+            <div 
+              @click="updateColorFormat('standard')"
+              class="relative p-4 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-2"
+              :class="colorFormat === 'standard' ? 'border-indigo-500 ring-4 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
+            >
+              <span class="text-xl font-black text-gray-900">赤・黄色</span>
+              <p class="text-[9px] font-bold text-gray-400">標準（漢字/カタカナ）</p>
+              <div v-if="colorFormat === 'standard'" class="absolute -top-2 -right-2 bg-indigo-500 text-white rounded-full p-1 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Hiragana -->
+            <div 
+              @click="updateColorFormat('hiragana')"
+              class="relative p-4 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-2"
+              :class="colorFormat === 'hiragana' ? 'border-indigo-500 ring-4 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
+            >
+              <span class="text-xl font-black text-gray-900">あか・きいろ</span>
+              <p class="text-[9px] font-bold text-gray-400">すべてひらがな</p>
+              <div v-if="colorFormat === 'hiragana'" class="absolute -top-2 -right-2 bg-indigo-500 text-white rounded-full p-1 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <!-- Naming Convention Settings -->
         <section class="space-y-6 mb-12">

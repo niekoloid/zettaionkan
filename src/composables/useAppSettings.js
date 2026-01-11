@@ -3,10 +3,33 @@ import { supabase } from '../lib/supabase'
 
 const STORAGE_KEY = 'zettaionkan_app_settings'
 
+const HIRAGANA_COLORS = {
+  '赤': 'あか',
+  '黄色': 'きいろ',
+  '青': 'あお',
+  '黒': 'くろ',
+  '緑': 'みどり',
+  'オレンジ': 'おれんじ',
+  '紫': 'むらさき',
+  'ピンク': 'ぴんく',
+  '茶色': 'ちゃいろ',
+  '黄緑': 'きみどり',
+  'ベージュ': 'べーじゅ',
+  '薄橙': 'うすだいだい',
+  '肌色': 'はだいろ',
+  '薄紫': 'うすむらさき',
+  '藤色': 'ふじいろ',
+  'グレー': 'ぐれー',
+  '灰色': 'はいいろ',
+  '水色': 'みずいろ',
+  '空色': 'そらいろ'
+}
+
 // Global state SINGLETON
 const settings = ref({
   namingConvention: 'italian', // 'italian' (ドミソ) or 'german' (C-E-G)
-  instrument: 'yamaha'
+  instrument: 'yamaha',
+  colorFormat: 'standard' // 'standard' (漢字/カタカナ) or 'hiragana'
 })
 
 // Load from LocalStorage
@@ -31,13 +54,14 @@ export function useAppSettings() {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('naming_convention, preferred_instrument')
+        .select('naming_convention, preferred_instrument, color_format')
         .eq('id', session.user.id)
         .maybeSingle()
       
       if (data) {
         if (data.naming_convention) settings.value.namingConvention = data.naming_convention
         if (data.preferred_instrument) settings.value.instrument = data.preferred_instrument
+        if (data.color_format) settings.value.colorFormat = data.color_format
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings.value))
       }
     } catch (e) {
@@ -55,7 +79,8 @@ export function useAppSettings() {
     try {
       const DB_KEY_MAP = {
         namingConvention: 'naming_convention',
-        instrument: 'preferred_instrument'
+        instrument: 'preferred_instrument',
+        colorFormat: 'color_format'
       }
       const dbKey = DB_KEY_MAP[key]
       if (!dbKey) return
@@ -69,6 +94,13 @@ export function useAppSettings() {
     } catch (e) {
       console.error('useAppSettings: Save error', e)
     }
+  }
+
+  const formatColorName = (name) => {
+    if (settings.value.colorFormat === 'hiragana') {
+      return HIRAGANA_COLORS[name] || name
+    }
+    return name
   }
 
   const formatChordName = (chord) => {
@@ -92,8 +124,11 @@ export function useAppSettings() {
   return {
     namingConvention: computed(() => settings.value.namingConvention),
     instrument: computed(() => settings.value.instrument),
+    colorFormat: computed(() => settings.value.colorFormat),
     updateNamingConvention: (val) => updateSetting('namingConvention', val),
     updateInstrument: (val) => updateSetting('instrument', val),
+    updateColorFormat: (val) => updateSetting('colorFormat', val),
+    formatColorName,
     formatChordName,
     syncWithDb
   }
