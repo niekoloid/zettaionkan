@@ -14,6 +14,7 @@ import FrequencySettings from '../components/FrequencySettings.vue'
 // ... imports
 import IceCreamGameMode from '../components/IceCreamGameMode.vue'
 import TrainGameMode from '../components/TrainGameMode.vue'
+import VehicleGameMode from '../components/VehicleGameMode.vue'
 // ...
 
 
@@ -79,7 +80,7 @@ const isAutoPlayRevealed = ref(false)
 const isAutoPlayImmediate = ref(true)
 const isVoiceEnabled = ref(true)
 const revealDelay = ref(2.5) // seconds before revealing/speaking
-const autoPlayRevealType = ref('full') // 'full' | 'grid' | 'icecream'
+const autoPlayRevealType = ref('full') // 'full' | 'grid' | 'icecream' | 'train' | 'vehicle'
 
 const selectedChords = computed(() => {
   return TEST_CHORDS.value.filter(c => selectedChordIds.value.has(c.id))
@@ -441,6 +442,18 @@ onUnmounted(() => {
                 <div class="text-2xl mb-1">🚃</div>
                 <span class="text-xs font-black" :class="autoPlayRevealType === 'train' ? 'text-green-600' : 'text-gray-400'">電車</span>
               </button>
+
+              <!-- Vehicle Option -->
+              <button 
+                @click="autoPlayRevealType = 'vehicle'"
+                class="flex flex-col items-center justify-center py-4 rounded-xl border-2 transition-all duration-200"
+                :class="autoPlayRevealType === 'vehicle' 
+                  ? 'bg-white border-red-400 shadow-md transform scale-[1.02]' 
+                  : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
+              >
+                <div class="text-2xl mb-1">🚒</div>
+                <span class="text-xs font-black" :class="autoPlayRevealType === 'vehicle' ? 'text-red-600' : 'text-gray-400'">はたらく車</span>
+              </button>
             </div>
           </div>
         </div>
@@ -639,8 +652,36 @@ onUnmounted(() => {
           </div>
         </transition>
 
+        <!-- AutoPlay Reveal: Vehicle Mode -->
+        <transition name="fade">
+          <div 
+            v-if="autoPlayRevealType === 'vehicle'" 
+            class="fixed inset-0 z-40 bg-white"
+          >
+             <VehicleGameMode 
+               :currentQuestion="currentQuestion"
+               :choices="selectedChords"
+               :correctHistory="iceCreamHistory"
+               :userAnswer="isAutoPlayRevealed ? currentQuestion : null"
+               :isQuestionChanging="false"
+               :isAutoPlay="true"
+             />
+             
+             <!-- Overlay Stop Button -->
+             <div class="absolute bottom-12 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+                <button 
+                  @click="stopAutoPlay"
+                  class="pointer-events-auto px-6 py-2.5 bg-white/80 backdrop-blur-md text-gray-400 hover:text-red-500 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-lg hover:shadow-xl border border-white/20"
+                >
+                  <div class="w-1.5 h-1.5 bg-current rounded-full"></div>
+                  <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
+                </button>
+             </div>
+          </div>
+        </transition>
+
         <!-- Stop Button (Standard) -->
-        <div v-if="autoPlayRevealType !== 'icecream' && autoPlayRevealType !== 'train'" class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
+        <div v-if="autoPlayRevealType !== 'icecream' && autoPlayRevealType !== 'train' && autoPlayRevealType !== 'vehicle'" class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
           <button 
             @click="stopAutoPlay"
             class="px-6 py-2.5 bg-black/5 hover:bg-black/10 backdrop-blur-sm text-gray-400 hover:text-gray-600 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 border border-black/5"
