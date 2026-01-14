@@ -57,6 +57,15 @@ const internalReviewWeighted = computed({
       <div class="flex justify-between items-end">
         <div class="flex flex-col">
           <div class="flex items-center space-x-1.5 mb-1">
+              <span class="w-2 h-2 rounded-full" :style="{ backgroundColor: parentChord?.color }"></span>
+              <span class="text-[10px] font-black text-gray-700">新音: {{ parentChord?.displayColor }}</span>
+          </div>
+          <span class="text-xl font-black text-gray-900">{{ Math.round(parentChordRatio * 10) }}</span>
+        </div>
+        <div class="text-gray-300 font-black text-xl">:</div>
+        <div class="flex flex-col items-end">
+          <div class="flex items-center space-x-1.5 mb-1">
+            <span class="text-[10px] font-black text-gray-700">復習: {{ otherChordsDisplay }}</span>
             <div class="flex -space-x-1">
               <span 
                 v-for="c in otherChords.slice(0, 3)" 
@@ -65,22 +74,20 @@ const internalReviewWeighted = computed({
                 :style="{ backgroundColor: c.color }"
               ></span>
             </div>
-            <span class="text-[10px] font-black text-gray-700">復習: {{ otherChordsDisplay }}</span>
           </div>
           <span class="text-xl font-black text-gray-900">{{ 10 - Math.round(parentChordRatio * 10) }}</span>
-        </div>
-        <div class="text-gray-300 font-black text-xl">:</div>
-        <div class="flex flex-col items-end">
-          <div class="flex items-center space-x-1.5 mb-1">
-            <span class="text-[10px] font-black text-gray-700">新音: {{ parentChord?.displayColor }}</span>
-            <span class="w-2 h-2 rounded-full" :style="{ backgroundColor: parentChord?.color }"></span>
-          </div>
-          <span class="text-xl font-black text-gray-900">{{ Math.round(parentChordRatio * 10) }}</span>
         </div>
       </div>
 
       <div class="h-3 w-full bg-gray-200 rounded-full overflow-hidden flex shadow-inner border border-gray-100">
-        <!-- Review Segment (Left) -->
+        <!-- New Chord Segment (Left) -->
+        <div 
+          class="h-full transition-all duration-500 ease-out relative group"
+          :style="{ width: (parentChordRatio * 100) + '%', backgroundColor: parentChord?.color }"
+        >
+          <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+        </div>
+        <!-- Review Segment (Right) -->
         <div class="h-full flex" :style="{ width: ((1 - parentChordRatio) * 100) + '%' }">
            <div 
              v-for="c in otherChordsWithWeights" 
@@ -91,13 +98,6 @@ const internalReviewWeighted = computed({
                backgroundColor: c.color 
              }"
            ></div>
-        </div>
-        <!-- New Chord Segment (Right) -->
-        <div 
-          class="h-full transition-all duration-500 ease-out relative group"
-          :style="{ width: (parentChordRatio * 100) + '%', backgroundColor: parentChord?.color }"
-        >
-          <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
         </div>
       </div>
     </div>

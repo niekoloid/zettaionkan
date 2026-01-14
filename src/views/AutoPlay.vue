@@ -15,8 +15,9 @@ import FrequencySettings from '../components/FrequencySettings.vue'
 import IceCreamGameMode from '../components/IceCreamGameMode.vue'
 import TrainGameMode from '../components/TrainGameMode.vue'
 import VehicleGameMode from '../components/VehicleGameMode.vue'
+import CatGameMode from '../components/CatGameMode.vue'
+import VideoCatGameMode from '../components/VideoCatGameMode.vue'
 // ...
-
 
 import { useChordFrequency } from '../composables/useChordFrequency'
 import { useChordSettings } from '../composables/useChordSettings'
@@ -80,7 +81,7 @@ const isAutoPlayRevealed = ref(false)
 const isAutoPlayImmediate = ref(true)
 const isVoiceEnabled = ref(true)
 const revealDelay = ref(2.5) // seconds before revealing/speaking
-const autoPlayRevealType = ref('full') // 'full' | 'grid' | 'icecream' | 'train' | 'vehicle'
+const autoPlayRevealType = ref('full') // 'full' | 'icecream' | 'train' | 'vehicle' | 'cat' | 'video_cat'
 
 const selectedChords = computed(() => {
   return TEST_CHORDS.value.filter(c => selectedChordIds.value.has(c.id))
@@ -190,7 +191,7 @@ const playCurrentQuestion = async () => {
     isAutoPlayRevealed.value = true
   }
   
-  s.triggerAttackRelease(chord.notes, 2)
+  s.triggerAttackRelease(chord.notes, 3)
   
   const delayMs = revealDelay.value * 1000
 
@@ -406,11 +407,11 @@ onUnmounted(() => {
         <div class="px-2">
           <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2">
               <!-- Full Screen Option -->
               <button 
                 @click="autoPlayRevealType = 'full'"
-                class="flex flex-col items-center justify-center py-4 rounded-xl border-2 transition-all duration-200"
+                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
                 :class="autoPlayRevealType === 'full' 
                   ? 'bg-white border-gray-900 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
@@ -422,7 +423,7 @@ onUnmounted(() => {
               <!-- Ice Cream Option -->
               <button 
                 @click="autoPlayRevealType = 'icecream'"
-                class="flex flex-col items-center justify-center py-4 rounded-xl border-2 transition-all duration-200"
+                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
                 :class="autoPlayRevealType === 'icecream' 
                   ? 'bg-white border-pink-400 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
@@ -430,11 +431,35 @@ onUnmounted(() => {
                 <div class="text-2xl mb-1">🍦</div>
                 <span class="text-xs font-black" :class="autoPlayRevealType === 'icecream' ? 'text-pink-500' : 'text-gray-400'">アイス</span>
               </button>
+              
+              <!-- Cat Option -->
+              <button 
+                @click="autoPlayRevealType = 'cat'"
+                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                :class="autoPlayRevealType === 'cat' 
+                  ? 'bg-white border-amber-500 shadow-md transform scale-[1.02]' 
+                  : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
+              >
+                <div class="text-2xl mb-1">🐱</div>
+                <span class="text-xs font-black" :class="autoPlayRevealType === 'cat' ? 'text-amber-600' : 'text-gray-400'">ねこ</span>
+              </button>
+
+              <!-- Video Cat Option -->
+              <button 
+                @click="autoPlayRevealType = 'video_cat'"
+                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                :class="autoPlayRevealType === 'video_cat' 
+                  ? 'bg-white border-stone-800 shadow-md transform scale-[1.02]' 
+                  : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
+              >
+                <div class="text-2xl mb-1">🎥</div>
+                <span class="text-xs font-black" :class="autoPlayRevealType === 'video_cat' ? 'text-stone-800' : 'text-gray-400'">動画ねこ</span>
+              </button>
 
               <!-- Train Option -->
               <button 
                 @click="autoPlayRevealType = 'train'"
-                class="flex flex-col items-center justify-center py-4 rounded-xl border-2 transition-all duration-200"
+                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
                 :class="autoPlayRevealType === 'train' 
                   ? 'bg-white border-green-500 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
@@ -446,13 +471,13 @@ onUnmounted(() => {
               <!-- Vehicle Option -->
               <button 
                 @click="autoPlayRevealType = 'vehicle'"
-                class="flex flex-col items-center justify-center py-4 rounded-xl border-2 transition-all duration-200"
+                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
                 :class="autoPlayRevealType === 'vehicle' 
                   ? 'bg-white border-red-400 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
               >
                 <div class="text-2xl mb-1">🚒</div>
-                <span class="text-xs font-black" :class="autoPlayRevealType === 'vehicle' ? 'text-red-600' : 'text-gray-400'">はたらく車</span>
+                <span class="text-xs font-black" :class="autoPlayRevealType === 'vehicle' ? 'text-red-600' : 'text-gray-400'">車</span>
               </button>
             </div>
           </div>
@@ -624,6 +649,63 @@ onUnmounted(() => {
           </div>
         </transition>
 
+        <!-- Auto Play Reveal: Cat Mode -->
+        <transition name="fade">
+          <div 
+            v-if="autoPlayRevealType === 'cat'" 
+            class="fixed inset-0 z-40 bg-white"
+          >
+             <CatGameMode 
+               :currentQuestion="currentQuestion"
+               :choices="selectedChords"
+               :correctHistory="iceCreamHistory"
+               :userAnswer="isAutoPlayRevealed ? currentQuestion : null"
+               :isQuestionChanging="false"
+               :isAutoPlay="true"
+             />
+             
+             <!-- Overlay Stop Button -->
+             <div class="absolute bottom-12 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+                <button 
+                  @click="stopAutoPlay"
+                  class="pointer-events-auto px-6 py-2.5 bg-white/80 backdrop-blur-md text-gray-400 hover:text-red-500 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-lg hover:shadow-xl border border-white/20"
+                >
+                  <div class="w-1.5 h-1.5 bg-current rounded-full"></div>
+                  <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
+                </button>
+             </div>
+          </div>
+        </transition>
+
+        <!-- Auto Play Reveal: Video Cat Mode -->
+        <transition name="fade">
+          <div 
+            v-if="autoPlayRevealType === 'video_cat'" 
+            class="fixed inset-0 z-40 bg-black"
+          >
+             <VideoCatGameMode 
+               :key="currentQuestionIndex"
+               :currentQuestion="currentQuestion"
+               :choices="selectedChords"
+               :correctHistory="iceCreamHistory"
+               :userAnswer="isAutoPlayRevealed ? currentQuestion : null"
+               :isQuestionChanging="false"
+               :isAutoPlay="true"
+             />
+             
+             <!-- Overlay Stop Button -->
+             <div class="absolute bottom-12 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+                <button 
+                  @click="stopAutoPlay"
+                  class="pointer-events-auto px-6 py-2.5 bg-black/50 backdrop-blur-md text-white/80 hover:text-red-400 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-lg hover:shadow-xl border border-white/10"
+                >
+                  <div class="w-1.5 h-1.5 bg-current rounded-full"></div>
+                  <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
+                </button>
+             </div>
+          </div>
+        </transition>
+
         <!-- AutoPlay Reveal: Train Mode -->
         <transition name="fade">
           <div 
@@ -681,7 +763,7 @@ onUnmounted(() => {
         </transition>
 
         <!-- Stop Button (Standard) -->
-        <div v-if="autoPlayRevealType !== 'icecream' && autoPlayRevealType !== 'train' && autoPlayRevealType !== 'vehicle'" class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
+        <div v-if="autoPlayRevealType === 'full'" class="fixed bottom-10 left-0 right-0 flex justify-center z-[60]">
           <button 
             @click="stopAutoPlay"
             class="px-6 py-2.5 bg-black/5 hover:bg-black/10 backdrop-blur-sm text-gray-400 hover:text-gray-600 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 border border-black/5"

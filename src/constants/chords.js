@@ -1,7 +1,7 @@
 export const ChordDefinitions = {
   // --- 白鍵の9個の和音 ---
   DOMISO: { id: 'domiso', name: 'ドミソ', nameIt: 'ドミソ', symbol: 'C', colorName: '赤', color: '#EF4444', notes: ['C4', 'E4', 'G4'], abc: '[CEG]', scoreImage: '/videos/assets/scores/Lv1_score_赤.png' },
-  DOFARA: { id: 'dofara', name: 'ドファラ', nameIt: 'ドファラ', symbol: 'F/C', colorName: '黄色', color: '#FFFF00', notes: ['C4', 'F4', 'A4'], abc: '[CFA]', scoreImage: '/videos/assets/scores/Lv2_score_黄色.png' },
+  DOFARA: { id: 'dofara', name: 'ドファラ', nameIt: 'ドファラ', symbol: 'F/C', colorName: '黄色', color: '#FFD700', notes: ['C4', 'F4', 'A4'], abc: '[CFA]', scoreImage: '/videos/assets/scores/Lv2_score_黄色.png' },
   SHIRESO: { id: 'shireso', name: 'シレソ', nameIt: 'シレソ', symbol: 'G/B', colorName: '青', color: '#0000FF', notes: ['B3', 'D4', 'G4'], abc: '[B,DG]', scoreImage: '/videos/assets/scores/Lv3_score_青.png' },
   RADOFA: { id: 'radofa', name: 'ラドファ', nameIt: 'ラドファ', symbol: 'F/A', colorName: '黒', color: '#000000', notes: ['A3', 'C4', 'F4'], abc: '[A,CF]', scoreImage: '/videos/assets/scores/Lv4_score_黒.png' },
   RESOSHI: { id: 'resoshi', name: 'レソシ', nameIt: 'レソシ', symbol: 'G/D', colorName: '緑', color: '#16a34a', notes: ['D4', 'G4', 'B4'], abc: '[DGB]', scoreImage: '/videos/assets/scores/Lv5_score_緑.png' },
