@@ -99,6 +99,15 @@ const routes = [
   }
 ]
 
+// Development only routes
+if (import.meta.env.DEV) {
+  routes.push({
+    path: '/admin/video-gen',
+    name: 'VideoGenerator',
+    component: () => import('../views/VideoGenerator.vue')
+  })
+}
+
 const router = createRouter({
   history: createWebHistory(),
   routes,

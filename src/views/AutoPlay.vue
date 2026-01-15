@@ -17,6 +17,7 @@ import TrainGameMode from '../components/TrainGameMode.vue'
 import VehicleGameMode from '../components/VehicleGameMode.vue'
 import CatGameMode from '../components/CatGameMode.vue'
 import VideoCatGameMode from '../components/VideoCatGameMode.vue'
+import CatFlagGameMode from '../components/CatFlagGameMode.vue'
 // ...
 
 import { useChordFrequency } from '../composables/useChordFrequency'
@@ -81,7 +82,7 @@ const isAutoPlayRevealed = ref(false)
 const isAutoPlayImmediate = ref(true)
 const isVoiceEnabled = ref(true)
 const revealDelay = ref(2.5) // seconds before revealing/speaking
-const autoPlayRevealType = ref('full') // 'full' | 'icecream' | 'train' | 'vehicle' | 'cat' | 'video_cat'
+const autoPlayRevealType = ref('full') // 'full' | 'icecream' | 'train' | 'vehicle' | 'cat' | 'video_cat' | 'cat_flag'
 
 const selectedChords = computed(() => {
   return TEST_CHORDS.value.filter(c => selectedChordIds.value.has(c.id))
@@ -191,20 +192,23 @@ const playCurrentQuestion = async () => {
     isAutoPlayRevealed.value = true
   }
   
-  s.triggerAttackRelease(chord.notes, 3)
+  const soundDuration = autoPlayRevealType.value === 'cat_flag' ? 5 : 3
+  s.triggerAttackRelease(chord.notes, soundDuration)
   
   const delayMs = revealDelay.value * 1000
 
   if (isAutoPlayImmediate.value) {
+    const nextDelay = autoPlayRevealType.value === 'cat_flag' ? 3500 : DELAYS.NEXT_QUESTION
     autoPlayTimeout.value = setTimeout(() => {
       if (isVoiceEnabled.value) speakColor(chord.displayColor)
-      autoPlayTimeout.value = setTimeout(nextQuestion, DELAYS.NEXT_QUESTION)
+      autoPlayTimeout.value = setTimeout(nextQuestion, nextDelay)
     }, delayMs)
   } else {
+    const nextDelay = autoPlayRevealType.value === 'cat_flag' ? 3500 : DELAYS.NEXT_QUESTION
     autoPlayTimeout.value = setTimeout(() => {
       isAutoPlayRevealed.value = true
       if (isVoiceEnabled.value) speakColor(chord.displayColor)
-      autoPlayTimeout.value = setTimeout(nextQuestion, DELAYS.NEXT_QUESTION)
+      autoPlayTimeout.value = setTimeout(nextQuestion, nextDelay)
     }, delayMs)
   }
 }
@@ -456,6 +460,18 @@ onUnmounted(() => {
                 <span class="text-xs font-black" :class="autoPlayRevealType === 'video_cat' ? 'text-stone-800' : 'text-gray-400'">動画ねこ</span>
               </button>
 
+              <!-- Cat Flag Option -->
+              <button 
+                @click="autoPlayRevealType = 'cat_flag'"
+                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                :class="autoPlayRevealType === 'cat_flag' 
+                  ? 'bg-white border-red-500 shadow-md transform scale-[1.02]' 
+                  : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
+              >
+                <div class="text-2xl mb-1">🚩</div>
+                <span class="text-xs font-black" :class="autoPlayRevealType === 'cat_flag' ? 'text-red-600' : 'text-gray-400'">ねこ旗揚げ</span>
+              </button>
+
               <!-- Train Option -->
               <button 
                 @click="autoPlayRevealType = 'train'"
@@ -700,6 +716,35 @@ onUnmounted(() => {
                   class="pointer-events-auto px-6 py-2.5 bg-black/50 backdrop-blur-md text-white/80 hover:text-red-400 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-lg hover:shadow-xl border border-white/10"
                 >
                   <div class="w-1.5 h-1.5 bg-current rounded-full"></div>
+                  <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
+                </button>
+             </div>
+          </div>
+        </transition>
+
+        <!-- Auto Play Reveal: Cat Flag Mode -->
+        <transition name="fade">
+          <div 
+            v-if="autoPlayRevealType === 'cat_flag'" 
+            class="fixed inset-0 z-40 bg-stone-100"
+          >
+             <CatFlagGameMode 
+               :key="currentQuestionIndex"
+               :currentQuestion="currentQuestion"
+               :choices="selectedChords"
+               :correctHistory="iceCreamHistory"
+               :userAnswer="isAutoPlayRevealed ? currentQuestion : null"
+               :isQuestionChanging="false"
+               :isAutoPlay="true"
+             />
+             
+             <!-- Overlay Stop Button -->
+             <div class="absolute bottom-12 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+                <button 
+                  @click="stopAutoPlay"
+                  class="pointer-events-auto px-6 py-2.5 bg-stone-900/50 backdrop-blur-md text-white font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-lg hover:shadow-xl border border-white/10"
+                >
+                  <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
                   <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
                 </button>
              </div>
