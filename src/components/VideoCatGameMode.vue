@@ -9,11 +9,11 @@
           v-if="currentVideoSrc"
           :key="currentVideoSrc"
           :src="currentVideoSrc"
-          autoplay
           muted
           playsinline
           class="absolute inset-0 w-full h-full object-contain"
           @error="handleVideoError"
+          ref="videoPlayer"
         ></video>
         
         <!-- Fallback if video missing or error -->
@@ -95,7 +95,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
   currentQuestion: Object,
@@ -197,6 +197,31 @@ const gridColsClass = computed(() => {
   if (count <= 9) return 'grid-cols-4 sm:grid-cols-5'
   return 'grid-cols-5 sm:grid-cols-7'
 })
+
+const videoPlayer = ref(null)
+
+const playVideo = async () => {
+  await nextTick()
+  if (videoPlayer.value) {
+    try {
+      videoPlayer.value.currentTime = 0
+      await videoPlayer.value.play()
+    } catch (e) {
+      console.warn('Video play failed:', e)
+    }
+  }
+}
+
+// Watch for source changes to play
+watch(currentVideoSrc, async (newVal) => {
+  if (newVal) {
+    await playVideo()
+  }
+}, { immediate: true })
+
+// Also watch for "play" emit? No, parent handles sound play. 
+// If we want re-play video on user "Replay" click, we might need a prop or method.
+// But for now, focus on initial auto-play.
 </script>
 
 <style scoped>

@@ -7,11 +7,11 @@
           v-if="currentVideoSrc && !hasVideoError && isPreloaded"
           :key="currentVideoSrc"
           :src="currentVideoSrc"
-          autoplay
           muted
           playsinline
           class="w-full h-full object-cover"
           @error="handleVideoError"
+          ref="videoPlayer"
         ></video>
         
         <!-- Fallback / Loading -->
@@ -101,7 +101,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['answer', 'play'])
+const emit = defineEmits(['answer', 'play', 'ready'])
 
 const COLOR_TO_EN = {
   '赤': 'red',
@@ -196,12 +196,12 @@ const preloadVideos = async () => {
       const onDone = () => {
         loadedCount++
         preloadProgress.value = Math.round((loadedCount / total) * 100)
-        video.removeEventListener('canplaythrough', onDone)
+        video.removeEventListener('loadedmetadata', onDone)
         video.removeEventListener('error', onDone)
         resolve()
       }
 
-      video.addEventListener('canplaythrough', onDone)
+      video.addEventListener('loadedmetadata', onDone)
       video.addEventListener('error', onDone)
       
       // Start loading
@@ -209,11 +209,15 @@ const preloadVideos = async () => {
     })
   })
 
-  // Set a timeout of 10s so we don't wait forever if some videos are missing
-  const timeout = new Promise(resolve => setTimeout(resolve, 10000))
+  // Set a timeout of 5s so we don't wait forever
+  const timeout = new Promise(resolve => setTimeout(() => {
+    console.warn('Preload timed out')
+    resolve()
+  }, 5000))
   
   await Promise.race([Promise.all(promises), timeout])
   isPreloaded.value = true
+  emit('ready')
 }
 
 onMounted(() => {
@@ -222,10 +226,20 @@ onMounted(() => {
   preloadVideos()
 })
 
-// Randomize variant on question change
-watch(() => props.currentQuestion, (newVal) => {
-  if (newVal) randomizeVariant(newVal.colorName)
-  hasVideoError.value = false
+// When preloading finishes, if we already have a video to show, play it.
+watch(isPreloaded, (val) => {
+  if (val && currentVideoSrc.value) {
+    playVideo()
+  }
+})
+
+// Randomize variant on question change AND play
+watch(() => props.currentQuestion, async (newVal) => {
+  if (newVal) {
+    randomizeVariant(newVal.colorName)
+    hasVideoError.value = false
+    await playVideo()
+  }
 })
 
 const handleVideoError = (e) => {

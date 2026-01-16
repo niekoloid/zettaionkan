@@ -195,7 +195,10 @@ const playCurrentQuestion = async () => {
   const soundDuration = autoPlayRevealType.value === 'cat_flag' ? 5 : 3
   s.triggerAttackRelease(chord.notes, soundDuration)
   
-  const delayMs = revealDelay.value * 1000
+  // Narration timing: Use 5s for flag mode as requested
+  const delayMs = autoPlayRevealType.value === 'cat_flag' 
+    ? 5000 
+    : revealDelay.value * 1000
 
   if (isAutoPlayImmediate.value) {
     const nextDelay = autoPlayRevealType.value === 'cat_flag' ? 3500 : DELAYS.NEXT_QUESTION
@@ -299,7 +302,10 @@ const startAutoPlay = async () => {
   currentQuestionIndex.value = 0
   view.value = 'playing'
   
-  setTimeout(playCurrentQuestion, DELAYS.PLAYBACK_START)
+  // Only start playback immediately if not in cat_flag mode (which waits for preloading)
+  if (autoPlayRevealType.value !== 'cat_flag') {
+    setTimeout(playCurrentQuestion, DELAYS.PLAYBACK_START)
+  }
 }
 
 const stopAutoPlay = async () => {
@@ -700,7 +706,6 @@ onUnmounted(() => {
             class="fixed inset-0 z-40 bg-black"
           >
              <VideoCatGameMode 
-               :key="currentQuestionIndex"
                :currentQuestion="currentQuestion"
                :choices="selectedChords"
                :correctHistory="iceCreamHistory"
@@ -729,13 +734,13 @@ onUnmounted(() => {
             class="fixed inset-0 z-40 bg-stone-100"
           >
              <CatFlagGameMode 
-               :key="currentQuestionIndex"
                :currentQuestion="currentQuestion"
                :choices="selectedChords"
                :correctHistory="iceCreamHistory"
                :userAnswer="isAutoPlayRevealed ? currentQuestion : null"
                :isQuestionChanging="false"
                :isAutoPlay="true"
+               @ready="playCurrentQuestion"
              />
              
              <!-- Overlay Stop Button -->
