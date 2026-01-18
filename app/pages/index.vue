@@ -1,4 +1,7 @@
 <script setup lang="ts">
+useHead({
+  title: 'いろおと - 絶対音感トレーニング'
+})
 import * as Tone from 'tone'
 
 
@@ -20,11 +23,14 @@ const playbackTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
 // === Single List Logic ===
 // Flatten all 14 basic chords into a single list with metadata
 const { allChords: customChords } = useChordSettings()
-const { namingConvention, formatChordName } = useAppSettings()
+const { namingConvention, updateNamingConvention, instrument, updateInstrument, syncWithDb: syncApp, formatColorName, formatChordName, colorFormat, updateColorFormat, isKeyboardSoundEnabled, updateKeyboardSound } = useAppSettings()
 
 const allChords = computed(() => {
-  return customChords.value.slice(0, 14).map((chord, index) => {
-    // Pre-calculate lightness to avoid repeated calls in template
+  const selected = customChords.value.filter(c => c.homeEnabled)
+  // If nothing is selected, display everything. If something is selected, display only those.
+  const displaySource = selected.length > 0 ? selected : customChords.value
+
+  return displaySource.map((chord, index) => {
     const r = parseInt(chord.color.slice(1, 3), 16)
     const g = parseInt(chord.color.slice(3, 5), 16)
     const b = parseInt(chord.color.slice(5, 7), 16)
@@ -126,6 +132,7 @@ const playChord = async (notes: string[]) => {
 }
 
 const playNote = async (note: string) => {
+  if (!isKeyboardSoundEnabled.value) return
   if (Tone.context.state !== 'running') await Tone.start()
   
   const currentSampler = samplers[selectedInstrument.value]
@@ -198,6 +205,25 @@ const getBlackKeyNote = (whiteNote: string) => {
   const octave = whiteNote.match(/\d/)![0]
   return `${noteName}#${octave}`
 }
+
+// === Dynamic Layout Logic ===
+const gridClasses = computed(() => {
+  const count = allChords.value.length
+  if (count === 0) return 'hidden'
+  if (count === 1) return 'grid-cols-1 max-w-xs mx-auto'
+  if (count === 2) return 'grid-cols-2 max-w-md mx-auto'
+  if (count === 3) return 'grid-cols-3'
+  if (count === 4) return 'grid-cols-4'
+  return 'grid-cols-5 md:grid-cols-3 lg:grid-cols-4'
+})
+
+const itemClasses = computed(() => {
+  const count = allChords.value.length
+  if (count <= 4 && count > 0) {
+    return 'md:h-32' // Significantly taller for desktop
+  }
+  return 'md:h-20'
+})
 </script>
 
 <template>
@@ -232,7 +258,7 @@ const getBlackKeyNote = (whiteNote: string) => {
         <ScoreDisplay :abc="currentChord?.abc" :is-answered="true">
           <template #footer v-if="currentChord">
             <div class="mt-4 text-[14px] font-bold text-gray-700 flex flex-col items-center">
-              <span class="whitespace-nowrap">{{ formatChordName(currentChord) }} ({{ currentChord.colorName }})</span>
+              <span class="whitespace-nowrap">{{ formatChordName(currentChord) }} ({{ formatColorName(currentChord.colorName) }})</span>
             </div>
           </template>
         </ScoreDisplay>
@@ -286,18 +312,17 @@ const getBlackKeyNote = (whiteNote: string) => {
 
       <!-- Chord List (All Levels) -->
       <section class="mb-8">
-
-
-          <div class="grid grid-cols-5 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div class="grid gap-4 transition-all duration-500" :class="gridClasses">
             <div 
               v-for="(chord) in allChords" 
               :key="chord.id"
               @click="toggleChord(chord)"
-              class="relative cursor-pointer shadow-sm group aspect-square rounded-full md:aspect-auto md:rounded-2xl md:h-20 overflow-hidden"
+              class="relative cursor-pointer shadow-sm group aspect-square rounded-full md:aspect-auto md:rounded-2xl overflow-hidden transition-all duration-300"
               :class="[
                  currentChord?.id === chord.id 
                     ? 'ring-4 ring-offset-2 ring-gray-200 z-10 scale-105 shadow-md' 
-                    : 'hover:scale-105 active:scale-95 hover:shadow-md'
+                    : 'hover:scale-105 active:scale-95 hover:shadow-md',
+                 itemClasses
               ]"
               :style="{ backgroundColor: chord.color }"
             >
@@ -337,7 +362,7 @@ const getBlackKeyNote = (whiteNote: string) => {
                     class="text-[10px] font-bold leading-none mt-1 opacity-90"
                     :class="chord.isLight ? 'text-gray-600' : 'text-white'"
                   >
-                    {{ chord.colorName }}
+                    {{ formatColorName(chord.colorName) }}
                   </span>
                 </div>
               </div>

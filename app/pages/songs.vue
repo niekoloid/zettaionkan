@@ -11,7 +11,7 @@ import { useAudioSettings } from '~/composables/useAudioSettings'
 
 const { samplers, selectedInstrument, isSamplerLoaded, loadSampler, playNarration } = useAudio()
 const { userTier, authReady } = useAuth()
-const { namingConvention, formatChordName } = useAppSettings()
+const { namingConvention, formatChordName, formatColorName } = useAppSettings()
 const { getPreferredInstrument } = useAudioSettings()
 
 const selectedSong = ref<Song>(SONGS[0]!)
@@ -351,7 +351,7 @@ const isLightColor = (hex: string | undefined) => {
                 <span class="text-lg font-black text-gray-900 block leading-tight">
                   {{ formatChordName(currentChord) }}
                 </span>
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ currentChord.colorName }}</span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ formatColorName(currentChord.colorName) }}</span>
               </template>
               <template v-else-if="isPlaying">
                 <span class="text-lg font-black text-gray-200">Playing...</span>

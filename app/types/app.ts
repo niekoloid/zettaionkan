@@ -34,3 +34,10 @@ export interface UserProfile {
   subscription_tier: 'free' | 'entry' | 'standard' | 'premium'
   stripe_customer_id?: string
 }
+
+export interface AppSettings {
+  namingConvention: 'italian' | 'german' | 'hybrid'
+  instrument: string
+  colorFormat: 'standard' | 'hiragana'
+  isKeyboardSoundEnabled: boolean
+}

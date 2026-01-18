@@ -1,4 +1,7 @@
 <script setup lang="ts">
+useHead({
+  title: '各種設定 - 絶対音感トレーニング'
+})
 
 const { 
   selectedInstrument, 
@@ -8,45 +11,46 @@ const {
   isLoaded
 } = useAudio()
 
-const { setPreferredInstrument } = useAudioSettings()
 const { userTier, authReady } = useAuth()
-const { allChords, saveSingleMapping, syncWithDb: syncChords, resetAll: resetGlobal } = useChordSettings()
-const { namingConvention, updateNamingConvention, instrument, updateInstrument, syncWithDb: syncApp, formatColorName, formatChordName, colorFormat, updateColorFormat } = useAppSettings()
+const { allChords, saveSingleMapping, resetAll: resetGlobal } = useChordSettings()
+const { 
+  namingConvention, updateNamingConvention, 
+  instrument, updateInstrument, 
+  formatColorName, formatChordName, 
+  colorFormat, updateColorFormat,
+  isKeyboardSoundEnabled, updateKeyboardSound
+} = useAppSettings()
 
 const NARRATION_PRESETS = [
   '赤', '黄色', '青', '黒', '緑', 'オレンジ', '紫', 'ピンク', '茶色', '黄緑', 'ベージュ', '薄橙', '肌色', '薄紫', '藤色', 'グレー', '灰色', '水色', '空色'
 ]
 
 // Mapping Draft State
-const draftMappings = ref<Record<string, { color: string; colorName: string }>>({})
+const draftMappings = ref<Record<string, { color: string; colorName: string; homeEnabled: boolean }>>({})
 const showSaveSuccess = ref(false)
 
 const initializeDraft = () => {
-  const current: Record<string, { color: string; colorName: string }> = {}
+  const current: Record<string, { color: string; colorName: string; homeEnabled: boolean }> = {}
   allChords.value.forEach(c => {
-    current[c.id] = { color: c.color, colorName: c.colorName }
+    current[c.id] = { color: c.color, colorName: c.colorName, homeEnabled: c.homeEnabled }
   })
   draftMappings.value = current
 }
 
-const handleInstrumentChange = (instrument: string) => {
-  if (instrument === selectedInstrument.value) return
+const handleInstrumentChange = (inst: string) => {
+  if (inst === selectedInstrument.value) return
   
-  if (instrument === 'steinway' && userTier.value !== 'premium') {
+  if (inst === 'steinway' && userTier.value !== 'premium') {
     alert('Steinway B音源はプレミアムプラン限定です。')
     return
   }
 
-  loadSampler(instrument as 'yamaha' | 'steinway')
-  updateInstrument(instrument)
+  loadSampler(inst as 'yamaha' | 'steinway')
+  updateInstrument(inst)
 }
 
 onMounted(async () => {
   await authReady
-  await Promise.all([
-    syncChords(),
-    syncApp()
-  ])
   initializeDraft()
 })
 
@@ -57,15 +61,63 @@ const updateDraft = (id: string, updates: any) => {
 const isModified = (chord: any) => {
   const draft = draftMappings.value[chord.id]
   if (!draft) return false
-  return draft.color !== chord.color || draft.colorName !== chord.colorName
+  return (
+    draft.color !== chord.color || 
+    draft.colorName !== chord.colorName || 
+    (draft.homeEnabled ?? false) !== (chord.homeEnabled ?? false)
+  )
 }
 
+const isSavingMap = ref<Record<string, boolean>>({})
+
 const handleSaveChord = async (id: string) => {
-  await saveSingleMapping(id, draftMappings.value[id]!)
-  showSaveSuccess.value = true
-  setTimeout(() => {
-    showSaveSuccess.value = false
-  }, 2000)
+  if (isSavingMap.value[id]) return
+  
+  isSavingMap.value[id] = true
+  
+  const timeoutId = setTimeout(() => {
+    if (isSavingMap.value[id]) {
+      isSavingMap.value[id] = false
+      alert('保存がタイムアウトしました。ネットワークを確認してください。')
+    }
+  }, 10000)
+
+  try {
+    await saveSingleMapping(id, draftMappings.value[id]!)
+    showSaveSuccess.value = true
+    setTimeout(() => {
+      showSaveSuccess.value = false
+    }, 2000)
+  } catch (e) {
+    console.error('Settings: Save failed', e)
+    alert('保存中にエラーが発生しました。')
+  } finally {
+    clearTimeout(timeoutId)
+    isSavingMap.value[id] = false
+  }
+}
+
+const handleToggleHome = async (chord: any) => {
+  const currentDraft = draftMappings.value[chord.id] || { 
+    color: chord.color, 
+    colorName: chord.colorName, 
+    homeEnabled: chord.homeEnabled 
+  }
+  
+  const nextValue = !currentDraft.homeEnabled
+  updateDraft(chord.id, { homeEnabled: nextValue })
+  
+  try {
+    // Save with the new toggle value, but keep the current DB values for color/name 
+    // to avoid saving unconfirmed draft changes.
+    await saveSingleMapping(chord.id, {
+      color: chord.color,
+      colorName: chord.colorName,
+      homeEnabled: nextValue
+    })
+  } catch (e) {
+    console.error('Auto-save toggle failed:', e)
+  }
 }
 
 const handleReset = () => {
@@ -91,37 +143,6 @@ const handleReset = () => {
           <p class="text-sm text-gray-400 font-bold">アプリの表示や音源の設定を変更できます</p>
         </div>
 
-        <!-- Preload Section -->
-        <section class="mb-12 p-6 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-3xl border border-indigo-100/50">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="space-y-2">
-              <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                  <span class="text-sm">⚡️</span>
-                </div>
-                <h3 class="text-sm font-black text-indigo-900">音源の先行ダウンロード</h3>
-              </div>
-              <p class="text-[10px] font-bold text-indigo-400 leading-relaxed max-w-sm">
-                タブレットや低速なネットワーク環境でお使いの場合、あらかじめ全ての音源をダウンロードしておくことで、スムーズに学習を開始できます。
-              </p>
-            </div>
-            
-            <button 
-              @click="preloadAll"
-              :disabled="isPreloading"
-              class="relative px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs shadow-xl shadow-indigo-200 hover:bg-indigo-700 active:scale-95 disabled:opacity-50 disabled:scale-100 transition-all flex items-center justify-center space-x-2 group overflow-hidden"
-            >
-              <div v-if="isPreloading" class="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full"></div>
-              <span v-else>
-                {{ isLoaded.steinway && isLoaded.yamaha ? '音源を再読込する' : '全ての音源を準備する' }}
-              </span>
-              
-              <!-- Shimmer effect -->
-              <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-            </button>
-          </div>
-        </section>
-
         <!-- Instrument Settings -->
         <section class="space-y-6 mb-12">
           <div class="flex items-center space-x-2">
@@ -130,11 +151,10 @@ const handleReset = () => {
           </div>
 
           <div class="grid grid-cols-1 gap-4">
-            <!-- Yamaha Option -->
             <div 
               @click="handleInstrumentChange('yamaha')"
               class="relative p-5 rounded-2xl border-2 transition-all cursor-pointer group shadow-sm bg-white"
-              :class="selectedInstrument === 'yamaha' ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-gray-100 hover:border-gray-200'"
+              :class="instrument === 'yamaha' ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-gray-100 hover:border-gray-200'"
             >
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
@@ -144,7 +164,7 @@ const handleReset = () => {
                     <p class="text-[10px] font-bold text-gray-400 mt-0.5">落ち着いた、温かみのある伝統的なピアノ音源</p>
                   </div>
                 </div>
-                <div v-if="selectedInstrument === 'yamaha'" class="text-indigo-500">
+                <div v-if="instrument === 'yamaha'" class="text-indigo-500">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
@@ -152,12 +172,11 @@ const handleReset = () => {
               </div>
             </div>
 
-            <!-- Steinway Option -->
             <div 
               @click="handleInstrumentChange('steinway')"
               class="relative p-5 rounded-2xl border-2 transition-all cursor-pointer group shadow-sm bg-white"
               :class="[
-                selectedInstrument === 'steinway' ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-gray-100 hover:border-gray-200',
+                instrument === 'steinway' ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-gray-100 hover:border-gray-200',
                 userTier !== 'premium' ? 'opacity-80' : ''
               ]"
             >
@@ -172,7 +191,7 @@ const handleReset = () => {
                     <p class="text-[10px] font-bold text-gray-400 mt-0.5">繊細で豊かな表現力を持つ最高峰の響き</p>
                   </div>
                 </div>
-                <div v-if="selectedInstrument === 'steinway'" class="text-indigo-500">
+                <div v-if="instrument === 'steinway'" class="text-indigo-500">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
@@ -187,6 +206,36 @@ const handleReset = () => {
           </div>
         </section>
 
+        <!-- Keyboard UI Settings -->
+        <section class="space-y-6 mb-12">
+          <div class="flex items-center space-x-2">
+            <span class="w-1 h-5 bg-indigo-500 rounded-full"></span>
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">鍵盤の設定</h3>
+          </div>
+
+          <div 
+            @click="updateKeyboardSound(!isKeyboardSoundEnabled)"
+            class="flex items-center justify-between p-5 bg-white rounded-2xl border-2 cursor-pointer transition-all active:scale-[0.98]"
+            :class="isKeyboardSoundEnabled ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-gray-100'"
+          >
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-lg">🔊</div>
+              <div>
+                <h4 class="font-black text-gray-900 text-sm">ホーム画面の鍵盤の音を鳴らす</h4>
+                <p class="text-[10px] font-bold text-gray-400 mt-0.5">鍵盤を押したときに音を出します</p>
+              </div>
+            </div>
+            <div 
+              class="w-10 h-6 rounded-full transition-colors relative shrink-0"
+              :class="isKeyboardSoundEnabled ? 'bg-indigo-600' : 'bg-gray-200'"
+            >
+              <div 
+                class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
+                :class="isKeyboardSoundEnabled ? 'translate-x-4' : ''"
+              ></div>
+            </div>
+          </div>
+        </section>
 
         <!-- Color Name Format Settings -->
         <section class="space-y-6 mb-12">
@@ -196,7 +245,6 @@ const handleReset = () => {
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <!-- Standard (Kanji/Katakana) -->
             <div 
               @click="updateColorFormat('standard')"
               class="relative p-4 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-2"
@@ -211,7 +259,6 @@ const handleReset = () => {
               </div>
             </div>
 
-            <!-- Hiragana -->
             <div 
               @click="updateColorFormat('hiragana')"
               class="relative p-4 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-2"
@@ -236,7 +283,6 @@ const handleReset = () => {
           </div>
 
           <div class="grid grid-cols-3 gap-3">
-            <!-- Italian (Do-Mi-So) -->
             <div 
               @click="updateNamingConvention('italian')"
               class="relative p-2 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-1 h-24"
@@ -251,7 +297,6 @@ const handleReset = () => {
               </div>
             </div>
 
-            <!-- Hybrid (Do-Mi-So + German Accidental) -->
             <div 
               @click="updateNamingConvention('hybrid')"
               class="relative p-2 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-1 h-24"
@@ -266,7 +311,6 @@ const handleReset = () => {
               </div>
             </div>
 
-            <!-- German (C-E-G) -->
             <div 
               @click="updateNamingConvention('german')"
               class="relative p-2 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-1 h-24"
@@ -301,7 +345,8 @@ const handleReset = () => {
           <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 space-y-6">
             <p class="text-[10px] font-bold text-gray-400 leading-normal">
               各和音に対応する色と、音声ガイドでの読み上げ名を変更できます。<br>
-              変更後、一番下の「変更を確定して保存」ボタンを押してください。
+              「Home表示」をオンにすると、その和音だけをHome画面に表示できます（未選択時はすべて表示されます）。<br>
+              変更後、各項目の「確定して保存」ボタンを押してください。
             </p>
 
             <div class="space-y-4">
@@ -311,11 +356,9 @@ const handleReset = () => {
                 class="bg-white p-4 rounded-3xl border transition-all duration-300 shadow-sm space-y-4 relative overflow-hidden"
                 :class="isModified(chord) ? 'border-indigo-500 ring-4 ring-indigo-50 shadow-md' : 'border-gray-100'"
               >
-                <!-- Modification Badge -->
                 <div v-if="isModified(chord)" class="absolute top-0 left-0 bg-indigo-500 text-white text-[8px] font-black px-3 py-1 rounded-br-xl uppercase tracking-widest animate-pulse">
                   未確定
                 </div>
-                <!-- Header: Name and Save Button -->
                 <div class="flex items-center justify-between">
                   <div class="flex items-center space-x-2">
                     <span class="text-xs font-black text-gray-900 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
@@ -324,18 +367,24 @@ const handleReset = () => {
                   </div>
                   <button 
                     @click="handleSaveChord(chord.id)"
+                    type="button"
                     class="px-4 py-1.5 rounded-full font-bold text-[10px] active:scale-95 transition-all flex items-center space-x-1"
-                    :class="isModified(chord) ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 animate-bounce-subtle' : 'bg-gray-100 text-gray-400 cursor-default'"
+                    :class="[
+                      isModified(chord) 
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 animate-bounce-subtle' 
+                        : 'bg-gray-100 text-gray-400 cursor-default pointer-events-none',
+                      isSavingMap[chord.id] ? 'opacity-50 pointer-events-none' : ''
+                    ]"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                    <svg v-if="!isSavingMap[chord.id]" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
-                    <span>{{ isModified(chord) ? '確定して保存' : '確定済み' }}</span>
+                    <div v-else class="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>{{ isSavingMap[chord.id] ? '保存中...' : (isModified(chord) ? '確定して保存' : '確定済み') }}</span>
                   </button>
                 </div>
 
                 <div class="flex items-center space-x-1">
-                  <!-- Score Preview -->
                   <div class="shrink-0 w-20 h-14 flex items-center justify-center">
                     <img 
                       v-if="chord.scoreImage" 
@@ -345,8 +394,6 @@ const handleReset = () => {
                     >
                     <div v-else class="text-[8px] font-black text-gray-200">NO IMAGE</div>
                   </div>
-
-                  <!-- Color Preview / Picker -->
                   <div class="relative w-16 h-16 shrink-0 group">
                     <div 
                       class="w-full h-full rounded-2xl shadow-inner border border-gray-100 flex items-center justify-center text-[9px] font-black"
@@ -364,8 +411,6 @@ const handleReset = () => {
                       class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                     >
                   </div>
-
-                  <!-- Narration Selection (Presets only) -->
                   <div class="flex-grow min-w-0">
                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 pl-1">再生ナレーション</p>
                     <div class="relative">
@@ -385,10 +430,50 @@ const handleReset = () => {
                       </div>
                     </div>
                   </div>
+                  <div class="shrink-0 flex flex-col items-center justify-center pl-2 space-y-1">
+                    <p class="text-[8px] font-black text-gray-400 uppercase leading-none">Home表示</p>
+                    <button 
+                      @click="handleToggleHome(chord)"
+                      type="button"
+                      class="w-10 h-6 rounded-full relative transition-all duration-300 active:scale-90"
+                      :class="draftMappings[chord.id]?.homeEnabled ? 'bg-indigo-500' : 'bg-gray-200'"
+                    >
+                      <div 
+                        class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 shadow-sm"
+                        :class="draftMappings[chord.id]?.homeEnabled ? 'translate-x-4' : 'translate-x-0'"
+                      ></div>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+        </section>
 
+        <!-- Subscription Management -->
+        <section class="space-y-6 mb-20">
+          <div class="flex items-center space-x-2">
+            <span class="w-1 h-5 bg-amber-500 rounded-full"></span>
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">アカウント・プラン</h3>
+          </div>
+
+          <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-1">
+              <h4 class="text-sm font-black text-gray-900">
+                現在のプラン: {{ userTier === 'premium' ? 'プレミアム' : (userTier === 'standard' ? 'スタンダード' : (userTier === 'entry' ? 'エントリー' : '無料')) }}プラン
+              </h4>
+              <p class="text-[10px] font-bold text-gray-400">プランの変更や解約はマイページから行えます</p>
+            </div>
+            
+            <NuxtLink 
+              to="/account"
+              class="px-6 py-3 bg-white text-gray-900 border border-gray-200 rounded-2xl font-black text-xs shadow-sm hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center space-x-2 shrink-0"
+            >
+              <span>マイページで管理する</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </NuxtLink>
           </div>
         </section>
 
@@ -403,9 +488,6 @@ const handleReset = () => {
             </div>
           </div>
         </Transition>
-
-
-        <!-- Other settings could go here in future -->
       </main>
     </div>
   </div>

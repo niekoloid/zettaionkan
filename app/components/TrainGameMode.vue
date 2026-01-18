@@ -107,7 +107,7 @@
                         class="text-[10px] font-black bg-white/90 px-1.5 py-0.5 rounded-full shadow-sm"
                         :style="{ color: history.question.color }"
                     >
-                        {{ (history.question as any).colorName }}
+                        {{ formatColorName((history.question as any).colorName) }}
                     </span>
                 </div>
             </div>
@@ -158,7 +158,7 @@
             
             <div class="flex flex-col items-center leading-none">
               <span class="text-[10px] font-black text-gray-800 mb-1 whitespace-nowrap">
-                {{ chord.colorName }}
+                {{ formatColorName(chord.colorName) }}
               </span>
             </div>
         </button>
@@ -173,6 +173,9 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { type PropType } from 'vue'
 import type { Chord } from '~/constants/chords'
 import type { HistoryItem } from '~/types/app'
+import { useAppSettings } from '~/composables/useAppSettings'
+
+const { formatColorName } = useAppSettings()
 
 const props = defineProps({
   currentQuestion: Object as PropType<Chord | null>,

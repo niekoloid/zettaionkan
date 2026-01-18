@@ -110,7 +110,7 @@ const internalReviewWeighted = computed({
       min="0.1" 
       max="0.5" 
       step="0.1"
-      class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-900"
+      class="w-full h-2.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-indigo-600 transition-all hover:bg-gray-300"
     >
     
     <div class="flex justify-between px-1">
@@ -131,22 +131,34 @@ const internalReviewWeighted = computed({
     <!-- Review Weighting Toggle -->
     <div 
       @click="internalReviewWeighted = !internalReviewWeighted"
-      class="pt-4 border-t border-gray-100 flex items-center justify-between cursor-pointer group"
+      class="pt-5 border-t border-gray-100 flex items-center justify-between cursor-pointer group select-none"
     >
-      <div class="pr-4">
-        <p class="text-[11px] font-black text-gray-800 flex items-center">
-          復習の重み付け
+      <div class="pr-6">
+        <div class="flex items-center space-x-2">
+          <div 
+            class="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] transition-colors"
+            :class="internalReviewWeighted ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'"
+          >
+            ⚖️
+          </div>
+          <p class="text-[12px] font-black text-gray-800">
+            復習の重み付け
+          </p>
+        </div>
+        <p class="text-[9px] font-bold text-gray-400 mt-1.5 leading-relaxed">
+          Lv1に近い基礎の音をより多く、新音に近い音を少なめに出題（おすすめ）
         </p>
-        <p class="text-[9px] font-bold text-gray-400 mt-0.5">Lv1に近い基礎の音をより多く、新音に近い音を少なめに出題</p>
       </div>
       <div 
-        class="w-8 h-4.5 rounded-full transition-colors relative shrink-0"
-        :class="internalReviewWeighted ? 'bg-blue-500' : 'bg-gray-200'"
+        class="w-12 h-7 rounded-full transition-all duration-300 relative shrink-0 shadow-inner"
+        :class="internalReviewWeighted ? 'bg-indigo-600 shadow-indigo-900/10' : 'bg-gray-200'"
       >
         <div 
-          class="absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-white rounded-full transition-transform shadow-sm"
-          :class="internalReviewWeighted ? 'translate-x-3.5' : ''"
-        ></div>
+          class="absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform duration-300 shadow-md flex items-center justify-center"
+          :class="internalReviewWeighted ? 'translate-x-5' : ''"
+        >
+          <div v-if="internalReviewWeighted" class="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-pulse"></div>
+        </div>
       </div>
     </div>
   </div>

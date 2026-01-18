@@ -44,7 +44,7 @@
       class="absolute top-12 left-0 right-0 flex flex-col items-center pointer-events-none z-10"
     >
       <div class="px-8 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl transform transition-all duration-500 scale-110">
-        <span class="text-white font-black text-2xl tracking-tight">{{ userAnswer.colorName }}</span>
+        <span class="text-white font-black text-2xl tracking-tight">{{ formatColorName(userAnswer.colorName) }}</span>
       </div>
       
       <!-- Colored indicator -->
@@ -85,6 +85,9 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { type PropType } from 'vue'
 import type { Chord } from '~/constants/chords'
 import type { HistoryItem } from '~/types/app'
+import { useAppSettings } from '~/composables/useAppSettings'
+
+const { formatColorName } = useAppSettings()
 
 const props = defineProps({
   currentQuestion: Object as PropType<Chord | null>,

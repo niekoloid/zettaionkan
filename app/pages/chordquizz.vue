@@ -12,14 +12,14 @@ const router = useRouter()
 
 // === Constants ===
 const { allChords: customChords } = useChordSettings()
-const { namingConvention } = useAppSettings()
+const { namingConvention, formatChordName, formatColorName } = useAppSettings()
 
 const QUIZZ_CHORDS = computed<Chord[]>(() => {
   return customChords.value.slice(0, 14).map((c, index) => ({
     ...c,
     label: (index + 1).toString(),
-    displayColor: c.colorName,
-    displayColorFormatted: c.colorName,
+    displayColor: formatColorName(c.colorName),
+    displayColorFormatted: formatColorName(c.colorName),
     sortOrder: index + 1
   }))
 })
@@ -42,17 +42,9 @@ const userAnswer = ref<Chord | null>(null)
 const isQuestionChanging = ref(false)
 
 const selectedChordIds = ref(new Set())
-// Initialize default chords on mount
-onMounted(() => {
-  if (selectedChordIds.value.size === 0 && QUIZZ_CHORDS.value.length >= 2) {
-    selectedChordIds.value.add(QUIZZ_CHORDS.value[0]!.id)
-    selectedChordIds.value.add(QUIZZ_CHORDS.value[1]!.id)
-  }
-})
 const questions = ref<Chord[]>([])
 const quizzHistory = ref<HistoryItem[]>([])
 const shuffledIds = ref<string[]>([])
-const isIceCreamMode = ref(false)
 const correctHistory = computed(() => quizzHistory.value.filter(h => h.isCorrect))
 
 const selectedChords = computed(() => {
@@ -112,6 +104,38 @@ const shuffleChords = () => {
     [ids[i], ids[j]] = [ids[j], ids[i]]
   }
   shuffledIds.value = ids as string[]
+}
+
+// === Persistence ===
+interface QuizzCookieSettings {
+  selectedChordIds: string[]
+  parentChordRatio: number
+  isReviewWeighted: boolean
+}
+
+const quizzCookie = useCookie<QuizzCookieSettings>('chord_quizz_settings', {
+  default: () => ({
+    selectedChordIds: [],
+    parentChordRatio: 0.3,
+    isReviewWeighted: false
+  }),
+  watch: true,
+  maxAge: 60 * 60 * 24 * 365 * 100 // 100 years
+})
+
+const syncToCookie = () => {
+  quizzCookie.value = {
+    selectedChordIds: Array.from(selectedChordIds.value) as string[],
+    parentChordRatio: parentChordRatio.value,
+    isReviewWeighted: isReviewWeighted.value
+  }
+}
+
+const loadFromCookie = () => {
+  const s = quizzCookie.value
+  if (s.selectedChordIds) selectedChordIds.value = new Set(s.selectedChordIds)
+  if (s.parentChordRatio !== undefined) parentChordRatio.value = s.parentChordRatio
+  if (s.isReviewWeighted !== undefined) isReviewWeighted.value = s.isReviewWeighted
 }
 
 // === Helper Functions ===
@@ -288,6 +312,15 @@ const { user, userTier, authReady } = useAuth()
 
 onMounted(async () => {
   await authReady
+  loadFromCookie()
+
+  // Initialize default chords on mount IF still empty after load
+  if (selectedChordIds.value.size === 0 && QUIZZ_CHORDS.value.length >= 2) {
+    selectedChordIds.value.add(QUIZZ_CHORDS.value[0]!.id)
+    selectedChordIds.value.add(QUIZZ_CHORDS.value[1]!.id)
+    syncToCookie()
+  }
+
   const { getPreferredInstrument } = useAudioSettings()
   let preferred = getPreferredInstrument(userTier.value)
   
@@ -307,6 +340,11 @@ onMounted(async () => {
 onUnmounted(() => {
   cleanupSideEffects()
 })
+
+// === Watchers for Persistence ===
+watch([selectedChordIds, parentChordRatio, isReviewWeighted], () => {
+  syncToCookie()
+}, { deep: true })
 </script>
 
 <template>
@@ -346,23 +384,6 @@ onUnmounted(() => {
             <span>テストを開始する</span>
           </button>
 
-          <!-- Beta Feature Toggle -->
-          <div 
-            @click="isIceCreamMode = !isIceCreamMode"
-            class="w-full p-3 rounded-xl border border-dashed border-sky-300 bg-sky-50 cursor-pointer flex items-center justify-between group hover:bg-sky-100 transition-all select-none"
-          >
-             <div class="flex items-center space-x-3">
-               <div class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-lg">🍦</div>
-               <div class="text-left">
-                 <p class="text-xs font-bold text-gray-700">アイスクリームモード</p>
-               </div>
-             </div>
-             <div class="w-10 h-6 rounded-full p-1 transition-all duration-300 relative" 
-                  :class="isIceCreamMode ? 'bg-sky-500' : 'bg-gray-200'">
-                <div class="w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-300"
-                     :class="isIceCreamMode ? 'translate-x-4' : 'translate-x-0'"></div>
-             </div>
-          </div>
         </div>
         <!-- Chord Selection -->
         <section>
@@ -423,146 +444,95 @@ onUnmounted(() => {
         <!-- QUIZ VIEW -->
         <div v-if="view === 'quiz'" class="flex-grow w-full flex flex-col bg-white relative">
           
-          <!-- Conditional Rendering: Standard Grid OR Ice Cream Mode -->
-          <template v-if="!isIceCreamMode">
-              <!-- Top Progress Bar (Standard) -->
-              <div class="fixed top-0 left-0 right-0 z-[60] h-1.5 bg-gray-100/50 backdrop-blur-sm">
-                <div class="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-500 ease-out"
-                    :class="{ 'brightness-150 h-2': isQuestionChanging }"
-                    :style="{ width: '100%' }"></div>
+          <!-- Top Progress Bar (Standard) -->
+          <div class="fixed top-0 left-0 right-0 z-[60] h-1.5 bg-gray-100/50 backdrop-blur-sm">
+            <div class="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-500 ease-out"
+                :class="{ 'brightness-150 h-2': isQuestionChanging }"
+                :style="{ width: '100%' }"></div>
+          </div>
+
+          <!-- Minimal Top Info (Standard) -->
+          <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
+            <div class="flex items-center space-x-2">
+              <!-- Premium Question Indicator -->
+              <div class="flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-lg overflow-hidden ring-1 ring-black/5 h-8 transition-all duration-300"
+                  :class="{ 'scale-125 ring-4 ring-indigo-500/50 bg-indigo-900/60': isQuestionChanging }">
+                <div class="px-3 h-full flex items-center bg-white/10 border-r border-white/5">
+                  <span class="text-[8px] text-gray-300 font-black uppercase tracking-widest leading-none">Question</span>
+                </div>
+                <div class="px-4 h-full flex items-center min-w-[3rem] justify-center text-white text-[11px] font-black">
+                  Q {{ currentQuestionCount }}
+                </div>
               </div>
+            </div>
 
-              <!-- Minimal Top Info (Standard) -->
-              <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
-                <div class="flex items-center space-x-2">
-                  <!-- Premium Question Indicator -->
-                  <div class="flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-lg overflow-hidden ring-1 ring-black/5 h-8 transition-all duration-300"
-                      :class="{ 'scale-125 ring-4 ring-indigo-500/50 bg-indigo-900/60': isQuestionChanging }">
-                    <div class="px-3 h-full flex items-center bg-white/10 border-r border-white/5">
-                      <span class="text-[8px] text-gray-300 font-black uppercase tracking-widest leading-none">Question</span>
-                    </div>
-                    <div class="px-4 h-full flex items-center min-w-[3rem] justify-center text-white text-[11px] font-black">
-                      Q {{ currentQuestionCount }}
-                    </div>
-                  </div>
-                </div>
+            <button 
+              @click="finishQuizz"
+              class="pointer-events-auto bg-black/40 backdrop-blur-md text-[10px] text-white font-black rounded-full px-4 h-8 hover:bg-black/50 transition-colors border border-white/10 shadow-lg drop-shadow-sm flex items-center"
+            >
+              テストを終了
+            </button>
+          </div>
 
-                <button 
-                  @click="finishQuizz"
-                  class="pointer-events-auto bg-black/40 backdrop-blur-md text-[10px] text-white font-black rounded-full px-4 h-8 hover:bg-black/50 transition-colors border border-white/10 shadow-lg drop-shadow-sm flex items-center"
-                >
-                  テストを終了
-                </button>
+          <!-- Feedback Overlay (Standard) -->
+          <Transition name="feedback-pop">
+            <div v-if="userAnswer" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+              <div v-if="userAnswer && currentQuestion && userAnswer.id === currentQuestion.id" 
+                  class="text-[250px] sm:text-[350px] font-black text-blue-500 drop-shadow-[0_0_20px_rgba(59,130,246,0.6)] select-none leading-none">
+                ◯
               </div>
-
-              <!-- Feedback Overlay (Standard) -->
-              <Transition name="feedback-pop">
-                <div v-if="userAnswer" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
-                  <div v-if="userAnswer && currentQuestion && userAnswer.id === currentQuestion.id" 
-                      class="text-[250px] sm:text-[350px] font-black text-blue-500 drop-shadow-[0_0_20px_rgba(59,130,246,0.6)] select-none leading-none">
-                    ◯
-                  </div>
-                  <div v-else 
-                      class="text-[250px] sm:text-[350px] font-black text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.6)] select-none leading-none">
-                    ×
-                  </div>
-                </div>
-              </Transition>
-
-              <Transition name="slide-fade" mode="out-in">
-                <div :key="currentQuestionIndex" class="flex-grow grid gap-0.5 w-full h-full"
-                  :style="{ 
-                    gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
-                    gridTemplateRows: `repeat(${gridRows}, minmax(0, 1fr))`
-                  }"
-                >
-                    <template v-for="chord in currentLayoutChords" :key="chord.id">
-                      <button
-                        @click="submitAnswer(chord)"
-                        :disabled="!!userAnswer"
-                        class="relative w-full h-full transition-all duration-150 active:scale-95 flex items-center justify-center overflow-hidden"
-                        :class="[
-                          userAnswer ? (userAnswer.id === chord.id ? 'z-10 ring-inset ring-8 ring-white/50' : 'opacity-20') : 'hover:brightness-105 active:brightness-90'
-                        ]"
-                        :style="{ backgroundColor: chord.color }"
-                      >
-                      </button>
-                    </template>
-                </div>
-              </Transition>
-              
-              <!-- Bottom Controls Overlay (Standard) -->
-              <div class="absolute bottom-10 left-0 right-0 z-50 flex justify-center items-center space-x-4 pointer-events-none">
-                <button 
-                  v-if="!resultMessage"
-                  @click="playCurrentQuestion"
-                  class="pointer-events-auto bg-black/40 backdrop-blur-md text-[10px] text-white font-black rounded-full px-6 py-2.5 hover:bg-black/50 transition-colors border border-white/20 shadow-lg drop-shadow-sm flex items-center space-x-2 active:scale-95"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                  </svg>
-                  <span>再再生</span>
-                </button>
-
-                <button 
-                  v-if="!resultMessage"
-                  @click="skipQuestion"
-                  class="pointer-events-auto bg-black/40 backdrop-blur-md px-6 py-2.5 rounded-full text-white font-black hover:bg-black/50 transition-all flex items-center space-x-2 active:scale-95 border border-white/10 shadow-lg drop-shadow-sm"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                  </svg>
-                  <span class="text-[10px] uppercase tracking-widest">スキップ</span>
-                </button>
+              <div v-else 
+                  class="text-[250px] sm:text-[350px] font-black text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.6)] select-none leading-none">
+                ×
               </div>
-          </template>
-
-          <!-- Ice Cream Mode -->
-          <IceCreamGameMode
-            v-else
-            :currentQuestion="currentQuestion"
-            :choices="currentLayoutChords"
-            :correctHistory="correctHistory"
-            :userAnswer="userAnswer as any"
-            :isQuestionChanging="isQuestionChanging"
-            @answer="submitAnswer"
-            @play="playCurrentQuestion"
-          />
-
-          <!-- Common Feedback Overlay Logic needs to be inside IceCreamMode if needed, or overlayed globally -->
-          <!-- The Ice Cream component handles visual feedback via props mostly, but we can reuse the global pop audio/logic -->
-          <!-- Actually, let's keep the standard Feedback overlay HIDDEN in Ice Cream mode 
-               because IceCreamMode likely wants its own feedback or relies on the 'stacking' as positive feedback.
-               However, for WRONG answers, we might still want the big X ? 
-               The user prompt says "Enter Animation... When correct... scroll falls". 
-               So positive feedback is the ice cream. 
-               Negative feedback? I'll leave the global overlay enabled for Ice Cream mode too? 
-               Wait, the requirements didn't specify negative feedback visualization, 
-               but reusing the existing big X/O might be jarring on top of the cute UI.
-               
-               Let's reuse the Feedback Overlay simply because logic is shared, 
-               but maybe style it differently or keep it. I'll put it OUTSIDE the v-if="!isIceCreamMode" block if I want it shared.
-               
-               Actually, I moved the Feedback Overlay INSIDE the !isIceCreamMode block above.
-               Let's move it OUT to be shared, OR duplicate/customize it.
-               The request didn't specify, but typically "Game Mode" replaces the full view.
-               I'll trust IceCreamGameMode to handle its visuals, but for now I will rely on standard correct/wrong logic calls.
-          -->
-          <Transition name="feedback-pop" v-if="isIceCreamMode">
-             <div v-if="userAnswer && currentQuestion && userAnswer.id !== currentQuestion.id" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
-                <div class="text-[250px] sm:text-[350px] font-black text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.6)] select-none leading-none">
-                  ×
-                </div>
-             </div>
+            </div>
           </Transition>
-          <!-- Top Controls for Ice Cream Mode (Exit) -->
-          <div v-if="isIceCreamMode" class="absolute top-4 right-4 z-[60]">
-             <button 
-                @click="finishQuizz"
-                class="bg-white/50 backdrop-blur-md text-gray-600 rounded-full p-2 hover:bg-white/80 transition-all font-bold text-xs"
-              >
-                終了
-              </button>
+
+          <Transition name="slide-fade" mode="out-in">
+            <div :key="currentQuestionIndex" class="flex-grow grid gap-0.5 w-full h-full"
+              :style="{ 
+                gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+                gridTemplateRows: `repeat(${gridRows}, minmax(0, 1fr))`
+              }"
+            >
+                <template v-for="chord in currentLayoutChords" :key="chord.id">
+                  <button
+                    @click="submitAnswer(chord)"
+                    :disabled="!!userAnswer"
+                    class="relative w-full h-full transition-all duration-150 active:scale-95 flex items-center justify-center overflow-hidden"
+                    :class="[
+                      userAnswer ? (userAnswer.id === chord.id ? 'z-10 ring-inset ring-8 ring-white/50' : 'opacity-20') : 'hover:brightness-105 active:brightness-90'
+                    ]"
+                    :style="{ backgroundColor: chord.color }"
+                  >
+                  </button>
+                </template>
+            </div>
+          </Transition>
+          
+          <!-- Bottom Controls Overlay (Standard) -->
+          <div class="absolute bottom-10 left-0 right-0 z-50 flex justify-center items-center space-x-4 pointer-events-none">
+            <button 
+              v-if="!resultMessage"
+              @click="playCurrentQuestion"
+              class="pointer-events-auto bg-black/40 backdrop-blur-md text-[10px] text-white font-black rounded-full px-6 py-2.5 hover:bg-black/50 transition-colors border border-white/20 shadow-lg drop-shadow-sm flex items-center space-x-2 active:scale-95"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+              </svg>
+              <span>再再生</span>
+            </button>
+
+            <button 
+              v-if="!resultMessage"
+              @click="skipQuestion"
+              class="pointer-events-auto bg-black/40 backdrop-blur-md px-6 py-2.5 rounded-full text-white font-black hover:bg-black/50 transition-all flex items-center space-x-2 active:scale-95 border border-white/10 shadow-lg drop-shadow-sm"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+              </svg>
+              <span class="text-[10px] uppercase tracking-widest">スキップ</span>
+            </button>
           </div>
         </div>
 
@@ -582,7 +552,7 @@ onUnmounted(() => {
         <!-- Result History List -->
         <div class="w-full bg-gray-50 rounded-3xl border border-gray-100 mb-10 overflow-hidden flex flex-col max-h-[400px]">
           <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white/50">
-            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">問題ごとの結果</span>
+            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">解答履歴</span>
             <span class="text-[10px] font-bold text-gray-900">{{ score }} / {{ quizzHistory.length }} 正解</span>
           </div>
           <div class="flex-grow overflow-y-auto px-4 py-2 space-y-2 scrollbar-hide">

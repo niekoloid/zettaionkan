@@ -1,5 +1,5 @@
-import { ref, computed } from 'vue'
-import type { Database } from '~/types/database.types'
+import { computed } from 'vue'
+import type { AppSettings } from '~/types/app'
 
 const STORAGE_KEY = 'zettaionkan_app_settings'
 
@@ -25,84 +25,28 @@ const HIRAGANA_COLORS: Record<string, string> = {
   '空色': 'そらいろ'
 }
 
-interface AppSettings {
-  namingConvention: 'italian' | 'german' | 'hybrid'
-  instrument: string
-  colorFormat: 'standard' | 'hiragana'
-}
-
-// Global state SINGLETON
-const settings = ref<AppSettings>({
-  namingConvention: 'italian', // 'italian' (ドミソ) or 'german' (C-E-G)
+const DEFAULT_SETTINGS: AppSettings = {
+  namingConvention: 'italian',
   instrument: 'yamaha',
-  colorFormat: 'standard' // 'standard' (漢字/カタカナ) or 'hiragana'
-})
-
-// Load from LocalStorage
-const loadLocal = () => {
-  if (import.meta.server) return
-  const saved = localStorage.getItem(STORAGE_KEY)
-  if (saved) {
-    try {
-      settings.value = { ...settings.value, ...JSON.parse(saved) }
-    } catch (e) {
-      console.error('Failed to parse app settings', e)
-    }
-  }
+  colorFormat: 'standard',
+  isKeyboardSoundEnabled: true
 }
-if (import.meta.client) loadLocal()
 
 export function useAppSettings() {
-  const supabase = useSupabaseClient<Database>()
-  
-  const syncWithDb = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user) return
+  // Use Nuxt's useCookie for seamless SSR and simplified persistence
+  const settings = useCookie<AppSettings>(STORAGE_KEY, {
+    default: () => ({ ...DEFAULT_SETTINGS }),
+    watch: true,
+    maxAge: 60 * 60 * 24 * 365 * 100 // 100 years
+  })
 
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('naming_convention, preferred_instrument, color_format')
-        .eq('id', session.user.id)
-        .single()
-      
-      const sessionData = data as any
+  // Removed DB sync logic to simplify structure as requested.
+  // All settings are now managed purely through Cookies.
 
-      if (!error && sessionData) {
-        if (sessionData.naming_convention) settings.value.namingConvention = sessionData.naming_convention as AppSettings['namingConvention']
-        if (sessionData.preferred_instrument) settings.value.instrument = sessionData.preferred_instrument
-        if (sessionData.color_format) settings.value.colorFormat = sessionData.color_format as AppSettings['colorFormat']
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings.value))
-      }
-    } catch (e) {
-      console.warn('useAppSettings: Sync error', e)
-    }
-  }
-
-  const updateSetting = async <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => {
-    settings.value[key] = value
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings.value))
-
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user) return
-
-    try {
-      const DB_KEY_MAP: Record<keyof AppSettings, keyof Database['public']['Tables']['profiles']['Update']> = {
-        namingConvention: 'naming_convention',
-        instrument: 'preferred_instrument',
-        colorFormat: 'color_format'
-      }
-      const dbKey = DB_KEY_MAP[key]
-      if (!dbKey) return
-
-      await supabase
-        .from('profiles')
-        .upsert({ 
-          id: session.user.id,
-          [dbKey]: value
-        } as any)
-    } catch (e) {
-      console.error('useAppSettings: Save error', e)
+  const updateSetting = <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => {
+    settings.value = {
+      ...settings.value,
+      [key]: value
     }
   }
 
@@ -126,40 +70,16 @@ export function useAppSettings() {
     return chord.nameIt || stripTags(chord.name || '')
   }
 
-  // Initial sync attempt
-  if (import.meta.client) {
-    syncWithDb()
-  }
-  
-  // Auth listener
-  // Using a watch or just relying on hook usage? 
-  // Original had supabase.auth.onAuthStateChange inside the composable body, which adds a listener every time useAppSettings is called!
-  // This might be a memory leak if called frequently.
-  // Ideally, this sync logic should be centralized or singleton-managed.
-  // For now, I'll keep it but wrap in onMounted or check if already listening?
-  // Actually, previous code:
-  // supabase.auth.onAuthStateChange((event, session) => {
-  //   if (session?.user) syncWithDb()
-  // })
-  // This was executing at the module scope level? No, inside `useAppSettings`.
-  
-  // Let's rely on `useAuth` or `app.vue` to trigger sync, or stick to the current pattern but be aware.
-  // In `useAppSettings.js`, it was inside the function.
-  // If `useAppSettings` is called in many components, we get many listeners.
-  // Improved: move the listener inside a `onMounted` or just call `syncWithDb` when `useAuth` changes user.
-  // But to stick to 1-to-1 conversion + types:
-  
-  // Moving listener to singleton initialization block helps.
-  
   return {
     namingConvention: computed(() => settings.value.namingConvention),
     instrument: computed(() => settings.value.instrument),
     colorFormat: computed(() => settings.value.colorFormat),
+    isKeyboardSoundEnabled: computed(() => settings.value.isKeyboardSoundEnabled),
     updateNamingConvention: (val: AppSettings['namingConvention']) => updateSetting('namingConvention', val),
     updateInstrument: (val: string) => updateSetting('instrument', val),
     updateColorFormat: (val: AppSettings['colorFormat']) => updateSetting('colorFormat', val),
+    updateKeyboardSound: (val: boolean) => updateSetting('isKeyboardSoundEnabled', val),
     formatColorName,
-    formatChordName,
-    syncWithDb
+    formatChordName
   }
 }

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+useHead({
+  title: '和音の聞き流し - いろおと'
+})
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { Database } from '~/types/database.types'
@@ -41,16 +44,60 @@ const DELAYS = {
 // === Reactive State ===
 const view = ref('settings')
 const currentQuestionIndex = ref(0)
-const selectedChordIds = ref(new Set())
-// Initialize default chords on mount
-onMounted(() => {
-  if (selectedChordIds.value.size === 0 && TEST_CHORDS.value.length >= 2) {
-    selectedChordIds.value.add(TEST_CHORDS.value[0]!.id)
-    selectedChordIds.value.add(TEST_CHORDS.value[1]!.id)
-  }
+const AUTOPLAY_SETTINGS_KEY = 'zettaionkan_autoplay_settings'
+
+interface AutoplayCookieSettings {
+  chordIds: string[]
+  revealType: string
+  voiceEnabled: boolean
+  immediate: boolean
+  delay: number
+  ratio: number
+  isReviewWeighted: boolean
+}
+
+const autoplayCookie = useCookie<AutoplayCookieSettings>(AUTOPLAY_SETTINGS_KEY, {
+  default: () => ({
+    chordIds: [],
+    revealType: 'icecream',
+    voiceEnabled: false,
+    immediate: false,
+    delay: 3,
+    ratio: 0.3,
+    isReviewWeighted: false
+  }),
+  watch: true,
+  maxAge: 60 * 60 * 24 * 365 * 100 // 100 years
 })
-const questions = ref<Chord[]>([])
+
+const selectedChordIds = ref(new Set<string>(autoplayCookie.value.chordIds))
 const isSaving = ref(false)
+
+const syncToCookie = () => {
+  autoplayCookie.value = {
+    chordIds: Array.from(selectedChordIds.value),
+    revealType: autoPlayRevealType.value,
+    voiceEnabled: isVoiceEnabled.value,
+    immediate: isAutoPlayImmediate.value,
+    delay: revealDelay.value,
+    ratio: parentChordRatio.value,
+    isReviewWeighted: isReviewWeighted.value
+  }
+}
+
+const loadFromCookie = () => {
+  const s = autoplayCookie.value
+  if (s.chordIds) selectedChordIds.value = new Set(s.chordIds)
+  if (s.revealType) autoPlayRevealType.value = s.revealType
+  if (s.voiceEnabled !== undefined) isVoiceEnabled.value = s.voiceEnabled
+  if (s.immediate !== undefined) isAutoPlayImmediate.value = s.immediate
+  if (s.delay) revealDelay.value = s.delay
+  if (s.ratio) parentChordRatio.value = s.ratio
+  if (s.isReviewWeighted !== undefined) isReviewWeighted.value = s.isReviewWeighted
+}
+
+const questions = ref<Chord[]>([])
+
 const playedCount = computed(() => {
   if (view.value !== 'playing') return 0
   return isAutoPlayRevealed.value ? currentQuestionIndex.value + 1 : currentQuestionIndex.value
@@ -229,7 +276,8 @@ const toggleChordSelection = (id: string) => {
   TEST_CHORDS.value.forEach(c => {
     if ((c.sortOrder || 0) <= (targetChord.sortOrder || 0)) newSet.add(c.id)
   })
-  selectedChordIds.value = newSet
+  selectedChordIds.value = newSet as Set<string>
+  syncToCookie()
 }
 
 const saveSession = async () => {
@@ -323,8 +371,9 @@ const handleHeaderBack = async (e: Event) => {
 onBeforeRouteLeave(async (to, from) => {
   if (view.value !== 'settings') {
     await stopAutoPlay()
-    return true
+    return false
   }
+  return true
 })
 
 // === Lifecycle ===
@@ -332,6 +381,15 @@ const { user, userTier, authReady } = useAuth()
 
 onMounted(async () => {
   await authReady
+  loadFromCookie()
+
+  // Default selection if nothing loaded or found
+  if (selectedChordIds.value.size === 0 && TEST_CHORDS.value.length >= 2) {
+    selectedChordIds.value.add(TEST_CHORDS.value[0]!.id)
+    selectedChordIds.value.add(TEST_CHORDS.value[1]!.id)
+    syncToCookie()
+  }
+
   let preferred: 'yamaha' | 'steinway' = instrument.value as 'yamaha' | 'steinway'
   
   if (preferred === 'steinway' && userTier.value !== 'premium') {
@@ -347,6 +405,7 @@ onMounted(async () => {
     if (route.query.voice === 'false') isVoiceEnabled.value = false
     if (route.query.type) autoPlayRevealType.value = route.query.type as string
     if (route.query.ratio) parentChordRatio.value = parseFloat(route.query.ratio as string)
+    syncToCookie()
     
     // Select all chords if requested
     if (route.query.chords === 'all') {
@@ -369,6 +428,12 @@ onMounted(async () => {
 onUnmounted(() => {
   cleanupSideEffects()
 })
+
+// === Watchers for Persistence ===
+watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate, revealDelay, parentChordRatio, isReviewWeighted], () => {
+  syncToCookie()
+}, { deep: true })
+
 </script>
 
 <template>

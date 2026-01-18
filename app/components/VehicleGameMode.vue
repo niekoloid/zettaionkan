@@ -135,7 +135,7 @@
           <!-- Info Bubble -->
           <div class="mt-24 bg-white/95 backdrop-blur-xl px-12 py-6 rounded-[3rem] shadow-2xl border-4 border-stone-100 flex flex-col items-center animate-bounce-subtle">
             <span class="text-[14px] font-black tracking-[0.4em] uppercase mb-1" :style="{ color: userAnswer.color }">
-              {{ getHiraganaColor(userAnswer.colorName) }}
+              {{ formatColorName(userAnswer.colorName) }}
             </span>
             <span class="text-3xl font-black text-stone-900">
               {{ getVehicleName(userAnswer.colorName) }}
@@ -198,6 +198,9 @@
 import { type PropType } from 'vue'
 import type { Chord } from '~/constants/chords'
 import type { HistoryItem } from '~/types/app'
+import { useAppSettings } from '~/composables/useAppSettings'
+
+const { formatColorName } = useAppSettings()
 
 const props = defineProps({
   currentQuestion: Object as PropType<Chord | null>,

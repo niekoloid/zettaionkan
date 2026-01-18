@@ -153,7 +153,7 @@
             <div class="flex flex-col items-center leading-none">
               <!-- Color Name (Small) -->
               <span class="text-[9px] font-bold text-gray-400 mb-0.5" :style="{ color: chord.color }">
-                {{ chord.colorName }}
+                {{ formatColorName(chord.colorName) }}
               </span>
               <!-- Flavor Name (Main) -->
               <span class="text-[10px] font-black text-gray-800 mb-1 whitespace-nowrap">
@@ -171,6 +171,9 @@
 import { type PropType } from 'vue'
 import type { Chord } from '~/constants/chords'
 import type { HistoryItem } from '~/types/app'
+import { useAppSettings } from '~/composables/useAppSettings'
+
+const { formatColorName } = useAppSettings()
 
 const props = defineProps({
   currentQuestion: Object as PropType<Chord | null>,

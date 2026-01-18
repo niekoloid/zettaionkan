@@ -32,19 +32,25 @@ const addAliases = (map: Record<string, string>): Record<string, string> => {
 }
 
 // Steinway Logic
-const isSteinwaySubsetNote = (note: string): boolean => {
-  // We now have all samples (88 keys), so we accept everything in ALL_NOTES
-  return true
+const isSteinwayFastNote = (note: string): boolean => {
+  // To speed up loading, we sample every 3rd note (approx 2.5 per octave)
+  const idx = ALL_NOTES.indexOf(note)
+  return idx % 3 === 0 || note === 'C8' // Always include the last note
 }
 
-const rawSteinwayMap: Record<string, string> = {}
+const rawSteinwayFastMap: Record<string, string> = {}
+const rawSteinwayFullMap: Record<string, string> = {}
+
 ALL_NOTES.forEach(note => {
-  if (isSteinwaySubsetNote(note)) {
-    rawSteinwayMap[note] = `${note}.mp3`
+  rawSteinwayFullMap[note] = `${note}.mp3`
+  if (isSteinwayFastNote(note)) {
+    rawSteinwayFastMap[note] = `${note}.mp3`
   }
 })
 
-export const STEINWAY_MAP: Record<string, string> = addAliases(rawSteinwayMap)
+export const STEINWAY_FAST_MAP: Record<string, string> = addAliases(rawSteinwayFastMap)
+export const STEINWAY_FULL_MAP: Record<string, string> = addAliases(rawSteinwayFullMap)
+export const STEINWAY_MAP: Record<string, string> = STEINWAY_FAST_MAP
 
 // Yamaha Logic (Salamander Grand Piano samples)
 const isYamahaSubsetNote = (note: string): boolean => {

@@ -8,6 +8,14 @@ const isLoading = ref(true)
 const isPortalLoading = ref(false)
 const hasCustomer = ref(false)
 
+const handleRefresh = async () => {
+  isLoading.value = true
+  await refreshStatus()
+  const status = await checkPremiumStatus()
+  hasCustomer.value = status.hasCustomer
+  isLoading.value = false
+}
+
 onMounted(async () => {
   if (!user.value) {
     // Re-check once just in case of race condition during navigation
@@ -40,8 +48,13 @@ const getTierName = (tier: SubscriptionTier | undefined | null | string) => {
 
 const openCustomerPortal = async () => {
   if (!hasCustomer.value) {
-    alert('お支払い情報が見つかりません。プランへの加入履歴がありません。')
-    return
+    // Try one last refresh before giving up
+    await handleRefresh()
+    
+    if (!hasCustomer.value) {
+      alert('お支払い情報が見つかりません。プランへの加入履歴がありません。\nプランに加入したばかりの場合は、反映まで数分かかることがあります。')
+      return
+    }
   }
 
   isPortalLoading.value = true
@@ -98,7 +111,14 @@ const openCustomerPortal = async () => {
           <div class="pt-6 border-t border-white flex justify-between items-center">
             <div>
               <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">現在のプラン</p>
-              <p class="text-base font-black text-gray-900">{{ getTierName(userTier) }}</p>
+              <div class="flex items-center space-x-2">
+                <p class="text-base font-black text-gray-900">{{ getTierName(userTier) }}</p>
+                <button @click="handleRefresh" class="p-1 text-gray-400 hover:text-indigo-500 transition-colors" title="ステータスを更新">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" :class="{ 'animate-spin': isLoading }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </button>
+              </div>
             </div>
             <NuxtLink v-if="userTier === 'free'" to="/subscription" class="text-[10px] font-bold text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full hover:bg-amber-100 transition-colors">
               プラン一覧を見る

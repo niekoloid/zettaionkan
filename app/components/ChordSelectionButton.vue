@@ -33,7 +33,7 @@
         {{ formatChordName(chord) }}
       </span>
       <span class="text-[10px] font-medium text-gray-400 shrink-0 truncate w-full">
-        {{ chord.displayColor }}
+        {{ formatColorName(chord.displayColor || '') }}
       </span>
     </div>
 
@@ -54,7 +54,7 @@ import { useAppSettings } from '~/composables/useAppSettings'
 
 import type { Chord } from '~/constants/chords'
 
-const { namingConvention, formatChordName } = useAppSettings()
+const { namingConvention, formatChordName, formatColorName } = useAppSettings()
 const props = defineProps({
   chord: {
     type: Object as PropType<Chord>,

@@ -1,10 +1,8 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { User } from '@supabase/supabase-js'
 import type { SubscriptionTier } from './usePremium'
 
-// Singleton state
 const user = ref<User | null>(null)
-const userTier = ref<SubscriptionTier>('free')
 const isAuthReady = ref(false)
 
 // Initialize and listen for changes
@@ -17,6 +15,12 @@ const authReadyPromise = new Promise<void>(resolve => {
 export function useAuth() {
   const supabase = useSupabaseClient()
   const { checkPremiumStatus } = usePremium()
+  
+  // Use Cookie for tier to enable SSR support and prevent flickering
+  const userTierCookie = useCookie<SubscriptionTier>('zettaionkan_user_tier', {
+    default: () => 'free',
+    maxAge: 60 * 60 * 24 * 365 * 100 // 100 years
+  })
 
   const refreshStatus = async () => {
     try {
@@ -24,13 +28,13 @@ export function useAuth() {
       user.value = data?.user || null
       if (user.value) {
         const status = await checkPremiumStatus()
-        userTier.value = status.tier
+        userTierCookie.value = status.tier
       } else {
-        userTier.value = 'free'
+        userTierCookie.value = 'free'
       }
     } catch (err) {
       console.error('refreshStatus error:', err)
-      userTier.value = 'free'
+      userTierCookie.value = 'free'
     }
   }
 
@@ -49,26 +53,23 @@ export function useAuth() {
       user.value = session?.user || null
       if (user.value) {
         const status = await checkPremiumStatus()
-        userTier.value = status.tier
+        userTierCookie.value = status.tier
       } else {
-        userTier.value = 'free'
+        userTierCookie.value = 'free'
       }
     })
   }
 
-  // Auto-init on first use
-  // Ensure we are on client to avoid hydration mismatch with singleton state?
-  // But init() calls async methods.
-  // In Nuxt, useAuth called in setup.
   if (import.meta.client) {
      init()
   }
 
   return {
     user,
-    userTier,
+    userTier: computed(() => userTierCookie.value || 'free'),
     isAuthReady,
     authReady: authReadyPromise,
     refreshStatus
   }
 }
+

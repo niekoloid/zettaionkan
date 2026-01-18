@@ -1,6 +1,6 @@
 import * as Tone from 'tone'
 import { ref, computed } from 'vue'
-import { STEINWAY_MAP, YAMAHA_MAP } from '~/constants/instruments'
+import { STEINWAY_FAST_MAP, STEINWAY_FULL_MAP, YAMAHA_MAP } from '~/constants/instruments'
 import { useAuth } from './useAuth'
 
 // Singleton state shared across all components
@@ -8,6 +8,7 @@ const samplers: Record<string, Tone.Sampler> = {}
 const isLoaded = ref({
   yamaha: false,
   steinway: false,
+  steinwayFull: false,
   narration: false,
   effects: false
 })
@@ -48,8 +49,9 @@ export function useAudio() {
   const { user, userTier } = useAuth()
 
   const loadSampler = async (instrumentId: 'yamaha' | 'steinway', isBackground = false): Promise<boolean> => {
-    // 1. If sampler already exists, just switch and return
-    if (samplers[instrumentId]) {
+    // 1. If full sampler already exists, just switch and return
+    const isFullLoaded = instrumentId === 'steinway' ? isLoaded.value.steinwayFull : isLoaded.value.yamaha
+    if (samplers[instrumentId] && (isFullLoaded || (isBackground && instrumentId !== 'steinway'))) {
       if (!isBackground) {
         selectedInstrument.value = instrumentId
       }
@@ -69,20 +71,49 @@ export function useAudio() {
 
     samplerLoadingPromises[instrumentId] = new Promise<boolean>((resolve) => {
       try {
-        const config = instrumentId === 'yamaha'
-          ? { urls: YAMAHA_MAP, baseUrl: "https://tonejs.github.io/audio/salamander/" }
-          : { urls: STEINWAY_MAP, baseUrl: "/samples/steinway/ff/" }
+        let urls = instrumentId === 'yamaha' ? YAMAHA_MAP : STEINWAY_FAST_MAP
+        const baseUrl = instrumentId === 'yamaha' 
+          ? "https://tonejs.github.io/audio/salamander/" 
+          : "/samples/steinway/ff/"
 
-        const fileList = Object.values(config.urls)
+        // Use full map if background or already partially loaded
+        if (instrumentId === 'steinway' && (isBackground || isLoaded.value.steinway)) {
+          console.log('Targeting Steinway FULL map (two-stage upgrade)')
+          urls = STEINWAY_FULL_MAP
+        }
+
+        const fileList = Object.values(urls)
         let fileIdx = 0
         let interval: NodeJS.Timeout | null = null
 
         const s = new Tone.Sampler({
-          ...config,
+          urls,
+          baseUrl,
           onload: () => {
-            console.log(`${instrumentId} loaded and cached`)
-            samplers[instrumentId] = s
+            console.log(`${instrumentId} loaded (${Object.keys(urls).length} samples)`)
+            
+            // Upgrade case
+            if (samplers[instrumentId] && urls === STEINWAY_FULL_MAP) {
+              const oldSampler = samplers[instrumentId]
+              samplers[instrumentId] = s.toDestination()
+              // Dispose old sampler after a delay to avoid cutting off sounds
+              setTimeout(() => {
+                if (oldSampler) {
+                  try {
+                    oldSampler.dispose()
+                    console.log('Old Steinway sampler disposed')
+                  } catch (e) {}
+                }
+              }, 4000)
+            } else {
+              samplers[instrumentId] = s.toDestination()
+            }
+
             isLoaded.value[instrumentId] = true
+            if (instrumentId === 'steinway' && urls === STEINWAY_FULL_MAP) {
+              isLoaded.value.steinwayFull = true
+            }
+
             if (!isBackground) {
               if (!isPreloading.value) {
                 isLoading.value = false
@@ -91,6 +122,12 @@ export function useAudio() {
               }
             }
             samplerLoadingPromises[instrumentId] = null
+            
+            // Stage 2: Trigger Full load in background if Fast load just finished
+            if (instrumentId === 'steinway' && urls === STEINWAY_FAST_MAP) {
+              loadSampler('steinway', true)
+            }
+
             resolve(true)
           },
           onerror: (err) => {
@@ -104,7 +141,7 @@ export function useAudio() {
             samplerLoadingPromises[instrumentId] = null
             resolve(false)
           }
-        }).toDestination()
+        })
 
         if (!isBackground) {
           interval = setInterval(() => {
@@ -134,21 +171,22 @@ export function useAudio() {
     if (narrationLoadingPromise) return narrationLoadingPromise
 
     narrationLoadingPromise = (async () => {
-      console.log('Starting narration buffer load...')
+      console.log('Starting narration buffer load in parallel...')
       try {
-        // Load sequentially to avoid memory spikes on tablets
         const entries = Object.entries(NARRATION_FILES)
-        for (const [name, url] of entries) {
+        const promises = entries.map(async ([name, url]) => {
           if (!narrationBuffers[name]) {
             narrationBuffers[name] = await Tone.ToneAudioBuffer.fromUrl(url)
           }
-        }
+        })
+        
+        await Promise.all(promises)
         
         console.log('Narration buffers loaded successfully')
         isLoaded.value.narration = true
         narrationLoadingPromise = null
         
-        // Also trigger effect loading sequentially in background
+        // Also trigger effect loading in parallel
         loadEffects().catch(console.error)
         
         return true
@@ -167,7 +205,7 @@ export function useAudio() {
     if (effectsLoadingPromise) return effectsLoadingPromise
 
     effectsLoadingPromise = (async () => {
-      console.log('Starting effect buffer load...')
+      console.log('Starting effect buffer load in parallel...')
       const effectFiles = {
         'correct': '/audio/effects/correct.mp3',
         'incorrect': '/audio/effects/incorrect.mp3'
@@ -175,11 +213,13 @@ export function useAudio() {
 
       try {
         const entries = Object.entries(effectFiles)
-        for (const [name, url] of entries) {
+        const promises = entries.map(async ([name, url]) => {
           if (!effectBuffers[name]) {
             effectBuffers[name] = await Tone.ToneAudioBuffer.fromUrl(url)
           }
-        }
+        })
+        
+        await Promise.all(promises)
         console.log('Effect buffers loaded')
         isLoaded.value.effects = true
         effectsLoadingPromise = null
@@ -200,24 +240,41 @@ export function useAudio() {
     isLoading.value = true
     loadingProgress.value = 0
     
-    console.log('Preloading all audio samples sequentially...')
+    console.log('Preloading all audio samples in parallel...')
     
-    loadingFile.value = 'Yamaha Piano'
-    await loadSampler('yamaha', false)
-    loadingProgress.value = 33
+    loadingFile.value = 'Preparing Sound Source...'
     
-    loadingFile.value = 'Steinway Piano'
-    await loadSampler('steinway', false)
-    loadingProgress.value = 66
-    
-    loadingFile.value = 'Narration & Effects'
-    await loadNarration()
-    await loadEffects()
-    
-    loadingProgress.value = 100
-    isLoading.value = false
-    isPreloading.value = false
-    console.log('All audio samples preloaded.')
+    try {
+      // Start all loads in parallel
+      const yamahaPromise = loadSampler('yamaha', true)
+      const steinwayPromise = loadSampler('steinway', true)
+      const narrationPromise = loadNarration()
+      const effectsPromise = loadEffects()
+
+      // Set a tracking interval for overall progress
+      const progressInterval = setInterval(() => {
+        let totalProgress = 0
+        if (isLoaded.value.yamaha) totalProgress += 30
+        if (isLoaded.value.steinway) totalProgress += 30
+        if (isLoaded.value.narration) totalProgress += 20
+        if (isLoaded.value.effects) totalProgress += 20
+        
+        loadingProgress.value = Math.max(loadingProgress.value, totalProgress)
+        
+        if (totalProgress >= 100) {
+          clearInterval(progressInterval)
+        }
+      }, 500)
+
+      await Promise.all([yamahaPromise, steinwayPromise, narrationPromise, effectsPromise])
+    } catch (err) {
+      console.error('Preload all error:', err)
+    } finally {
+      loadingProgress.value = 100
+      isLoading.value = false
+      isPreloading.value = false
+      console.log('All audio samples preloaded.')
+    }
   }
 
   const playNotes = async (notes: string | string[], duration: string | number = 3): Promise<boolean> => {

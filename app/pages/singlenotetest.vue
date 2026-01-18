@@ -70,15 +70,42 @@ const currentQuestionIndex = ref(0)
 const resultMessage = ref<'correct' | 'incorrect' | null>(null)
 const userAnswer = ref<NoteDefinition | null>(null)
 const activeKeys = ref<Set<string>>(new Set())
+const NOTE_QUIZZ_SETTINGS_KEY = 'zettaionkan_note_quizz_settings'
 
-const selectedNoteIds = ref<Set<string>>(new Set(NOTE_DEFINITIONS.map(n => n.id)))
+interface NoteQuizzSettings {
+  selectedNoteIds: string[]
+  matchOctave: boolean
+  whiteKeysOnly: boolean
+  testAll88: boolean
+}
+
+const noteQuizzCookie = useCookie<NoteQuizzSettings>(NOTE_QUIZZ_SETTINGS_KEY, {
+  default: () => ({
+    selectedNoteIds: NOTE_DEFINITIONS.map(n => n.id),
+    matchOctave: false,
+    whiteKeysOnly: true,
+    testAll88: false
+  }),
+  maxAge: 60 * 60 * 24 * 365 * 100 // 100 years
+})
+
+const selectedNoteIds = ref<Set<string>>(new Set(noteQuizzCookie.value.selectedNoteIds))
 const questions = ref<NoteDefinition[]>([])
 const quizzHistory = ref<HistoryItem[]>([])
 const shuffledIds = ref<string[]>([])
-const matchOctave = ref(false)
-const whiteKeysOnly = ref(true)
-const testAll88 = ref(false)
+const matchOctave = ref(noteQuizzCookie.value.matchOctave)
+const whiteKeysOnly = ref(noteQuizzCookie.value.whiteKeysOnly)
+const testAll88 = ref(noteQuizzCookie.value.testAll88)
 const isQuestionChanging = ref(false)
+
+const syncToCookie = () => {
+  noteQuizzCookie.value = {
+    selectedNoteIds: Array.from(selectedNoteIds.value),
+    matchOctave: matchOctave.value,
+    whiteKeysOnly: whiteKeysOnly.value,
+    testAll88: testAll88.value
+  }
+}
 
 const J_NAMES: Record<string, string> = { 'C': 'ド', 'D': 'レ', 'E': 'ミ', 'F': 'ファ', 'G': 'ソ', 'A': 'ラ', 'B': 'シ' }
 
@@ -628,6 +655,11 @@ onMounted(async () => {
   
   loadSampler(preferred as 'yamaha' | 'steinway')
 })
+
+// === Watchers for Persistence ===
+watch([selectedNoteIds, matchOctave, whiteKeysOnly, testAll88], () => {
+  syncToCookie()
+}, { deep: true })
 
 </script>
 

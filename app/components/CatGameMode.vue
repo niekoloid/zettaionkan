@@ -102,7 +102,7 @@
           
            <!-- Color Name (Subtle) -->
            <div class="text-sm font-bold text-stone-400 tracking-wider">
-             {{ (currentCat as Chord).colorName }}
+             {{ formatColorName((currentCat as Chord).colorName) }}
            </div>
 
         </div>
@@ -158,7 +158,7 @@
             
             <div class="flex flex-col items-center leading-none">
                <span class="text-[9px] font-bold text-stone-500 mb-0.5 whitespace-nowrap">
-                 {{ chord.colorName }}
+                 {{ formatColorName(chord.colorName) }}
                </span>
             </div>
         </button>
@@ -173,6 +173,9 @@ import { computed } from 'vue'
 import { type PropType } from 'vue'
 import type { Chord } from '~/constants/chords'
 import type { HistoryItem } from '~/types/app'
+import { useAppSettings } from '~/composables/useAppSettings'
+
+const { formatColorName } = useAppSettings()
 
 const props = defineProps({
   currentQuestion: Object as PropType<Chord | null>,
