@@ -23,7 +23,7 @@ const playbackTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
 // === Single List Logic ===
 // Flatten all 14 basic chords into a single list with metadata
 const { allChords: customChords } = useChordSettings()
-const { namingConvention, updateNamingConvention, instrument, updateInstrument, syncWithDb: syncApp, formatColorName, formatChordName, colorFormat, updateColorFormat, isKeyboardSoundEnabled, updateKeyboardSound } = useAppSettings()
+const { namingConvention, updateNamingConvention, instrument, updateInstrument, formatColorName, formatChordName, colorFormat, updateColorFormat, isKeyboardSoundEnabled, updateKeyboardSound } = useAppSettings()
 
 const allChords = computed(() => {
   const selected = customChords.value.filter(c => c.homeEnabled)
@@ -99,6 +99,8 @@ onUnmounted(() => {
 })
 
 
+
+const isMenuOpen = ref(true)
 
 const playChord = async (notes: string[]) => {
   if (Tone.context.state !== 'running') await Tone.start()
@@ -219,6 +221,16 @@ const gridClasses = computed(() => {
 
 const itemClasses = computed(() => {
   const count = allChords.value.length
+  
+  // If menu is closed, make items significantly larger for kids
+  if (!isMenuOpen.value) {
+    if (count <= 2) return 'h-64 rounded-3xl'
+    if (count <= 4) return 'h-48 rounded-3xl'
+    if (count <= 9) return 'h-32 rounded-2xl'
+    return 'h-24 rounded-xl'
+  }
+
+  // Default sizes
   if (count <= 4 && count > 0) {
     return 'md:h-32' // Significantly taller for desktop
   }
@@ -370,186 +382,217 @@ const itemClasses = computed(() => {
           </div>
       </section>
 
+      <!-- Collapsible Menu Section -->
+      <!-- Collapsible Menu Section -->
       <section class="mb-10 px-4">
-        <div class="flex flex-col gap-4">
-          <!-- Auto Play -->
-          <NuxtLink to="/autoplay" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-indigo-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-            <div class="relative z-10 flex items-center w-full px-6">
-              <!-- Icon Container -->
-              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
-                  <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
-                </svg>
-              </div>
-
-              <!-- Text Content -->
-              <div class="ml-4 flex flex-col items-start justify-center flex-grow">
-                <h3 class="text-sm font-black text-indigo-900 tracking-wider">和音の聞き流し</h3>
-                <p class="text-[10px] font-bold text-indigo-400 mt-0.5">自動で和音が出題され続けます</p>
-              </div>
-
-              <!-- Arrow -->
-              <div class="text-indigo-200 group-hover:text-indigo-400 transition-colors duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </NuxtLink>
-
-          <!-- Chord Training -->
-          <div 
-            @click="router.push('/chordquizz')" 
-            class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-amber-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+        <!-- Toggle Button -->
+        <button 
+          @click="isMenuOpen = !isMenuOpen"
+          class="w-full flex flex-col items-center justify-center py-4 mb-2 text-gray-400 hover:text-gray-600 transition-colors group"
+        >
+          <div class="h-1.5 w-16 bg-gray-200 rounded-full mb-2 group-hover:bg-gray-300 transition-colors"></div>
+          <span class="text-[10px] font-bold tracking-widest uppercase opacity-70">
+            {{ isMenuOpen ? 'Hide Menu' : 'Show Menu' }}
+          </span>
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            class="h-4 w-4 mt-1 transition-transform duration-300"
+            :class="{ 'rotate-180': !isMenuOpen }"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor"
           >
-            <div class="relative z-10 flex items-center w-full px-6">
-              <!-- Icon Container -->
-              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-50 text-amber-600 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <!-- Bolt Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
-                  <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
-                </svg>
-              </div>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
 
-              <!-- Text Content -->
-              <div class="ml-4 flex flex-col items-start justify-center flex-grow">
-                <h3 class="text-sm font-black text-amber-900 tracking-wider">和音テストに挑戦</h3>
-                <p class="text-[10px] font-bold text-amber-500 mt-0.5">和音を色で認識できるかテスト</p>
-              </div>
+        <Transition
+          enter-active-class="transition-all duration-300 ease-out"
+          enter-from-class="opacity-0 max-h-0 overflow-hidden"
+          enter-to-class="opacity-100 max-h-[1000px] overflow-visible"
+          leave-active-class="transition-all duration-300 ease-in"
+          leave-from-class="opacity-100 max-h-[1000px] overflow-visible"
+          leave-to-class="opacity-0 max-h-0 overflow-hidden"
+        >
+          <div v-show="isMenuOpen">
+            <div class="flex flex-col gap-4">
+              <!-- Auto Play -->
+              <NuxtLink to="/autoplay" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-indigo-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="relative z-10 flex items-center w-full px-6">
+                  <!-- Icon Container -->
+                  <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                      <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
 
-              <!-- Arrow -->
-              <div class="text-amber-200 group-hover:text-amber-500 transition-colors duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                </svg>
+                  <!-- Text Content -->
+                  <div class="ml-4 flex flex-col items-start justify-center flex-grow">
+                    <h3 class="text-sm font-black text-indigo-900 tracking-wider">和音の聞き流し</h3>
+                    <p class="text-[10px] font-bold text-indigo-400 mt-0.5">自動で和音が出題され続けます</p>
+                  </div>
+
+                  <!-- Arrow -->
+                  <div class="text-indigo-200 group-hover:text-indigo-400 transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              </NuxtLink>
+
+              <!-- Chord Training -->
+              <div 
+                @click="router.push('/chordquizz')" 
+                class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-amber-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+              >
+                <div class="relative z-10 flex items-center w-full px-6">
+                  <!-- Icon Container -->
+                  <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-50 text-amber-600 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <!-- Bolt Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                      <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+
+                  <!-- Text Content -->
+                  <div class="ml-4 flex flex-col items-start justify-center flex-grow">
+                    <h3 class="text-sm font-black text-amber-900 tracking-wider">和音テストに挑戦</h3>
+                    <p class="text-[10px] font-bold text-amber-500 mt-0.5">和音を色で認識できるかテスト</p>
+                  </div>
+
+                  <!-- Arrow -->
+                  <div class="text-amber-200 group-hover:text-amber-500 transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <!-- Single Note Training -->
+              <NuxtLink to="/singlenotetest" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-sky-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="relative z-10 flex items-center w-full px-6">
+                  <!-- Icon Container -->
+                  <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-50 text-sky-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <span class="text-2xl font-black">?</span>
+                  </div>
+                  <!-- Text Content -->
+                  <div class="ml-4 flex flex-col items-start justify-center flex-grow">
+                    <h3 class="text-sm font-black text-sky-900 tracking-wider">単音テストに挑戦</h3>
+                    <p class="text-[10px] font-bold text-sky-400 mt-0.5">ドレミの音を一つずつ当ててみましょう</p>
+                  </div>
+                  <!-- Arrow -->
+                  <div class="text-sky-200 group-hover:text-sky-500 transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              </NuxtLink>
+
+              <!-- Learning History -->
+              <NuxtLink to="/history" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-indigo-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="relative z-10 flex items-center w-full px-6">
+                  <!-- Icon Container -->
+                  <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                      <path d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                      <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm2.25 0c0 4.142 3.358 7.5 7.5 7.5s7.5-3.358 7.5-7.5-3.358-7.5-7.5-7.5-7.5 3.358-7.5 7.5Z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <!-- Text Content -->
+                  <div class="ml-4 flex flex-col items-start justify-center flex-grow">
+                    <h3 class="text-sm font-black text-indigo-900 tracking-wider">学習履歴を確認</h3>
+                    <p class="text-[10px] font-bold text-indigo-400 mt-0.5">これまでのトレーニング成果を見返します</p>
+                  </div>
+                  <!-- Arrow -->
+                  <div class="text-indigo-200 group-hover:text-indigo-500 transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              </NuxtLink>
+
+              <!-- Settings -->
+              <NuxtLink to="/settings" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-gray-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="relative z-10 flex items-center w-full px-6">
+                  <!-- Icon Container -->
+                  <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                      <path fill-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.349l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.115-.26.297-.348.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.282-.819l.922-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.431l.84-.692a1.875 1.875 0 00.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.844zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <!-- Text Content -->
+                  <div class="ml-4 flex flex-col items-start justify-center flex-grow">
+                    <h3 class="text-sm font-black text-gray-900 tracking-wider">各種設定</h3>
+                    <p class="text-[10px] font-bold text-gray-400 mt-0.5">音源の切り替えやアプリの設定</p>
+                  </div>
+                  <!-- Arrow -->
+                  <div class="text-gray-200 group-hover:text-gray-400 transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              </NuxtLink>
+            </div>
+
+            <!-- Footer Links (Collapsible part) -->
+            <div class="mt-20 border-t border-gray-100 pt-16 pb-12">
+              <div class="px-6">
+                <div class="grid grid-cols-2 gap-x-8 gap-y-12 mb-16">
+                  <!-- Training & Plans -->
+                  <div class="space-y-4">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest pb-1 pl-1">Training</p>
+                    <div class="flex flex-col space-y-3">
+                      <NuxtLink to="/method" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
+                        <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
+                        トレーニング方法
+                      </NuxtLink>
+                      <NuxtLink to="/about" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
+                        <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
+                        サービス概要
+                      </NuxtLink>
+                    </div>
+                  </div>
+
+                  <!-- About & Support -->
+                  <div class="space-y-4">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest pb-1 pl-1">Support</p>
+                    <div class="flex flex-col space-y-3">
+                      <NuxtLink to="/subscription" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
+                        <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
+                        料金プラン
+                      </NuxtLink>
+                      <NuxtLink to="/contact" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
+                        <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
+                        お問い合わせ
+                      </NuxtLink>
+                      <NuxtLink to="/faq" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
+                        <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
+                        よくあるご質問 (Q&A)
+                      </NuxtLink>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Legal & Corporate -->
+                <div class="border-t border-gray-100 pt-8">
+                  <div class="flex flex-wrap justify-center gap-x-6 gap-y-4 mb-8">
+                    <NuxtLink to="/company" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">運営会社</NuxtLink>
+                    <NuxtLink to="/terms" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">利用規約</NuxtLink>
+                    <NuxtLink to="/privacy" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">プライバシーポリシー</NuxtLink>
+                    <NuxtLink to="/legal" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">特定商取引法に基づく表記</NuxtLink>
+                  </div>
+                  
+                  <footer class="text-center">
+                    <p class="text-[10px] text-gray-300 font-medium">&copy; 2026 Akatsuki Inc.</p>
+                  </footer>
+                </div>
               </div>
             </div>
           </div>
-          <!-- Single Note Training -->
-          <NuxtLink to="/singlenotetest" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-sky-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-            <div class="relative z-10 flex items-center w-full px-6">
-              <!-- Icon Container -->
-              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-50 text-sky-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <span class="text-2xl font-black">?</span>
-              </div>
-              <!-- Text Content -->
-              <div class="ml-4 flex flex-col items-start justify-center flex-grow">
-                <h3 class="text-sm font-black text-sky-900 tracking-wider">単音テストに挑戦</h3>
-                <p class="text-[10px] font-bold text-sky-400 mt-0.5">ドレミの音を一つずつ当ててみましょう</p>
-              </div>
-              <!-- Arrow -->
-              <div class="text-sky-200 group-hover:text-sky-500 transition-colors duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </NuxtLink>
-
-          <!-- Learning History -->
-          <NuxtLink to="/history" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-indigo-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-            <div class="relative z-10 flex items-center w-full px-6">
-              <!-- Icon Container -->
-              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
-                  <path d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                  <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm2.25 0c0 4.142 3.358 7.5 7.5 7.5s7.5-3.358 7.5-7.5-3.358-7.5-7.5-7.5-7.5 3.358-7.5 7.5Z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <!-- Text Content -->
-              <div class="ml-4 flex flex-col items-start justify-center flex-grow">
-                <h3 class="text-sm font-black text-indigo-900 tracking-wider">学習履歴を確認</h3>
-                <p class="text-[10px] font-bold text-indigo-400 mt-0.5">これまでのトレーニング成果を見返します</p>
-              </div>
-              <!-- Arrow -->
-              <div class="text-indigo-200 group-hover:text-indigo-500 transition-colors duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </NuxtLink>
-
-          <!-- Settings -->
-          <NuxtLink to="/settings" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-gray-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-            <div class="relative z-10 flex items-center w-full px-6">
-              <!-- Icon Container -->
-              <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
-                  <path fill-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.349l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.115-.26.297-.348.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.282-.819l.922-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.431l.84-.692a1.875 1.875 0 00.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.844zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <!-- Text Content -->
-              <div class="ml-4 flex flex-col items-start justify-center flex-grow">
-                <h3 class="text-sm font-black text-gray-900 tracking-wider">各種設定</h3>
-                <p class="text-[10px] font-bold text-gray-400 mt-0.5">音源の切り替えやアプリの設定</p>
-              </div>
-              <!-- Arrow -->
-              <div class="text-gray-200 group-hover:text-gray-400 transition-colors duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </NuxtLink>
-        </div>
+        </Transition>
       </section>
-
-
-      <!-- Footer Links -->
-      <div class="mt-20 border-t border-gray-100 pt-16 pb-12">
-        <div class="px-6">
-          <div class="grid grid-cols-2 gap-x-8 gap-y-12 mb-16">
-            <!-- Training & Plans -->
-            <div class="space-y-4">
-              <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest pb-1 pl-1">Training</p>
-              <div class="flex flex-col space-y-3">
-                <NuxtLink to="/method" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
-                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
-                  トレーニング方法
-                </NuxtLink>
-                <NuxtLink to="/about" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
-                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
-                  サービス概要
-                </NuxtLink>
-              </div>
-            </div>
-
-            <!-- About & Support -->
-            <div class="space-y-4">
-              <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest pb-1 pl-1">Support</p>
-              <div class="flex flex-col space-y-3">
-                <NuxtLink to="/subscription" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
-                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
-                  料金プラン
-                </NuxtLink>
-                <NuxtLink to="/contact" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
-                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
-                  お問い合わせ
-                </NuxtLink>
-                <NuxtLink to="/faq" class="text-sm text-gray-600 hover:text-gray-900 font-bold transition-colors flex items-center">
-                  <span class="w-1.5 h-1.5 bg-gray-300 rounded-full mr-2.5"></span>
-                  よくあるご質問 (Q&A)
-                </NuxtLink>
-              </div>
-            </div>
-          </div>
-
-          <!-- Legal & Corporate -->
-          <div class="border-t border-gray-100 pt-8">
-            <div class="flex flex-wrap justify-center gap-x-6 gap-y-4 mb-8">
-              <NuxtLink to="/company" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">運営会社</NuxtLink>
-              <NuxtLink to="/terms" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">利用規約</NuxtLink>
-              <NuxtLink to="/privacy" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">プライバシーポリシー</NuxtLink>
-              <NuxtLink to="/legal" class="text-[10px] text-gray-400 hover:text-gray-600 font-medium whitespace-nowrap">特定商取引法に基づく表記</NuxtLink>
-            </div>
-            
-            <footer class="text-center">
-              <p class="text-[10px] text-gray-300 font-medium">&copy; 2026 Akatsuki Inc.</p>
-            </footer>
-          </div>
-        </div>
-      </div>
     </main>
     </div>
   </div>

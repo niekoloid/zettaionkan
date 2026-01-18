@@ -198,49 +198,28 @@ const billingInfo = ref<any>(null)
 const budgetInfo = ref<any>(null)
 
 const checkBilling = async () => {
-    if (!projectId.value || !accessToken.value) return
+    if (!projectId.value) return
     error.value = null
     billingInfo.value = null
     budgetInfo.value = null
     
-    // Check if billing is enabled for the project
     try {
-        const response = await fetch(`https://cloudbilling.googleapis.com/v1/projects/${projectId.value}/billingInfo`, {
-            headers: {
-                'Authorization': `Bearer ${accessToken.value}`
-            }
+        const { data: result, error: fetchError } = await useFetch('/api/admin/billing-info', {
+            params: { projectId: projectId.value }
         })
         
-        if (!response.ok) {
-            const err = await response.json()
-            throw new Error(err.error?.message || 'Failed to fetch billing info')
+        if (fetchError.value) {
+            throw new Error(fetchError.value.statusMessage || 'Failed to fetch billing info')
         }
         
-        const data = await response.json()
-        billingInfo.value = data
-
-        // Try to fetch budget info if permissions allow
-        if (data.billingAccountName) {
-            try {
-                const bResponse = await fetch(`https://billingbudgets.googleapis.com/v1/${data.billingAccountName}/budgets`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken.value}`
-                    }
-                })
-                if (bResponse.ok) {
-                    budgetInfo.value = await bResponse.json()
-                }
-            } catch (e) {
-                console.warn('Budget info fetch failed - might lack Billing Account level permissions')
-            }
-        }
-        
+        const data = result.value as any
+        billingInfo.value = data.billing
+        budgetInfo.value = data.budgets
     } catch (e: any) {
         console.error(e)
         error.value = `Billing Check Failed: ${e.message}`
     }
 }
-
 const generateVideo = async () => {
   saveCredentials()
   isLoading.value = true
@@ -250,56 +229,30 @@ const generateVideo = async () => {
 
   try {
     // 1. Prepare Request
-    // Veo API Endpoint structure:
-    // https://us-central1-aiplatform.googleapis.com/v1/projects/{PROJECT}/locations/us-central1/publishers/google/models/{MODEL}:predict
-    const endpoint = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId.value}/locations/us-central1/publishers/google/models/${modelId.value}:predict`
-    
-    // Construct Payload
-    // Based on Veo documentation, input is 'instances' list.
     const instance: Record<string, any> = {}
     if (prompt.value) instance.prompt = prompt.value
     if (imageBase64.value) {
-      // Remove data URL prefix for API
       const base64Clean = imageBase64.value.split(',')[1]
       instance.image = { bytesBase64Encoded: base64Clean }
     }
 
-    const payload = {
-      instances: [instance],
-      parameters: {
-        // Default parameters
-        sampleCount: 1,
-        // videoLength: "5s", // optional
-        // aspectRatio: "16:9" // optional
-      }
-    }
-
-    // 2. Send Prediction Request
-    const response = await fetch(endpoint, {
+    const { data: result, error: fetchError } = await useFetch('/api/admin/video-gen', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken.value}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
+      body: {
+        projectId: projectId.value,
+        modelId: modelId.value,
+        instances: [instance],
+        parameters: {
+          sampleCount: 1
+        }
+      }
     })
 
-    if (!response.ok) {
-      const err = await response.json()
-      throw new Error(err.error?.message || 'Request failed')
+    if (fetchError.value) {
+      throw new Error(fetchError.value.statusMessage || 'Request failed')
     }
 
-    const data = await response.json()
-    
-    // Veo usually returns bytes directly in 'predictions' OR an LRO if it's slow?
-    // Most 'predict' endpoints return immediate results or base64.
-    // However, some generation endpoints use 'predict' but take a while.
-    // Let's assume standard Vertex AI Prediction response: { predictions: [ { bytesBase64Encoded: "..." } ] }
-    // Or it might be a GCS URI.
-    
-    // NOTE: Veo might differ from Imagen.
-    // If it returns a GCS URI (e.g. `videoUri`), we can try to display it (might need signing or authenticated fetch).
-    // If it returns base64 content, we can display immediately.
+    const data = result.value as any
     
     if (data.predictions && data.predictions.length > 0) {
       const pred = data.predictions[0]
@@ -307,14 +260,9 @@ const generateVideo = async () => {
       if (pred.bytesBase64Encoded) {
         generatedVideoUrl.value = `data:video/mp4;base64,${pred.bytesBase64Encoded}`
       } else if (pred.videoUri) {
-         // If it's a GCS URI, we might not be able to view it directly without auth.
-         // But let's try.
          statusMessage.value = `Generated! Video URI: ${pred.videoUri}`
-         // We can't easily display a gs:// URI or private https://storage.cloud.google.com URI without auth cookies.
-         // For now, let's warn if this happens.
          throw new Error(`Video generated at ${pred.videoUri}, but cannot be displayed directly due to CORS/Auth. Check GCS bucket.`)
       } else {
-        // Check for other fields?
         console.log('Prediction result:', pred)
         throw new Error('Unexpected response format')
       }
