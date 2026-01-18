@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { type PropType } from 'vue'
-import type { Chord } from '../constants/chords'
+import type { Chord } from '~/constants/chords'
 
 const props = defineProps({
   parentChordRatio: {

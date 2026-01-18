@@ -8,7 +8,7 @@ import type { HistoryItem } from '~/types/app'
 const supabase = useSupabaseClient<Database>()
 
 import * as Tone from 'tone'
-import { ChordDefinitions } from '../constants/chords'
+import { ChordDefinitions } from '~/constants/chords'
 
 // ... imports
 // ...

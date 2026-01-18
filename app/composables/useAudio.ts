@@ -1,6 +1,6 @@
 import * as Tone from 'tone'
 import { ref, computed } from 'vue'
-import { STEINWAY_MAP, YAMAHA_MAP } from '../constants/instruments'
+import { STEINWAY_MAP, YAMAHA_MAP } from '~/constants/instruments'
 import { useAuth } from './useAuth'
 
 // Singleton state shared across all components

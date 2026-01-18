@@ -50,9 +50,9 @@
 </template>
 
 <script setup lang="ts">
-import { useAppSettings } from '../composables/useAppSettings'
+import { useAppSettings } from '~/composables/useAppSettings'
 
-import type { Chord } from '../constants/chords'
+import type { Chord } from '~/constants/chords'
 
 const { namingConvention, formatChordName } = useAppSettings()
 const props = defineProps({

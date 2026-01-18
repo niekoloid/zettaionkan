@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { ChordDefinitions, type Chord } from '../constants/chords'
+import { ChordDefinitions, type Chord } from '~/constants/chords'
 import type { Database } from '~/types/database.types'
 
 const STORAGE_KEY = 'zettaionkan_custom_chords'

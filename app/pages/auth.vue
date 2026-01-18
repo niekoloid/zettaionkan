@@ -69,7 +69,7 @@ const handleOAuthLogin = async (provider: Provider) => {
     <main class="flex-grow px-8 pb-20 overflow-y-auto">
       <div class="text-center mb-10">
         <div class="flex justify-center mb-8">
-          <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-32 w-auto object-contain" />
+          <img src="~/assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-32 w-auto object-contain" />
         </div>
         <h1 class="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mb-4">Account</h1>
         <h2 class="text-xl font-bold text-gray-900 mb-2">{{ isSignUp ? '新規登録' : 'ログイン' }}</h2>

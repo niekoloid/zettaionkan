@@ -19,7 +19,7 @@ onMounted(() => {
         </svg>
       </NuxtLink>
       <div class="absolute left-1/2 transform -translate-x-1/2">
-        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-20 w-auto object-contain" />
+        <img src="~/assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-20 w-auto object-contain" />
       </div>
       <div class="w-10"></div> <!-- Spacer -->
     </header>

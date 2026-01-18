@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useAuth } from '../composables/useAuth'
-import { useAudio } from '../composables/useAudio'
+import { useAuth } from '~/composables/useAuth'
+import { useAudio } from '~/composables/useAudio'
 
 const props = defineProps({
   showBack: {
@@ -49,7 +49,7 @@ const instrumentName = {
     <!-- Center: Logo & Instrument -->
     <div class="flex flex-col items-center">
       <NuxtLink to="/">
-        <img src="../assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-16 w-auto object-contain" />
+        <img src="~/assets/logo_irooto.png" alt="いろおと 絶対音感トレーニング" class="h-16 w-auto object-contain" />
       </NuxtLink>
     </div>
 

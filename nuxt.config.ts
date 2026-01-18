@@ -1,5 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  future: {
+    compatibilityVersion: 4
+  },
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/supabase'
@@ -20,7 +23,6 @@ export default defineNuxtConfig({
     },
     pageTransition: { name: 'page', mode: 'out-in' }
   },
-  srcDir: '.',
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true }
 })

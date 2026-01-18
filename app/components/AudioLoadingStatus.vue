@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAudio } from '../composables/useAudio'
+import { useAudio } from '~/composables/useAudio'
 
 const { isLoading, isPreloading, loadingProgress, loadingFile, selectedInstrument } = useAudio()
 

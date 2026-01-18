@@ -3,7 +3,7 @@ import type { Database } from '~/types/database.types'
 const supabase = useSupabaseClient<Database>()
 
 import * as Tone from 'tone'
-import { ChordDefinitions, type Chord } from '../constants/chords'
+import { ChordDefinitions, type Chord } from '~/constants/chords'
 import type { HistoryItem } from '~/types/app'
 
 

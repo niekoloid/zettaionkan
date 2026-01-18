@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChordDefinitions } from '../constants/chords.js'
+import { ChordDefinitions } from '~/constants/chords.js'
 
 const mainChords = [
   ChordDefinitions.DOMISO,

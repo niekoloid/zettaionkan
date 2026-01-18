@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import * as Tone from 'tone'
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { SONGS, type Song, type SongSequenceItem } from '../constants/songs'
-import { ChordDefinitions, type Chord } from '../constants/chords'
+import { SONGS, type Song, type SongSequenceItem } from '~/constants/songs'
+import { ChordDefinitions, type Chord } from '~/constants/chords'
 import { useSupabaseClient } from '#imports'
 import { useAudio } from '~/composables/useAudio'
 import { useAuth } from '~/composables/useAuth'
