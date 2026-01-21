@@ -12,6 +12,8 @@ const {
 } = useAudio()
 
 const { userTier, authReady } = useAuth()
+const { isPro, isEnabled, hasAccess } = usePro()
+const checkAccess = (feature: any) => hasAccess(feature, userTier.value)
 const { allChords, saveSingleMapping, resetAll: resetGlobal } = useChordSettings()
 const { 
   namingConvention, updateNamingConvention, 
@@ -20,6 +22,12 @@ const {
   colorFormat, updateColorFormat,
   isKeyboardSoundEnabled, updateKeyboardSound
 } = useAppSettings()
+
+const navigateToSubscription = () => {
+  if (confirm('この機能はPROプラン限定です。プランを確認しますか？')) {
+    navigateTo('/subscription')
+  }
+}
 
 const NARRATION_PRESETS = [
   '赤', '黄色', '青', '黒', '緑', 'オレンジ', '紫', 'ピンク', '茶色', '黄緑', 'ベージュ', '薄橙', '肌色', '薄紫', '藤色', 'グレー', '灰色', '水色', '空色'
@@ -40,8 +48,12 @@ const initializeDraft = () => {
 const handleInstrumentChange = (inst: string) => {
   if (inst === selectedInstrument.value) return
   
-  if (inst === 'steinway' && userTier.value !== 'premium') {
-    alert('Steinway B音源はプレミアムプラン限定です。')
+  // Explicitly limit Steinway to PRO users
+  if (inst === 'steinway' && !isPro(userTier.value)) {
+    // Redirect to subscription if not pro
+    if (confirm('Steinway音源はPROプラン限定です。プランを確認しますか？')) {
+      navigateTo('/subscription')
+    }
     return
   }
 
@@ -51,6 +63,15 @@ const handleInstrumentChange = (inst: string) => {
 
 onMounted(async () => {
   await authReady
+  
+  // Security check: Force back to free options if user is not PRO
+  if (!isPro(userTier.value)) {
+    if (instrument.value === 'steinway') updateInstrument('yamaha')
+    if (colorFormat.value === 'hiragana') updateColorFormat('standard')
+    if (namingConvention.value !== 'italian') updateNamingConvention('italian')
+    if (isKeyboardSoundEnabled.value) updateKeyboardSound(false)
+  }
+  
   initializeDraft()
 })
 
@@ -144,7 +165,7 @@ const handleReset = () => {
         </div>
 
         <!-- Instrument Settings -->
-        <section class="space-y-6 mb-12">
+        <section v-if="isEnabled('settings_instrument_yamaha') || isEnabled('settings_instrument_steinway')" class="space-y-6 mb-12">
           <div class="flex items-center space-x-2">
             <span class="w-1 h-5 bg-indigo-500 rounded-full"></span>
             <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">使用するピアノ音源</h3>
@@ -152,6 +173,7 @@ const handleReset = () => {
 
           <div class="grid grid-cols-1 gap-4">
             <div 
+              v-if="isEnabled('settings_instrument_yamaha')"
               @click="handleInstrumentChange('yamaha')"
               class="relative p-5 rounded-2xl border-2 transition-all cursor-pointer group shadow-sm bg-white"
               :class="instrument === 'yamaha' ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-gray-100 hover:border-gray-200'"
@@ -173,11 +195,12 @@ const handleReset = () => {
             </div>
 
             <div 
+              v-if="isEnabled('settings_instrument_steinway')"
               @click="handleInstrumentChange('steinway')"
               class="relative p-5 rounded-2xl border-2 transition-all cursor-pointer group shadow-sm bg-white"
               :class="[
                 instrument === 'steinway' ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-gray-100 hover:border-gray-200',
-                userTier !== 'premium' ? 'opacity-80' : ''
+                !isPro(userTier) ? 'opacity-80' : ''
               ]"
             >
               <div class="flex items-center justify-between">
@@ -186,7 +209,12 @@ const handleReset = () => {
                   <div>
                     <div class="flex items-center space-x-2">
                       <h4 class="font-black text-gray-900">Steinway Model B</h4>
-                      <span v-if="userTier !== 'premium'" class="px-2 py-0.5 bg-amber-100 text-amber-700 text-[8px] font-black rounded-full uppercase tracking-tighter">Premium</span>
+                      <span v-if="!isPro(userTier)" class="px-2 py-0.5 bg-gray-900 text-white text-[8px] font-black rounded-full uppercase tracking-tighter shadow-sm flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                           <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                        </svg>
+                        Pro
+                      </span>
                     </div>
                     <p class="text-[10px] font-bold text-gray-400 mt-0.5">繊細で豊かな表現力を持つ最高峰の響き</p>
                   </div>
@@ -196,7 +224,7 @@ const handleReset = () => {
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
                 </div>
-                <div v-else-if="userTier !== 'premium'" class="text-gray-300">
+                <div v-else-if="!isPro(userTier)" class="text-gray-300">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                   </svg>
@@ -206,39 +234,8 @@ const handleReset = () => {
           </div>
         </section>
 
-        <!-- Keyboard UI Settings -->
-        <section class="space-y-6 mb-12">
-          <div class="flex items-center space-x-2">
-            <span class="w-1 h-5 bg-indigo-500 rounded-full"></span>
-            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">鍵盤の設定</h3>
-          </div>
-
-          <div 
-            @click="updateKeyboardSound(!isKeyboardSoundEnabled)"
-            class="flex items-center justify-between p-5 bg-white rounded-2xl border-2 cursor-pointer transition-all active:scale-[0.98]"
-            :class="isKeyboardSoundEnabled ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-gray-100'"
-          >
-            <div class="flex items-center space-x-4">
-              <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-lg">🔊</div>
-              <div>
-                <h4 class="font-black text-gray-900 text-sm">ホーム画面の鍵盤の音を鳴らす</h4>
-                <p class="text-[10px] font-bold text-gray-400 mt-0.5">鍵盤を押したときに音を出します</p>
-              </div>
-            </div>
-            <div 
-              class="w-10 h-6 rounded-full transition-colors relative shrink-0"
-              :class="isKeyboardSoundEnabled ? 'bg-indigo-600' : 'bg-gray-200'"
-            >
-              <div 
-                class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
-                :class="isKeyboardSoundEnabled ? 'translate-x-4' : ''"
-              ></div>
-            </div>
-          </div>
-        </section>
-
         <!-- Color Name Format Settings -->
-        <section class="space-y-6 mb-12">
+        <section v-if="isEnabled('settings_color_format')" class="space-y-6 mb-12">
           <div class="flex items-center space-x-2">
             <span class="w-1 h-5 bg-indigo-500 rounded-full"></span>
             <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">色の表示形式</h3>
@@ -260,12 +257,23 @@ const handleReset = () => {
             </div>
 
             <div 
-              @click="updateColorFormat('hiragana')"
+              @click="hasAccess('settings_color_format_hiragana', userTier) ? updateColorFormat('hiragana') : navigateToSubscription()"
               class="relative p-4 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-2"
-              :class="colorFormat === 'hiragana' ? 'border-indigo-500 ring-4 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
+              :class="[
+                colorFormat === 'hiragana' ? 'border-indigo-500 ring-4 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200',
+                !hasAccess('settings_color_format_hiragana', userTier) ? 'opacity-80' : ''
+              ]"
             >
               <span class="text-xl font-black text-gray-900">あか・きいろ</span>
-              <p class="text-[9px] font-bold text-gray-400">すべてひらがな</p>
+              <div class="flex flex-col items-center">
+                <p class="text-[9px] font-bold text-gray-400">すべてひらがな</p>
+                <span v-if="!hasAccess('settings_color_format_hiragana', userTier)" class="mt-1 px-2 py-0.5 bg-gray-900 text-white text-[8px] font-black rounded-full uppercase tracking-tighter shadow-sm flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                     <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                  </svg>
+                  PRO
+                </span>
+              </div>
               <div v-if="colorFormat === 'hiragana'" class="absolute -top-2 -right-2 bg-indigo-500 text-white rounded-full p-1 shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -276,7 +284,7 @@ const handleReset = () => {
         </section>
 
         <!-- Naming Convention Settings -->
-        <section class="space-y-6 mb-12">
+        <section v-if="isEnabled('settings_naming_convention')" class="space-y-6 mb-12">
           <div class="flex items-center space-x-2">
             <span class="w-1 h-5 bg-indigo-500 rounded-full"></span>
             <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">音名の表示形式</h3>
@@ -298,12 +306,23 @@ const handleReset = () => {
             </div>
 
             <div 
-              @click="updateNamingConvention('hybrid')"
+              @click="isPro(userTier) ? updateNamingConvention('hybrid') : navigateToSubscription()"
               class="relative p-2 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-1 h-24"
-              :class="namingConvention === 'hybrid' ? 'border-indigo-500 ring-2 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
+              :class="[
+                namingConvention === 'hybrid' ? 'border-indigo-500 ring-2 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200',
+                !isPro(userTier) ? 'opacity-80' : ''
+              ]"
             >
               <span class="text-sm font-black text-gray-900">ラ・チス・ミ</span>
-              <p class="text-[8px] font-bold text-gray-400">半音は独語読み</p>
+              <div class="flex flex-col items-center">
+                <p class="text-[8px] font-bold text-gray-400">半音は独語読み</p>
+                <span v-if="!isPro(userTier)" class="mt-1 px-2 py-0.5 bg-gray-900 text-white text-[7px] font-black rounded-full uppercase tracking-tighter shadow-sm flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                     <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                  </svg>
+                  PRO
+                </span>
+              </div>
               <div v-if="namingConvention === 'hybrid'" class="absolute -top-2 -right-2 bg-indigo-500 text-white rounded-full p-1 shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -312,12 +331,23 @@ const handleReset = () => {
             </div>
 
             <div 
-              @click="updateNamingConvention('german')"
+              @click="isPro(userTier) ? updateNamingConvention('german') : navigateToSubscription()"
               class="relative p-2 rounded-2xl border-2 transition-all cursor-pointer bg-white flex flex-col items-center justify-center text-center space-y-1 h-24"
-              :class="namingConvention === 'german' ? 'border-indigo-500 ring-2 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200'"
+              :class="[
+                namingConvention === 'german' ? 'border-indigo-500 ring-2 ring-indigo-50 animate-pulse-subtle' : 'border-gray-100 hover:border-gray-200',
+                !isPro(userTier) ? 'opacity-80' : ''
+              ]"
             >
               <span class="text-sm font-black text-gray-900">C - E - G</span>
-              <p class="text-[8px] font-bold text-gray-400">コード名</p>
+              <div class="flex flex-col items-center">
+                <p class="text-[8px] font-bold text-gray-400">コード名</p>
+                <span v-if="!isPro(userTier)" class="mt-1 px-2 py-0.5 bg-gray-900 text-white text-[7px] font-black rounded-full uppercase tracking-tighter shadow-sm flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                     <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                  </svg>
+                  PRO
+                </span>
+              </div>
               <div v-if="namingConvention === 'german'" class="absolute -top-2 -right-2 bg-indigo-500 text-white rounded-full p-1 shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -328,7 +358,7 @@ const handleReset = () => {
         </section>
 
         <!-- Chord Color Customization -->
-        <section class="space-y-6 mb-12">
+        <section v-if="isEnabled('settings_chord_customization')" class="space-y-6 mb-12">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
               <span class="w-1 h-5 bg-indigo-500 rounded-full"></span>
@@ -342,7 +372,22 @@ const handleReset = () => {
             </button>
           </div>
 
-          <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 space-y-6">
+          <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 space-y-6 relative overflow-hidden">
+            <!-- PRO Overlay for Chord Customization -->
+            <div v-if="!hasAccess('settings_chord_customization', userTier)" class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center">
+              <div class="bg-gray-900 text-white p-4 rounded-3xl shadow-xl mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                </svg>
+                <p class="text-xs font-black uppercase tracking-widest">PRO Plan Only</p>
+              </div>
+              <h4 class="text-gray-900 font-black mb-2">和音と色のカスタマイズ</h4>
+              <p class="text-[10px] font-bold text-gray-400 mb-6 max-w-[200px]">自分の好きな色や名前に変更するには、PROプランへの加入が必要です。</p>
+              <NuxtLink to="/subscription" class="bg-indigo-600 text-white px-8 py-3 rounded-full font-black text-xs shadow-lg shadow-indigo-200 active:scale-95 transition-all">
+                プランを確認する
+              </NuxtLink>
+            </div>
+
             <p class="text-[10px] font-bold text-gray-400 leading-normal">
               各和音に対応する色と、音声ガイドでの読み上げ名を変更できます。<br>
               「Home表示」をオンにすると、その和音だけをHome画面に表示できます（未選択時はすべて表示されます）。<br>
@@ -450,30 +495,47 @@ const handleReset = () => {
           </div>
         </section>
 
-        <!-- Subscription Management -->
-        <section class="space-y-6 mb-20">
+
+
+        <!-- Keyboard UI Settings -->
+        <section v-if="isEnabled('settings_keyboard_sound')" class="space-y-6 mb-12">
           <div class="flex items-center space-x-2">
-            <span class="w-1 h-5 bg-amber-500 rounded-full"></span>
-            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">アカウント・プラン</h3>
+            <span class="w-1 h-5 bg-indigo-500 rounded-full"></span>
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">鍵盤の設定</h3>
           </div>
 
-          <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="space-y-1">
-              <h4 class="text-sm font-black text-gray-900">
-                現在のプラン: {{ userTier === 'premium' ? 'プレミアム' : (userTier === 'standard' ? 'スタンダード' : (userTier === 'entry' ? 'エントリー' : '無料')) }}プラン
-              </h4>
-              <p class="text-[10px] font-bold text-gray-400">プランの変更や解約はマイページから行えます</p>
+          <div 
+            @click="isPro(userTier) ? updateKeyboardSound(!isKeyboardSoundEnabled) : navigateToSubscription()"
+            class="flex items-center justify-between p-5 bg-white rounded-2xl border-2 cursor-pointer transition-all active:scale-[0.98]"
+            :class="[
+              isKeyboardSoundEnabled ? 'border-indigo-500 ring-4 ring-indigo-50' : 'border-gray-100',
+              !isPro(userTier) ? 'opacity-80' : ''
+            ]"
+          >
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-lg">🔊</div>
+              <div>
+                <div class="flex items-center space-x-2">
+                  <h4 class="font-black text-gray-900 text-sm">ホーム画面の鍵盤の音を鳴らす</h4>
+                  <span v-if="!isPro(userTier)" class="px-2 py-0.5 bg-gray-900 text-white text-[8px] font-black rounded-full uppercase tracking-tighter shadow-sm flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                       <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                    </svg>
+                    PRO
+                  </span>
+                </div>
+                <p class="text-[10px] font-bold text-gray-400 mt-0.5">鍵盤を押したときに音を出します</p>
+              </div>
             </div>
-            
-            <NuxtLink 
-              to="/account"
-              class="px-6 py-3 bg-white text-gray-900 border border-gray-200 rounded-2xl font-black text-xs shadow-sm hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center space-x-2 shrink-0"
+            <div 
+              class="w-10 h-6 rounded-full transition-colors relative shrink-0"
+              :class="isKeyboardSoundEnabled ? 'bg-indigo-600' : 'bg-gray-200'"
             >
-              <span>マイページで管理する</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </NuxtLink>
+              <div 
+                class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
+                :class="isKeyboardSoundEnabled ? 'translate-x-4' : ''"
+              ></div>
+            </div>
           </div>
         </section>
 
@@ -489,6 +551,8 @@ const handleReset = () => {
           </div>
         </Transition>
       </main>
+
+
     </div>
   </div>
 </template>

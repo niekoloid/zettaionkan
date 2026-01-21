@@ -75,7 +75,7 @@ const NOTE_QUIZZ_SETTINGS_KEY = 'zettaionkan_note_quizz_settings'
 interface NoteQuizzSettings {
   selectedNoteIds: string[]
   matchOctave: boolean
-  whiteKeysOnly: boolean
+  includeBlackKeys: boolean
   testAll88: boolean
 }
 
@@ -83,7 +83,7 @@ const noteQuizzCookie = useCookie<NoteQuizzSettings>(NOTE_QUIZZ_SETTINGS_KEY, {
   default: () => ({
     selectedNoteIds: NOTE_DEFINITIONS.map(n => n.id),
     matchOctave: false,
-    whiteKeysOnly: true,
+    includeBlackKeys: false,
     testAll88: false
   }),
   maxAge: 60 * 60 * 24 * 365 * 100 // 100 years
@@ -94,7 +94,7 @@ const questions = ref<NoteDefinition[]>([])
 const quizzHistory = ref<HistoryItem[]>([])
 const shuffledIds = ref<string[]>([])
 const matchOctave = ref(noteQuizzCookie.value.matchOctave)
-const whiteKeysOnly = ref(noteQuizzCookie.value.whiteKeysOnly)
+const includeBlackKeys = ref(noteQuizzCookie.value.includeBlackKeys)
 const testAll88 = ref(noteQuizzCookie.value.testAll88)
 const isQuestionChanging = ref(false)
 
@@ -102,7 +102,7 @@ const syncToCookie = () => {
   noteQuizzCookie.value = {
     selectedNoteIds: Array.from(selectedNoteIds.value),
     matchOctave: matchOctave.value,
-    whiteKeysOnly: whiteKeysOnly.value,
+    includeBlackKeys: includeBlackKeys.value,
     testAll88: testAll88.value
   }
 }
@@ -110,20 +110,32 @@ const syncToCookie = () => {
 const J_NAMES: Record<string, string> = { 'C': 'ド', 'D': 'レ', 'E': 'ミ', 'F': 'ファ', 'G': 'ソ', 'A': 'ラ', 'B': 'シ' }
 
 const toggleTestAll88 = () => {
+  if (!isPro.value) {
+    navigateToSubscription()
+    return
+  }
   testAll88.value = !testAll88.value
 }
 
-const toggleWhiteKeysOnly = () => {
-  whiteKeysOnly.value = !whiteKeysOnly.value
+const toggleIncludeBlackKeys = () => {
+  if (!isPro.value) {
+    navigateToSubscription()
+    return
+  }
+  includeBlackKeys.value = !includeBlackKeys.value
 }
 
 const toggleMatchOctave = () => {
+  if (!isPro.value) {
+    navigateToSubscription()
+    return
+  }
   matchOctave.value = !matchOctave.value
 }
 
 watch(testAll88, (newVal) => {
   if (newVal) {
-    whiteKeysOnly.value = false
+    includeBlackKeys.value = true
   }
 })
 
@@ -226,8 +238,8 @@ const availableNotes = computed(() => {
   // Filter by user selection if not in 88-key mode
   let filtered = baseSet.filter(n => testAll88.value || selectedNoteIds.value.has(n.id))
   
-  // Filter for white keys only if enabled
-  if (whiteKeysOnly.value) {
+  // Filter for white keys only if black keys NOT included
+  if (!includeBlackKeys.value) {
     filtered = filtered.filter(n => !n.name.includes('#') && !n.name.includes('b'))
   }
   return filtered
@@ -301,7 +313,7 @@ const playCurrentQuestion = async () => {
   if (!noteObj) return
   const notes = noteObj.notes
   
-  s.triggerAttackRelease(notes, '1n')
+  s.triggerAttackRelease(notes, 8)
 }
 
 const playSingleNote = async (noteName: string) => {
@@ -311,7 +323,7 @@ const playSingleNote = async (noteName: string) => {
   
   const normalized = normalizeNote(noteName)
   activeKeys.value.add(normalized)
-  s.triggerAttackRelease(noteName, '1n')
+  s.triggerAttackRelease(noteName, 8)
   
   // Quiz mode: Submit answer via keyboard
   if (view.value === 'quiz' && !resultMessage.value) {
@@ -324,7 +336,7 @@ const playSingleNote = async (noteName: string) => {
 
   setTimeout(() => {
     activeKeys.value.delete(normalized)
-  }, 300)
+  }, 8000)
 }
 
 const shuffleNotes = () => {
@@ -649,7 +661,7 @@ onMounted(async () => {
   let preferred = getPreferredInstrument(userTier.value)
 
   // Safeguard
-  if (preferred === 'steinway' && userTier.value !== 'premium') {
+  if (preferred === 'steinway' && userTier.value !== "premium") {
     preferred = 'yamaha'
   }
   
@@ -657,10 +669,18 @@ onMounted(async () => {
 })
 
 // === Watchers for Persistence ===
-watch([selectedNoteIds, matchOctave, whiteKeysOnly, testAll88], () => {
+watch([selectedNoteIds, matchOctave, includeBlackKeys, testAll88], () => {
   syncToCookie()
 }, { deep: true })
 
+const { isPro: checkProAccess, isEnabled } = usePro()
+const isPro = computed(() => checkProAccess(userTier.value))
+
+const navigateToSubscription = () => {
+    if (confirm('このオプションの変更はPROプラン限定です。プランを確認しますか？')) {
+        router.push('/subscription')
+    }
+}
 </script>
 
 <template>
@@ -696,29 +716,53 @@ watch([selectedNoteIds, matchOctave, whiteKeysOnly, testAll88], () => {
 
 
           <section class="space-y-4 px-1">
-            <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-4 px-1">オプション</label>
+            <label v-if="isEnabled('singlenote_setting_white_keys') || isEnabled('singlenote_setting_match_octave') || isEnabled('singlenote_setting_88_keys')" class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-4 px-1">オプション</label>
             
-            <!-- White Keys Only Toggle -->
-            <div @click="whiteKeysOnly = !whiteKeysOnly"
-                 class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-all hover:bg-gray-100 active:bg-gray-200 mb-2 relative z-10">
+            <!-- Include Black Keys Toggle -->
+            <div 
+              v-if="isEnabled('singlenote_setting_white_keys')"
+              @click="toggleIncludeBlackKeys"
+              class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-all hover:bg-gray-100 active:bg-gray-200 mb-2 relative z-10"
+              :class="!isPro ? 'opacity-80' : ''"
+            >
               <div>
-                <p class="text-sm font-black text-gray-900">白鍵のみをテストする</p>
-                <p class="text-[10px] font-bold text-gray-400 mt-0.5">黒鍵（変記号・嬰記号）をテスト対象から除外します</p>
+                <div class="flex items-center space-x-2">
+                  <p class="text-sm font-black text-gray-900">黒鍵も含めてテストする</p>
+                  <span v-if="!isPro" class="px-2 py-0.5 bg-gray-900 text-white text-[8px] font-black rounded-full uppercase tracking-tighter shadow-sm flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                       <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                    </svg>
+                    PRO
+                  </span>
+                </div>
+                <p class="text-[10px] font-bold text-gray-400 mt-0.5">黒鍵（変記号・嬰記号）もランダムに出題されるようになります</p>
               </div>
               <div class="pointer-events-none">
                 <div class="w-10 h-6 rounded-full transition-colors relative"
-                     :class="whiteKeysOnly ? 'bg-indigo-600' : 'bg-gray-200'">
+                     :class="includeBlackKeys ? 'bg-indigo-600' : 'bg-gray-200'">
                   <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
-                       :class="whiteKeysOnly ? 'translate-x-4' : ''"></div>
+                       :class="includeBlackKeys ? 'translate-x-4' : ''"></div>
                 </div>
               </div>
             </div>
 
             <!-- Octave Matching Toggle -->
-            <div @click="matchOctave = !matchOctave"
-                 class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-all hover:bg-gray-100 active:bg-gray-200 mb-2 relative z-10">
+            <div 
+              v-if="isEnabled('singlenote_setting_match_octave')"
+              @click="toggleMatchOctave"
+              class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-all hover:bg-gray-100 active:bg-gray-200 mb-2 relative z-10"
+              :class="!isPro ? 'opacity-80' : ''"
+            >
               <div>
-                <p class="text-sm font-black text-gray-900">オクターブまで一致させる</p>
+                <div class="flex items-center space-x-2">
+                  <p class="text-sm font-black text-gray-900">オクターブまで一致させる</p>
+                  <span v-if="!isPro" class="px-2 py-0.5 bg-gray-900 text-white text-[8px] font-black rounded-full uppercase tracking-tighter shadow-sm flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                       <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                    </svg>
+                    PRO
+                  </span>
+                </div>
                 <p class="text-[10px] font-bold text-gray-400 mt-0.5">同じ音名でもオクターブが違うと不正解になります</p>
               </div>
               <div class="pointer-events-none">
@@ -731,10 +775,22 @@ watch([selectedNoteIds, matchOctave, whiteKeysOnly, testAll88], () => {
             </div>
 
             <!-- All 88 Keys Toggle -->
-            <div @click="testAll88 = !testAll88"
-                 class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-all hover:bg-gray-100 active:bg-gray-200 mb-2 relative z-10">
+            <div 
+              v-if="isEnabled('singlenote_setting_88_keys')"
+              @click="toggleTestAll88"
+              class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer transition-all hover:bg-gray-100 active:bg-gray-200 mb-2 relative z-10"
+              :class="!isPro ? 'opacity-80' : ''"
+            >
               <div>
-                <p class="text-sm font-black text-gray-900">全88鍵盤でテストする</p>
+                <div class="flex items-center space-x-2">
+                  <p class="text-sm font-black text-gray-900">全88鍵盤でテストする</p>
+                  <span v-if="!isPro" class="px-2 py-0.5 bg-gray-900 text-white text-[8px] font-black rounded-full uppercase tracking-tighter shadow-sm flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                       <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                    </svg>
+                    PRO
+                  </span>
+                </div>
                 <p class="text-[10px] font-bold text-gray-400 mt-0.5">ピアノの全音域からランダムに出題されます</p>
               </div>
               <div class="pointer-events-none">

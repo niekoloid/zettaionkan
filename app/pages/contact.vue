@@ -5,6 +5,7 @@ const supabase = useSupabaseClient<Database>()
 
 const name = ref('')
 const email = ref('')
+const phone = ref('')
 const subject = ref('question')
 const message = ref('')
 const isLoading = ref(false)
@@ -28,35 +29,16 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    // 1. Save to Supabase table (Optional but recommended)
-    const { error: dbError } = await supabase
-      .from('inquiries')
-      .insert([
-        { 
-          name: name.value, 
-          email: email.value, 
-          subject: subject.value, 
-          message: message.value 
-        }
-      ] as any)
-    
-    // If table doesn't exist, we might get an error, but we still try to call the function
-    if (dbError) {
-      console.warn('Database save failed, continuing to send email:', dbError)
-    }
-
-    // 2. Call Edge Function to send email
-    const { data: { session } } = await supabase.auth.getSession()
+    // 1. Call Edge Function to send email
+    // Explicitly use the anon key for public access if needed, mostly handled by client
     const { data, error: fnError } = await supabase.functions.invoke('send-inquiry', {
       body: {
         name: name.value,
         email: email.value,
+        phone: phone.value,
         subject: subjects.find(s => s.id === subject.value)?.label,
         message: message.value
-      },
-      headers: session?.access_token ? {
-        Authorization: `Bearer ${session.access_token}`
-      } : {}
+      }
     })
 
     if (fnError) throw fnError
@@ -130,6 +112,16 @@ const handleSubmit = async () => {
                 type="email" 
                 required
                 placeholder="example@mail.com"
+                class="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+              />
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">電話番号 <span class="text-xs text-gray-300 font-normal ml-1">(任意)</span></label>
+              <input 
+                v-model="phone"
+                type="tel" 
+                placeholder="090-0000-0000"
                 class="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
               />
             </div>

@@ -31,7 +31,7 @@ export interface HistoryItem {
 export interface UserProfile {
   id: string
   email: string
-  subscription_tier: 'free' | 'entry' | 'standard' | 'premium'
+  subscription_tier: 'free' | 'entry' | 'premium'
   stripe_customer_id?: string
 }
 

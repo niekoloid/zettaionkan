@@ -2,8 +2,8 @@
 import type { Database } from '~/types/database.types'
 const supabase = useSupabaseClient<Database>()
 
-
 const { user, userTier, authReady } = useAuth()
+const { isEnabled, hasAccess } = usePro()
 const { namingConvention, formatChordName } = useAppSettings()
 
 import type { HistoryItem } from '~/types/app'
@@ -18,8 +18,13 @@ interface TrainingSession {
 }
 
 const trainingHistory = ref<TrainingSession[]>([])
+const activeTab = ref<'chord_quizz' | 'single_note_quizz' | 'autoplay'>('chord_quizz')
 const expandedSessionId = ref<string | null>(null)
 const isLoadingHistory = ref(true)
+
+const filteredHistory = computed(() => {
+  return trainingHistory.value.filter(s => s.settings?.mode === activeTab.value)
+})
 
 const formatDate = (dateString: string) => {
   const d = new Date(dateString)
@@ -76,7 +81,7 @@ onMounted(async () => {
         .limit(10)
         
       if (history) {
-        trainingHistory.value = history
+        trainingHistory.value = history as any
       }
     }
   } finally {
@@ -96,15 +101,34 @@ onMounted(async () => {
           <p class="text-sm text-gray-400 font-bold">これまでのトレーニング成果を確認できます</p>
         </div>
 
+        <!-- Tabs -->
+        <div class="flex items-center space-x-1 p-1 bg-gray-100 rounded-xl mb-6">
+          <button 
+            v-for="tab in [
+              { id: 'chord_quizz', label: '和音テスト' },
+              { id: 'single_note_quizz', label: '単音テスト' },
+              { id: 'autoplay', label: '聞き流し' }
+            ]"
+            :key="tab.id"
+            @click="activeTab = tab.id as any; expandedSessionId = null"
+            class="flex-grow py-2 px-3 rounded-lg text-xs font-black transition-all"
+            :class="activeTab === tab.id 
+              ? 'bg-white text-gray-900 shadow-sm transform scale-[1.02]' 
+              : 'text-gray-400 hover:text-gray-600'"
+          >
+            {{ tab.label }}
+          </button>
+        </div>
+
         <!-- Training History Section -->
         <section class="space-y-6">
           <div v-if="isLoadingHistory" class="flex justify-center py-10">
             <div class="w-6 h-6 border-2 border-gray-200 border-t-indigo-500 rounded-full animate-spin"></div>
           </div>
 
-          <div v-else-if="trainingHistory.length > 0" class="space-y-3">
+          <div v-else-if="filteredHistory.length > 0" class="space-y-3">
             <div 
-              v-for="session in trainingHistory" 
+              v-for="session in filteredHistory" 
               :key="session.id"
               class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
             >
@@ -137,6 +161,7 @@ onMounted(async () => {
                     <span class="text-xs font-bold text-gray-300">/{{ session.total_questions }}</span>
                   </div>
                   <button 
+                    v-if="isEnabled('history_delete_feature')"
                     @click.stop="deleteSession(session.id)"
                     class="p-2 text-gray-300 hover:text-red-400 hover:bg-red-50 rounded-full transition-colors"
                     title="削除"
@@ -156,9 +181,8 @@ onMounted(async () => {
                 </div>
               </div>
 
-              <!-- Detailed Log -->
               <div v-if="expandedSessionId === session.id" class="border-t border-gray-100 bg-gray-50/50 p-4">
-                  <div v-if="['standard', 'premium'].includes(userTier)" class="space-y-2">
+                  <div v-if="hasAccess('history_detailed_view', userTier)" class="space-y-2">
                     <div 
                       v-for="(log, idx) in session.details" 
                       :key="idx"
@@ -217,7 +241,7 @@ onMounted(async () => {
                     </div>
                   </div>
                   <div v-else class="text-center py-4">
-                    <p class="text-[10px] font-bold text-gray-500 mb-3">詳細情報の閲覧はスタンダードプラン以上限定です</p>
+                    <p class="text-[10px] font-bold text-gray-500 mb-3">詳細情報の閲覧はPROプラン限定です</p>
                     <NuxtLink to="/subscription" class="inline-block text-[10px] font-bold text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full">
                         プランを確認する
                     </NuxtLink>

@@ -36,8 +36,8 @@ const TEST_CHORDS = computed<Chord[]>(() => {
 })
 
 const DELAYS = {
-  REVEAL: 3000,
-  NEXT_QUESTION: 2000,
+  REVEAL: 5000,
+  NEXT_QUESTION: 4000,
   PLAYBACK_START: 500,
 }
 
@@ -45,6 +45,19 @@ const DELAYS = {
 const view = ref('settings')
 const currentQuestionIndex = ref(0)
 const AUTOPLAY_SETTINGS_KEY = 'zettaionkan_autoplay_settings'
+// ... (keep persistence stuff) ...
+
+// === Auth & PRO ===
+const { user, userTier, authReady } = useAuth()
+const { hasAccess, isEnabled } = usePro()
+const checkAccess = (feature: any) => hasAccess(feature, userTier.value)
+const isPro = computed(() => userTier.value !== 'free') // Keep for simple checks if needed, but per-feature is better
+
+const handleLockedClick = () => {
+    if (confirm('本機能はPROプラン限定です。\nプラン詳細を確認しますか？')) {
+        router.push('/subscription')
+    }
+}
 
 interface AutoplayCookieSettings {
   chordIds: string[]
@@ -111,8 +124,12 @@ const {
   selectedInstrument, 
   loadSampler,
   loadNarration,
-  playNarration
+  playNarration,
+  customVoiceEnabled
 } = useAudio()
+
+import { useVoiceSettings } from '~/composables/useVoiceSettings'
+const { availableVoices, fetchAvailableVoices, fetchSettings, updateSettings } = useVoiceSettings()
 
 const autoPlayTimeout = ref<any>(null)
 const isAutoPlayRevealed = ref(false)
@@ -124,6 +141,27 @@ const autoPlayRevealType = ref('full') // 'full' | 'icecream' | 'train' | 'vehic
 const selectedChords = computed(() => {
   return TEST_CHORDS.value.filter(c => selectedChordIds.value.has(c.id))
 })
+
+const missingRecordingChords = computed(() => {
+  return selectedChords.value.filter(chord => !availableVoices.value.has(chord.colorName))
+})
+
+const hasAllRecordings = computed(() => {
+  return missingRecordingChords.value.length === 0
+})
+
+const handleToggleCustomVoice = async () => {
+  if (!customVoiceEnabled.value) {
+    // 録音がない和音が一つでもある場合は有効化させない
+    if (!hasAllRecordings.value) {
+      const names = missingRecordingChords.value.map(c => c.colorName).join('、')
+      alert(`以下の選択された和音の録音が見つかりません：\n${names}\n\n全ての和音の録音を完了させてから有効にしてください。`)
+      return
+    }
+  }
+  await updateSettings(!customVoiceEnabled.value)
+}
+
 
 const {
   parentChordRatio,
@@ -232,7 +270,7 @@ const playCurrentQuestion = async () => {
     isAutoPlayRevealed.value = true
   }
   
-  const soundDuration = autoPlayRevealType.value === 'cat_flag' ? 5 : 3
+  const soundDuration = autoPlayRevealType.value === 'cat_flag' ? 8 : 8
   s.triggerAttackRelease(chord.notes, soundDuration)
   
   // Narration timing: Use 5s for flag mode as requested
@@ -285,10 +323,10 @@ const saveSession = async () => {
   
   const currentCount = playedCount.value
   if (currentCount === 0) return
-
+  
   const { data: { user: currentUser } } = await supabase.auth.getUser()
   if (!currentUser) return
-
+  
   isSaving.value = true
   try {
     const sessionDetails = questions.value.slice(0, currentCount).map(q => ({
@@ -377,7 +415,6 @@ onBeforeRouteLeave(async (to, from) => {
 })
 
 // === Lifecycle ===
-const { user, userTier, authReady } = useAuth()
 
 onMounted(async () => {
   await authReady
@@ -392,12 +429,14 @@ onMounted(async () => {
 
   let preferred: 'yamaha' | 'steinway' = instrument.value as 'yamaha' | 'steinway'
   
-  if (preferred === 'steinway' && userTier.value !== 'premium') {
+  if (preferred === 'steinway' && !checkAccess('instrument_steinway')) {
     preferred = 'yamaha'
   }
   
   loadSampler(preferred)
   loadNarration()
+  fetchAvailableVoices()
+  fetchSettings()
 
   // Automation support via URL params
   if (route.query.start === 'true') {
@@ -479,7 +518,7 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
               <!-- Full Screen Option -->
               <button 
                 @click="autoPlayRevealType = 'full'"
-                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                class="flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200"
                 :class="autoPlayRevealType === 'full' 
                   ? 'bg-white border-gray-900 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
@@ -490,74 +529,86 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
 
               <!-- Ice Cream Option -->
               <button 
-                @click="autoPlayRevealType = 'icecream'"
-                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                v-if="isEnabled('mode_icecream')"
+                @click="checkAccess('mode_icecream') ? autoPlayRevealType = 'icecream' : handleLockedClick()"
+                class="flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 relative overflow-hidden"
                 :class="autoPlayRevealType === 'icecream' 
                   ? 'bg-white border-pink-400 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
               >
-                <div class="text-2xl mb-1">🍦</div>
-                <span class="text-xs font-black" :class="autoPlayRevealType === 'icecream' ? 'text-pink-500' : 'text-gray-400'">アイス</span>
+                <div v-if="!checkAccess('mode_icecream')" class="absolute top-2 right-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg></div>
+                <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_icecream') }">🍦</div>
+                <span class="text-xs font-black" :class="[autoPlayRevealType === 'icecream' ? 'text-pink-500' : 'text-gray-400', !checkAccess('mode_icecream') && 'opacity-50']">アイス</span>
               </button>
               
               <!-- Cat Option -->
               <button 
-                @click="autoPlayRevealType = 'cat'"
-                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                v-if="isEnabled('mode_cat')"
+                @click="checkAccess('mode_cat') ? autoPlayRevealType = 'cat' : handleLockedClick()"
+                class="flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 relative overflow-hidden"
                 :class="autoPlayRevealType === 'cat' 
                   ? 'bg-white border-amber-500 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
               >
-                <div class="text-2xl mb-1">🐱</div>
-                <span class="text-xs font-black" :class="autoPlayRevealType === 'cat' ? 'text-amber-600' : 'text-gray-400'">ねこ</span>
+                <div v-if="!checkAccess('mode_cat')" class="absolute top-2 right-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg></div>
+                <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_cat') }">🐱</div>
+                <span class="text-xs font-black" :class="[autoPlayRevealType === 'cat' ? 'text-amber-600' : 'text-gray-400', !checkAccess('mode_cat') && 'opacity-50']">ねこ</span>
               </button>
 
               <!-- Video Cat Option -->
               <button 
-                @click="autoPlayRevealType = 'video_cat'"
-                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                v-if="isEnabled('mode_video_cat')"
+                @click="checkAccess('mode_video_cat') ? autoPlayRevealType = 'video_cat' : handleLockedClick()"
+                class="flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 relative overflow-hidden"
                 :class="autoPlayRevealType === 'video_cat' 
                   ? 'bg-white border-stone-800 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
               >
-                <div class="text-2xl mb-1">🎥</div>
-                <span class="text-xs font-black" :class="autoPlayRevealType === 'video_cat' ? 'text-stone-800' : 'text-gray-400'">動画ねこ</span>
+                 <div v-if="!checkAccess('mode_video_cat')" class="absolute top-2 right-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg></div>
+                <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_video_cat') }">🎥</div>
+                <span class="text-xs font-black" :class="[autoPlayRevealType === 'video_cat' ? 'text-stone-800' : 'text-gray-400', !checkAccess('mode_video_cat') && 'opacity-50']">動画ねこ</span>
               </button>
 
               <!-- Cat Flag Option -->
               <button 
-                @click="autoPlayRevealType = 'cat_flag'"
-                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                v-if="isEnabled('mode_cat_flag')"
+                @click="checkAccess('mode_cat_flag') ? autoPlayRevealType = 'cat_flag' : handleLockedClick()"
+                class="flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 relative overflow-hidden"
                 :class="autoPlayRevealType === 'cat_flag' 
                   ? 'bg-white border-red-500 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
               >
-                <div class="text-2xl mb-1">🚩</div>
-                <span class="text-xs font-black" :class="autoPlayRevealType === 'cat_flag' ? 'text-red-600' : 'text-gray-400'">ねこ旗揚げ</span>
+                 <div v-if="!checkAccess('mode_cat_flag')" class="absolute top-2 right-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg></div>
+                <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_cat_flag') }">🚩</div>
+                <span class="text-xs font-black" :class="[autoPlayRevealType === 'cat_flag' ? 'text-red-600' : 'text-gray-400', !checkAccess('mode_cat_flag') && 'opacity-50']">ねこ旗揚げ</span>
               </button>
 
               <!-- Train Option -->
               <button 
-                @click="autoPlayRevealType = 'train'"
-                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                v-if="isEnabled('mode_train')"
+                @click="checkAccess('mode_train') ? autoPlayRevealType = 'train' : handleLockedClick()"
+                class="flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 relative overflow-hidden"
                 :class="autoPlayRevealType === 'train' 
                   ? 'bg-white border-green-500 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
               >
-                <div class="text-2xl mb-1">🚃</div>
-                <span class="text-xs font-black" :class="autoPlayRevealType === 'train' ? 'text-green-600' : 'text-gray-400'">電車</span>
+                 <div v-if="!checkAccess('mode_train')" class="absolute top-2 right-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg></div>
+                <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_train') }">🚃</div>
+                <span class="text-xs font-black" :class="[autoPlayRevealType === 'train' ? 'text-green-600' : 'text-gray-400', !checkAccess('mode_train') && 'opacity-50']">電車</span>
               </button>
 
               <!-- Vehicle Option -->
               <button 
-                @click="autoPlayRevealType = 'vehicle'"
-                class="flex flex-col items-center justify-center py-4 px-6 rounded-xl border-2 transition-all duration-200 shrink-0"
+                v-if="isEnabled('mode_vehicle')"
+                @click="checkAccess('mode_vehicle') ? autoPlayRevealType = 'vehicle' : handleLockedClick()"
+                class="flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 relative overflow-hidden"
                 :class="autoPlayRevealType === 'vehicle' 
                   ? 'bg-white border-red-400 shadow-md transform scale-[1.02]' 
                   : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
               >
-                <div class="text-2xl mb-1">🚒</div>
-                <span class="text-xs font-black" :class="autoPlayRevealType === 'vehicle' ? 'text-red-600' : 'text-gray-400'">車</span>
+                 <div v-if="!checkAccess('mode_vehicle')" class="absolute top-2 right-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg></div>
+                <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_vehicle') }">🚒</div>
+                <span class="text-xs font-black" :class="[autoPlayRevealType === 'vehicle' ? 'text-red-600' : 'text-gray-400', !checkAccess('mode_vehicle') && 'opacity-50']">車</span>
               </button>
             </div>
           </div>
@@ -580,12 +631,14 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
                 <ChordSelectionButton 
                   :chord="chord" 
                   :selected="selectedChordIds.has(chord.id)"
+                  :locked="!checkAccess(`autoplay_chord_${chord.id}`)"
                   @toggle="toggleChordSelection(chord.id)"
+                  @locked-click="handleLockedClick"
                 />
               </template>
             </div>
           </div>
-
+ 
             <div class="flex items-center justify-between mb-4">
               <h3 class="text-xs font-bold text-gray-900 flex items-center">
                 <span class="w-1 h-4 bg-gray-900 rounded-full mr-2"></span>
@@ -598,7 +651,9 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
                  :key="chord.id"
                  :chord="chord"
                  :selected="selectedChordIds.has(chord.id)"
+                 :locked="!checkAccess(`autoplay_chord_${chord.id}`)"
                  @toggle="toggleChordSelection(chord.id)"
+                 @locked-click="handleLockedClick"
                />
             </div>
         </section>
@@ -648,6 +703,57 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
                 ></div>
               </div>
             </div>
+            
+            <!-- Custom Parent Voice Toggle -->
+            <div 
+              v-if="isEnabled('parent_voice')"
+              class="flex flex-col p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100/50 space-y-3"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-black text-gray-900">保護者の声で読み上げる</p>
+                  <p class="text-[10px] font-bold text-gray-400 mt-0.5">録音したあなたの声でガイド</p>
+                </div>
+                <div 
+                  @click="handleToggleCustomVoice"
+                  class="w-10 h-6 rounded-full transition-colors relative shrink-0 cursor-pointer"
+                  :class="customVoiceEnabled ? 'bg-indigo-600' : 'bg-gray-200'"
+                >
+                  <div 
+                    class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
+                    :class="customVoiceEnabled ? 'translate-x-4' : ''"
+                  ></div>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-[10px] font-bold text-indigo-400">
+                  {{ availableVoices.size }} / 14 色 録音済み
+                </span>
+                <NuxtLink 
+                  to="/voice-settings"
+                  class="text-[10px] font-black text-indigo-600 hover:text-indigo-700 flex items-center"
+                >
+                  <span>声を録音・管理する</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-0.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </NuxtLink>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pt-2">
+            <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-4 px-1">出現頻度の調整</label>
+            <FrequencySettings 
+              v-model:parentChordRatio="parentChordRatio"
+              v-model:isReviewWeighted="isReviewWeighted"
+              :parentChord="parentChord"
+              :otherChords="otherChords"
+              :otherChordsDisplay="otherChordsDisplay"
+              :otherChordsWithWeights="otherChordsWithWeights"
+              :selectedCount="selectedChords.length"
+            />
           </div>
 
           <!-- Reveal Delay Slider -->
@@ -673,16 +779,6 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
             </div>
           </div>
 
-          <!-- Frequency Settings -->
-          <FrequencySettings 
-            v-model:parentChordRatio="parentChordRatio"
-            v-model:isReviewWeighted="isReviewWeighted"
-            :parentChord="parentChord"
-            :otherChords="otherChords"
-            :otherChordsDisplay="otherChordsDisplay"
-            :otherChordsWithWeights="otherChordsWithWeights"
-            :selectedCount="selectedChords.length"
-          />
 
 
         </section>

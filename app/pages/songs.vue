@@ -266,7 +266,7 @@ onMounted(async () => {
   await authReady
   let preferred = getPreferredInstrument(userTier.value)
   
-  if (preferred === 'steinway' && userTier.value !== 'premium') {
+  if (preferred === 'steinway' && userTier.value !== 'PRO') {
     preferred = 'yamaha'
   }
   

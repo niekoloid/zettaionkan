@@ -24,6 +24,8 @@ const playbackTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
 // Flatten all 14 basic chords into a single list with metadata
 const { allChords: customChords } = useChordSettings()
 const { namingConvention, updateNamingConvention, instrument, updateInstrument, formatColorName, formatChordName, colorFormat, updateColorFormat, isKeyboardSoundEnabled, updateKeyboardSound } = useAppSettings()
+const { user, userTier, authReady } = useAuth()
+const { isPro, hasAccess } = usePro()
 
 const allChords = computed(() => {
   const selected = customChords.value.filter(c => c.homeEnabled)
@@ -36,11 +38,15 @@ const allChords = computed(() => {
     const b = parseInt(chord.color.slice(5, 7), 16)
     const brightness = (r * 299 + g * 587 + b * 114) / 1000
     const isLight = brightness > 180
+    
+    // Use granular feature gates for each chord in Home context
+    const isLocked = !hasAccess(`home_chord_${chord.id}` as any, userTier.value)
 
     return {
       ...chord,
       globalIndex: index + 1,
-      isLight
+      isLight,
+      isLocked
     }
   })
 })
@@ -69,7 +75,6 @@ const {
   loadSampler
 } = useAudio()
 
-const { user, userTier, authReady } = useAuth()
 const { getPreferredInstrument } = useAudioSettings()
 
 onMounted(async () => {
@@ -79,8 +84,8 @@ onMounted(async () => {
   // Initial load
   let preferred = getPreferredInstrument(userTier.value)
   
-  // Safeguard: If steinway is preferred but user is not premium, force yamaha
-  if (preferred === 'steinway' && userTier.value !== 'premium') {
+  // Safeguard: If steinway is preferred but user is not PRO, force yamaha
+  if (preferred === 'steinway' && !isPro(userTier.value)) {
     preferred = 'yamaha'
   }
   
@@ -119,15 +124,15 @@ const playChord = async (notes: string[]) => {
     // Set state immediately for UI responsiveness
     isChordPlaying.value = true
 
-    // Audio trigger
-    currentSampler.triggerAttackRelease(notes, 6)
+    // Audio trigger - Increased to 15s for extra long sustain
+    currentSampler.triggerAttackRelease(notes, 15)
     notes.forEach(note => pressedNotes.value.add(note))
     
     playbackTimeout.value = setTimeout(() => {
       notes.forEach(note => pressedNotes.value.delete(note))
       isChordPlaying.value = false
       playbackTimeout.value = null
-    }, 6000)
+    }, 15000)
   } else {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
   }
@@ -140,20 +145,23 @@ const playNote = async (note: string) => {
   const currentSampler = samplers[selectedInstrument.value]
 
   if (currentSampler && isSamplerLoaded.value) {
-    currentSampler.triggerAttackRelease(note, '2n')
+    currentSampler.triggerAttackRelease(note, 10)
     pressedNotes.value.add(note)
-    setTimeout(() => pressedNotes.value.delete(note), 1000)
+    setTimeout(() => pressedNotes.value.delete(note), 10000)
   } else {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
   }
 }
 
-  // 全ての和音を制限なしで開放
-  const isChordRestricted = (chord: any) => {
-    return false
-  }
-
   const toggleChord = async (chord: DisplayChord) => {
+    // Check lock
+    if ((chord as any).isLocked) {
+      if (confirm('本機能はPROプラン限定です。プランを確認しますか？')) {
+        navigateTo('/subscription')
+      }
+      return
+    }
+
     // 視覚情報（楽譜、鍵盤の着色）は常に更新
     currentChord.value = chord
 
@@ -338,6 +346,12 @@ const itemClasses = computed(() => {
               ]"
               :style="{ backgroundColor: chord.color }"
             >
+              <!-- Lock Overlay -->
+              <div v-if="(chord as any).isLocked" class="absolute inset-0 bg-gray-900/50 z-20 flex items-center justify-center backdrop-blur-[0.5px]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white/90 drop-shadow-md" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
 
               <!-- Mobile Content: Center Number -->
               <div class="absolute inset-0 flex items-center justify-center md:hidden">
@@ -405,12 +419,12 @@ const itemClasses = computed(() => {
         </button>
 
         <Transition
-          enter-active-class="transition-all duration-300 ease-out"
-          enter-from-class="opacity-0 max-h-0 overflow-hidden"
-          enter-to-class="opacity-100 max-h-[1000px] overflow-visible"
-          leave-active-class="transition-all duration-300 ease-in"
-          leave-from-class="opacity-100 max-h-[1000px] overflow-visible"
-          leave-to-class="opacity-0 max-h-0 overflow-hidden"
+          enter-active-class="transition-all duration-300 ease-out overflow-hidden"
+          enter-from-class="opacity-0 max-h-0"
+          enter-to-class="opacity-100 max-h-[1000px]"
+          leave-active-class="transition-all duration-300 ease-in overflow-hidden"
+          leave-from-class="opacity-100 max-h-[1000px]"
+          leave-to-class="opacity-0 max-h-0"
         >
           <div v-show="isMenuOpen">
             <div class="flex flex-col gap-4">

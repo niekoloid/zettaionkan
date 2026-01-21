@@ -2,6 +2,7 @@ import * as Tone from 'tone'
 import { ref, computed } from 'vue'
 import { STEINWAY_FAST_MAP, STEINWAY_FULL_MAP, YAMAHA_MAP } from '~/constants/instruments'
 import { useAuth } from './useAuth'
+import { useVoiceSettings } from './useVoiceSettings'
 
 // Singleton state shared across all components
 const samplers: Record<string, Tone.Sampler> = {}
@@ -22,6 +23,27 @@ const effectBuffers: Record<string, Tone.ToneAudioBuffer> = {}
 const samplerLoadingPromises: Record<string, Promise<boolean> | null> = {}
 let narrationLoadingPromise: Promise<boolean> | null = null
 let effectsLoadingPromise: Promise<boolean> | null = null
+const customVoiceBuffers: Record<string, Tone.ToneAudioBuffer> = {}
+
+// Set narration volume to approx 50% (-6dB) - initialized lazily on client
+let narrationVolume: Tone.Volume | null = null
+let effectsVolume: Tone.Volume | null = null
+
+const getNarrationVolume = () => {
+  if (!import.meta.client) return null
+  if (!narrationVolume) {
+    narrationVolume = new Tone.Volume(-6).toDestination()
+  }
+  return narrationVolume
+}
+
+const getEffectsVolume = () => {
+  if (!import.meta.client) return null
+  if (!effectsVolume) {
+    effectsVolume = new Tone.Volume(-3).toDestination()
+  }
+  return effectsVolume
+}
 
 const NARRATION_FILES: Record<string, string> = {
   '赤': '/narration/google/赤.mp3',
@@ -47,11 +69,11 @@ const NARRATION_FILES: Record<string, string> = {
 
 export function useAudio() {
   const { user, userTier } = useAuth()
+  const { getVoiceUrl, customVoiceEnabled, availableVoices } = useVoiceSettings()
 
   const loadSampler = async (instrumentId: 'yamaha' | 'steinway', isBackground = false): Promise<boolean> => {
-    // 1. If full sampler already exists, just switch and return
-    const isFullLoaded = instrumentId === 'steinway' ? isLoaded.value.steinwayFull : isLoaded.value.yamaha
-    if (samplers[instrumentId] && (isFullLoaded || (isBackground && instrumentId !== 'steinway'))) {
+    // 1. If sampler already exists, just switch and return
+    if (samplers[instrumentId] && isLoaded.value[instrumentId as keyof typeof isLoaded.value]) {
       if (!isBackground) {
         selectedInstrument.value = instrumentId
       }
@@ -89,6 +111,7 @@ export function useAudio() {
         const s = new Tone.Sampler({
           urls,
           baseUrl,
+          release: 4,
           onload: () => {
             console.log(`${instrumentId} loaded (${Object.keys(urls).length} samples)`)
             
@@ -110,9 +133,6 @@ export function useAudio() {
             }
 
             isLoaded.value[instrumentId] = true
-            if (instrumentId === 'steinway' && urls === STEINWAY_FULL_MAP) {
-              isLoaded.value.steinwayFull = true
-            }
 
             if (!isBackground) {
               if (!isPreloading.value) {
@@ -123,11 +143,6 @@ export function useAudio() {
             }
             samplerLoadingPromises[instrumentId] = null
             
-            // Stage 2: Trigger Full load in background if Fast load just finished
-            if (instrumentId === 'steinway' && urls === STEINWAY_FAST_MAP) {
-              loadSampler('steinway', true)
-            }
-
             resolve(true)
           },
           onerror: (err) => {
@@ -247,7 +262,7 @@ export function useAudio() {
     try {
       // Start all loads in parallel
       const yamahaPromise = loadSampler('yamaha', true)
-      const steinwayPromise = loadSampler('steinway', true)
+      const steinwayPromise = userTier.value === 'premium' ? loadSampler('steinway', true) : Promise.resolve(true)
       const narrationPromise = loadNarration()
       const effectsPromise = loadEffects()
 
@@ -297,17 +312,48 @@ export function useAudio() {
       }
     }
     
-    // 2. Ensure loaded
+    // 2. Custom Voice Logic
+    if (customVoiceEnabled.value && availableVoices.value.has(colorName)) {
+      try {
+        if (!customVoiceBuffers[colorName]) {
+          const url = getVoiceUrl(colorName)
+          if (url) {
+            customVoiceBuffers[colorName] = await Tone.ToneAudioBuffer.fromUrl(url)
+          }
+        }
+        
+        const buffer = customVoiceBuffers[colorName]
+        if (buffer) {
+          const vol = getNarrationVolume()
+          const source = new Tone.BufferSource(buffer)
+          if (vol) source.connect(vol)
+          else source.toDestination()
+          
+          source.start()
+          console.log(`Custom Voice Play: ${colorName}`)
+          return true
+        }
+      } catch (e) {
+        console.error(`Custom Voice Play Error (${colorName}):`, e)
+        // Fall back to default
+      }
+    }
+
+    // 3. Ensure default loaded
     if (!isLoaded.value.narration) {
       const success = await loadNarration()
       if (!success) return false
     }
     
-    // 3. Play using BufferSource (stateless)
+    // 4. Play using BufferSource (stateless)
     const buffer = narrationBuffers[colorName]
     if (buffer) {
       try {
-        const source = new Tone.BufferSource(buffer).toDestination()
+        const vol = getNarrationVolume()
+        const source = new Tone.BufferSource(buffer)
+        if (vol) source.connect(vol)
+        else source.toDestination()
+        
         source.fadeIn = 0.05
         source.fadeOut = 0.1
         source.start()
@@ -334,7 +380,11 @@ export function useAudio() {
     const buffer = effectBuffers[effectName]
     if (buffer) {
       try {
-        const source = new Tone.BufferSource(buffer).toDestination()
+        const vol = getEffectsVolume()
+        const source = new Tone.BufferSource(buffer)
+        if (vol) source.connect(vol)
+        else source.toDestination()
+        
         source.start()
         return true
       } catch (e) {
@@ -359,6 +409,7 @@ export function useAudio() {
     preloadAll,
     playNotes,
     playNarration,
-    playEffect
+    playEffect,
+    customVoiceEnabled
   }
 }

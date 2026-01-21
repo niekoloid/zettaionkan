@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import type { User } from '@supabase/supabase-js'
-import type { SubscriptionTier } from './usePremium'
+import type { SubscriptionTier } from './usePro'
 
 const user = ref<User | null>(null)
 const isAuthReady = ref(false)
@@ -14,8 +14,13 @@ const authReadyPromise = new Promise<void>(resolve => {
 
 export function useAuth() {
   const supabase = useSupabaseClient()
-  const { checkPremiumStatus } = usePremium()
+  const { checkProStatus } = usePro()
   
+  const debugTierCookie = useCookie<SubscriptionTier | null>('zettaionkan_debug_tier', {
+    default: () => null,
+    watch: true
+  })
+
   // Use Cookie for tier to enable SSR support and prevent flickering
   const userTierCookie = useCookie<SubscriptionTier>('zettaionkan_user_tier', {
     default: () => 'free',
@@ -27,7 +32,7 @@ export function useAuth() {
       const { data } = await supabase.auth.getUser()
       user.value = data?.user || null
       if (user.value) {
-        const status = await checkPremiumStatus()
+        const status = await checkProStatus()
         userTierCookie.value = status.tier
       } else {
         userTierCookie.value = 'free'
@@ -52,7 +57,7 @@ export function useAuth() {
       console.log('Auth event (global):', event)
       user.value = session?.user || null
       if (user.value) {
-        const status = await checkPremiumStatus()
+        const status = await checkProStatus()
         userTierCookie.value = status.tier
       } else {
         userTierCookie.value = 'free'
@@ -66,10 +71,14 @@ export function useAuth() {
 
   return {
     user,
-    userTier: computed(() => userTierCookie.value || 'free'),
+    userTier: computed(() => {
+        if (import.meta.dev && debugTierCookie.value) {
+            return debugTierCookie.value
+        }
+        return userTierCookie.value || 'free'
+    }),
     isAuthReady,
     authReady: authReadyPromise,
     refreshStatus
   }
 }
-

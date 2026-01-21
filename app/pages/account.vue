@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const router = useRouter()
 const supabase = useSupabaseClient()
-const { checkPremiumStatus } = usePremium()
+const { checkProStatus } = usePro()
 const { user, userTier, refreshStatus } = useAuth()
-import type { SubscriptionTier } from '~/composables/usePremium'
+import type { SubscriptionTier } from '~/composables/usePro'
 const isLoading = ref(true)
 const isPortalLoading = ref(false)
 const hasCustomer = ref(false)
@@ -11,25 +11,29 @@ const hasCustomer = ref(false)
 const handleRefresh = async () => {
   isLoading.value = true
   await refreshStatus()
-  const status = await checkPremiumStatus()
+  const status = await checkProStatus()
   hasCustomer.value = status.hasCustomer
   isLoading.value = false
 }
 
 onMounted(async () => {
-  if (!user.value) {
-    // Re-check once just in case of race condition during navigation
-    await refreshStatus()
+  try {
     if (!user.value) {
-      router.push('/auth')
-      return
+      // Re-check once just in case of race condition during navigation
+      await refreshStatus()
+      if (!user.value) {
+        router.push('/auth')
+        return
+      }
     }
+
+    const status = await checkProStatus()
+    hasCustomer.value = status.hasCustomer
+  } catch (e) {
+    console.error('Failed to load account info:', e)
+  } finally {
+    isLoading.value = false
   }
-
-  const status = await checkPremiumStatus()
-  hasCustomer.value = status.hasCustomer
-
-  isLoading.value = false
 })
 
 const handleLogout = async () => {
@@ -38,12 +42,10 @@ const handleLogout = async () => {
 }
 
 const getTierName = (tier: SubscriptionTier | undefined | null | string) => {
-  switch (tier) {
-    case 'entry': return 'エントリープラン'
-    case 'standard': return 'スタンダードプラン'
-    case 'premium': return 'プレミアムプラン'
-    default: return '無料プラン'
-  }
+  if (tier === "premium") return 'PROプラン'
+  if (tier === 'standard') return 'スタンダードプラン'
+  if (tier === 'entry') return 'エントリープラン'
+  return '無料プラン'
 }
 
 const openCustomerPortal = async () => {
@@ -70,7 +72,6 @@ const openCustomerPortal = async () => {
       }
     })
     
-    if (error) throw error
     if (data?.url) {
       window.location.href = data.url
     }
@@ -79,6 +80,17 @@ const openCustomerPortal = async () => {
     alert('管理画面の準備中にエラーが発生しました。しばらく時間をおいてから再度お試しください。')
   } finally {
     isPortalLoading.value = false
+  }
+}
+
+// Debug Support
+const isDev = import.meta.dev
+const setDebugTier = (tier: string | null) => {
+  const cookie = useCookie('zettaionkan_debug_tier')
+  cookie.value = tier
+  // Force reload to apply changes if reactivity is stuck (though cookie should be reactive)
+  if (confirm(`Debugging: Set tier to ${tier || 'Real'}. Reload?`)) {
+    window.location.reload()
   }
 }
 </script>
@@ -176,6 +188,45 @@ const openCustomerPortal = async () => {
             <span class="text-sm font-bold">ホームに戻る</span>
           </NuxtLink>
         </div>
+
+        <!-- Debug Section (Dev Only) -->
+        <section v-if="isDev" class="opacity-50 hover:opacity-100 transition-opacity pt-8">
+          <div class="border-t border-dashed border-gray-300 pt-6">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Development Debug</h3>
+            <div class="flex gap-2 flex-wrap">
+              <button 
+                @click="setDebugTier('free')"
+                class="px-3 py-1 bg-gray-100 text-gray-500 rounded text-xs font-bold hover:bg-gray-200"
+              >
+                Force Free
+              </button>
+              <button 
+                @click="setDebugTier('entry')"
+                class="px-3 py-1 bg-blue-100 text-blue-600 rounded text-xs font-bold hover:bg-blue-200"
+              >
+                Force Entry
+              </button>
+              <button 
+                @click="setDebugTier('standard')"
+                class="px-3 py-1 bg-green-100 text-green-600 rounded text-xs font-bold hover:bg-green-200"
+              >
+                Force Standard
+              </button>
+              <button 
+                @click="setDebugTier('premium')"
+                class="px-3 py-1 bg-amber-100 text-amber-600 rounded text-xs font-bold hover:bg-amber-200"
+              >
+                Force PRO (Pro)
+              </button>
+              <button 
+                @click="setDebugTier(null)"
+                class="px-3 py-1 bg-white border border-gray-200 text-gray-400 rounded text-xs font-bold hover:bg-gray-50"
+              >
+                Reset to Real
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
 

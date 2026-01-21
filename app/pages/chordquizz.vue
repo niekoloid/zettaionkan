@@ -61,6 +61,23 @@ const {
   getRandomChord
 } = useChordFrequency(selectedChords)
 
+const { user, userTier, authReady } = useAuth()
+const { hasAccess, isEnabled, isPro: checkProAccess } = usePro()
+const checkAccess = (feature: any) => hasAccess(feature, userTier.value)
+const isPro = computed(() => checkProAccess(userTier.value))
+
+const navigateToSubscription = () => {
+    if (confirm('このオプションの変更はPROプラン限定です。プランを確認しますか？')) {
+        router.push('/subscription')
+    }
+}
+
+const handleLockedClick = () => {
+  if (confirm('黒鍵（レベル10〜14）はPROプラン限定です。\nプラン詳細を確認しますか？')) {
+    router.push('/subscription')
+  }
+} // Temporary simple alert
+
 
 const { 
   samplers, 
@@ -161,12 +178,18 @@ const playCurrentQuestion = async () => {
   
   const chord = currentQuestion.value
   if (!chord) return
-  s.triggerAttackRelease(chord.notes, 2)
+  s.triggerAttackRelease(chord.notes, 8)
 }
 
 const toggleChordSelection = (id: string) => {
   const targetChord = QUIZZ_CHORDS.value.find(c => c.id === id)
   if (!targetChord) return
+
+  const isBlackKey = (targetChord.sortOrder || 0) > 9
+  if (isBlackKey && !checkAccess('quiz_content_black_keys')) {
+    navigateToSubscription()
+    return
+  }
 
   const newSet = new Set()
   QUIZZ_CHORDS.value.forEach(c => {
@@ -308,7 +331,6 @@ onBeforeRouteLeave((to, from) => {
 })
 
 // === Lifecycle ===
-const { user, userTier, authReady } = useAuth()
 
 onMounted(async () => {
   await authReady
@@ -324,7 +346,7 @@ onMounted(async () => {
   const { getPreferredInstrument } = useAudioSettings()
   let preferred = getPreferredInstrument(userTier.value)
   
-  if (preferred === 'steinway' && userTier.value !== 'premium') {
+  if (preferred === 'steinway' && userTier.value !== "premium") {
     preferred = 'yamaha'
   }
   
@@ -398,11 +420,13 @@ watch([selectedChordIds, parentChordRatio, isReviewWeighted], () => {
               白鍵の和音
             </h3>
             <div class="grid grid-cols-2 gap-3">
-              <template v-for="(chord, index) in whiteKeyChords" :key="chord.id">
+              <template v-for="chord in whiteKeyChords" :key="chord.id">
                 <ChordSelectionButton 
                   :chord="chord" 
                   :selected="selectedChordIds.has(chord.id)"
+                  :locked="false"
                   @toggle="toggleChordSelection(chord.id)"
+                  @locked-click="navigateToSubscription"
                 />
               </template>
             </div>
@@ -420,13 +444,16 @@ watch([selectedChordIds, parentChordRatio, isReviewWeighted], () => {
                 :key="chord.id"
                 :chord="chord"
                 :selected="selectedChordIds.has(chord.id)"
+                :locked="!checkAccess('quiz_content_black_keys')"
                 @toggle="toggleChordSelection(chord.id)"
+                @locked-click="handleLockedClick"
               />
             </div>
         </section>
 
         <!-- Frequency Settings -->
         <FrequencySettings 
+          v-if="isEnabled('quiz_settings_frequency')"
           v-model:parentChordRatio="parentChordRatio"
           v-model:isReviewWeighted="isReviewWeighted"
           :parentChord="parentChord"
@@ -454,7 +481,7 @@ watch([selectedChordIds, parentChordRatio, isReviewWeighted], () => {
           <!-- Minimal Top Info (Standard) -->
           <div class="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
             <div class="flex items-center space-x-2">
-              <!-- Premium Question Indicator -->
+              <!-- PRO Question Indicator -->
               <div class="flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-lg overflow-hidden ring-1 ring-black/5 h-8 transition-all duration-300"
                   :class="{ 'scale-125 ring-4 ring-indigo-500/50 bg-indigo-900/60': isQuestionChanging }">
                 <div class="px-3 h-full flex items-center bg-white/10 border-r border-white/5">

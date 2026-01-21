@@ -10,7 +10,15 @@ export default defineNuxtConfig({
   supabase: {
     url: process.env.VITE_SUPABASE_URL,
     key: process.env.VITE_SUPABASE_ANON_KEY,
-    redirect: false
+    redirect: false,
+    clientOptions: {
+      auth: {
+        flowType: 'pkce',
+        detectSessionInUrl: true,
+        persistSession: true,
+        autoRefreshToken: true
+      }
+    }
   },
   css: ['~/assets/css/main.css'],
   app: {

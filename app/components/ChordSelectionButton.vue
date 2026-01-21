@@ -1,6 +1,6 @@
 <template>
   <div 
-    @click="$emit('toggle')"
+    @click="locked ? $emit('locked-click') : $emit('toggle')"
     class="flex items-center p-4 border rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98] group"
     :class="[
       selected
@@ -46,6 +46,15 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
       </svg>
     </div>
+
+    <!-- Locked Overlay -->
+    <div v-if="locked" class="absolute inset-0 bg-gray-100/50 backdrop-blur-[1px] flex items-center justify-center z-10 cursor-not-allowed">
+      <div class="bg-white/90 p-1.5 rounded-full shadow-sm border border-gray-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -63,12 +72,16 @@ const props = defineProps({
   selected: {
     type: Boolean,
     default: false
+  },
+  locked: {
+    type: Boolean,
+    default: false
   }
 })
 
 import { type PropType } from 'vue'
 
-defineEmits(['toggle'])
+defineEmits(['toggle', 'locked-click'])
 
 const isLightColor = (hex: string) => {
   if (!hex) return false

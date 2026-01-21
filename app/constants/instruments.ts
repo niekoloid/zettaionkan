@@ -14,6 +14,13 @@ export const ALL_NOTES: string[] = [
   "C8"
 ]
 
+// The essential notes used by the 14 chords and the app keyboard (F3 to G5 range)
+export const IROOTO_NOTES = [
+  "F3", "Gb3", "G3", "Ab3", "A3", "Bb3", "B3",
+  "C4", "Db4", "D4", "Eb4", "E4", "F4", "Gb4", "G4", "Ab4", "A4", "Bb4", "B4",
+  "C5", "Db5", "D5", "Eb5", "E5", "F5", "Gb5", "G5"
+]
+
 const addAliases = (map: Record<string, string>): Record<string, string> => {
   const newMap = { ...map }
   Object.keys(newMap).forEach(note => {
@@ -32,20 +39,15 @@ const addAliases = (map: Record<string, string>): Record<string, string> => {
 }
 
 // Steinway Logic
-const isSteinwayFastNote = (note: string): boolean => {
-  // To speed up loading, we sample every 3rd note (approx 2.5 per octave)
-  const idx = ALL_NOTES.indexOf(note)
-  return idx % 3 === 0 || note === 'C8' // Always include the last note
-}
-
 const rawSteinwayFastMap: Record<string, string> = {}
 const rawSteinwayFullMap: Record<string, string> = {}
 
-ALL_NOTES.forEach(note => {
+// Limit ALL maps to IROOTO_NOTES as requested to save bandwidth and memory
+IROOTO_NOTES.forEach(note => {
   rawSteinwayFullMap[note] = `${note}.mp3`
-  if (isSteinwayFastNote(note)) {
-    rawSteinwayFastMap[note] = `${note}.mp3`
-  }
+  // For "Fast" map, we could subset even more, but 27 notes is already lean enough.
+  // Including all IROOTO_NOTES in both for consistency.
+  rawSteinwayFastMap[note] = `${note}.mp3`
 })
 
 export const STEINWAY_FAST_MAP: Record<string, string> = addAliases(rawSteinwayFastMap)
@@ -53,41 +55,33 @@ export const STEINWAY_FULL_MAP: Record<string, string> = addAliases(rawSteinwayF
 export const STEINWAY_MAP: Record<string, string> = STEINWAY_FAST_MAP
 
 // Yamaha Logic (Salamander Grand Piano samples)
-const isYamahaSubsetNote = (note: string): boolean => {
-  const match = note.match(/([A-G][b#]?|Ab|Bb|Db|Eb|Gb)(\d)/)
-  if (!match || !match[1] || !match[2]) return false
-  
-  const name = match[1].replace('♯', '#').replace('♭', 'b')
-  const octave = parseInt(match[2])
-  
-  const normalizedName = ({ 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' } as Record<string, string>)[name] || name
-  
-  if (normalizedName === 'A') return octave >= 0 && octave <= 7
-  if (normalizedName === 'C') return octave >= 1 && octave <= 8
-  if (normalizedName === 'D#') return octave >= 1 && octave <= 7
-  if (normalizedName === 'F#') return octave >= 1 && octave <= 7
-  
-  return false
-}
-
+// For Yamaha, we also limit to IROOTO_NOTES but only if Salamander has them.
+// Salamander samples are not available for every single note, Tone.js interpolates.
+// We select a subset of IROOTO_NOTES that fit the Salamander naming convention.
 const rawYamahaMap: Record<string, string> = {}
-ALL_NOTES.forEach(note => {
-  if (isYamahaSubsetNote(note)) {
-    // Yamaha samples use 's' for sharps and specific names (A, C, Ds, Fs)
-    // Normalize to the sharp version for filename consistency
-    const match = note.match(/([A-G][b#]?|Ab|Bb|Db|Eb|Gb)/)
-    if (!match || !match[1]) return;
+IROOTO_NOTES.forEach(note => {
+  const match = note.match(/([A-G][b#]?|Ab|Bb|Db|Eb|Gb)(\d)/)
+  if (!match || !match[1] || !match[2]) return
 
-    const name = match[1].replace('♯', '#').replace('♭', 'b')
-    const octaveMatch = note.match(/\d/)
-    const octave = octaveMatch ? octaveMatch[0] : ''
-    
-    const sharpMap: Record<string, string> = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' }
-    const sharpName = sharpMap[name] || name
-    
-    const filename = sharpName.replace('#', 's') + octave + '.mp3'
+  const name = match[1]
+  const octave = match[2]
+  
+  // Salamander samples include: A, C, D#, F# (using 's' for sharp)
+  // We use sharp names for filename mapping
+  let mappedName = ''
+  if (name === 'A') mappedName = 'A'
+  else if (name === 'C') mappedName = 'C'
+  else if (name === 'Eb' || name === 'D#' || name === 'Db' || name === 'C#') {
+    // Some mapping logic to select the best available sample
+    if (name === 'Eb' || name === 'D#') mappedName = 'Ds'
+  }
+  else if (name === 'Gb' || name === 'F#') mappedName = 'Fs'
+  
+  if (mappedName) {
+    const filename = mappedName + octave + '.mp3'
     rawYamahaMap[note] = filename
   }
 })
 
 export const YAMAHA_MAP: Record<string, string> = addAliases(rawYamahaMap)
+
