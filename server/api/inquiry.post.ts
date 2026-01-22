@@ -1,16 +1,27 @@
 export default defineEventHandler(async (event) => {
+  console.log('[API] /api/inquiry requested')
+  
   const config = useRuntimeConfig()
   const RESEND_API_KEY = config.resendApiKey
   const RECIPIENT_EMAIL = 'sagong.sun@gmail.com'
 
+  console.log('[API] Check Config:', { 
+    hasResendKey: !!RESEND_API_KEY, 
+    recipient: RECIPIENT_EMAIL 
+  })
+
   try {
-    const { name, email, phone, subject, message } = await readBody(event)
+    const body = await readBody(event)
+    console.log('[API] Request Body:', JSON.stringify(body, null, 2))
+    
+    const { name, email, phone, subject, message } = body
 
     if (!RESEND_API_KEY) {
-      console.warn('RESEND_API_KEY is not set. Email will not be sent.')
+      console.warn('[API] RESEND_API_KEY is not set. Email will not be sent.')
       return { message: 'Inquiry received (Mock Mode: API Key missing)' }
     }
 
+    console.log('[API] Sending email via Resend...')
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -34,10 +45,12 @@ export default defineEventHandler(async (event) => {
       })
     })
 
+    console.log('[API] Resend API Status:', res.status)
     const data = await res.json()
+    console.log('[API] Resend API Response:', JSON.stringify(data, null, 2))
 
     if (res.status >= 400) {
-      console.error('Resend API Error:', data)
+      console.error('[API] Resend API Error:', data)
       throw createError({
         statusCode: 500,
         statusMessage: 'Failed to send email via provider',
@@ -48,7 +61,7 @@ export default defineEventHandler(async (event) => {
     return data
 
   } catch (error: any) {
-    console.error('API Error:', error)
+    console.error('[API] Critical Error:', error)
     throw createError({
       statusCode: error.statusCode || 400,
       statusMessage: error.message || 'Bad Request',

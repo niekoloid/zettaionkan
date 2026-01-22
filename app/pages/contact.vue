@@ -25,28 +25,36 @@ const handleSubmit = async () => {
     return
   }
 
+  console.log('[Frontend] Submitting contact form...')
   isLoading.value = true
   error.value = ''
 
+  const payload = {
+    name: name.value,
+    email: email.value,
+    phone: phone.value,
+    subject: subjects.find(s => s.id === subject.value)?.label,
+    message: message.value
+  }
+
+  console.log('[Frontend] Payload:', payload)
+
   try {
     // Call server API route instead of Edge Function
-    await $fetch('/api/inquiry', {
+    const response = await $fetch('/api/inquiry', {
       method: 'POST',
-      body: {
-        name: name.value,
-        email: email.value,
-        phone: phone.value,
-        subject: subjects.find(s => s.id === subject.value)?.label,
-        message: message.value
-      }
+      body: payload
     })
 
+    console.log('[Frontend] API Response:', response)
     isSubmitted.value = true
-  } catch (err) {
-    console.error('Inquiry submission error:', err)
+  } catch (err: any) {
+    console.error('[Frontend] Inquiry submission error:', err)
+    console.error('[Frontend] Error details:', err.data)
     error.value = '送信中にエラーが発生しました。しばらく時間をおいて再度お試しいただくか、公式SNS等からお問い合わせください。'
   } finally {
     isLoading.value = false
+    console.log('[Frontend] Submission process finished.')
   }
 }
 </script>
@@ -62,7 +70,7 @@ const handleSubmit = async () => {
           </svg>
         </NuxtLink>
         <div class="absolute left-1/2 transform -translate-x-1/2">
-          <img src="~/assets/logo_irooto.png" alt="いろおと" class="h-20 w-auto object-contain" />
+          <img src="/logo_irooto.png" alt="いろおと" class="h-20 w-auto object-contain" />
         </div>
         <div class="w-10"></div>
       </header>
