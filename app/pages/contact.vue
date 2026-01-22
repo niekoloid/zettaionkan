@@ -29,9 +29,9 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    // 1. Call Edge Function to send email
-    // Explicitly use the anon key for public access if needed, mostly handled by client
-    const { data, error: fnError } = await supabase.functions.invoke('send-inquiry', {
+    // Call server API route instead of Edge Function
+    await $fetch('/api/inquiry', {
+      method: 'POST',
       body: {
         name: name.value,
         email: email.value,
@@ -40,8 +40,6 @@ const handleSubmit = async () => {
         message: message.value
       }
     })
-
-    if (fnError) throw fnError
 
     isSubmitted.value = true
   } catch (err) {

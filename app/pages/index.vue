@@ -337,7 +337,7 @@ const itemClasses = computed(() => {
               v-for="(chord) in allChords" 
               :key="chord.id"
               @click="toggleChord(chord)"
-              class="relative cursor-pointer shadow-sm group aspect-square rounded-full md:aspect-auto md:rounded-2xl overflow-hidden transition-all duration-300"
+              class="relative cursor-pointer shadow-sm group aspect-square rounded-full md:aspect-auto md:rounded-2xl overflow-hidden transition-all duration-300 select-none"
               :class="[
                  currentChord?.id === chord.id 
                     ? 'ring-4 ring-offset-2 ring-gray-200 z-10 scale-105 shadow-md' 

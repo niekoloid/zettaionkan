@@ -391,11 +391,15 @@ const startAutoPlay = async () => {
 const stopAutoPlay = async () => {
   const currentCount = playedCount.value
   cleanupSideEffects()
-  if (currentCount > 0) {
-    await saveSession()
-  }
+  
+  // Update UI immediately
   view.value = 'settings'
   isAutoPlayRevealed.value = false
+
+  // Save session in background
+  if (currentCount > 0) {
+    saveSession()
+  }
 }
 
 const handleHeaderBack = async (e: Event) => {
@@ -482,7 +486,6 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
 
     <!-- Header -->
     <AppHeader 
-      v-if="view !== 'settings'" 
       showBack 
       @back="handleHeaderBack"
     />
