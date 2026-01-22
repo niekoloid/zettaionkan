@@ -2,7 +2,8 @@ export default defineEventHandler(async (event) => {
   console.log('[API] /api/inquiry requested')
   
   const config = useRuntimeConfig()
-  const RESEND_API_KEY = config.resendApiKey
+  // Fallback to process.env for broader compatibility (e.g. Vercel/Netlify env vars)
+  const RESEND_API_KEY = config.resendApiKey || process.env.RESEND_API_KEY
   const RECIPIENT_EMAIL = 'sagong.sun@gmail.com'
 
   console.log('[API] Check Config:', { 
