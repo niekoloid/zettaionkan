@@ -31,6 +31,7 @@ export default defineNuxtConfig({
     },
     pageTransition: { name: 'page', mode: 'out-in' }
   },
+  srcDir: 'app/',
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   runtimeConfig: {
