@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import type { Database } from '~/types/database.types'
-const supabase = useSupabaseClient<Database>()
-
-
+const config = useRuntimeConfig()
 const name = ref('')
 const email = ref('')
 const phone = ref('')
 const subject = ref('question')
 const message = ref('')
-const isLoading = ref(false)
-const isSubmitted = ref(false)
-const error = ref('')
 
 const subjects = [
   { id: 'question', label: '一般的なご質問' },
@@ -18,45 +12,6 @@ const subjects = [
   { id: 'media', label: 'メディア・取材関係' },
   { id: 'other', label: 'その他' }
 ]
-
-const handleSubmit = async () => {
-  if (!name.value || !email.value || !message.value) {
-    error.value = 'お名前、メールアドレス、お問い合わせ内容は必須です。'
-    return
-  }
-
-  console.log('[Frontend] Submitting contact form...')
-  isLoading.value = true
-  error.value = ''
-
-  const payload = {
-    name: name.value,
-    email: email.value,
-    phone: phone.value,
-    subject: subjects.find(s => s.id === subject.value)?.label,
-    message: message.value
-  }
-
-  console.log('[Frontend] Payload:', payload)
-
-  try {
-    // Call server API route instead of Edge Function
-    const response = await $fetch('/api/inquiry', {
-      method: 'POST',
-      body: payload
-    })
-
-    console.log('[Frontend] API Response:', response)
-    isSubmitted.value = true
-  } catch (err: any) {
-    console.error('[Frontend] Inquiry submission error:', err)
-    console.error('[Frontend] Error details:', err.data)
-    error.value = '送信中にエラーが発生しました。しばらく時間をおいて再度お試しいただくか、公式SNS等からお問い合わせください。'
-  } finally {
-    isLoading.value = false
-    console.log('[Frontend] Submission process finished.')
-  }
-}
 </script>
 
 <template>
@@ -76,33 +31,18 @@ const handleSubmit = async () => {
       </header>
 
       <main class="flex-grow px-6 pb-20 overflow-y-auto">
-        <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm transition-all duration-500" :class="{ 'scale-95 opacity-50': isLoading }">
+        <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm transition-all duration-500">
           <div class="text-center mb-10">
             <h1 class="text-xs font-bold text-indigo-500 uppercase tracking-[0.2em] mb-4">Contact Us</h1>
             <h2 class="text-2xl font-bold text-gray-900 mb-2">お問い合わせ</h2>
             <p class="text-xs text-gray-500 leading-relaxed">ご質問やご要望、取材のご依頼など、<br>お気軽にお問い合わせください。</p>
           </div>
 
-          <div v-if="isSubmitted" class="py-12 text-center animate-bounce-in">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-green-50 rounded-full mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">お問い合わせを送信しました</h3>
-            <p class="text-xs text-gray-500 mb-8 leading-relaxed">
-              内容を確認し、担当者より折り返しご連絡いたします。<br>
-              通常、1〜3営業日以内に回答を差し上げております。
-            </p>
-            <NuxtLink to="/" class="inline-block px-10 py-4 bg-gray-900 text-white rounded-2xl font-bold text-sm shadow-lg hover:bg-gray-800 transition-all">
-              ホームへ戻る
-            </NuxtLink>
-          </div>
-
-          <form v-else @submit.prevent="handleSubmit" class="space-y-6">
+          <form :action="config.public.formspreeEndpoint" method="POST" class="space-y-6">
             <div>
               <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">おなまえ <span class="text-red-400">*</span></label>
               <input 
+                name="name"
                 v-model="name"
                 type="text" 
                 required
@@ -114,6 +54,7 @@ const handleSubmit = async () => {
             <div>
               <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">メールアドレス <span class="text-red-400">*</span></label>
               <input 
+                name="email"
                 v-model="email"
                 type="email" 
                 required
@@ -125,6 +66,7 @@ const handleSubmit = async () => {
             <div>
               <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">電話番号 <span class="text-xs text-gray-300 font-normal ml-1">(任意)</span></label>
               <input 
+                name="phone"
                 v-model="phone"
                 type="tel" 
                 placeholder="090-0000-0000"
@@ -136,6 +78,7 @@ const handleSubmit = async () => {
               <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">お問い合わせ種別</label>
               <div class="relative">
                 <select 
+                  name="subject"
                   v-model="subject"
                   class="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm appearance-none"
                 >
@@ -152,6 +95,7 @@ const handleSubmit = async () => {
             <div>
               <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">お問い合わせ内容 <span class="text-red-400">*</span></label>
               <textarea 
+                name="message"
                 v-model="message"
                 required
                 rows="6"
@@ -160,18 +104,13 @@ const handleSubmit = async () => {
               ></textarea>
             </div>
 
-            <p v-if="error" class="text-xs text-red-500 font-medium px-1">{{ error }}</p>
+
 
             <button 
               type="submit"
-              :disabled="isLoading"
               class="w-full bg-gray-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-gray-800 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center space-x-2"
             >
-              <svg v-if="isLoading" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span>{{ isLoading ? '送信中...' : 'この内容で送信する' }}</span>
+              <span>この内容で送信する</span>
             </button>
           </form>
         </div>
