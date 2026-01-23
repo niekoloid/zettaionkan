@@ -19,27 +19,25 @@ const handleSubscribe = async () => {
   isLoading.value = true
   
   try {
-    if (!user.value) {
-      alert('決済を行うにはログインが必要です。')
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!user.value || !session) {
+      alert('セッションが切れているか、ログインしていません。もう一度ログインしてください。')
       navigateTo('/auth')
       return
     }
 
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.access_token) {
-       throw new Error('No active session')
-    }
+    // Determine if we are in test mode based on the publishable key
+    const stripeKey = useRuntimeConfig().public.stripePublishableKey || ''
+    const isTest = stripeKey.startsWith('pk_test')
 
-    // Note: Stripe price IDs should be configured in your backend/Supabase Edge Function
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: { 
         tier: 'premium',
         interval: billingCycle.value,
-        return_url: window.location.origin + '/subscription/success'
-      },
-      headers: {
-        Authorization: `Bearer ${session.access_token}`
+        return_url: window.location.origin + '/subscription/success',
+        is_test: isTest
       }
+      // Note: Authorization header is automatically added by the Supabase client
     })
 
     if (error) throw error

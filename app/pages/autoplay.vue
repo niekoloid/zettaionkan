@@ -133,7 +133,7 @@ const { availableVoices, fetchAvailableVoices, fetchSettings, updateSettings } =
 
 const autoPlayTimeout = ref<any>(null)
 const isAutoPlayRevealed = ref(false)
-const isAutoPlayImmediate = ref(true)
+const isAutoPlayImmediate = ref(false)
 const isVoiceEnabled = ref(true)
 const revealDelay = ref(2.5) // seconds before revealing/speaking
 const autoPlayRevealType = ref('full') // 'full' | 'icecream' | 'train' | 'vehicle' | 'cat' | 'video_cat' | 'cat_flag'
@@ -232,6 +232,14 @@ const isLightColor = (hex: string) => {
 // === Core Logic ===
 const playCurrentQuestion = async () => {
   cleanupSideEffects()
+
+  // Reset reveal state depending on mode
+  // Move this to top to prevent "flash" of answer before sound if there are awaits below
+  if (!isAutoPlayImmediate.value) {
+    isAutoPlayRevealed.value = false
+  } else {
+    isAutoPlayRevealed.value = true
+  }
   
   // Wait for samplers if they are still loading (max 5s)
   let waitAttempts = 0
@@ -263,12 +271,7 @@ const playCurrentQuestion = async () => {
   if (!chord) return
   
   
-  // Reset reveal state depending on mode
-  if (!isAutoPlayImmediate.value) {
-    isAutoPlayRevealed.value = false
-  } else {
-    isAutoPlayRevealed.value = true
-  }
+  // Determine duration based on mode
   
   const soundDuration = autoPlayRevealType.value === 'cat_flag' ? 8 : 8
   s.triggerAttackRelease(chord.notes, soundDuration)
@@ -294,9 +297,15 @@ const playCurrentQuestion = async () => {
   }
 }
 
-const nextQuestion = () => {
+const nextQuestion = async () => {
   if (view.value !== 'playing') return
   
+  // Prevent answer flash: Hide previous answer BEFORE loading new chord data
+  if (!isAutoPlayImmediate.value) {
+    isAutoPlayRevealed.value = false
+    await nextTick()
+  }
+
   const next = getRandomChord()
   if (next) questions.value.push(next)
   currentQuestionIndex.value++
@@ -453,6 +462,8 @@ onMounted(async () => {
     // Select all chords if requested
     if (route.query.chords === 'all') {
       selectedChordIds.value = new Set(TEST_CHORDS.value.map(c => c.id))
+    } else if (route.query.chordId) {
+      selectedChordIds.value = new Set([route.query.chordId as string])
     }
 
     // Wait for sampler and interactions to be ready

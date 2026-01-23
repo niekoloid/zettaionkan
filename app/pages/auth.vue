@@ -43,15 +43,17 @@ const handleAuth = async () => {
 
 const handleOAuthLogin = async (provider: Provider) => {
   try {
+    const redirectTo = `${window.location.origin}/`
     const { error } = await supabase.auth.signInWithOAuth({
       provider: provider,
       options: {
-        redirectTo: window.location.origin
+        redirectTo
       }
     })
     if (error) throw error
   } catch (error: any) {
-    message.value = error.message
+    console.error('OAuth Login Error:', error)
+    message.value = `エラーが発生しました: ${error.message || '不明なエラー'}`
   }
 }
 </script>

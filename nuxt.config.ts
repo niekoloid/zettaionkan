@@ -37,7 +37,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     resendApiKey: process.env.RESEND_API_KEY,
     public: {
-      formspreeEndpoint: process.env.NUXT_PUBLIC_FORMSPREE_ENDPOINT
+      formspreeEndpoint: process.env.NUXT_PUBLIC_FORMSPREE_ENDPOINT,
+      stripePublishableKey: process.env.VITE_STRIPE_PUBLISHABLE_KEY
     }
   }
 })
