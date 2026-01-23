@@ -50,9 +50,11 @@ const handleSubscribe = async () => {
     if (data?.url) {
       window.location.href = data.url
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Subscription error:', err)
-    alert('決済の準備中にエラーが発生しました。しばらく時間をおいて再度お試しください。')
+    // Extract error message if available
+    const errorMessage = err?.message || JSON.stringify(err) || '不明なエラー'
+    alert(`エラーが発生しました: ${errorMessage}\n\n(詳細はコンソールを確認してください)`)
   } finally {
     isLoading.value = false
   }
