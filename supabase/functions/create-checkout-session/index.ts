@@ -17,11 +17,17 @@ serve(async (req) => {
     
     // Determine the environment
     const suffix = is_test ? '_TEST' : '_PROD'
+    console.log(`Debug Server: Environment mode: ${suffix}`)
+    
     const secretKey = Deno.env.get(`STRIPE_SECRET_KEY${suffix}`)
     const priceMonthly = Deno.env.get(`STRIPE_PRICE_MONTHLY${suffix}`)
     const priceYearly = Deno.env.get(`STRIPE_PRICE_YEARLY${suffix}`)
 
-    if (!secretKey) throw new Error(`Stripe Secret Key (${suffix}) not configured in Supabase`)
+    if (!secretKey) {
+        console.error(`Debug Server: Missing Secret Key for ${suffix}`)
+        throw new Error(`Stripe Secret Key (${suffix}) not configured in Supabase`)
+    }
+    if (!priceMonthly) console.error(`Debug Server: Missing Monthly Price for ${suffix}`)
 
     const stripe = new Stripe(secretKey, {
       apiVersion: '2023-10-16',
@@ -80,6 +86,7 @@ serve(async (req) => {
             await stripe.customers.retrieve(customerId)
         }
     } catch (e) {
+        console.log(`Debug Server: Existing customer check failed (likely env mismatch), creating new: ${e.message}`)
         customerId = null // ID was from different environment
     }
 
@@ -118,6 +125,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
+    console.error('Debug Server: Caught Error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
