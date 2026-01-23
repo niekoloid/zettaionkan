@@ -132,7 +132,7 @@ const setDebugTier = (tier: string | null) => {
                 </button>
               </div>
             </div>
-            <NuxtLink v-if="userTier === 'free'" to="/subscription" class="text-[10px] font-bold text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full hover:bg-amber-100 transition-colors">
+            <NuxtLink to="/subscription" class="text-[10px] font-bold text-amber-500 bg-amber-50 px-3 py-1.5 rounded-full hover:bg-amber-100 transition-colors">
               プラン一覧を見る
             </NuxtLink>
           </div>

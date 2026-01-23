@@ -28,9 +28,15 @@ serve(async (req) => {
       httpClient: Stripe.createFetchHttpClient(),
     })
 
-    const authHeader = req.headers.get('Authorization')!
+    const authHeader = req.headers.get('Authorization')
+    console.log('Debug Server: Auth Header Present:', !!authHeader)
+    if (authHeader) {
+      console.log('Debug Server: Auth Header Prefix:', authHeader.substring(0, 20))
+    }
+
     if (!authHeader) {
       console.error('No Authorization header provided in request')
+      return new Response(JSON.stringify({ error: 'Missing Authorization header' }), { status: 401 })
     }
 
     const supabaseClient = createClient(
@@ -40,9 +46,15 @@ serve(async (req) => {
     )
 
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
+    
+    console.log('Debug Server: Auth User Verification Result:', user?.id ? 'Success' : 'Failed')
+    if (userError) {
+      console.error('Debug Server: Auth Error:', userError)
+    }
+
     if (userError || !user) {
       console.error('Auth Error Details:', userError)
-      throw new Error(`Unauthorized: ${userError?.message || 'No user found'}`)
+      return new Response(JSON.stringify({ error: `Unauthorized: ${userError?.message || 'No user found'}` }), { status: 401 })
     }
 
     // 2. Map interval to Price ID

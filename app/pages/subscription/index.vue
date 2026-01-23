@@ -20,6 +20,11 @@ const handleSubscribe = async () => {
   
   try {
     const { data: { session } } = await supabase.auth.getSession()
+    
+    console.log('Debug: User ID:', user.value?.id)
+    console.log('Debug: Session exists:', !!session)
+    console.log('Debug: Access Token (prefix):', session?.access_token?.substring(0, 20))
+
     if (!user.value || !session) {
       alert('セッションが切れているか、ログインしていません。もう一度ログインしてください。')
       navigateTo('/auth')
@@ -29,6 +34,7 @@ const handleSubscribe = async () => {
     // Determine if we are in test mode based on the publishable key
     const stripeKey = useRuntimeConfig().public.stripePublishableKey || ''
     const isTest = stripeKey.startsWith('pk_test')
+    console.log('Debug: Utilizing Stripe Key Mode (Test?):', isTest)
 
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: { 
