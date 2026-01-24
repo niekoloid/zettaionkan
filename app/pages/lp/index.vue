@@ -50,6 +50,15 @@ const scrollToTop = () => {
   <Head>
     <Title>絶対音感の習得を、もっと簡単に。 | いろおと</Title>
     <Meta name="description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
+    
+    <!-- Fonts - Preconnect for speed -->
+    <Link rel="preconnect" href="https://fonts.googleapis.com" />
+    <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <Link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet" />
+
+    <!-- Preload Hero Image -->
+    <Link rel="preload" as="image" href="/images/lp/hero.webp" fetchpriority="high" />
+
     <!-- Web/SEO -->
     <Meta name="robots" content="index, follow" />
     <Meta property="og:type" content="website" />
@@ -71,7 +80,7 @@ const scrollToTop = () => {
         <div class="flex justify-center md:justify-between items-center h-16">
           <div class="flex-shrink-0 flex items-center cursor-pointer" @click="scrollToTop">
              <!-- Text Logo or Image Logo if available -->
-             <img src="~/assets/logo_irooto_only_name.png" alt="いろおと" class="h-8 w-auto" width="100" height="32" />
+             <img src="~/assets/logo_irooto_only_name.webp" alt="いろおと" class="h-8 w-auto" width="100" height="32" />
           </div>
           <nav class="hidden md:flex space-x-8">
             <button @click="scrollToTop" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">トップ</button>
@@ -116,7 +125,7 @@ const scrollToTop = () => {
             <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center transition-all duration-1000 ease-out delay-200">
               <div class="relative mx-auto w-full rounded-2xl shadow-2xl lg:max-w-md overflow-hidden">
                 <!-- Hero Image -->
-                <img class="w-full h-full object-cover" src="/images/lp/hero.webp" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" />
+                <img class="w-full h-full object-cover" src="/images/lp/hero.webp" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" fetchpriority="high" />
               </div>
               
               <!-- Mobile Only CTA -->
