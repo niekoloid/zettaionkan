@@ -193,7 +193,7 @@ useHead({
                 </div>
                  <!-- Card 2 -->
                 <div class="bg-white p-6 rounded-xl shadow-md animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 border-l-4 border-gray-400">
-                  <p class="text-lg font-medium text-gray-700">家事の合間に、レッスン環境を準備する余裕がない</p>
+                  <p class="text-lg font-medium text-gray-700">レッスンに通わせる時間の余裕がない</p>
                 </div>
                  <!-- Card 3 -->
                 <div class="bg-white p-6 rounded-xl shadow-md animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300 border-l-4 border-gray-400">
