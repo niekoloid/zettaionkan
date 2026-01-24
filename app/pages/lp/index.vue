@@ -560,7 +560,7 @@ useSeoMeta({
                     <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
                       コスト
                     </td>
-                    <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 rounded-b-lg border-x-2 border-b-2 border-indigo-100 relative z-10 shadow-lg transform scale-105 origin-top">月額 980円〜</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 rounded-b-lg border-x-2 border-b-2 border-indigo-100 relative z-10 shadow-lg transform scale-105 origin-top">月額 980円 / 1,980円</td>
                     <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">月額 約1万円〜</td>
                     <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">高額な教材費</td>
                   </tr>
