@@ -5,14 +5,35 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/supabase'
+    '@nuxtjs/supabase',
+    '@nuxtjs/sitemap'
   ],
+  site: {
+    url: 'https://zettaionkan.jp',
+    name: 'いろおと - 絶対音感トレーニング'
+  },
+  sitemap: {
+    exclude: [
+      '/auth/**',
+      '/account/**',
+      '/subscription/**',
+      '/admin/**',
+      '/legal',
+      '/privacy',
+      '/company'
+    ],
+    defaults: {
+      lastmod: new Date().toISOString(),
+      changefreq: 'weekly',
+      priority: 0.8
+    }
+  },
   routeRules: {
-    '/lp': { prerender: true },
-    '/': { prerender: true },
-    '/auth/**': { ssr: false },
-    '/account/**': { ssr: false },
-    '/subscription/**': { ssr: false }
+    '/': { sitemap: { priority: 1.0, changefreq: 'weekly' }, prerender: true },
+    '/lp': { sitemap: { priority: 0.9, changefreq: 'weekly' }, prerender: true },
+    '/auth/**': { ssr: false, sitemap: false },
+    '/account/**': { ssr: false, sitemap: false },
+    '/subscription/**': { ssr: false, sitemap: false }
   },
   supabase: {
     url: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
