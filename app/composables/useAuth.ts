@@ -13,6 +13,17 @@ const authReadyPromise = new Promise<void>(resolve => {
 })
 
 export function useAuth() {
+  const route = useRoute()
+  if (route.path.startsWith('/lp')) {
+    return {
+      user: ref(null),
+      userTier: computed(() => 'free' as SubscriptionTier),
+      isAuthReady: ref(true),
+      authReady: Promise.resolve(),
+      refreshStatus: async () => {}
+    }
+  }
+
   const supabase = useSupabaseClient()
   const { checkProStatus } = usePro()
   

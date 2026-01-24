@@ -1,12 +1,16 @@
 <script setup lang="ts">
 const route = useRoute()
-const { authReady } = useAuth()
+const isLp = computed(() => route.path.startsWith('/lp'))
+
+// Only use auth logic if not on LP to avoid unnecessary auth initialization/OIDC requests
+let auth: any = { authReady: Promise.resolve() }
+if (!isLp.value) {
+  auth = useAuth()
+}
+const { authReady } = auth
 
 onMounted(async () => {
-  // Don't wait for auth or load audio logic on LP to keep it lean and fast
-  if (route.path === '/lp') {
-    return
-  }
+  if (isLp.value) return
 
   await authReady
 
