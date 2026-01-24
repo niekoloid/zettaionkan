@@ -137,7 +137,7 @@ useSeoMeta({
             <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
               <div class="relative mx-auto w-full rounded-2xl shadow-2xl lg:max-w-md overflow-hidden">
                 <!-- Hero Image -->
-                <img class="w-full h-full object-cover" src="/images/lp/hero_phone_mockup.png" alt="スマホでアプリ画面を表示している様子" width="1024" height="1024" loading="eager" decoding="async" fetchpriority="high" />
+                <img class="w-full h-full object-cover" src="/images/lp/hero_phone_mockup_v2.png" alt="スマホでアプリ画面を表示している様子" width="1024" height="1024" loading="eager" decoding="async" fetchpriority="high" />
               </div>
               
               <!-- Mobile Only CTA -->
@@ -450,7 +450,7 @@ useSeoMeta({
               </div>
 
               <div class="w-24 h-24 mb-6 rounded-full overflow-hidden shadow-lg border-4 border-pink-50 bg-white group-hover:scale-110 transition-transform duration-300">
-                <img src="/images/lp/gift_confidence_nanobanana.png" alt="自信の贈り物" class="w-full h-full object-cover" width="96" height="96" />
+                <img src="/images/lp/benefits_nanobanana.png" alt="自信の贈り物" class="w-full h-full object-cover" width="96" height="96" />
               </div>
 
               <div class="mb-3">
@@ -473,7 +473,7 @@ useSeoMeta({
             <div class="md:w-1/2 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-400">
                <div class="relative">
                  <div class="absolute inset-0 bg-gradient-to-tr from-indigo-200 to-pink-200 blur-3xl opacity-30 rounded-full"></div>
-                 <img src="/images/lp/benefits_nanobanana.png" alt="子供が未来を夢見るイメージ" class="relative z-10 w-full h-auto rounded-3xl shadow-xl" width="1024" height="1024" />
+                 <img src="/images/lp/gift_confidence_nanobanana.png" alt="子供が未来を夢見るイメージ" class="relative z-10 w-full h-auto rounded-3xl shadow-xl" width="1024" height="1024" />
                </div>
             </div>
             <div class="md:w-1/2 text-center md:text-left animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-500">
