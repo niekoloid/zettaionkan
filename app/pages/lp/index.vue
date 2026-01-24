@@ -381,7 +381,7 @@ const scrollToTop = () => {
              </table>
           </div>
           <div class="mt-4 text-center md:hidden">
-            <span class="text-xs text-gray-500 font-medium">← 横にスクロールして比較できます →</span>
+            <span class="text-xs text-indigo-200 font-medium">← 横にスクロールして比較できます →</span>
           </div>
         </div>
       </section>
@@ -580,7 +580,7 @@ const scrollToTop = () => {
           
           <!-- Legal Disclaimer -->
           <div class="max-w-4xl mx-auto mb-12 text-left">
-            <div class="bg-white rounded-lg p-6 text-[11px] text-gray-500 leading-relaxed border border-gray-100 shadow-sm">
+            <div class="bg-white rounded-lg p-6 text-[11px] text-gray-600 leading-relaxed border border-gray-100 shadow-sm">
               <h3 class="font-bold mb-2 text-gray-600">【本ご案内に関する注記・免責事項】</h3>
               <ul class="list-disc pl-4 space-y-1">
                 <li><strong class="text-gray-700">絶対音感の習得について：</strong>「絶対音感」の定義や達成度には個人差があります。本サービスは、適切な時期（一般的に2歳〜6歳頃の臨界期）に継続的なトレーニングを行うことで習得をサポートするものですが、全ての方に絶対音感の習得を保証するものではありません。また、本アプリは相対音感のトレーニング用としては設計されておらず、あくまで6歳頃までのお子様を持つ保護者の方が、お子様に絶対音感を教えるための補助ツールとしての利用を想定しています。</li>
@@ -593,12 +593,12 @@ const scrollToTop = () => {
           </div>
 
           <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-8">
-            <NuxtLink to="/company" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors">運営会社</NuxtLink>
-            <NuxtLink to="/terms" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors">利用規約</NuxtLink>
-            <NuxtLink to="/privacy" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors">プライバシーポリシー</NuxtLink>
-            <NuxtLink to="/legal" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors">特定商取引法に基づく表記</NuxtLink>
+            <NuxtLink to="/company" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">運営会社</NuxtLink>
+            <NuxtLink to="/terms" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">利用規約</NuxtLink>
+            <NuxtLink to="/privacy" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">プライバシーポリシー</NuxtLink>
+            <NuxtLink to="/legal" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">特定商取引法に基づく表記</NuxtLink>
           </div>
-          <p class="text-xs text-gray-500 font-medium">&copy; 2026 Akatsuki Inc.</p>
+          <p class="text-xs text-gray-600 font-medium">&copy; 2026 Akatsuki Inc.</p>
         </div>
       </footer>
     </main>
