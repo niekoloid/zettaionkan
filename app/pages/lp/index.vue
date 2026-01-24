@@ -137,7 +137,7 @@ useSeoMeta({
             <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
               <div class="relative mx-auto w-full rounded-2xl shadow-2xl lg:max-w-md overflow-hidden">
                 <!-- Hero Image -->
-                <img class="w-full h-full object-cover" src="/images/lp/hero.webp" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" fetchpriority="high" />
+                <img class="w-full h-full object-cover" src="/images/lp/hero_nanobanana.png" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" fetchpriority="high" />
               </div>
               
               <!-- Mobile Only CTA -->
@@ -181,7 +181,7 @@ useSeoMeta({
               <div class="relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
                  <div class="relative rounded-2xl overflow-hidden shadow-2xl border-8 border-white transform rotate-[-2deg] hover:rotate-0 transition-all duration-500">
                    <div class="absolute inset-0 bg-gray-900/10 z-10"></div> <!-- Slight darken overlay -->
-                   <img src="/images/lp/pain.webp" alt="散らかったリビングで頭を抱える親" class="w-full h-auto object-cover" width="600" height="400" />
+                   <img src="/images/lp/pain_nanobanana.png" alt="散らかったリビングで頭を抱える親" class="w-full h-auto object-cover" width="600" height="400" />
                    <!-- Caption Overlay -->
                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6 z-20">
                      <p class="text-white font-bold text-lg">「もう、やめたい...」</p>
@@ -413,7 +413,7 @@ useSeoMeta({
               </h4>
               
               <p class="text-sm text-gray-600 leading-relaxed font-medium">
-                色と音を対応付ける日々の訓練は、脳の可塑性を高め、共感覚（Synesthesia）のような特殊な知覚能力を自然と育みます。また、音楽という言葉を超えた、より抽象度の高い世界へアクセスできるようになることで、思考の枠が広がり、お子様の持つ可能性が大きく開花します。さらに、微妙な音の違いを正確に聴き分ける耳は、将来の外国語（英語）習得においても圧倒的なアドバンテージとなります。
+                色と音を対応付ける日々の訓練は、脳の可塑性を高め、<strong class="text-blue-600 bg-blue-50 px-1 rounded">共感覚（Synesthesia）</strong>のような特殊な知覚能力を自然と育みます。また、音楽という言葉を超えた、より抽象度の高い世界へアクセスできるようになることで、<strong class="text-blue-600 bg-blue-50 px-1 rounded">IQや語学力の向上など思考の枠が広がり</strong>、お子様の持つ可能性が大きく開花します。
               </p>
             </div>
 
