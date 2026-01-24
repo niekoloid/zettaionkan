@@ -35,7 +35,7 @@ onMounted(async () => {
 <template>
   <div class="relative min-h-screen">
     <NuxtPage />
-    <template v-if="route.path !== '/lp'">
+    <template v-if="!isLp">
       <AudioLoadingStatus />
       <CommonProModal />
     </template>

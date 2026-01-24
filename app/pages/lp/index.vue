@@ -50,6 +50,22 @@ const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
+
+// Move font loading script to useHead for better SSR compatibility
+useHead({
+  script: [
+    {
+      innerHTML: `(function() {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap';
+        link.media = 'all';
+        document.head.appendChild(link);
+      })();`,
+      type: 'text/javascript'
+    }
+  ]
+})
 </script>
 
 <template>
@@ -58,16 +74,7 @@ const scrollToTop = () => {
     <Title>絶対音感の習得を、もっと簡単に。 | いろおと</Title>
     <Meta name="description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
     
-    <!-- Fonts - Completely asynchronous loading to eliminate critical path delay -->
-    <Script>
-      (function() {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap';
-        link.media = 'all';
-        document.head.appendChild(link);
-      })();
-    </Script>
+    <!-- Fonts - Handled via useHead for better hydration -->
     <noscript>
       <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" />
     </noscript>
@@ -571,10 +578,12 @@ const scrollToTop = () => {
                 あなたと、大切なお子様の未来が、色とりどりの音で溢れますように。
               </p>
               <!-- googleoff: index -->
-              <div class="text-right mt-12" v-if="devInfo.name">
-                <p class="text-sm text-gray-500 mb-1">{{ devInfo.title }}</p>
-                <p class="text-xl font-bold text-gray-900">{{ devInfo.name }}</p>
-              </div>
+              <ClientOnly>
+                <div class="text-right mt-12" v-if="devInfo.name">
+                  <p class="text-sm text-gray-500 mb-1">{{ devInfo.title }}</p>
+                  <p class="text-xl font-bold text-gray-900">{{ devInfo.name }}</p>
+                </div>
+              </ClientOnly>
               <!-- googleon: index -->
             </div>
           </div>
