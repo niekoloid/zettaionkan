@@ -116,7 +116,7 @@ const scrollToTop = () => {
             <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center transition-all duration-1000 ease-out delay-200">
               <div class="relative mx-auto w-full rounded-2xl shadow-2xl lg:max-w-md overflow-hidden">
                 <!-- Hero Image -->
-                <img class="w-full h-full object-cover" src="/images/lp/hero.png" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" />
+                <img class="w-full h-full object-cover" src="/images/lp/hero.webp" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" />
               </div>
               
               <!-- Mobile Only CTA -->
@@ -149,7 +149,7 @@ const scrollToTop = () => {
             <div class="lg:col-span-1 md:col-span-2 order-last md:order-first animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
                <div class="rounded-xl overflow-hidden shadow-lg">
                 <!-- Pain Image -->
-                <img class="w-full h-full object-cover" src="/images/lp/pain.png" alt="散らかったリビングで頭を抱える親" width="1024" height="1024" loading="lazy" decoding="async" />
+                <img class="w-full h-full object-cover" src="/images/lp/pain.webp" alt="散らかったリビングで頭を抱える親" width="1024" height="1024" loading="lazy" decoding="async" />
               </div>
             </div>
             
@@ -189,7 +189,7 @@ const scrollToTop = () => {
               <div class="flex animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
                 <div class="flex-shrink-0">
                   <div class="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md">
-                    <img src="/images/lp/feature_visual.png" alt="演出モードのイメージ" class="w-full h-full object-cover" width="64" height="64" />
+                    <img src="/images/lp/feature_visual.webp" alt="演出モードのイメージ" class="w-full h-full object-cover" width="64" height="64" />
                   </div>
                 </div>
                 <div class="ml-4">
@@ -206,7 +206,7 @@ const scrollToTop = () => {
               <div class="flex animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200">
                 <div class="flex-shrink-0">
                   <div class="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md">
-                    <img src="/images/lp/feature_autoplay.png" alt="オートプレイのイメージ" class="w-full h-full object-cover" width="64" height="64" />
+                    <img src="/images/lp/feature_autoplay.webp" alt="オートプレイのイメージ" class="w-full h-full object-cover" width="64" height="64" />
                   </div>
                 </div>
                 <div class="ml-4">
@@ -222,7 +222,7 @@ const scrollToTop = () => {
               <div class="flex animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300">
                 <div class="flex-shrink-0">
                   <div class="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md">
-                    <img src="/images/lp/feature_piano.png" alt="スタインウェイ音源のイメージ" class="w-full h-full object-cover" width="64" height="64" />
+                    <img src="/images/lp/feature_piano.webp" alt="スタインウェイ音源のイメージ" class="w-full h-full object-cover" width="64" height="64" />
                   </div>
                 </div>
                 <div class="ml-4">
@@ -238,7 +238,7 @@ const scrollToTop = () => {
             <div class="mt-12 lg:mt-0 relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300">
               <div class="rounded-2xl shadow-xl overflow-hidden bg-gray-100">
                  <!-- Solution Image -->
-                 <img class="w-full h-full object-cover transform hover:scale-105 transition duration-500" src="/images/lp/solution.png" alt="アプリ画面から飛び出す電車やねこ" width="1024" height="1024" loading="lazy" decoding="async" />
+                 <img class="w-full h-full object-cover transform hover:scale-105 transition duration-500" src="/images/lp/solution.webp" alt="アプリ画面から飛び出す電車やねこ" width="1024" height="1024" loading="lazy" decoding="async" />
               </div>
             </div>
           </div>
@@ -266,7 +266,7 @@ const scrollToTop = () => {
                    <div class="aspect-video bg-white rounded-2xl shadow-sm flex items-center justify-center relative overflow-hidden">
                       <div class="absolute inset-0 bg-gradient-to-r from-red-100 via-yellow-100 to-blue-100 opacity-30"></div>
                       <div class="text-center relative z-10 w-full h-full">
-                        <img src="/images/lp/cim.png" alt="和音の響きが鮮やかな色に変換されるイメージ" class="w-full h-full object-cover" width="1024" height="1024" loading="lazy" decoding="async" />
+                        <img src="/images/lp/cim.webp" alt="和音の響きが鮮やかな色に変換されるイメージ" class="w-full h-full object-cover" width="1024" height="1024" loading="lazy" decoding="async" />
                       </div>
                    </div>
                 </div>
