@@ -45,6 +45,15 @@ export function useAuth() {
 
   const init = async () => {
     if (isInitialized) return
+    
+    // Skip auth initialization on LP to keep it static and fast
+    const route = useRoute()
+    if (route.path === '/lp') {
+      isAuthReady.value = true
+      if (authReadyResolver) authReadyResolver()
+      return
+    }
+
     isInitialized = true
 
     // Initial check

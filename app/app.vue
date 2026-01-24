@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import * as Tone from 'tone'
+const route = useRoute()
 const { authReady } = useAuth()
 
 onMounted(async () => {
-  await authReady
+  // Don't wait for auth on LP to speed up initial load
+  if (route.path !== '/lp') {
+    await authReady
+  }
 
   // Global audio context resume handler
   const resumeAudio = async () => {
