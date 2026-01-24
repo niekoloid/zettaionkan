@@ -37,6 +37,12 @@ onMounted(() => {
     observer.value?.observe(el)
   })
 })
+
+const scrollToTop = () => {
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
 </script>
 
 <template>
@@ -49,31 +55,34 @@ onMounted(() => {
     <Meta property="og:type" content="website" />
     <Meta property="og:title" content="絶対音感の習得を、もっと簡単に。 | いろおと" />
     <Meta property="og:description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
-    <Meta property="og:image" content="https://zettaionkan.com/images/lp/ogp_image.png" />
-    <Meta property="og:url" content="https://zettaionkan.com/" />
+    <Meta property="og:image" content="https://zettaionkan.jp/images/lp/ogp_image.png" />
+    <Meta property="og:url" content="https://zettaionkan.jp/" />
     <Meta property="og:site_name" content="いろおと" />
     <Meta name="twitter:card" content="summary_large_image" />
     <Meta name="twitter:title" content="絶対音感の習得を、もっと簡単に。 | いろおと" />
     <Meta name="twitter:description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
-    <Meta name="twitter:image" content="https://zettaionkan.com/images/lp/ogp_image.png" />
+    <Meta name="twitter:image" content="https://zettaionkan.jp/images/lp/ogp_image.png" />
   </Head>
 
   <div class="font-sans text-gray-800 bg-white">
     <!-- Header/Nav (Simplified for LP) -->
     <header class="fixed top-0 w-full bg-white/80 backdrop-blur-md z-40 border-b border-gray-100">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex-shrink-0 flex items-center">
+        <div class="flex justify-center md:justify-between items-center h-16">
+          <div class="flex-shrink-0 flex items-center cursor-pointer" @click="scrollToTop">
              <!-- Text Logo or Image Logo if available -->
              <img src="~/assets/logo_irooto_only_name.png" alt="いろおと" class="h-8 w-auto" width="100" height="32" />
           </div>
           <nav class="hidden md:flex space-x-8">
-            <a href="#solution" class="text-gray-500 hover:text-gray-900 font-medium">特徴</a>
-            <a href="#comparison" class="text-gray-500 hover:text-gray-900 font-medium">比較</a>
-            <a href="#pricing" class="text-gray-500 hover:text-gray-900 font-medium">料金</a>
+            <button @click="scrollToTop" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">トップ</button>
+            <a href="#solution" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">特徴</a>
+            <a href="#method" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">仕組み</a>
+            <a href="#comparison" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">比較表</a>
+            <a href="#pricing" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">料金プラン</a>
+            <a href="#faq" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">Q&A</a>
           </nav>
           <div class="hidden md:flex items-center">
-             <a href="/auth?mode=signup" class="ml-8 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+             <a href="/auth?mode=signup" class="ml-8 inline-flex items-center justify-center px-6 py-2 border border-transparent rounded-full shadow-md text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
                無料で始める
              </a>
           </div>
@@ -88,19 +97,18 @@ onMounted(() => {
           <div class="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
             <!-- REMOVED animate-on-scroll for immediate LCP -->
             <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left transition-all duration-1000 ease-out">
-              <h1 class="block text-4xl tracking-tight font-extrabold sm:text-5xl xl:text-6xl text-gray-900 leading-tight">
-                絶対音感の習得を、<br/>もっと簡単に。
+              <h1 class="block text-4xl tracking-tight font-extrabold sm:text-5xl xl:text-6xl text-gray-900 leading-tight text-balance">
+                <span class="inline-block">絶対音感の習得を、</span><span class="inline-block">もっと簡単に。</span>
               </h1>
               <p class="mt-5 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl font-medium">
-                こどもの耳の『黄金期』を逃さない。<br class="hidden sm:inline" />
-                再現性の高い科学的メソッドで、スマホひとつで身につける絶対音感トレーニング。
+                <span class="inline-block">こどもの耳の『黄金期』を逃さない。</span><br class="hidden sm:inline" />
+                <span class="inline-block">再現性の高い科学的メソッドで、</span><span class="inline-block">スマホひとつで身につける</span><span class="inline-block">絶対音感トレーニング。</span>
               </p>
-              <div class="mt-8 sm:mt-12 sm:flex sm:justify-center lg:justify-start">
+              <div class="mt-8 sm:mt-12 hidden lg:flex lg:justify-start">
                 <div class="w-full sm:max-w-xs">
                   <a href="/auth?mode=signup" class="w-full flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-full text-white bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 transform transition hover:scale-105 shadow-xl">
                     今すぐ無料で始める
                   </a>
-                  <p class="mt-3 text-sm text-gray-500 text-center">登録時のカード入力は不要</p>
                 </div>
               </div>
             </div>
@@ -109,6 +117,15 @@ onMounted(() => {
               <div class="relative mx-auto w-full rounded-2xl shadow-2xl lg:max-w-md overflow-hidden">
                 <!-- Hero Image -->
                 <img class="w-full h-full object-cover" src="/images/lp/hero.png" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" />
+              </div>
+              
+              <!-- Mobile Only CTA -->
+              <div class="mt-8 flex justify-center lg:hidden">
+                <div class="w-full max-w-xs">
+                  <a href="/auth?mode=signup" class="w-full flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-full text-white bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 transform transition hover:scale-105 shadow-xl">
+                    今すぐ無料で始める
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -122,8 +139,8 @@ onMounted(() => {
       <section class="py-16 bg-gray-50 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-            <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
-              あんなに意気込んで始めたのに、<br class="sm:hidden" />毎日の『準備』と『つきっきり』に<br class="sm:hidden" />疲れていませんか？
+            <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl text-balance">
+              <span class="inline-block">あんなに意気込んで始めたのに、</span><br class="sm:hidden" /><span class="inline-block">毎日の『準備』と『つきっきり』に</span><br class="sm:hidden" /><span class="inline-block">疲れていませんか？</span>
             </h2>
           </div>
 
@@ -140,7 +157,7 @@ onMounted(() => {
              <div class="lg:col-span-3 md:col-span-2 grid grid-cols-1 gap-6">
                 <!-- Card 1 -->
                 <div class="bg-white p-6 rounded-xl shadow-md animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100 border-l-4 border-gray-400">
-                  <p class="text-lg font-medium text-gray-700">ピアノの前に座るだけでも一苦労</p>
+                  <p class="text-lg font-medium text-gray-700">楽器の前に座るだけでも一苦労</p>
                 </div>
                  <!-- Card 2 -->
                 <div class="bg-white p-6 rounded-xl shadow-md animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 border-l-4 border-gray-400">
@@ -160,8 +177,8 @@ onMounted(() => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div class="text-center mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
             <span class="text-indigo-600 font-semibold tracking-wide uppercase text-sm">Solution</span>
-            <h2 class="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">
-              『練習』を、子供が夢中になる『遊び』へアップデート。
+            <h2 class="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl text-balance">
+              <span class="inline-block">『練習』を、</span><span class="inline-block">子供が夢中になる『遊び』へ</span><span class="inline-block">アップデート。</span>
             </h2>
           </div>
 
@@ -171,8 +188,8 @@ onMounted(() => {
                <!-- Feature 1 -->
               <div class="flex animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
                 <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white text-2xl">
-                    🚂
+                  <div class="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md">
+                    <img src="/images/lp/feature_visual.png" alt="演出モードのイメージ" class="w-full h-full object-cover" width="64" height="64" />
                   </div>
                 </div>
                 <div class="ml-4">
@@ -188,14 +205,14 @@ onMounted(() => {
                <!-- Feature 3 -->
               <div class="flex animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200">
                 <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white text-2xl">
-                    📱
+                  <div class="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md">
+                    <img src="/images/lp/feature_autoplay.png" alt="オートプレイのイメージ" class="w-full h-full object-cover" width="64" height="64" />
                   </div>
                 </div>
                 <div class="ml-4">
-                  <h3 class="text-lg leading-6 font-bold text-gray-900">どこでもトレーニング</h3>
+                  <h3 class="text-lg leading-6 font-bold text-gray-900">BGMとして流すだけ</h3>
                   <p class="mt-2 text-base text-gray-600">
-                    アプリのダウンロードは不要。レストランの待ち時間や移動中が、そのまま英才教育の時間に。
+                    「オートプレイ機能」搭載。忙しい家事の合間や移動中、BGMとして流しておくだけで、無意識のうちに音感が育ちます。
                   </p>
                 </div>
               </div>
@@ -204,8 +221,8 @@ onMounted(() => {
                <!-- Feature 4 -->
               <div class="flex animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300">
                 <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-amber-500 text-white text-2xl">
-                    🎹
+                  <div class="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md">
+                    <img src="/images/lp/feature_piano.png" alt="スタインウェイ音源のイメージ" class="w-full h-full object-cover" width="64" height="64" />
                   </div>
                 </div>
                 <div class="ml-4">
@@ -229,16 +246,16 @@ onMounted(() => {
       </section>
 
       <!-- 2.5 Method / Theory (CIM) -->
-      <section class="py-16 bg-white overflow-hidden relative border-b border-gray-100">
+      <section id="method" class="py-16 bg-white overflow-hidden relative border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="lg:text-center animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
             <span class="text-indigo-600 font-bold tracking-wide uppercase text-xs md:text-sm">Method</span>
-            <h2 class="mt-2 text-2xl font-extrabold text-gray-900 sm:text-4xl">
-              なぜ、「単音」ではなく<br class="sm:hidden" />「和音」なのか？
+            <h2 class="mt-2 text-2xl font-extrabold text-gray-900 sm:text-4xl text-balance">
+              <span class="inline-block">どうすれば、</span><span class="inline-block">絶対音感を身につけられるのか？</span>
             </h2>
             <p class="mt-4 max-w-2xl text-base md:text-xl text-gray-500 lg:mx-auto font-medium">
-              科学的根拠に基づいた<span class="text-indigo-600 font-bold">「和音色彩学習法」</span>のアプローチを採用。<br />
-              幼児の脳に、最も自然に、深く音感を刻み込みます。
+              特別な才能は必要ありません。やることは非常にシンプル。<br />
+              <span class="text-indigo-600 font-bold text-lg md:text-2xl">「白鍵9種類＋黒鍵5種類の計14種類の和音」</span>を覚えるだけです。
             </p>
           </div>
 
@@ -255,19 +272,18 @@ onMounted(() => {
                 </div>
                 <div class="md:w-1/2">
                   <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 leading-snug">
-                    音を「勉強」する前に、<br />「感覚」として身体に入れる。
+                    なぜ「単音」ではなく、<br />「和音」から始めるのか？
                   </h3>
                   <div class="prose prose-blue text-gray-600 text-sm md:text-base leading-relaxed space-y-4">
                     <p>
-                      「ド」はド、「レ」はレ…と単音を暗記させる方法は、実は幼児にとっては退屈な「お勉強」になりがちです。
+                      「ド」はド、「レ」はレ…といった単音は、子供の脳にとっては「細すぎて記憶に残りにくい」という特徴があります。
                     </p>
-                    <p class="font-bold text-indigo-900 bg-indigo-100/50 p-2 rounded-lg inline-block">
-                      いろおとは、子供の耳が臨界期に達する前までの絶対音感習得に最も効果的とされる
-                      <span class="underline decoration-indigo-400 decoration-2 underline-offset-2">『和音の響きを色彩として捉えるトレーニング理論』</span>
-                      をベースに、最新のテクノロジーを融合させた独自の学習ツールです。
+                    <p class="font-bold text-indigo-900 bg-indigo-100/50 p-4 rounded-lg">
+                      一方、複数の音が重なる<span class="text-indigo-600">「和音」</span>は響きが豊かで、脳に鮮烈な印象を与えます。
+                      この14種類の和音特有の響き（クロマ）を記憶することで、脳内で音が整理され、やがて一つ一つの音の違いも識別できるようになります（和音→単音分化）。
                     </p>
                     <p>
-                      複数の音が重なり合う豊かな響きを、理屈ではなく「色」として脳にインプット。右脳が活発な幼児期だからこそ、このアプローチが驚くべき習得効率を生み出すのです。
+                      このアプローチこそが、日常言語を覚えるのと同じ仕組みで、一生モノの「絶対的な音の記憶」を定着させる最短ルートなのです。
                     </p>
                   </div>
                 </div>
@@ -284,65 +300,79 @@ onMounted(() => {
             <h2 class="text-3xl font-bold">現代の忙しいパパ・ママに選ばれる理由</h2>
           </div>
 
-          <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-2xl overflow-hidden animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-             <table class="min-w-full">
+          <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-2xl overflow-x-auto animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+             <table class="min-w-full border-collapse">
                <thead>
                  <tr class="bg-gray-50 border-b border-gray-200">
-                   <th class="px-4 py-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">比較項目</th>
-                   <th class="px-4 py-5 text-center text-base font-bold text-white uppercase tracking-wider w-1/4 bg-indigo-600 rounded-t-lg shadow-lg transform scale-105 relative z-10">いろおと</th>
-                   <th class="px-4 py-5 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-1/4 hidden md:table-cell">ピアノ教室</th>
-                   <th class="px-4 py-5 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-1/4">市販の教材</th>
+                   <th class="sticky left-0 z-30 bg-gray-50 px-4 py-6 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider min-w-[100px] md:min-w-0">比較項目</th>
+                   <th class="px-4 py-6 text-center text-base md:text-lg font-bold text-white uppercase tracking-wider min-w-[140px] md:min-w-0 bg-indigo-600 shadow-lg relative z-10">いろおと</th>
+                   <th class="px-4 py-6 text-center text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider min-w-[120px] md:min-w-0">ピアノ教室</th>
+                   <th class="px-4 py-6 text-center text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider min-w-[120px] md:min-w-0 border-r border-gray-100">市販の教材</th>
                  </tr>
                </thead>
                <tbody class="divide-y divide-gray-100 text-gray-800">
                  <tr>
-                   <td class="px-4 py-5 whitespace-nowrap text-xs font-medium text-gray-900 bg-white">準備するもの</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-base font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">スマホひとつ</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white hidden md:table-cell">楽器・楽譜・カバン</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white">多量のカード類</td>
+                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                     <span class="mr-1 md:mr-2 text-base md:text-lg">🎒</span>準備
+                   </td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">スマホひとつ</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">楽器・楽譜一式</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">多量のカード類</td>
                  </tr>
                  <tr>
-                    <td class="px-4 py-5 whitespace-nowrap text-xs font-medium text-gray-900 bg-white">練習場所</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-base font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">どこでもOK</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white hidden md:table-cell">教室（要送迎）</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white">楽器の前（固定）</td>
+                    <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                      <span class="mr-1 md:mr-2 text-base md:text-lg">🏠</span>場所
+                    </td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">どこでもOK</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">教室（要送迎）</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">楽器の前（固定）</td>
                  </tr>
                  <tr>
-                   <td class="px-4 py-5 whitespace-nowrap text-xs font-medium text-gray-900 bg-white">親の負担</td>
-                   <td class="px-4 py-5 whitespace-normal text-center text-base font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">子供が自走</td>
-                   <td class="px-4 py-5 whitespace-normal text-center text-xs text-gray-500 bg-white hidden md:table-cell">送迎と連絡</td>
-                   <td class="px-4 py-5 whitespace-normal text-center text-xs text-gray-500 bg-white">つきっきり指導</td>
+                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                     <span class="mr-1 md:mr-2 text-base md:text-lg">🕰️</span>親の負担
+                   </td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">BGM再生でOK</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">送迎と連絡</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">つきっきり指導</td>
                  </tr>
                  <tr>
-                   <td class="px-4 py-5 whitespace-nowrap text-xs font-medium text-gray-900 bg-white">子供の反応</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-base font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">演出で夢中</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white hidden md:table-cell">緊張感がある</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white">飽きやすい</td>
+                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                     <span class="mr-1 md:mr-2 text-base md:text-lg">👶</span>反応
+                   </td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">演出で夢中</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">緊張感がある</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">飽きやすい</td>
                  </tr>
                  <tr>
-                   <td class="px-4 py-5 whitespace-nowrap text-xs font-medium text-gray-900 bg-white">成長の記録</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-base font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">データ自動集計</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white hidden md:table-cell">先生の評価のみ</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white">親の手書きメモ</td>
+                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                     <span class="mr-1 md:mr-2 text-base md:text-lg">📊</span>記録
+                   </td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">自動集計</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">先生の評価のみ</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">親の手書きメモ</td>
                  </tr>
                  <tr>
-                   <td class="px-4 py-5 whitespace-nowrap text-xs font-medium text-gray-900 bg-white">月々のコスト</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-base font-bold text-indigo-700 bg-indigo-50 rounded-b-lg border-x-2 border-b-2 border-indigo-100 relative z-10 shadow-lg transform scale-105 origin-top">習い事1回分以下</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white hidden md:table-cell">約1万円〜</td>
-                   <td class="px-4 py-5 whitespace-nowrap text-center text-xs text-gray-500 bg-white">高額な教材費</td>
+                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                     <span class="mr-1 md:mr-2 text-base md:text-lg">👛</span>コスト
+                   </td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 rounded-b-lg border-x-2 border-b-2 border-indigo-100 relative z-10 shadow-lg transform scale-105 origin-top">習い事1回分以下</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">約1万円〜</td>
+                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">高額な教材費</td>
                  </tr>
                </tbody>
              </table>
           </div>
+          <div class="mt-4 text-center md:hidden">
+            <span class="text-xs text-gray-400">← 横にスクロールして比較できます →</span>
+          </div>
         </div>
       </section>
-
       <!-- 5. Offer & Risk Reversal -->
       <section id="pricing" class="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div class="animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-              一生モノのギフトを、<br/>まずは無料で体験。
+            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl text-balance">
+              <span class="inline-block">一生モノのギフトを、</span><br/><span class="inline-block">まずは無料で体験。</span>
             </h2>
             <p class="mt-4 text-xl text-gray-600">
               気に入ったら月額 1,980円で本格トレーニング。
@@ -361,7 +391,8 @@ onMounted(() => {
                 980<span class="ml-1 text-2xl font-medium text-gray-500">円〜</span>
               </div>
               <p class="mt-4 text-gray-500">
-                基本機能は永年無料。<br/>お子様が夢中になったら、いつでもProプランへアップグレードできます。
+                14日間の無料トライアルで<br/>
+                全ての機能（電車や猫の演出含む）をお試しいただけます。
               </p>
             </div>
              <div class="px-6 pt-2 pb-8 sm:px-10 sm:py-10">
@@ -374,7 +405,7 @@ onMounted(() => {
       </section>
 
       <!-- 6. FAQ -->
-      <section class="py-16 bg-white">
+      <section id="faq" class="py-16 bg-white">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
             よくあるご質問
@@ -390,6 +421,19 @@ onMounted(() => {
               <div v-show="faqOpen === 1" class="mt-2 pr-12">
                 <p class="text-base text-gray-600">
                   A. はい、可能です。絶対音感の習得に最も重要なのは「脳が柔軟な時期（6歳半頃まで）に、いかに高頻度で音の入力を繰り返すか」です。もちろん個人差はありますが、14種類の和音を絶対的な聞き方ができる時期にしっかりと覚えさせることで、高い確率で絶対音感を身につけることができます。「いろおと」は場所を選ばず隙間時間に何度でも取り組めるため、1日1回のピアノ練習よりも圧倒的な習得効率を実現します。
+                </p>
+              </div>
+            </div>
+
+            <!-- FAQ 1.2 Frequency -->
+            <div class="border-b border-gray-200 pb-4 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-25">
+              <button @click="toggleFaq(1.2)" class="flex justify-between items-center w-full text-left focus:outline-none">
+                <span class="text-lg font-medium text-gray-900">Q. どれぐらいの頻度と感覚で練習する必要がありますか？</span>
+                <span class="ml-6 flex-shrink-0 text-indigo-500 font-bold text-2xl">{{ faqOpen === 1.2 ? '−' : '＋' }}</span>
+              </button>
+              <div v-show="faqOpen === 1.2" class="mt-2 pr-12">
+                <p class="text-base text-gray-600">
+                  A. 一日4回以上、和音を15〜30回ほど聞かせるのが理想です。一回の時間は短くても、生活の中に「音を聞く時間」を細かく作ってあげることが習得の近道です。「オートプレイ機能」を使えば、BGM感覚で無理なく習慣化できます。
                 </p>
               </div>
             </div>
@@ -415,7 +459,7 @@ onMounted(() => {
               </button>
               <div v-show="faqOpen === 2" class="mt-2 pr-12">
                   <p class="text-base text-gray-600">
-                    A. はい、音質には一切の妥協をしていません。絶対音感の習得において最も重要なのは、歪みのない「本物」の倍音成分に触れることです。「いろおと」には、**アイオワ大学電子音楽スタジオ (University of Iowa Electronic Music Studios)** が収録した、希少な**New York Steinway Model B**の音源を採用しています。スタジオ環境で緻密にサンプリングされたこの音源は、一般的なアプリで見られるようなデータ圧縮や高域カット（大人の可聴域外の間引き）を一切行わず、**20kHzを超える子供にしか聴こえない微細な倍音**まで忠実に再現しています。この豊かな響きこそが、脳に正確な音の記憶を刻みます。その真価を体験いただくため、高音質なスピーカーを搭載したデバイスや、外部スピーカーのご利用を強くお勧めします。
+                    A. はい、音質には一切の妥協をしていません。絶対音感の習得において最も重要なのは、歪みのない「本物」の倍音成分に触れることです。「いろおと」には、<span class="font-bold">アイオワ大学電子音楽スタジオ (University of Iowa Electronic Music Studios)</span> が収録した、希少な<span class="font-bold">New York Steinway Model B</span>の音源を採用しています。スタジオ環境で緻密にサンプリングされたこの音源は、一般的なアプリで見られるようなデータ圧縮や高域カット（大人の可聴域外の間引き）を一切行わず、<span class="font-bold">20kHzを超える子供にしか聴こえない微細な倍音</span>まで忠実に再現しています。この豊かな響きこそが、脳に正確な音の記憶を刻みます。もし可能であれば、比較的性能の良いスピーカーで鳴らしてあげると、より効果的です。
                   </p>
               </div>
             </div>
@@ -456,7 +500,9 @@ onMounted(() => {
               </button>
               <div v-show="faqOpen === 6" class="mt-2 pr-12">
                  <p class="text-base text-gray-600">
-                  A. もちろん可能です。契約期間の縛りは一切ありません。管理画面からいつでもご自身で解約の手続きが行えますので、まずはお子様が楽しんでくれるかどうか、安心してお試しください。
+                  A. もちろん可能です。契約期間の縛りは一切ありません。管理画面からいつでもご自身で解約の手続きが行えます。
+                  <br/><br/>
+                  さらに、PROプランであっても<b>最初の14日間は無料</b>ですべての機能をお試しいただけます。もし「合わない」と感じた場合は、無料期間中に解約すれば料金は一切かかりません。まずはお子様が楽しんでくれるかどうか、安心してお試しください。
                 </p>
               </div>
             </div>
@@ -511,6 +557,21 @@ onMounted(() => {
       <!-- Footer -->
       <footer class="bg-gray-50 py-12 border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          
+          <!-- Legal Disclaimer -->
+          <div class="max-w-4xl mx-auto mb-12 text-left">
+            <div class="bg-white rounded-lg p-6 text-xs text-gray-400 leading-relaxed border border-gray-100 shadow-sm">
+              <h3 class="font-bold mb-2 text-gray-500">【本ご案内に関する注記・免責事項】</h3>
+              <ul class="list-disc pl-4 space-y-1">
+                <li><strong>絶対音感の習得について：</strong>「絶対音感」の定義や達成度には個人差があります。本サービスは、適切な時期（一般的に2歳〜6歳頃の臨界期）に継続的なトレーニングを行うことで習得をサポートするものですが、全ての方に絶対音感の習得を保証するものではありません。</li>
+                <li><strong>比較情報について：</strong>本ページ内に掲載されている「ピアノ教室」「市販の教材」等との比較情報は、当社独自の調査（2026年1月時点）および一般的なサービス事例に基づくものです。全ての事業者・商品に当てはまるわけではありません。また、特定の団体・教室・教材等を指すものではなく、それらとの関係性は一切ありません。</li>
+                <li><strong>科学的根拠について：</strong>「臨界期」「脳科学的アプローチ」等の記述は、一般的な発達心理学・脳科学の学説や理論（CIM等）に基づいています。特定の医学的効果を標榜するものではありません。</li>
+                <li><strong>機能について：</strong>「演出モード（電車・車・猫など）」を含む一部の機能は、有料のPROプラン（月額980円〜）に含まれます。これらは14日間の無料トライアルですべてお試しいただけます。</li>
+                <li><strong>音源について：</strong>Steinway Model Bの音源は、University of Iowa Electronic Music Studiosが公開しているMISデータベースの音源を使用しています。</li>
+              </ul>
+            </div>
+          </div>
+
           <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-8">
             <NuxtLink to="/company" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors">運営会社</NuxtLink>
             <NuxtLink to="/terms" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors">利用規約</NuxtLink>
@@ -531,5 +592,19 @@ onMounted(() => {
 /* Additional custom styles if needed beyond Tailwind */
 .font-serif {
   font-family: 'Noto Serif JP', serif;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.inline-block {
+  display: inline-block;
 }
 </style>

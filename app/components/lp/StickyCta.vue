@@ -17,7 +17,6 @@ const mainCtaRef = ref<HTMLElement | null>(null)
       <a href="/auth?mode=signup" class="w-full bg-gradient-to-r from-orange-400 to-pink-500 text-white font-bold text-center py-4 rounded-full shadow-lg text-lg animate-pulse">
         今すぐ無料で始める
       </a>
-      <p class="text-xs text-gray-500 mt-1">登録時のカード入力は不要・無料プランからスタート</p>
     </div>
   </div>
 </template>
