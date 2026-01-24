@@ -521,11 +521,12 @@ const scrollToTop = () => {
         </div>
       </section>
 
-      <!-- 7. Developer Letter -->
+      <!-- 7. Message -->
       <section class="py-16 lg:py-24 bg-gray-50 border-t border-gray-200">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="bg-white p-8 md:p-12 rounded-lg shadow-inner animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-             <h2 class="text-2xl font-serif font-bold text-gray-800 mb-8 border-b-2 border-indigo-100 pb-4">
+            <h3 class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em] mb-4">Message</h3>
+            <h2 class="text-2xl font-serif font-bold text-gray-800 mb-8 border-b-2 border-indigo-100 pb-4">
               間に合わなかったという後悔を、<br/>誰にもしてほしくない。
             </h2>
             <div class="prose prose-lg text-gray-600 font-serif leading-relaxed">
