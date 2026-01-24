@@ -64,13 +64,13 @@ const scrollToTop = () => {
     <Meta property="og:type" content="website" />
     <Meta property="og:title" content="絶対音感の習得を、もっと簡単に。 | いろおと" />
     <Meta property="og:description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
-    <Meta property="og:image" content="https://zettaionkan.jp/images/lp/ogp_image.png" />
+    <Meta property="og:image" content="https://zettaionkan.jp/images/lp/ogp_image.webp" />
     <Meta property="og:url" content="https://zettaionkan.jp/" />
     <Meta property="og:site_name" content="いろおと" />
     <Meta name="twitter:card" content="summary_large_image" />
     <Meta name="twitter:title" content="絶対音感の習得を、もっと簡単に。 | いろおと" />
     <Meta name="twitter:description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
-    <Meta name="twitter:image" content="https://zettaionkan.jp/images/lp/ogp_image.png" />
+    <Meta name="twitter:image" content="https://zettaionkan.jp/images/lp/ogp_image.webp" />
   </Head>
 
   <div class="font-sans text-gray-800 bg-white">
@@ -575,7 +575,7 @@ const scrollToTop = () => {
                 <li><strong>絶対音感の習得について：</strong>「絶対音感」の定義や達成度には個人差があります。本サービスは、適切な時期（一般的に2歳〜6歳頃の臨界期）に継続的なトレーニングを行うことで習得をサポートするものですが、全ての方に絶対音感の習得を保証するものではありません。</li>
                 <li><strong>比較情報について：</strong>本ページ内に掲載されている「ピアノ教室」「市販の教材」等との比較情報は、当社独自の調査（2026年1月時点）および一般的なサービス事例に基づくものです。全ての事業者・商品に当てはまるわけではありません。また、特定の団体・教室・教材等を指すものではなく、それらとの関係性は一切ありません。</li>
                 <li><strong>科学的根拠について：</strong>「臨界期」「脳科学的アプローチ」等の記述は、一般的な発達心理学・脳科学の学説や理論（CIM等）に基づいています。特定の医学的効果を標榜するものではありません。</li>
-                <li><strong>機能について：</strong>「演出モード（電車・車・猫など）」を含む一部の機能は、有料のPROプラン（月額980円〜）に含まれます。これらは14日間の無料トライアルですべてお試しいただけます。</li>
+                <li><strong>機能について：</strong>「演出モード（電車・車・猫など）」を含む一部の機能は、有料のPROプラン（月額1,980円〜）に含まれます。これらは14日間の無料トライアルですべてお試しいただけます。</li>
                 <li><strong>音源について：</strong>Steinway Model Bの音源は、University of Iowa Electronic Music Studiosが公開しているMISデータベースの音源を使用しています。</li>
               </ul>
             </div>
