@@ -531,7 +531,7 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
         <div class="px-2">
           <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
-            <div class="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2">
+            <div class="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2 px-1">
               <!-- Full Screen Option -->
               <button 
                 @click="autoPlayRevealType = 'full'"
