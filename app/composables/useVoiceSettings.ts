@@ -86,40 +86,28 @@ export function useVoiceSettings() {
     return data.publicUrl
   }
 
-  const fetchSettings = async () => {
-    if (!user.value) return
-    try {
-      const { data, error } = await (supabase
-        .from('user_audio_settings') as any)
-        .select('*')
-        .single()
+  // Persistent settings via Cookie
+  const customVoiceEnabledCookie = useCookie<boolean>('zettaionkan_custom_voice_enabled', {
+    default: () => false,
+    maxAge: 60 * 60 * 24 * 365 // 1 year
+  })
 
-      if (error && error.code !== 'PGRST116') throw error // PGRST116 is "not found"
-      
-      if (data) {
-        customVoiceEnabled.value = data.custom_voice_enabled
-      }
-    } catch (e) {
-      console.error('Failed to fetch user audio settings:', e)
+  // Sync singleton ref with cookie
+  if (import.meta.client && !isSettingsLoaded.value) {
+    customVoiceEnabled.value = customVoiceEnabledCookie.value
+    isSettingsLoaded.value = true
+  }
+
+  const fetchSettings = async () => {
+    // Legacy: Now handled by Cookie initialization
+    if (import.meta.client) {
+      customVoiceEnabled.value = customVoiceEnabledCookie.value
     }
   }
 
   const updateSettings = async (enabled: boolean) => {
-    if (!user.value) return
     customVoiceEnabled.value = enabled
-    try {
-      const { error } = await (supabase
-        .from('user_audio_settings') as any)
-        .upsert({
-          user_id: user.value.id,
-          custom_voice_enabled: enabled,
-          updated_at: new Date().toISOString()
-        })
-
-      if (error) throw error
-    } catch (e) {
-      console.error('Failed to update user audio settings:', e)
-    }
+    customVoiceEnabledCookie.value = enabled
   }
 
   return {

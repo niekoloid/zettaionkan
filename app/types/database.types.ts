@@ -99,29 +99,7 @@ export interface Database {
           message?: string
         }
       }
-      user_audio_settings: {
-        Row: {
-          user_id: string
-          custom_voice_enabled: boolean
-          narration_volume: number
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          user_id: string
-          custom_voice_enabled?: boolean
-          narration_volume?: number
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          user_id?: string
-          custom_voice_enabled?: boolean
-          narration_volume?: number
-          created_at?: string
-          updated_at?: string
-        }
-      }
+
     }
   }
 }

@@ -55,6 +55,9 @@ const instrumentName = {
 
     <!-- Right side: Account & Instrument Indicator -->
     <div class="flex items-center space-x-3">
+      <!-- Streak Counter -->
+      <CommonStreakCounter />
+
       <!-- Instrument Badge -->
       <div v-if="selectedInstrument" class="hidden sm:flex flex-col items-end">
         <span class="text-[8px] font-black text-gray-300 uppercase tracking-tighter leading-none mb-0.5">Sound Source</span>

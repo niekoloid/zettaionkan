@@ -4,10 +4,17 @@ import type { Provider } from '@supabase/supabase-js'
 const supabase = useSupabaseClient()
 
 const router = useRouter()
+const route = useRoute()
 const email = ref('')
 const password = ref('')
 const isLoading = ref(false)
 const isSignUp = ref(false)
+
+onMounted(() => {
+  if (route.query.mode === 'signup') {
+    isSignUp.value = true
+  }
+})
 const message = ref('')
 const isDev = import.meta.env.DEV
 

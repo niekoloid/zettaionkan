@@ -1,4 +1,4 @@
-import type { SubscriptionTier } from '~/composables/usePro'
+import type { SubscriptionTier } from '~/types/app'
 
 export type FeatureKey = 
   // --- Pages ---
@@ -7,7 +7,6 @@ export type FeatureKey =
   | 'page_chordquiz'        // 和音クイズ
   | 'page_single_note_test' // 単音テスト
   | 'page_history'          // 学習履歴
-  | 'page_songs'            // 課題曲
   | 'page_voice_settings'   // 声の管理/設定
   | 'page_settings'         // 一般設定
   
@@ -89,7 +88,6 @@ export const FEATURE_GATES: Record<FeatureKey, FeatureConfig> = {
   'page_chordquiz': { tier: 'free', enabled: true },
   'page_single_note_test': { tier: 'free', enabled: true },
   'page_history': { tier: 'free', enabled: true },
-  'page_songs': { tier: 'premium', enabled: true },
   'page_voice_settings': { tier: 'free', enabled: true },
   'page_settings': { tier: 'free', enabled: true },
 
@@ -103,11 +101,11 @@ export const FEATURE_GATES: Record<FeatureKey, FeatureConfig> = {
   'home_chord_farado':      { tier: 'free',  enabled: true },
   'home_chord_soshire':     { tier: 'free',  enabled: true },
   'home_chord_sodomi':      { tier: 'free',  enabled: true },
-  'home_chord_lacismi':     { tier: 'free',  enabled: true },
-  'home_chord_refisla':     { tier: 'free',  enabled: true },
-  'home_chord_migissi':     { tier: 'free',  enabled: true },
-  'home_chord_berefa':      { tier: 'free',  enabled: true },
-  'home_chord_essobe':      { tier: 'free',  enabled: true },
+  'home_chord_lacismi':     { tier: 'entry',  enabled: true },
+  'home_chord_refisla':     { tier: 'entry',  enabled: true },
+  'home_chord_migissi':     { tier: 'entry',  enabled: true },
+  'home_chord_berefa':      { tier: 'entry',  enabled: true },
+  'home_chord_essobe':      { tier: 'entry',  enabled: true },
 
   // --- Chord Access (Autoplay) ---
   'autoplay_chord_domiso':  { tier: 'free',    enabled: true },
@@ -167,7 +165,6 @@ export const FEATURE_DESCRIPTIONS: Record<FeatureKey, string> = {
   'page_chordquiz': '和音クイズ',
   'page_single_note_test': '単音テスト',
   'page_history': '学習履歴',
-  'page_songs': '課題曲',
   'page_voice_settings': '声の管理/設定',
   'page_settings': '一般設定',
 

@@ -1,8 +1,23 @@
 <script setup lang="ts">
+import * as Tone from 'tone'
 const { authReady } = useAuth()
 
 onMounted(async () => {
   await authReady
+
+  // Global audio context resume handler
+  const resumeAudio = async () => {
+    if (Tone.context.state !== 'running') {
+      await Tone.start()
+      console.log('AudioContext started via global gesture')
+    }
+    // Remove listeners after first successful interaction
+    window.removeEventListener('click', resumeAudio)
+    window.removeEventListener('touchstart', resumeAudio)
+  }
+
+  window.addEventListener('click', resumeAudio)
+  window.addEventListener('touchstart', resumeAudio)
 })
 </script>
 
@@ -10,6 +25,7 @@ onMounted(async () => {
   <div class="relative min-h-screen">
     <NuxtPage />
     <AudioLoadingStatus />
+    <CommonProModal />
   </div>
 </template>
 

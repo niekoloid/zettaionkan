@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import type { User } from '@supabase/supabase-js'
-import type { SubscriptionTier } from './usePro'
+import type { SubscriptionTier } from '~/types/app'
 
 const user = ref<User | null>(null)
 const isAuthReady = ref(false)
@@ -72,6 +72,7 @@ export function useAuth() {
   return {
     user,
     userTier: computed(() => {
+        if (!user.value) return 'free'
         if (import.meta.dev && debugTierCookie.value) {
             return debugTierCookie.value
         }

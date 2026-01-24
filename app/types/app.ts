@@ -28,10 +28,12 @@ export interface HistoryItem {
   isSkipped?: boolean
 }
 
+export type SubscriptionTier = 'free' | 'entry' | 'standard' | 'premium'
+
 export interface UserProfile {
   id: string
   email: string
-  subscription_tier: 'free' | 'entry' | 'premium'
+  subscription_tier: SubscriptionTier
   stripe_customer_id?: string
 }
 

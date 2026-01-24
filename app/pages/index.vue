@@ -42,6 +42,10 @@ const allChords = computed(() => {
     // Use granular feature gates for each chord in Home context
     const isLocked = !hasAccess(`home_chord_${chord.id}` as any, userTier.value)
 
+    if (chord.id === 'lacismi') {
+       console.log(`Chord: lacismi, User: ${user.value ? 'YES' : 'NO'}, Tier: ${userTier.value}, isLocked: ${isLocked}`)
+    }
+
     return {
       ...chord,
       globalIndex: index + 1,
@@ -156,8 +160,11 @@ const playNote = async (note: string) => {
   const toggleChord = async (chord: DisplayChord) => {
     // Check lock
     if ((chord as any).isLocked) {
-      if (confirm('本機能はPROプラン限定です。プランを確認しますか？')) {
-        navigateTo('/subscription')
+      const { openProModal } = useProModal()
+      if (userTier.value === 'free') {
+        openProModal('PROプラン限定', 'この和音（黒鍵など）はPROプランで利用可能です。体験版では制限されています。')
+      } else {
+        openProModal('PROプラン機能', 'この機能はPROプラン限定です。')
       }
       return
     }

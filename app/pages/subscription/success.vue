@@ -19,7 +19,7 @@ onMounted(() => {
       </svg>
     </div>
     
-    <h1 class="text-2xl font-bold text-gray-900 mb-4">PROプランへの登録が<br>完了しました！</h1>
+    <h1 class="text-2xl font-bold text-gray-900 mb-4">Proプランへの登録が<br>完了しました！</h1>
     <p class="text-sm text-gray-500 leading-relaxed mb-8">
       ご利用ありがとうございます。<br>
       全ての機能をお楽しみいただけます。

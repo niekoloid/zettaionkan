@@ -1,7 +1,6 @@
 import type { Database } from '~/types/database.types'
 import { type FeatureKey } from '~/constants/features'
-
-export type SubscriptionTier = Database['public']['Tables']['profiles']['Row']['subscription_tier']
+import type { SubscriptionTier } from '~/types/app'
 
 const TIER_ORDER: Record<SubscriptionTier, number> = {
   'free': 0,
@@ -48,8 +47,8 @@ export const usePro = () => {
     if (!config || !config.enabled) return false
 
     const requiredTier = config.tier
-    const currentScore = TIER_ORDER[currentTier] ?? 0
-    const requiredScore = TIER_ORDER[requiredTier] ?? 0
+    const currentScore = TIER_ORDER[currentTier as keyof typeof TIER_ORDER] ?? 0
+    const requiredScore = TIER_ORDER[requiredTier as keyof typeof TIER_ORDER] ?? 0
     return currentScore >= requiredScore
   }
 

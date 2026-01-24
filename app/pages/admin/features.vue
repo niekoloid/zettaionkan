@@ -20,8 +20,9 @@ const groupedFeatures = computed(() => {
     else if (key.startsWith('instrument_') || key === 'parent_voice') category = 'Core Features'
 
     if (!groups[category]) groups[category] = []
+    const currentGroup = groups[category]!
     
-    groups[category].push({
+    currentGroup.push({
       key,
       enabled: isEnabled(key),
       tier: getFeatureConfig(key).tier,

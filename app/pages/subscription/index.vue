@@ -80,7 +80,7 @@ const handleSubscribe = async () => {
     <main class="flex-grow px-6 pb-20 overflow-y-auto">
       <div class="text-center mb-8">
         <h1 class="text-xs font-bold text-amber-500 uppercase tracking-[0.2em] mb-2">Upgrade to Pro</h1>
-        <h2 class="text-2xl font-black text-gray-900 mb-2">プロプランで才能を開花させる</h2>
+        <h2 class="text-2xl font-black text-gray-900 mb-2">Proプランで才能を開花させる</h2>
         <p class="text-sm text-gray-500 leading-relaxed font-medium">黒鍵を含む全ての和音と、最高級の音源で<br>本物の絶対音感を身につけましょう。</p>
       </div>
 
@@ -131,7 +131,7 @@ const handleSubscribe = async () => {
           <h3 class="text-lg font-black text-gray-900 mb-1">Pro</h3>
           <p class="text-[11px] text-gray-400 mb-4 font-bold">本格的なトレーニングに</p>
           <div class="flex items-baseline mb-6">
-            <span class="text-3xl font-black text-gray-900">¥{{ billingCycle === 'monthly' ? '980' : '6,000' }}</span>
+            <span class="text-3xl font-black text-gray-900">¥{{ billingCycle === 'monthly' ? '1,980' : '11,760' }}</span>
             <span class="text-xs font-medium text-gray-400 ml-1">/{{ billingCycle === 'monthly' ? '月' : '年' }}</span>
           </div>
           <button 

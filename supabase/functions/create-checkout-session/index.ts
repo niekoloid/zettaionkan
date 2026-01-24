@@ -97,10 +97,15 @@ Deno.serve(async (req) => {
         customerId = customer.id
         
         // Save customer ID back to profile
-        await supabaseClient
+        const { error: updateError } = await supabaseClient
           .from('profiles')
           .update({ stripe_customer_id: customerId })
           .eq('id', user.id)
+
+        if (updateError) {
+            console.error('Debug Server: Failed to update profile with customer ID:', updateError)
+            // We don't block the checkout, but this is bad.
+        }
     }
 
     // 4. Create Checkout Session
@@ -108,6 +113,9 @@ Deno.serve(async (req) => {
       customer: customerId,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'subscription',
+      metadata: {
+        supabase_user_id: user.id
+      },
       subscription_data: {
         trial_period_days: 14,
         metadata: {

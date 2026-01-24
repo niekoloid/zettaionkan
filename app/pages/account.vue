@@ -3,7 +3,7 @@ const router = useRouter()
 const supabase = useSupabaseClient()
 const { checkProStatus } = usePro()
 const { user, userTier, refreshStatus } = useAuth()
-import type { SubscriptionTier } from '~/composables/usePro'
+import type { SubscriptionTier } from '~/types/app'
 const isLoading = ref(true)
 const isPortalLoading = ref(false)
 const hasCustomer = ref(false)
@@ -44,7 +44,8 @@ const handleLogout = async () => {
 const getTierName = (tier: SubscriptionTier | undefined | null | string) => {
   if (tier === "premium") return 'PROプラン'
   if (tier === 'standard') return 'スタンダードプラン'
-  if (tier === 'entry') return 'エントリープラン'
+  if (tier === 'entry') return 'フリープラン'
+  if (tier === 'free') return 'フリープラン（未ログイン）'
   return '無料プラン'
 }
 

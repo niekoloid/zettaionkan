@@ -54,8 +54,11 @@ const checkAccess = (feature: any) => hasAccess(feature, userTier.value)
 const isPro = computed(() => userTier.value !== 'free') // Keep for simple checks if needed, but per-feature is better
 
 const handleLockedClick = () => {
-    if (confirm('本機能はPROプラン限定です。\nプラン詳細を確認しますか？')) {
-        router.push('/subscription')
+    const { openProModal } = useProModal()
+    if (userTier.value === 'free') {
+        openProModal('PROプラン限定', 'この機能（モード変更や黒鍵の選択など）はPROプランで利用可能です。')
+    } else {
+        openProModal('PROプラン機能', 'この機能はPROプラン限定です。')
     }
 }
 
