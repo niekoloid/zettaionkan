@@ -375,7 +375,7 @@ const scrollToTop = () => {
              </table>
           </div>
           <div class="mt-4 text-center md:hidden">
-            <span class="text-xs text-gray-400">← 横にスクロールして比較できます →</span>
+            <span class="text-xs text-gray-500 font-medium">← 横にスクロールして比較できます →</span>
           </div>
         </div>
       </section>
@@ -574,14 +574,14 @@ const scrollToTop = () => {
           
           <!-- Legal Disclaimer -->
           <div class="max-w-4xl mx-auto mb-12 text-left">
-            <div class="bg-white rounded-lg p-6 text-xs text-gray-400 leading-relaxed border border-gray-100 shadow-sm">
-              <h3 class="font-bold mb-2 text-gray-500">【本ご案内に関する注記・免責事項】</h3>
+            <div class="bg-white rounded-lg p-6 text-[11px] text-gray-500 leading-relaxed border border-gray-100 shadow-sm">
+              <h3 class="font-bold mb-2 text-gray-600">【本ご案内に関する注記・免責事項】</h3>
               <ul class="list-disc pl-4 space-y-1">
-                <li><strong>絶対音感の習得について：</strong>「絶対音感」の定義や達成度には個人差があります。本サービスは、適切な時期（一般的に2歳〜6歳頃の臨界期）に継続的なトレーニングを行うことで習得をサポートするものですが、全ての方に絶対音感の習得を保証するものではありません。また、本アプリは相対音感のトレーニング用としては設計されておらず、あくまで6歳頃までのお子様を持つ保護者の方が、お子様に絶対音感を教えるための補助ツールとしての利用を想定しています。</li>
-                <li><strong>比較情報について：</strong>本ページ内に掲載されている「ピアノ教室」「市販の教材」等との比較情報は、当社独自の調査（2026年1月時点）および一般的なサービス事例に基づくものです。全ての事業者・商品に当てはまるわけではありません。また、特定の団体・教室・教材等を指すものではなく、それらとの関係性は一切ありません。</li>
-                <li><strong>科学的根拠について：</strong>「臨界期」「脳科学的アプローチ」等の記述は、一般的な発達心理学・脳科学の学説や理論（CIM等）に基づいています。特定の医学的効果を標榜するものではありません。</li>
-                <li><strong>機能について：</strong>「演出モード（電車・車・猫など）」を含む一部の機能は、有料のPROプラン（月額1,980円〜）に含まれます。これらは14日間の無料トライアルですべてお試しいただけます。</li>
-                <li><strong>音源について：</strong>Steinway Model Bの音源は、University of Iowa Electronic Music Studiosが公開しているMISデータベースの音源を使用しています。</li>
+                <li><strong class="text-gray-700">絶対音感の習得について：</strong>「絶対音感」の定義や達成度には個人差があります。本サービスは、適切な時期（一般的に2歳〜6歳頃の臨界期）に継続的なトレーニングを行うことで習得をサポートするものですが、全ての方に絶対音感の習得を保証するものではありません。また、本アプリは相対音感のトレーニング用としては設計されておらず、あくまで6歳頃までのお子様を持つ保護者の方が、お子様に絶対音感を教えるための補助ツールとしての利用を想定しています。</li>
+                <li><strong class="text-gray-700">比較情報について：</strong>本ページ内に掲載されている「ピアノ教室」「市販の教材」等との比較情報は、当社独自の調査（2026年1月時点）および一般的なサービス事例に基づくものです。全ての事業者・商品に当てはまるわけではありません。また、特定の団体・教室・教材等を指すものではなく、それらとの関係性は一切ありません。</li>
+                <li><strong class="text-gray-700">科学的根拠について：</strong>「臨界期」「脳科学的アプローチ」等の記述は、一般的な発達心理学・脳科学の学説や理論（CIM等）に基づいています。特定の医学的効果を標榜するものではありません。</li>
+                <li><strong class="text-gray-700">機能について：</strong>「演出モード（電車・車・猫など）」を含む一部の機能は、有料のPROプラン（月額1,980円〜）に含まれます。これらは14日間の無料トライアルですべてお試しいただけます。</li>
+                <li><strong class="text-gray-700">音源について：</strong>Steinway Model Bの音源は, University of Iowa Electronic Music Studiosが公開しているMISデータベースの音源を使用しています。</li>
               </ul>
             </div>
           </div>
@@ -592,7 +592,7 @@ const scrollToTop = () => {
             <NuxtLink to="/privacy" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors">プライバシーポリシー</NuxtLink>
             <NuxtLink to="/legal" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors">特定商取引法に基づく表記</NuxtLink>
           </div>
-          <p class="text-xs text-gray-400">&copy; 2026 Akatsuki Inc.</p>
+          <p class="text-xs text-gray-500 font-medium">&copy; 2026 Akatsuki Inc.</p>
         </div>
       </footer>
     </main>
