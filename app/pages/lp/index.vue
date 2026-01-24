@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import StickyCta from '~/components/lp/StickyCta.vue'
 
 definePageMeta({
@@ -66,36 +66,24 @@ useHead({
     }
   ]
 })
+// SEO Setup
+useSeoMeta({
+  title: '絶対音感の習得を、もっと簡単に。 | いろおと',
+  description: 'こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。',
+  ogTitle: '絶対音感の習得を、もっと簡単に。 | いろおと',
+  ogDescription: 'こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。',
+  ogImage: 'https://zettaionkan.jp/images/lp/ogp_image.webp',
+  ogUrl: 'https://zettaionkan.jp/',
+  ogType: 'website',
+  ogSiteName: 'いろおと',
+  twitterCard: 'summary_large_image',
+  twitterTitle: '絶対音感の習得を、もっと簡単に。 | いろおと',
+  twitterDescription: 'こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。',
+  twitterImage: 'https://zettaionkan.jp/images/lp/ogp_image.webp',
+})
 </script>
 
 <template>
-  <!-- SEO Meta Tags would be handled by Nuxt generated head/config, but adding specific title/desc logic here if needed -->
-  <Head>
-    <Title>絶対音感の習得を、もっと簡単に。 | いろおと</Title>
-    <Meta name="description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
-    
-    <!-- Fonts - Handled via useHead for better hydration -->
-    <noscript>
-      <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" />
-    </noscript>
-
-    <!-- Preload Hero Image -->
-    <Link rel="preload" as="image" href="/images/lp/hero.webp" fetchpriority="high" />
-
-    <!-- Web/SEO -->
-    <Meta name="robots" content="index, follow" />
-    <Meta property="og:type" content="website" />
-    <Meta property="og:title" content="絶対音感の習得を、もっと簡単に。 | いろおと" />
-    <Meta property="og:description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
-    <Meta property="og:image" content="https://zettaionkan.jp/images/lp/ogp_image.webp" />
-    <Meta property="og:url" content="https://zettaionkan.jp/" />
-    <Meta property="og:site_name" content="いろおと" />
-    <Meta name="twitter:card" content="summary_large_image" />
-    <Meta name="twitter:title" content="絶対音感の習得を、もっと簡単に。 | いろおと" />
-    <Meta name="twitter:description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
-    <Meta name="twitter:image" content="https://zettaionkan.jp/images/lp/ogp_image.webp" />
-  </Head>
-
   <div class="font-sans text-gray-800 bg-white">
     <!-- Header/Nav (Simplified for LP) -->
     <header class="fixed top-0 w-full bg-white/80 backdrop-blur-md z-40 border-b border-gray-100">
@@ -343,7 +331,9 @@ useHead({
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
             <!-- Gift 1 -->
             <div class="relative p-8 rounded-3xl bg-indigo-50/50 border border-indigo-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100 flex flex-col items-center text-center">
-              <div class="w-20 h-20 mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center text-4xl">🌍</div>
+              <div class="w-24 h-24 mb-6 rounded-2xl overflow-hidden shadow-sm bg-white">
+                <img src="/images/lp/gift_language.png" alt="語学の贈り物" class="w-full h-full object-cover" width="96" height="96" />
+              </div>
               <h4 class="text-lg font-bold text-gray-900 mb-4 whitespace-pre-wrap">贈り物①：外国語（英語）の習得が劇的に有利になる<span class="block text-sm text-indigo-600 mt-1">【語学・脳の発達】</span></h4>
               <p class="text-sm text-gray-600 leading-relaxed">
                 音を正確に聴き分ける「絶対音感」を持つ子は、外国語の微妙な発音やイントネーションの違いを「音」として瞬時にキャッチできます。特に英語のリスニングやスピーキングにおいて、将来の学習スピードが圧倒的に変わります。まさに<strong class="text-indigo-900">「グローバルで活躍するための土台」</strong>です。
@@ -352,7 +342,9 @@ useHead({
 
             <!-- Gift 2 -->
             <div class="relative p-8 rounded-3xl bg-orange-50/50 border border-orange-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 flex flex-col items-center text-center">
-              <div class="w-20 h-20 mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center text-4xl">🎸</div>
+              <div class="w-24 h-24 mb-6 rounded-2xl overflow-hidden shadow-sm bg-white">
+                <img src="/images/lp/gift_music.png" alt="音楽の贈り物" class="w-full h-full object-cover" width="96" height="96" />
+              </div>
               <h4 class="text-lg font-bold text-gray-900 mb-4 whitespace-pre-wrap">贈り物②：どんな楽器も「遊び」のように楽しめる<span class="block text-sm text-orange-600 mt-1">【表現力の開花】</span></h4>
               <p class="text-sm text-gray-600 leading-relaxed">
                 一度絶対音感が身につけば、耳で聴いたメロディをすぐに楽器で再現できる「耳コピ」ができるようになります。 将来、ピアノ、ギター、吹奏楽など、どんな楽器を始める時も<strong class="text-orange-900">「楽譜が読めなくて挫折する」という最初の壁がありません</strong>。音楽が「お勉強」ではなく、一生の友達になります。
@@ -361,10 +353,12 @@ useHead({
 
             <!-- Gift 3 -->
             <div class="relative p-8 rounded-3xl bg-pink-50/50 border border-pink-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300 flex flex-col items-center text-center">
-              <div class="w-20 h-20 mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center text-4xl">✨</div>
+              <div class="w-24 h-24 mb-6 rounded-2xl overflow-hidden shadow-sm bg-white">
+                <img src="/images/lp/gift_confidence.png" alt="自信の贈り物" class="w-full h-full object-cover" width="96" height="96" />
+              </div>
               <h4 class="text-lg font-bold text-gray-900 mb-4 whitespace-pre-wrap">贈り物③：「私には特別な力がある」という圧倒的な自信<span class="block text-sm text-pink-600 mt-1">【自己肯定感】</span></h4>
               <p class="text-sm text-gray-600 leading-relaxed">
-                「雨の音がソに聞こえる」「車のクラクションがドとミের和音だ」など、日常の音が音楽に変わる特別な感覚。 この「他の人にはない、自分だけの特別な力」は、お子様にとって大きな自信（自己肯定感）となります。この自信は、音楽だけでなく、勉強やスポーツなどあらゆる挑戦を支える心の土台になります。
+                「雨の音がソに聞こえる」「車のクラクションがドとミの和音だ」など、日常の音が音楽に変わる特別な感覚。 この「他の人にはない、自分だけの特別な力」は、お子様にとって大きな自信（自己肯定感）となります。この自信は、音楽だけでなく、勉強やスポーツなどあらゆる挑戦を支える心の土台になります。
               </p>
             </div>
           </div>
@@ -688,7 +682,9 @@ useHead({
     </main>
 
     <!-- Sticky CTA Component -->
-    <StickyCta />
+    <ClientOnly>
+      <StickyCta />
+    </ClientOnly>
   </div>
 </template>
 
