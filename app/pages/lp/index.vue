@@ -137,7 +137,7 @@ useSeoMeta({
             <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
               <div class="relative mx-auto w-full rounded-2xl shadow-2xl lg:max-w-md overflow-hidden">
                 <!-- Hero Image -->
-                <img class="w-full h-full object-cover" src="/images/lp/hero_nanobanana.png" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" fetchpriority="high" />
+                <img class="w-full h-full object-cover" src="/images/lp/hero_phone_mockup.png" alt="スマホでアプリ画面を表示している様子" width="1024" height="1024" loading="eager" decoding="async" fetchpriority="high" />
               </div>
               
               <!-- Mobile Only CTA -->
