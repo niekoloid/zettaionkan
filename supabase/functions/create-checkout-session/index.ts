@@ -62,9 +62,25 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: `Unauthorized: ${userError?.message || 'No user found'}` }), { status: 401 })
     }
 
-    // 2. Map interval to Price ID
-    const priceId = interval === 'yearly' ? priceYearly : priceMonthly
-    if (!priceId) throw new Error(`Price ID for ${interval} ${suffix} not configured`)
+    // 2. Map interval to Price ID based on tier
+    let priceId = ''
+    
+    // Default to premium if not specified for backward compatibility, but ideally frontend sends it
+    const requestedTier = tier || 'premium'
+    
+    if (requestedTier === 'standard') {
+        const standardPriceMonthly = Deno.env.get(`STRIPE_PRICE_STANDARD_MONTHLY${suffix}`)
+        const standardPriceYearly = Deno.env.get(`STRIPE_PRICE_STANDARD_YEARLY${suffix}`)
+        priceId = interval === 'yearly' ? standardPriceYearly : standardPriceMonthly
+    } else {
+        // Premium (Default)
+        // If specific premium variables exist, use them. Otherwise fallback to the legacy variables which were implicitly premium.
+        const premiumPriceMonthly = Deno.env.get(`STRIPE_PRICE_PREMIUM_MONTHLY${suffix}`) || priceMonthly
+        const premiumPriceYearly = Deno.env.get(`STRIPE_PRICE_PREMIUM_YEARLY${suffix}`) || priceYearly
+        priceId = interval === 'yearly' ? premiumPriceYearly : premiumPriceMonthly
+    }
+
+    if (!priceId) throw new Error(`Price ID for ${requestedTier} ${interval} ${suffix} not configured`)
 
     // 3. User mapping logic
     const { data: profile } = await supabaseClient
@@ -114,12 +130,14 @@ Deno.serve(async (req) => {
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'subscription',
       metadata: {
-        supabase_user_id: user.id
+        supabase_user_id: user.id,
+        tier: requestedTier
       },
       subscription_data: {
         trial_period_days: 14,
         metadata: {
-            supabase_user_id: user.id
+            supabase_user_id: user.id,
+            tier: requestedTier
         }
       },
       success_url: return_url || `${req.headers.get('origin')}/subscription/success`,

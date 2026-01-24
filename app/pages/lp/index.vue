@@ -516,54 +516,54 @@ useSeoMeta({
                  </tr>
                </thead>
                <tbody class="divide-y divide-gray-100 text-gray-800">
-                 <tr>
-                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
-                     <span class="mr-1 md:mr-2 text-base md:text-lg">🎒</span>準備
-                   </td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">スマホひとつ</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">楽器・楽譜一式</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">多量のカード類</td>
-                 </tr>
-                 <tr>
+                  <tr>
                     <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
-                      <span class="mr-1 md:mr-2 text-base md:text-lg">🏠</span>場所
+                      準備
                     </td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">どこでもOK</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">教室（要送迎）</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">楽器の前（固定）</td>
-                 </tr>
-                 <tr>
-                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
-                     <span class="mr-1 md:mr-2 text-base md:text-lg">🕰️</span>親の負担
-                   </td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">BGM再生でOK</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">送迎と連絡</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">つきっきり指導</td>
-                 </tr>
-                 <tr>
-                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
-                     <span class="mr-1 md:mr-2 text-base md:text-lg">👶</span>反応
-                   </td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">演出で夢中</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">緊張感がある</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">飽きやすい</td>
-                 </tr>
-                 <tr>
-                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
-                     <span class="mr-1 md:mr-2 text-base md:text-lg">📊</span>記録
-                   </td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">自動集計</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">先生の評価のみ</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">親の手書きメモ</td>
-                 </tr>
-                 <tr>
-                   <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
-                     <span class="mr-1 md:mr-2 text-base md:text-lg">👛</span>コスト
-                   </td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 rounded-b-lg border-x-2 border-b-2 border-indigo-100 relative z-10 shadow-lg transform scale-105 origin-top">月額 980円〜</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">月額 約1万円〜</td>
-                   <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">高額な教材費</td>
-                 </tr>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">スマホひとつ</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">楽器・楽譜一式</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">多量のカード類</td>
+                  </tr>
+                  <tr>
+                     <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                       場所
+                     </td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">どこでもOK</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">教室（要送迎）</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">楽器の前（固定）</td>
+                  </tr>
+                  <tr>
+                    <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                      親の負担
+                    </td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">BGM再生でOK</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">送迎と連絡</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">つきっきり指導</td>
+                  </tr>
+                  <tr>
+                    <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                      反応
+                    </td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">演出で夢中</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">緊張感がある</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">飽きやすい</td>
+                  </tr>
+                  <tr>
+                    <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                      記録
+                    </td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 border-x-2 border-indigo-100 relative z-10 shadow-sm">自動集計</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">先生の評価のみ</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">親の手書きメモ</td>
+                  </tr>
+                  <tr>
+                    <td class="sticky left-0 z-20 px-4 py-6 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900 bg-white border-r border-gray-100">
+                      コスト
+                    </td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-sm md:text-lg font-bold text-indigo-700 bg-indigo-50 rounded-b-lg border-x-2 border-b-2 border-indigo-100 relative z-10 shadow-lg transform scale-105 origin-top">月額 980円〜</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">月額 約1万円〜</td>
+                    <td class="px-4 py-6 whitespace-nowrap text-center text-xs md:text-sm text-gray-500">高額な教材費</td>
+                  </tr>
                </tbody>
              </table>
           </div>

@@ -96,6 +96,7 @@ Deno.serve(async (req) => {
             console.log('Session metadata:', JSON.stringify(session.metadata))
             
             let userId = session.subscription_data?.metadata?.supabase_user_id || session.metadata?.supabase_user_id
+            let tier = session.subscription_data?.metadata?.tier || session.metadata?.tier || 'premium'
             const customerId = session.customer
 
             if (!userId && customerId) {
@@ -115,11 +116,11 @@ Deno.serve(async (req) => {
             }
 
             if (userId) {
-                console.log(`Updating user ${userId} to premium with customer ID ${customerId}`)
+                console.log(`Updating user ${userId} to ${tier} with customer ID ${customerId}`)
                 const { error } = await supabaseAdmin
                 .from('profiles')
                 .update({ 
-                    subscription_tier: 'premium',
+                    subscription_tier: tier,
                     stripe_customer_id: customerId 
                 })
                 .eq('id', userId)
@@ -154,9 +155,17 @@ Deno.serve(async (req) => {
             const status = subscription.status
             console.log(`Processing subscription update for customer ${customerId}, status: ${status}`)
             
+            const hasActiveStatus = ['active', 'trialing'].includes(status)
             let tier = 'free'
-            if (['active', 'trialing'].includes(status)) {
-                tier = 'premium'
+            
+            if (hasActiveStatus) {
+                // Check metadata first
+                if (subscription.metadata && subscription.metadata.tier) {
+                    tier = subscription.metadata.tier
+                } else {
+                    // Fallback: If no metadata, assume Premium (legacy behavior)
+                    tier = 'premium'
+                }
             }
 
             await supabaseAdmin

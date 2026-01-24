@@ -5,16 +5,9 @@ const user = useSupabaseUser()
 const isLoading = ref(false)
 const billingCycle = ref<'monthly' | 'yearly'>('monthly')
 
-const features = [
-  { name: '白鍵の和音 (9種類)', free: true, pro: true },
-  { name: '黒鍵の和音 (全14種類)', free: false, pro: true },
-  { name: 'Steinway B 音源', free: false, pro: true },
-  { name: '自動再生 (全モード)', free: false, pro: true },
-  { name: '学習履歴 (無期限)', free: false, pro: true },
-  { name: '広告なし', free: false, pro: true },
-]
 
-const handleSubscribe = async () => {
+
+const handleSubscribe = async (tierArg: 'standard' | 'premium' = 'premium') => {
   if (isLoading.value) return
   isLoading.value = true
   
@@ -38,7 +31,7 @@ const handleSubscribe = async () => {
 
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: { 
-        tier: 'premium',
+        tier: tierArg,
         interval: billingCycle.value,
         return_url: window.location.origin + '/subscription/success',
         is_test: isTest
@@ -105,7 +98,7 @@ const handleSubscribe = async () => {
         </div>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-4 mb-8">
+      <div class="grid md:grid-cols-3 gap-4 mb-8">
         <!-- Free Plan -->
         <div class="rounded-3xl p-6 border border-gray-100 bg-gray-50/50 flex flex-col">
           <h3 class="text-lg font-black text-gray-900 mb-1">Free</h3>
@@ -113,45 +106,102 @@ const handleSubscribe = async () => {
           <div class="text-3xl font-black text-gray-900 mb-6">¥0<span class="text-xs font-medium text-gray-400 ml-1">/月</span></div>
           <button disabled class="w-full py-3 rounded-xl bg-gray-200 text-gray-400 font-bold text-xs mb-6 cursor-default">現在のプラン</button>
           <ul class="space-y-3 flex-grow">
-            <li v-for="feat in features" :key="feat.name" class="flex items-center text-[11px] font-bold" :class="feat.free ? 'text-gray-600' : 'text-gray-300 line-through decoration-gray-300 decoration-2 opacity-60'">
-              <svg v-if="feat.free" class="h-4 w-4 mr-2 shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-              <svg v-else class="h-4 w-4 mr-2 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-              </svg>
-              <span>{{ feat.name }}</span>
+            <!-- Free Features -->
+            <li class="flex items-center text-[11px] font-bold text-gray-600">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+              <span>白鍵の和音 (9種類)</span>
+            </li>
+            <li class="flex items-center text-[11px] font-bold text-gray-300 line-through decoration-gray-300 decoration-2 opacity-60">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+              <span>黒鍵の和音 (全14種類)</span>
+            </li>
+            <li class="flex items-center text-[11px] font-bold text-gray-300 line-through decoration-gray-300 decoration-2 opacity-60">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+              <span>自動再生 (全モード)</span>
+            </li>
+            <li class="flex items-center text-[11px] font-bold text-gray-300 line-through decoration-gray-300 decoration-2 opacity-60">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+              <span>Steinway B 音源</span>
             </li>
           </ul>
         </div>
 
-        <!-- Pro Plan -->
-        <div class="rounded-3xl p-6 border-2 border-amber-400 bg-white relative overflow-hidden shadow-xl shadow-amber-100/50 flex flex-col">
-          <div class="absolute top-0 right-0 bg-amber-400 text-white text-[9px] font-black px-3 py-1 rounded-bl-xl shadow-sm tracking-wide">RECOMMENDED</div>
-          <h3 class="text-lg font-black text-gray-900 mb-1">Pro</h3>
-          <p class="text-[11px] text-gray-400 mb-4 font-bold">本格的なトレーニングに</p>
+        <!-- Standard Plan -->
+        <div class="rounded-3xl p-6 border-2 border-indigo-100 bg-white relative overflow-hidden flex flex-col hover:border-indigo-300 transition-colors">
+          <h3 class="text-lg font-black text-gray-900 mb-1">Standard</h3>
+          <p class="text-[11px] text-gray-400 mb-4 font-bold">基本をしっかり</p>
           <div class="flex items-baseline mb-6">
-            <span class="text-3xl font-black text-gray-900">¥{{ billingCycle === 'monthly' ? '1,980' : '11,760' }}</span>
+            <span class="text-3xl font-black text-gray-900">¥{{ billingCycle === 'monthly' ? '980' : '9,800' }}</span>
             <span class="text-xs font-medium text-gray-400 ml-1">/{{ billingCycle === 'monthly' ? '月' : '年' }}</span>
           </div>
           <button 
-            @click="handleSubscribe" 
+            @click="handleSubscribe('standard')" 
+            :disabled="isLoading"
+            class="w-full py-3 rounded-xl bg-indigo-50 text-indigo-600 font-bold text-xs mb-6 hover:bg-indigo-100 transition-all active:scale-95 relative overflow-hidden group"
+          >
+            <span class="relative z-10 flex items-center justify-center">
+              <span>{{ isLoading ? '処理中...' : 'Standardを選ぶ' }}</span>
+            </span>
+          </button>
+           <ul class="space-y-3 flex-grow">
+            <!-- Standard Features -->
+            <li class="flex items-center text-[11px] font-bold text-gray-900">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span>白鍵の和音 (9種類)</span>
+            </li>
+            <li class="flex items-center text-[11px] font-bold text-gray-900">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span>黒鍵の和音 (全14種類)</span>
+            </li>
+            <li class="flex items-center text-[11px] font-bold text-gray-900">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span>自動再生 (全モード)</span>
+            </li>
+            <li class="flex items-center text-[11px] font-bold text-gray-300 line-through decoration-gray-300 decoration-2 opacity-60">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+              <span>Steinway B 音源</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Premium Plan -->
+        <div class="rounded-3xl p-6 border-2 border-amber-400 bg-white relative overflow-hidden shadow-xl shadow-amber-100/50 flex flex-col">
+          <div class="absolute top-0 right-0 bg-amber-400 text-white text-[9px] font-black px-3 py-1 rounded-bl-xl shadow-sm tracking-wide">RECOMMENDED</div>
+          <h3 class="text-lg font-black text-gray-900 mb-1">Premium</h3>
+          <p class="text-[11px] text-gray-400 mb-4 font-bold">最高品質の環境を</p>
+          <div class="flex items-baseline mb-6">
+            <span class="text-3xl font-black text-gray-900">¥{{ billingCycle === 'monthly' ? '1,980' : '19,800' }}</span>
+            <span class="text-xs font-medium text-gray-400 ml-1">/{{ billingCycle === 'monthly' ? '月' : '年' }}</span>
+          </div>
+          <button 
+            @click="handleSubscribe('premium')" 
             :disabled="isLoading"
             class="w-full py-3 rounded-xl bg-gray-900 text-white font-bold text-xs mb-6 hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200 relative overflow-hidden group"
           >
             <span class="relative z-10 flex items-center justify-center">
-              <span>{{ isLoading ? '処理中...' : 'Proプランにアップグレード' }}</span>
+              <span>{{ isLoading ? '処理中...' : 'Premiumにアップグレード' }}</span>
               <svg v-if="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
               </svg>
             </span>
           </button>
            <ul class="space-y-3 flex-grow">
-            <li v-for="feat in features" :key="feat.name" class="flex items-center text-[11px] font-bold text-gray-900">
-              <svg class="h-4 w-4 mr-2 shrink-0 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
-              <span>{{ feat.name }}</span>
+             <!-- Premium Features -->
+            <li class="flex items-center text-[11px] font-bold text-gray-900">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span>白鍵の和音 (9種類)</span>
+            </li>
+            <li class="flex items-center text-[11px] font-bold text-gray-900">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span>黒鍵の和音 (全14種類)</span>
+            </li>
+            <li class="flex items-center text-[11px] font-bold text-gray-900">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span>自動再生 (全モード)</span>
+            </li>
+            <li class="flex items-center text-[11px] font-bold text-gray-900">
+              <svg class="h-4 w-4 mr-2 shrink-0 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span>Steinway B 音源</span>
             </li>
           </ul>
         </div>

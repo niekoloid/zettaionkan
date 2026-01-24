@@ -109,52 +109,52 @@ export const FEATURE_GATES: Record<FeatureKey, FeatureConfig> = {
 
   // --- Chord Access (Autoplay) ---
   'autoplay_chord_domiso':  { tier: 'free',    enabled: true },
-  'autoplay_chord_dofara':  { tier: 'premium', enabled: true },
-  'autoplay_chord_shireso': { tier: 'premium', enabled: true },
-  'autoplay_chord_radofa':  { tier: 'premium', enabled: true },
-  'autoplay_chord_resoshi': { tier: 'premium', enabled: true },
-  'autoplay_chord_misodo':  { tier: 'premium', enabled: true },
-  'autoplay_chord_farado':  { tier: 'premium', enabled: true },
-  'autoplay_chord_soshire': { tier: 'premium', enabled: true },
-  'autoplay_chord_sodomi':  { tier: 'premium', enabled: true },
-  'autoplay_chord_lacismi': { tier: 'premium', enabled: true },
-  'autoplay_chord_refisla': { tier: 'premium', enabled: true },
-  'autoplay_chord_migissi': { tier: 'premium', enabled: true },
-  'autoplay_chord_berefa':  { tier: 'premium', enabled: true },
-  'autoplay_chord_essobe':  { tier: 'premium', enabled: true },
+  'autoplay_chord_dofara':  { tier: 'standard', enabled: true },
+  'autoplay_chord_shireso': { tier: 'standard', enabled: true },
+  'autoplay_chord_radofa':  { tier: 'standard', enabled: true },
+  'autoplay_chord_resoshi': { tier: 'standard', enabled: true },
+  'autoplay_chord_misodo':  { tier: 'standard', enabled: true },
+  'autoplay_chord_farado':  { tier: 'standard', enabled: true },
+  'autoplay_chord_soshire': { tier: 'standard', enabled: true },
+  'autoplay_chord_sodomi':  { tier: 'standard', enabled: true },
+  'autoplay_chord_lacismi': { tier: 'standard', enabled: true },
+  'autoplay_chord_refisla': { tier: 'standard', enabled: true },
+  'autoplay_chord_migissi': { tier: 'standard', enabled: true },
+  'autoplay_chord_berefa':  { tier: 'standard', enabled: true },
+  'autoplay_chord_essobe':  { tier: 'standard', enabled: true },
 
   // --- Content Features ---
   'instrument_steinway': { tier: 'premium', enabled: true },
   'parent_voice': { tier: 'premium', enabled: false },
 
   // --- Autoplay Specific Modes ---
-  'mode_icecream': { tier: 'premium', enabled: true },
-  'mode_cat': { tier: 'premium', enabled: false },
-  'mode_video_cat': { tier: 'premium', enabled: false },
-  'mode_cat_flag': { tier: 'premium', enabled: false },
-  'mode_train': { tier: 'premium', enabled: true },
-  'mode_vehicle': { tier: 'premium', enabled: false },
+  'mode_icecream': { tier: 'standard', enabled: true }, // Changed to standard
+  'mode_cat': { tier: 'standard', enabled: false }, 
+  'mode_video_cat': { tier: 'standard', enabled: false },
+  'mode_cat_flag': { tier: 'standard', enabled: false },
+  'mode_train': { tier: 'standard', enabled: true }, // Changed to standard
+  'mode_vehicle': { tier: 'standard', enabled: false },
 
   // --- Settings ---
   'settings_instrument_yamaha': { tier: 'free', enabled: true },
   'settings_instrument_steinway': { tier: 'premium', enabled: true },
   'settings_keyboard_sound': { tier: 'premium', enabled: true },
   'settings_color_format': { tier: 'free', enabled: true },
-  'settings_color_format_hiragana': { tier: 'premium', enabled: true },
+  'settings_color_format_hiragana': { tier: 'standard', enabled: true }, // Changed to standard
   'settings_naming_convention': { tier: 'free', enabled: true },
   'settings_chord_customization': { tier: 'premium', enabled: true },
 
   // --- Quiz Settings ---
-  'quiz_content_black_keys': { tier: 'premium', enabled: true },
+  'quiz_content_black_keys': { tier: 'standard', enabled: true }, // Changed to standard
   'quiz_settings_frequency': { tier: 'free', enabled: true },
 
   // --- Single Note Test Settings ---
-  'singlenote_setting_white_keys': { tier: 'premium', enabled: true },
-  'singlenote_setting_match_octave': { tier: 'premium', enabled: true },
-  'singlenote_setting_88_keys': { tier: 'premium', enabled: true },
+  'singlenote_setting_white_keys': { tier: 'standard', enabled: true },
+  'singlenote_setting_match_octave': { tier: 'standard', enabled: true },
+  'singlenote_setting_88_keys': { tier: 'standard', enabled: true },
 
   // --- History Features ---
-  'history_detailed_view': { tier: 'premium', enabled: true },
+  'history_detailed_view': { tier: 'standard', enabled: true }, // Changed to standard
   'history_delete_feature': { tier: 'free', enabled: true },
 }
 
