@@ -3,7 +3,8 @@ import { ref, onMounted } from 'vue'
 import StickyCta from '~/components/lp/StickyCta.vue'
 
 definePageMeta({
-  layout: false
+  layout: false,
+  pageTransition: false
 })
 
 const faqOpen = ref<number | null>(null)
@@ -57,13 +58,10 @@ const scrollToTop = () => {
     <Title>絶対音感の習得を、もっと簡単に。 | いろおと</Title>
     <Meta name="description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
     
-    <!-- Fonts - Optimized loading to prevent render-blocking -->
-    <Link rel="preconnect" href="https://fonts.googleapis.com" />
+    <!-- Fonts - Optimized preconnect and non-blocking load -->
     <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" media="print" onload="this.media='all'" />
-    <noscript>
-      <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" />
-    </noscript>
+    <Link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" />
+    <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" media="all" />
 
     <!-- Preload Hero Image -->
     <Link rel="preload" as="image" href="/images/lp/hero.webp" fetchpriority="high" />
@@ -113,8 +111,8 @@ const scrollToTop = () => {
       <section class="relative overflow-hidden pt-10 pb-16 lg:pt-20 lg:pb-28">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div class="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
-            <!-- REMOVED animate-on-scroll for immediate LCP -->
-            <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left transition-all duration-1000 ease-out">
+            <!-- Removed animation/transition from hero for instant LCP -->
+            <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 class="block text-4xl tracking-tight font-extrabold sm:text-5xl xl:text-6xl text-gray-900 leading-tight text-balance">
                 <span class="inline-block">絶対音感の習得を、</span><span class="inline-block">もっと簡単に。</span>
               </h1>
@@ -130,8 +128,8 @@ const scrollToTop = () => {
                 </div>
               </div>
             </div>
-            <!-- REMOVED animate-on-scroll for immediate LCP -->
-            <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center transition-all duration-1000 ease-out delay-200">
+            <!-- Removed animation/transition from hero for instant LCP -->
+            <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
               <div class="relative mx-auto w-full rounded-2xl shadow-2xl lg:max-w-md overflow-hidden">
                 <!-- Hero Image -->
                 <img class="w-full h-full object-cover" src="/images/lp/hero.webp" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" fetchpriority="high" />
