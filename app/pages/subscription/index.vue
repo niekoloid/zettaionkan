@@ -170,7 +170,7 @@ const handleSubscribe = async (tierArg: 'standard' | 'premium' = 'premium') => {
           <h3 class="text-lg font-black text-gray-900 mb-1">Premium</h3>
           <p class="text-[11px] text-gray-400 mb-4 font-bold">最高品質の環境を</p>
           <div class="flex items-baseline mb-6">
-            <span class="text-3xl font-black text-gray-900">¥{{ billingCycle === 'monthly' ? '1,980' : '19,800' }}</span>
+            <span class="text-3xl font-black text-gray-900">¥{{ billingCycle === 'monthly' ? '1,980' : '15,000' }}</span>
             <span class="text-xs font-medium text-gray-400 ml-1">/{{ billingCycle === 'monthly' ? '月' : '年' }}</span>
           </div>
           <button 
