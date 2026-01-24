@@ -157,38 +157,88 @@ useSeoMeta({
       </section>
 
       <!-- 2. Pain & Agony -->
-      <section class="py-16 bg-gray-50 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-12 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-            <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl text-balance">
-              <span class="inline-block">あんなに意気込んで始めたのに、</span><br class="sm:hidden" /><span class="inline-block">毎日の『準備』と『つきっきり』に</span><br class="sm:hidden" /><span class="inline-block">疲れていませんか？</span>
+      <!-- 2. Pain & Agony -->
+      <section class="py-16 md:py-24 bg-gray-50 overflow-hidden relative">
+        <!-- Decorative background elements -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+          <div class="absolute -top-24 -left-24 w-96 h-96 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+          <div class="absolute top-1/2 right-0 w-72 h-72 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div class="text-center mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+            <span class="text-gray-500 font-semibold tracking-wide uppercase text-sm">Pain Points</span>
+            <h2 class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl text-balance leading-tight">
+              あんなに意気込んで始めたのに、<br />
+              毎日の<span class="text-red-500 bg-red-50 px-1 rounded mx-1 relative inline-block">『準備』</span>と
+              <span class="text-red-500 bg-red-50 px-1 rounded mx-1 relative inline-block">『つきっきり』</span>に<br class="hidden md:inline"/>
+              疲れていませんか？
             </h2>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-center">
-            <!-- Pain Image -->
-            <div class="lg:col-span-1 md:col-span-2 order-last md:order-first animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-               <div class="rounded-xl overflow-hidden shadow-lg">
-                <!-- Pain Image -->
-                <img class="w-full h-full object-cover" src="/images/lp/pain.webp" alt="散らかったリビングで頭を抱える親" width="1024" height="1024" loading="lazy" decoding="async" />
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 text-left items-center">
+              <!-- Image Side -->
+              <div class="relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+                 <div class="relative rounded-2xl overflow-hidden shadow-2xl border-8 border-white transform rotate-[-2deg] hover:rotate-0 transition-all duration-500">
+                   <div class="absolute inset-0 bg-gray-900/10 z-10"></div> <!-- Slight darken overlay -->
+                   <img src="/images/lp/pain.webp" alt="散らかったリビングで頭を抱える親" class="w-full h-auto object-cover" width="600" height="400" />
+                   <!-- Caption Overlay -->
+                   <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6 z-20">
+                     <p class="text-white font-bold text-lg">「もう、やめたい...」</p>
+                     <p class="text-gray-200 text-sm">理想と現実のギャップに悩む日々</p>
+                   </div>
+                 </div>
+                 <!-- Decorative element -->
+                 <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-gray-200 rounded-full mix-blend-multiply filter blur-xl opacity-50 z-0"></div>
               </div>
-            </div>
-            
-            <!-- Pain Cards -->
-             <div class="lg:col-span-3 md:col-span-2 grid grid-cols-1 gap-6">
-                <!-- Card 1 -->
-                <div class="bg-white p-6 rounded-xl shadow-md animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100 border-l-4 border-gray-400">
-                  <p class="text-lg font-medium text-gray-700">楽器の前に座るだけでも一苦労</p>
-                </div>
+
+              <!-- Cards Side -->
+              <div class="space-y-6">
+                 <!-- Card 1 -->
+                 <div class="flex items-start p-6 bg-white rounded-2xl shadow-lg border-l-4 border-gray-300 animate-on-scroll opacity-0 translate-x-10 transition-all duration-1000 ease-out delay-100 hover:shadow-xl hover:translate-x-1 transform transition-all group">
+                   <div class="flex-shrink-0 mr-4">
+                     <div class="w-12 h-12 bg-gray-100 text-2xl flex items-center justify-center rounded-full group-hover:bg-red-50 group-hover:text-red-500 transition-colors">
+                       😫
+                     </div>
+                   </div>
+                   <div>
+                     <h3 class="text-lg font-bold text-gray-900 mb-1 group-hover:text-red-600 transition-colors">楽器の前に座るだけでも一苦労</h3>
+                     <p class="text-gray-600 text-sm leading-relaxed">
+                       「練習しよう」と声をかけても、遊びに夢中で聞いてくれない。楽器の準備をするだけで親の体力が削られていく...。
+                     </p>
+                   </div>
+                 </div>
+
                  <!-- Card 2 -->
-                <div class="bg-white p-6 rounded-xl shadow-md animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 border-l-4 border-gray-400">
-                  <p class="text-lg font-medium text-gray-700">レッスンに通わせる時間の余裕がない</p>
-                </div>
-                 <!-- Card 3 -->
-                <div class="bg-white p-6 rounded-xl shadow-md animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300 border-l-4 border-gray-400">
-                  <p class="text-lg font-medium text-gray-700">子供が飽きてしまい、ついつい叱ってしまう自分への自己嫌悪</p>
-                </div>
-             </div>
+                 <div class="flex items-start p-6 bg-white rounded-2xl shadow-lg border-l-4 border-gray-300 animate-on-scroll opacity-0 translate-x-10 transition-all duration-1000 ease-out delay-200 hover:shadow-xl hover:translate-x-1 transform transition-all group">
+                   <div class="flex-shrink-0 mr-4">
+                      <div class="w-12 h-12 bg-gray-100 text-2xl flex items-center justify-center rounded-full group-hover:bg-red-50 group-hover:text-red-500 transition-colors">
+                       🕰️
+                     </div>
+                   </div>
+                   <div>
+                     <h3 class="text-lg font-bold text-gray-900 mb-1 group-hover:text-red-600 transition-colors">レッスンに通わせる時間の余裕がない</h3>
+                     <p class="text-gray-600 text-sm leading-relaxed">
+                       共働きで送迎の時間を作るのは至難の業。土日も家事や他の用事で潰れてしまい、継続的に通うのが難しい。
+                     </p>
+                   </div>
+                 </div>
+
+                  <!-- Card 3 -->
+                 <div class="flex items-start p-6 bg-white rounded-2xl shadow-lg border-l-4 border-gray-300 animate-on-scroll opacity-0 translate-x-10 transition-all duration-1000 ease-out delay-300 hover:shadow-xl hover:translate-x-1 transform transition-all group">
+                   <div class="flex-shrink-0 mr-4">
+                     <div class="w-12 h-12 bg-gray-100 text-2xl flex items-center justify-center rounded-full group-hover:bg-red-50 group-hover:text-red-500 transition-colors">
+                       😓
+                     </div>
+                   </div>
+                   <div>
+                     <h3 class="text-lg font-bold text-gray-900 mb-1 group-hover:text-red-600 transition-colors">ついつい叱ってしまう自己嫌悪</h3>
+                     <p class="text-gray-600 text-sm leading-relaxed">
+                       子供がすぐに飽きてしまい、真面目にやらない姿にイライラ。「なんでできないの！」と声を荒らげては、寝顔を見て反省する毎日。
+                     </p>
+                   </div>
+                 </div>
+              </div>
           </div>
         </div>
       </section>
@@ -205,52 +255,64 @@ useSeoMeta({
 
           <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
              <!-- Features List -->
-            <div class="space-y-10">
-               <!-- Feature 1 -->
-              <div class="flex animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-                <div class="flex-shrink-0">
-                  <div class="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md">
-                    <img src="/images/lp/feature_visual.webp" alt="演出モードのイメージ" class="w-full h-full object-cover" width="64" height="64" />
-                  </div>
+            <div class="space-y-8">
+               <!-- Feature 1: Performance Mode -->
+              <div class="group relative bg-white p-6 rounded-3xl border border-gray-100 shadow-lg shadow-indigo-50/50 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 transition-all duration-300 animate-on-scroll opacity-0 translate-y-10 ease-out">
+                <div class="absolute -left-2 -top-2 bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md z-10 tracking-widest">
+                  楽しさ
                 </div>
-                <div class="ml-4">
-                  <h3 class="text-lg leading-6 font-bold text-gray-900">演出モード</h3>
-                  <p class="mt-2 text-base text-gray-600">
-                    電車、車、ねこ…お子様の『大好き』が音と一緒に動き出すから、集中力が途切れません。
-                  </p>
+                <div class="flex items-start gap-5">
+                  <div class="flex-shrink-0">
+                    <div class="relative h-16 w-16 md:h-20 md:w-20 rounded-2xl overflow-hidden shadow-md ring-4 ring-indigo-50 group-hover:ring-indigo-100 transition-all">
+                      <img src="/images/lp/feature_visual.webp" alt="演出モードのイメージ" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" width="80" height="80" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 class="text-lg md:text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">演出モード</h3>
+                    <p class="mt-2 text-sm md:text-base text-gray-600 leading-relaxed font-medium">
+                      電車、車、ねこ…お子様の『大好き』が音と一緒に動き出すから、<span class="text-indigo-600 bg-indigo-50 px-1 rounded font-bold">集中力が途切れません</span>。
+                    </p>
+                  </div>
                 </div>
               </div>
 
-               <!-- Feature 2 Deleted -->
-
-               <!-- Feature 3 -->
-              <div class="flex animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200">
-                <div class="flex-shrink-0">
-                  <div class="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md">
-                    <img src="/images/lp/feature_autoplay.webp" alt="オートプレイのイメージ" class="w-full h-full object-cover" width="64" height="64" />
-                  </div>
+               <!-- Feature 2: Autoplay -->
+              <div class="group relative bg-white p-6 rounded-3xl border border-gray-100 shadow-lg shadow-indigo-50/50 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 transition-all duration-300 animate-on-scroll opacity-0 translate-y-10 ease-out delay-100">
+                <div class="absolute -left-2 -top-2 bg-pink-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md z-10 tracking-widest">
+                  手軽さ
                 </div>
-                <div class="ml-4">
-                  <h3 class="text-lg leading-6 font-bold text-gray-900">BGMとして流すだけ</h3>
-                  <p class="mt-2 text-base text-gray-600">
-                    「オートプレイ機能」搭載。忙しい家事の合間や移動中、BGMとして流しておくだけで、無意識のうちに音感が育ちます。
-                  </p>
+                <div class="flex items-start gap-5">
+                  <div class="flex-shrink-0">
+                    <div class="relative h-16 w-16 md:h-20 md:w-20 rounded-2xl overflow-hidden shadow-md ring-4 ring-pink-50 group-hover:ring-pink-100 transition-all">
+                      <img src="/images/lp/feature_autoplay.webp" alt="オートプレイのイメージ" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" width="80" height="80" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 class="text-lg md:text-xl font-bold text-gray-900 group-hover:text-pink-600 transition-colors">BGMとして流すだけ</h3>
+                    <p class="mt-2 text-sm md:text-base text-gray-600 leading-relaxed font-medium">
+                      「オートプレイ機能」搭載。忙しい家事の合間や移動中、BGMとして流しておくだけで、<span class="text-pink-600 bg-pink-50 px-1 rounded font-bold">無意識のうちに音感が育ちます</span>。
+                    </p>
+                  </div>
                 </div>
               </div>
 
-
-               <!-- Feature 4 -->
-              <div class="flex animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300">
-                <div class="flex-shrink-0">
-                  <div class="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md">
-                    <img src="/images/lp/feature_piano.webp" alt="スタインウェイ音源のイメージ" class="w-full h-full object-cover" width="64" height="64" />
-                  </div>
+               <!-- Feature 3: Sound Quality -->
+              <div class="group relative bg-white p-6 rounded-3xl border border-gray-100 shadow-lg shadow-indigo-50/50 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 transition-all duration-300 animate-on-scroll opacity-0 translate-y-10 ease-out delay-200">
+                <div class="absolute -left-2 -top-2 bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md z-10 tracking-widest">
+                  本物志向
                 </div>
-                <div class="ml-4">
-                  <h3 class="text-lg leading-6 font-bold text-gray-900">最高峰の音源</h3>
-                  <p class="mt-2 text-base text-gray-600">
-                    世界最高峰のスタインウェイ音源を採用。電子音ではない本物のグランドピアノの響きが、お子様の繊細な耳を育てます。
-                  </p>
+                <div class="flex items-start gap-5">
+                  <div class="flex-shrink-0">
+                    <div class="relative h-16 w-16 md:h-20 md:w-20 rounded-2xl overflow-hidden shadow-md ring-4 ring-orange-50 group-hover:ring-orange-100 transition-all">
+                      <img src="/images/lp/feature_piano.webp" alt="スタインウェイ音源のイメージ" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" width="80" height="80" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 class="text-lg md:text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors">最高峰の音源</h3>
+                    <p class="mt-2 text-sm md:text-base text-gray-600 leading-relaxed font-medium">
+                      世界最高峰のスタインウェイ音源を採用。電子音ではない本物のグランドピアノの響きが、<span class="text-orange-600 bg-orange-50 px-1 rounded font-bold">お子様の繊細な耳を育てます</span>。
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -328,37 +390,80 @@ useSeoMeta({
             </p>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 pt-10">
             <!-- Gift 1 -->
-            <div class="relative p-8 rounded-3xl bg-indigo-50/50 border border-indigo-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100 flex flex-col items-center text-center">
-              <div class="w-24 h-24 mb-6 rounded-2xl overflow-hidden shadow-sm bg-white">
+            <div class="relative p-8 pt-12 rounded-3xl bg-white border border-indigo-100 shadow-xl shadow-indigo-100/20 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100 flex flex-col items-center text-center group hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-100/40 transition-all duration-300">
+              <!-- Label Badge -->
+              <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-indigo-500 to-blue-500 text-white px-6 py-2 rounded-full shadow-lg text-sm font-black tracking-widest border-4 border-white">
+                GIFT 01
+              </div>
+              
+              <div class="w-24 h-24 mb-6 rounded-full overflow-hidden shadow-lg border-4 border-indigo-50 bg-white group-hover:scale-110 transition-transform duration-300">
                 <img src="/images/lp/gift_language.png" alt="語学の贈り物" class="w-full h-full object-cover" width="96" height="96" />
               </div>
-              <h4 class="text-lg font-bold text-gray-900 mb-4 whitespace-pre-wrap">贈り物①：外国語（英語）の習得が劇的に有利になる<span class="block text-sm text-indigo-600 mt-1">【語学・脳の発達】</span></h4>
-              <p class="text-sm text-gray-600 leading-relaxed">
-                音を正確に聴き分ける「絶対音感」を持つ子は、外国語の微妙な発音やイントネーションの違いを「音」として瞬時にキャッチできます。特に英語のリスニングやスピーキングにおいて、将来の学習スピードが圧倒的に変わります。まさに<strong class="text-indigo-900">「グローバルで活躍するための土台」</strong>です。
+              
+              <div class="mb-3">
+                 <span class="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full border border-indigo-100">
+                  語学・脳の発達
+                </span>
+              </div>
+
+              <h4 class="text-xl font-bold text-gray-900 mb-4 whitespace-pre-wrap leading-tight">
+                IQの向上につながり<br/>外国語の習得が有利になる
+              </h4>
+              
+              <p class="text-sm text-gray-600 leading-relaxed font-medium">
+                色と音を対応付ける訓練により、共感覚（Synesthesia）の能力トレーニングになります。また、音を正確に聴き分ける耳は、外国語（英語）の習得においても圧倒的なアドバンテージとなります。
               </p>
             </div>
 
             <!-- Gift 2 -->
-            <div class="relative p-8 rounded-3xl bg-orange-50/50 border border-orange-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 flex flex-col items-center text-center">
-              <div class="w-24 h-24 mb-6 rounded-2xl overflow-hidden shadow-sm bg-white">
+             <div class="relative p-8 pt-12 rounded-3xl bg-white border border-orange-100 shadow-xl shadow-orange-100/20 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 flex flex-col items-center text-center group hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-100/40 transition-all duration-300">
+               <!-- Label Badge -->
+              <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-400 to-red-400 text-white px-6 py-2 rounded-full shadow-lg text-sm font-black tracking-widest border-4 border-white">
+                GIFT 02
+              </div>
+
+              <div class="w-24 h-24 mb-6 rounded-full overflow-hidden shadow-lg border-4 border-orange-50 bg-white group-hover:scale-110 transition-transform duration-300">
                 <img src="/images/lp/gift_music.png" alt="音楽の贈り物" class="w-full h-full object-cover" width="96" height="96" />
               </div>
-              <h4 class="text-lg font-bold text-gray-900 mb-4 whitespace-pre-wrap">贈り物②：どんな楽器も「遊び」のように楽しめる<span class="block text-sm text-orange-600 mt-1">【表現力の開花】</span></h4>
-              <p class="text-sm text-gray-600 leading-relaxed">
-                一度絶対音感が身につけば、耳で聴いたメロディをすぐに楽器で再現できる「耳コピ」ができるようになります。 将来、ピアノ、ギター、吹奏楽など、どんな楽器を始める時も<strong class="text-orange-900">「楽譜が読めなくて挫折する」という最初の壁がありません</strong>。音楽が「お勉強」ではなく、一生の友達になります。
+
+              <div class="mb-3">
+                 <span class="inline-block bg-orange-50 text-orange-700 text-xs font-bold px-3 py-1 rounded-full border border-orange-100">
+                  表現力の開花
+                </span>
+              </div>
+
+              <h4 class="text-xl font-bold text-gray-900 mb-4 whitespace-pre-wrap leading-tight">
+                どんな楽器も<br/>「遊び」のように楽しめる
+              </h4>
+              <p class="text-sm text-gray-600 leading-relaxed font-medium">
+                一度絶対音感が身につけば、耳で聴いたメロディをすぐに楽器で再現できる「耳コピ」ができるようになります。 将来、ピアノ、ギター、吹奏楽など、どんな楽器を始める時も<strong class="text-orange-600 bg-orange-50 px-1 rounded">「楽譜が読めなくて挫折する」という最初の壁がありません</strong>。音楽が「お勉強」ではなく、一生の友達になります。
               </p>
             </div>
 
             <!-- Gift 3 -->
-            <div class="relative p-8 rounded-3xl bg-pink-50/50 border border-pink-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300 flex flex-col items-center text-center">
-              <div class="w-24 h-24 mb-6 rounded-2xl overflow-hidden shadow-sm bg-white">
+             <div class="relative p-8 pt-12 rounded-3xl bg-white border border-pink-100 shadow-xl shadow-pink-100/20 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300 flex flex-col items-center text-center group hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-100/50 transition-all duration-300">
+               <!-- Label Badge -->
+              <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-400 to-rose-400 text-white px-6 py-2 rounded-full shadow-lg text-sm font-black tracking-widest border-4 border-white">
+                GIFT 03
+              </div>
+
+              <div class="w-24 h-24 mb-6 rounded-full overflow-hidden shadow-lg border-4 border-pink-50 bg-white group-hover:scale-110 transition-transform duration-300">
                 <img src="/images/lp/gift_confidence.png" alt="自信の贈り物" class="w-full h-full object-cover" width="96" height="96" />
               </div>
-              <h4 class="text-lg font-bold text-gray-900 mb-4 whitespace-pre-wrap">贈り物③：「私には特別な力がある」という圧倒的な自信<span class="block text-sm text-pink-600 mt-1">【自己肯定感】</span></h4>
-              <p class="text-sm text-gray-600 leading-relaxed">
-                「救急車のサイレンが『シ・ソ』に聞こえる」「踏切の音が『ファ＃』に聞こえる」など、日常の音がドレミに変換される不思議で特別な感覚。 この「他の人にはない、自分だけの特別な力」は、お子様にとって大きな自信（自己肯定感）となります。この自信は、音楽だけでなく、勉強やスポーツなどあらゆる挑戦を支える心の土台になります。
+
+              <div class="mb-3">
+                 <span class="inline-block bg-pink-50 text-pink-700 text-xs font-bold px-3 py-1 rounded-full border border-pink-100">
+                  自己肯定感
+                </span>
+              </div>
+
+              <h4 class="text-xl font-bold text-gray-900 mb-4 whitespace-pre-wrap leading-tight">
+                自分だけの特別な力という<br/>「圧倒的な自信」
+              </h4>
+              <p class="text-sm text-gray-600 leading-relaxed font-medium">
+                「救急車のサイレンが『シ・ソ』に聞こえる」など、日常の音がドレミに変換される不思議で特別な感覚。 <strong class="text-pink-600 bg-pink-50 px-1 rounded">20万人に一人</strong>と呼ばれるこの希少な能力は、お子様にとって「他の人にはない自分だけの特別な力」として、大きな自信（自己肯定感）となります。この自信は、音楽だけでなく、勉強やスポーツなどあらゆる挑戦を支える心の土台になります。
               </p>
             </div>
           </div>
@@ -618,23 +723,29 @@ useSeoMeta({
           <div class="bg-white p-8 md:p-12 rounded-lg shadow-inner animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
             <h3 class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em] mb-4">Message</h3>
             <h2 class="text-2xl font-serif font-bold text-gray-800 mb-8 border-b-2 border-indigo-100 pb-4">
-              「間に合わなかった」という後悔を、<br/>ゼロにしたい。
+              間に合わなかったという後悔を、<br/>誰にもしてほしくない。
             </h2>
             <div class="prose prose-lg text-gray-600 font-serif leading-relaxed">
               <p>
                 はじめまして。いろおとの開発者です。
               </p>
               <p>
-                私自身、15歳でピアノに熱中した時「もし自分に絶対音感があれば」と切実に願いました。しかし、その時にはもう手遅れだったのです。
+                私自身、15歳のときにピアノの演奏にのめり込んでいた際、「自分にも絶対音感があったら」と切実に思っていました。しかし、皮肉にも絶対音感が欲しいと願うのは、もうそれが手に入らない大人になってからなのです。6歳頃までの子供たちは、まだ臨界期の存在すら知らず、自らそれを望むことはありません。
               </p>
               <p>
-                そんな悔しさと、自分の息子との練習で「やりなさい！」と声を荒らげてしまった反省から、この「いろおと」は生まれました。
+                親として「良いと言われることはしてあげたい」。その一心で2歳の息子と音感トレーニングに格闘しましたが、現実は甘くありませんでした。様々な研究資料をあたると「和音と色を結びつける方法」が最適であることは分かりましたが、いざ家庭で毎日実践しようとすると、それはあまりにも大変なことでした。教具を揃え、ピアノの前に誘い、なんとか子供を飽きさせないように……。気づけば余裕をなくし、「やりなさい！」と声を荒らげてしまう日々。
+              </p>
+              <p class="font-bold text-gray-800">
+                「これでは本末転倒だ……」
               </p>
               <p>
-                子供が自ら駆け寄り、親は隣でニコニコ見守るだけ。そんな「親子の笑顔の時間」を、一生モノの贈り物に変えたい。その一心で、遊びの要素を詰め込みました。
+                そんな挫折と反省から、この「いろおと」は生まれました。
               </p>
               <p>
-                タイムリミットはありますが、焦る必要はありません。正しい方法さえあれば、トレーニングは最高の「遊び」になるからです。
+                子供が自ら「やりたい！」と駆け寄ってくれる。親は隣でニコニコと見守るだけでいい。そんな幸せな景色を作りたくて、徹底的に「子供の視点」で遊びの要素を詰め込みました。
+              </p>
+              <p>
+                絶対音感の習得にはタイムリミットがありますが、焦る必要はありません。正しい方法さえあれば、それはトレーニングの時間ではなく、親子の笑顔の時間になるからです。
               </p>
               <p>
                 あなたと、大切なお子様の未来が、色とりどりの音で溢れますように。
