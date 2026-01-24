@@ -355,7 +355,7 @@ useSeoMeta({
                 </div>
                 <div class="md:w-1/2">
                   <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 leading-snug">
-                    なぜ「単音」ではなく、<br />「和音」から始めるのか？
+                    なぜ和音の練習で絶対音感が身につくのか？
                   </h3>
                   <div class="prose prose-blue text-gray-600 text-sm md:text-base leading-relaxed space-y-4">
                     <p>
@@ -580,7 +580,7 @@ useSeoMeta({
               <span class="inline-block">一生モノのギフトを、</span><br/><span class="inline-block">まずは無料で体験。</span>
             </h2>
             <p class="mt-4 text-xl text-gray-600">
-              気に入ったら月額 1,980円で本格トレーニング。
+              気に入ったら月額 980円で本格トレーニング。
             </p>
           </div>
 
@@ -592,7 +592,7 @@ useSeoMeta({
                 </span>
               </div>
               <div class="mt-4 flex justify-center items-baseline text-6xl font-extrabold text-gray-900">
-                 <span class="text-3xl font-medium text-gray-500 mr-2">実質月額</span>
+                 <span class="text-3xl font-medium text-gray-500 mr-2">月額</span>
                 980<span class="ml-1 text-2xl font-medium text-gray-500">円〜</span>
               </div>
               <p class="mt-4 text-gray-500">
