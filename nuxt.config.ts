@@ -45,6 +45,9 @@ export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
   },
+  features: {
+    inlineStyles: true
+  },
   experimental: {
     // inlineSSRStyles is removed in newer Nuxt 3 versions
   },
