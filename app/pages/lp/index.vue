@@ -399,7 +399,7 @@ useSeoMeta({
               </div>
               
               <div class="w-24 h-24 mb-6 rounded-full overflow-hidden shadow-lg border-4 border-indigo-50 bg-white group-hover:scale-110 transition-transform duration-300">
-                <img src="/images/lp/gift_language.png" alt="語学の贈り物" class="w-full h-full object-cover" width="96" height="96" />
+                <img src="/images/lp/gift_language_nanobanana.png" alt="語学の贈り物" class="w-full h-full object-cover" width="96" height="96" />
               </div>
               
               <div class="mb-3">
@@ -425,7 +425,7 @@ useSeoMeta({
               </div>
 
               <div class="w-24 h-24 mb-6 rounded-full overflow-hidden shadow-lg border-4 border-orange-50 bg-white group-hover:scale-110 transition-transform duration-300">
-                <img src="/images/lp/gift_music.png" alt="音楽の贈り物" class="w-full h-full object-cover" width="96" height="96" />
+                <img src="/images/lp/gift_music_nanobanana.png" alt="音楽の贈り物" class="w-full h-full object-cover" width="96" height="96" />
               </div>
 
               <div class="mb-3">
@@ -450,7 +450,7 @@ useSeoMeta({
               </div>
 
               <div class="w-24 h-24 mb-6 rounded-full overflow-hidden shadow-lg border-4 border-pink-50 bg-white group-hover:scale-110 transition-transform duration-300">
-                <img src="/images/lp/gift_confidence.png" alt="自信の贈り物" class="w-full h-full object-cover" width="96" height="96" />
+                <img src="/images/lp/gift_confidence_nanobanana.png" alt="自信の贈り物" class="w-full h-full object-cover" width="96" height="96" />
               </div>
 
               <div class="mb-3">
@@ -473,7 +473,7 @@ useSeoMeta({
             <div class="md:w-1/2 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-400">
                <div class="relative">
                  <div class="absolute inset-0 bg-gradient-to-tr from-indigo-200 to-pink-200 blur-3xl opacity-30 rounded-full"></div>
-                 <img src="/images/lp/benefits.png" alt="子供が未来を夢見るイメージ" class="relative z-10 w-full h-auto rounded-3xl shadow-xl" width="1024" height="1024" />
+                 <img src="/images/lp/benefits_nanobanana.png" alt="子供が未来を夢見るイメージ" class="relative z-10 w-full h-auto rounded-3xl shadow-xl" width="1024" height="1024" />
                </div>
             </div>
             <div class="md:w-1/2 text-center md:text-left animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-500">
