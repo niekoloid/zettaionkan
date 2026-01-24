@@ -27,7 +27,8 @@ export default defineNuxtConfig({
       }
     }
   },
-  css: ['~/assets/css/main.css'],
+  // Move tailwind to components/pages to avoid entry.css
+  // css: ['~/assets/css/main.css'],
   app: {
     head: {
       title: 'いろおと - 絶対音感トレーニング',
@@ -51,9 +52,7 @@ export default defineNuxtConfig({
   features: {
     inlineStyles: true
   },
-  experimental: {
-    // inlineSSRStyles is removed in newer Nuxt 3 versions
-  },
+  experimental: {},
   runtimeConfig: {
     resendApiKey: process.env.RESEND_API_KEY,
     public: {

@@ -43,7 +43,22 @@ onMounted(async () => {
 </template>
 
 <style>
-/* Global styles are handled in assets/css/main.css usually, but specific overrides can go here */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Noto Sans JP', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
 #chord-score svg {
   background: transparent !important;
 }
