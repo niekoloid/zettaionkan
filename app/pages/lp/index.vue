@@ -58,10 +58,12 @@ const scrollToTop = () => {
     <Title>絶対音感の習得を、もっと簡単に。 | いろおと</Title>
     <Meta name="description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
     
-    <!-- Fonts - Optimized preconnect and non-blocking load -->
+    <!-- Fonts - Truly non-render-blocking via print media trick -->
     <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <Link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" />
-    <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" media="all" />
+    <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@700&display=swap" />
+    </noscript>
 
     <!-- Preload Hero Image -->
     <Link rel="preload" as="image" href="/images/lp/hero.webp" fetchpriority="high" />
