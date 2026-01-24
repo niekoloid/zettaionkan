@@ -109,6 +109,7 @@ useHead({
             <button @click="scrollToTop" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">トップ</button>
             <a href="#solution" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">特徴</a>
             <a href="#method" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">仕組み</a>
+            <a href="#benefits" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">メリット</a>
             <a href="#comparison" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">比較表</a>
             <a href="#pricing" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">料金プラン</a>
             <a href="#faq" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">Q&A</a>
@@ -317,6 +318,79 @@ useHead({
                     <p>
                       このアプローチこそが、日常言語を覚えるのと同じ仕組みで、一生モノの「絶対的な音の記憶」を定着させる最短ルートなのです。
                     </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.7 Benefits Section -->
+      <section id="benefits" class="py-16 lg:py-24 bg-white overflow-hidden border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+            <span class="text-indigo-600 font-bold tracking-wide uppercase text-xs md:text-sm">Future Benefits</span>
+            <h2 class="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl text-balance mb-4">
+              絶対音感がお子様の未来に与える<br class="sm:hidden" />「3つの贈り物」
+            </h2>
+            <h3 class="text-xl font-bold text-indigo-900 mb-6">なぜ、世界の優秀な層はこぞって「耳」を育てるのか？</h3>
+            <p class="max-w-3xl mx-auto text-base md:text-lg text-gray-500 font-medium leading-relaxed">
+              絶対音感の習得は、単に「ドレミがわかる」ことではありません。脳が最も柔軟な幼児期に「音の基準」を作ることは、お子様の脳の発達に計り知れないメリットをもたらします。
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            <!-- Gift 1 -->
+            <div class="relative p-8 rounded-3xl bg-indigo-50/50 border border-indigo-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100 flex flex-col items-center text-center">
+              <div class="w-20 h-20 mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center text-4xl">🌍</div>
+              <h4 class="text-lg font-bold text-gray-900 mb-4 whitespace-pre-wrap">贈り物①：外国語（英語）の習得が劇的に有利になる<span class="block text-sm text-indigo-600 mt-1">【語学・脳の発達】</span></h4>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                音を正確に聴き分ける「絶対音感」を持つ子は、外国語の微妙な発音やイントネーションの違いを「音」として瞬時にキャッチできます。特に英語のリスニングやスピーキングにおいて、将来の学習スピードが圧倒的に変わります。まさに<strong class="text-indigo-900">「グローバルで活躍するための土台」</strong>です。
+              </p>
+            </div>
+
+            <!-- Gift 2 -->
+            <div class="relative p-8 rounded-3xl bg-orange-50/50 border border-orange-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 flex flex-col items-center text-center">
+              <div class="w-20 h-20 mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center text-4xl">🎸</div>
+              <h4 class="text-lg font-bold text-gray-900 mb-4 whitespace-pre-wrap">贈り物②：どんな楽器も「遊び」のように楽しめる<span class="block text-sm text-orange-600 mt-1">【表現力の開花】</span></h4>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                一度絶対音感が身につけば、耳で聴いたメロディをすぐに楽器で再現できる「耳コピ」ができるようになります。 将来、ピアノ、ギター、吹奏楽など、どんな楽器を始める時も<strong class="text-orange-900">「楽譜が読めなくて挫折する」という最初の壁がありません</strong>。音楽が「お勉強」ではなく、一生の友達になります。
+              </p>
+            </div>
+
+            <!-- Gift 3 -->
+            <div class="relative p-8 rounded-3xl bg-pink-50/50 border border-pink-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300 flex flex-col items-center text-center">
+              <div class="w-20 h-20 mb-6 rounded-2xl bg-white shadow-sm flex items-center justify-center text-4xl">✨</div>
+              <h4 class="text-lg font-bold text-gray-900 mb-4 whitespace-pre-wrap">贈り物③：「私には特別な力がある」という圧倒的な自信<span class="block text-sm text-pink-600 mt-1">【自己肯定感】</span></h4>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                「雨の音がソに聞こえる」「車のクラクションがドとミের和音だ」など、日常の音が音楽に変わる特別な感覚。 この「他の人にはない、自分だけの特別な力」は、お子様にとって大きな自信（自己肯定感）となります。この自信は、音楽だけでなく、勉強やスポーツなどあらゆる挑戦を支える心の土台になります。
+              </p>
+            </div>
+          </div>
+
+          <!-- Microcopy and Image -->
+          <div class="mt-20 flex flex-col md:flex-row items-center justify-center gap-12 max-w-5xl mx-auto">
+            <div class="md:w-1/2 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-400">
+               <div class="relative">
+                 <div class="absolute inset-0 bg-gradient-to-tr from-indigo-200 to-pink-200 blur-3xl opacity-30 rounded-full"></div>
+                 <img src="/images/lp/benefits.png" alt="子供が未来を夢見るイメージ" class="relative z-10 w-full h-auto rounded-3xl shadow-xl" width="1024" height="1024" />
+               </div>
+            </div>
+            <div class="md:w-1/2 text-center md:text-left animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-500">
+              <div class="bg-gradient-to-br from-gray-900 to-indigo-900 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16"></div>
+                <div class="relative z-10">
+                  <p class="text-white text-lg md:text-xl font-bold leading-relaxed">
+                    この「3つの贈り物」をあげられるのは、<span class="text-yellow-300 underline underline-offset-4">聴覚が発達する6歳半まで</span>。
+                  </p>
+                  <p class="mt-6 text-indigo-100 text-base md:text-lg font-medium leading-relaxed">
+                    「いろおと」は、この貴重なチャンスを逃さないためのパスポートです。
+                  </p>
+                  <div class="mt-8">
+                    <a href="/auth?mode=signup" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-full text-white bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 transform transition hover:scale-105 shadow-xl">
+                      無料で今すぐ始める
+                    </a>
                   </div>
                 </div>
               </div>
@@ -550,29 +624,23 @@ useHead({
           <div class="bg-white p-8 md:p-12 rounded-lg shadow-inner animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
             <h3 class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em] mb-4">Message</h3>
             <h2 class="text-2xl font-serif font-bold text-gray-800 mb-8 border-b-2 border-indigo-100 pb-4">
-              間に合わなかったという後悔を、<br/>誰にもしてほしくない。
+              「間に合わなかった」という後悔を、<br/>ゼロにしたい。
             </h2>
             <div class="prose prose-lg text-gray-600 font-serif leading-relaxed">
               <p>
                 はじめまして。いろおとの開発者です。
               </p>
               <p>
-                私自身、15歳のときにピアノの演奏にのめり込んでいた際、「自分にも絶対音感があったら」と切実に思っていました。しかし、皮肉にも絶対音感が欲しいと願うのは、もうそれが手に入らない大人になってからなのです。6歳頃までの子供たちは、まだ臨界期の存在すら知らず、自らそれを望むことはありません。
+                私自身、15歳でピアノに熱中した時「もし自分に絶対音感があれば」と切実に願いました。しかし、その時にはもう手遅れだったのです。
               </p>
               <p>
-                親として「良いと言われることはしてあげたい」。その一心で2歳の息子と音感トレーニングに格闘しましたが、現実は甘くありませんでした。様々な研究資料をあたると「和音と色を結びつける方法」が最適であることは分かりましたが、いざ家庭で毎日実践しようとすると、それはあまりにも大変なことでした。教具を揃え、ピアノの前に誘い、なんとか子供を飽きさせないように……。気づけば余裕をなくし、「やりなさい！」と声を荒らげてしまう日々。
-              </p>
-              <p class="font-bold text-gray-800">
-                「これでは本末転倒だ……」
+                そんな悔しさと、自分の息子との練習で「やりなさい！」と声を荒らげてしまった反省から、この「いろおと」は生まれました。
               </p>
               <p>
-                そんな挫折と反省から、この「いろおと」は生まれました。
+                子供が自ら駆け寄り、親は隣でニコニコ見守るだけ。そんな「親子の笑顔の時間」を、一生モノの贈り物に変えたい。その一心で、遊びの要素を詰め込みました。
               </p>
               <p>
-                子供が自ら「やりたい！」と駆け寄ってくれる。親は隣でニコニコと見守るだけでいい。そんな幸せな景色を作りたくて、徹底的に「子供の視点」で遊びの要素を詰め込みました。
-              </p>
-              <p>
-                絶対音感の習得にはタイムリミットがありますが、焦る必要はありません。正しい方法さえあれば、それはトレーニングの時間ではなく、親子の笑顔の時間になるからです。
+                タイムリミットはありますが、焦る必要はありません。正しい方法さえあれば、トレーニングは最高の「遊び」になるからです。
               </p>
               <p>
                 あなたと、大切なお子様の未来が、色とりどりの音で溢れますように。
