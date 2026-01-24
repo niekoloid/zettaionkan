@@ -1,7 +1,7 @@
 import { FEATURE_GATES, type FeatureKey } from '~/constants/features'
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  const { userTier, authReady } = useAuth()
+  const { userTier, authReady } = useAuth(to)
   const { hasAccess } = usePro()
 
   // Wait for auth to be determined (especially on initial load)

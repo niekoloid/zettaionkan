@@ -12,8 +12,8 @@ const authReadyPromise = new Promise<void>(resolve => {
   authReadyResolver = resolve
 })
 
-export function useAuth() {
-  const route = useRoute()
+export function useAuth(currentRoute?: { path: string }) {
+  const route = currentRoute || useRoute()
   if (route.path.startsWith('/lp')) {
     return {
       user: ref(null),
@@ -58,7 +58,7 @@ export function useAuth() {
     if (isInitialized) return
     
     // Skip auth initialization on LP to keep it static and fast
-    const route = useRoute()
+    // Use the route passed to useAuth or the active route
     if (route.path === '/lp') {
       isAuthReady.value = true
       if (authReadyResolver) authReadyResolver()
