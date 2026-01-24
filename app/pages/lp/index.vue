@@ -44,6 +44,18 @@ onMounted(() => {
   <Head>
     <Title>絶対音感の習得を、もっと簡単に。 | いろおと</Title>
     <Meta name="description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
+    <!-- Web/SEO -->
+    <Meta name="robots" content="index, follow" />
+    <Meta property="og:type" content="website" />
+    <Meta property="og:title" content="絶対音感の習得を、もっと簡単に。 | いろおと" />
+    <Meta property="og:description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
+    <Meta property="og:image" content="https://zettaionkan.com/images/lp/ogp_image.png" />
+    <Meta property="og:url" content="https://zettaionkan.com/" />
+    <Meta property="og:site_name" content="いろおと" />
+    <Meta name="twitter:card" content="summary_large_image" />
+    <Meta name="twitter:title" content="絶対音感の習得を、もっと簡単に。 | いろおと" />
+    <Meta name="twitter:description" content="こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。" />
+    <Meta name="twitter:image" content="https://zettaionkan.com/images/lp/ogp_image.png" />
   </Head>
 
   <div class="font-sans text-gray-800 bg-white">
@@ -53,7 +65,7 @@ onMounted(() => {
         <div class="flex justify-between items-center h-16">
           <div class="flex-shrink-0 flex items-center">
              <!-- Text Logo or Image Logo if available -->
-             <img src="~/assets/logo_irooto_only_name.png" alt="いろおと" class="h-8 w-auto" />
+             <img src="~/assets/logo_irooto_only_name.png" alt="いろおと" class="h-8 w-auto" width="100" height="32" />
           </div>
           <nav class="hidden md:flex space-x-8">
             <a href="#solution" class="text-gray-500 hover:text-gray-900 font-medium">特徴</a>
@@ -74,7 +86,8 @@ onMounted(() => {
       <section class="relative overflow-hidden pt-10 pb-16 lg:pt-20 lg:pb-28">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div class="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
-            <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+            <!-- REMOVED animate-on-scroll for immediate LCP -->
+            <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left transition-all duration-1000 ease-out">
               <h1 class="block text-4xl tracking-tight font-extrabold sm:text-5xl xl:text-6xl text-gray-900 leading-tight">
                 絶対音感の習得を、<br/>もっと簡単に。
               </h1>
@@ -91,10 +104,11 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-            <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200">
+            <!-- REMOVED animate-on-scroll for immediate LCP -->
+            <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center transition-all duration-1000 ease-out delay-200">
               <div class="relative mx-auto w-full rounded-2xl shadow-2xl lg:max-w-md overflow-hidden">
                 <!-- Hero Image -->
-                <img class="w-full h-full object-cover" src="/images/lp/hero.png" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" />
+                <img class="w-full h-full object-cover" src="/images/lp/hero.png" alt="親子が笑顔で顔を見合わせ、スマホには黄色いねこ" width="1024" height="1024" loading="eager" decoding="async" />
               </div>
             </div>
           </div>
@@ -118,7 +132,7 @@ onMounted(() => {
             <div class="lg:col-span-1 md:col-span-2 order-last md:order-first animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
                <div class="rounded-xl overflow-hidden shadow-lg">
                 <!-- Pain Image -->
-                <img class="w-full h-full object-cover" src="/images/lp/pain.png" alt="散らかったリビングで頭を抱える親" />
+                <img class="w-full h-full object-cover" src="/images/lp/pain.png" alt="散らかったリビングで頭を抱える親" width="1024" height="1024" loading="lazy" decoding="async" />
               </div>
             </div>
             
@@ -207,7 +221,7 @@ onMounted(() => {
             <div class="mt-12 lg:mt-0 relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300">
               <div class="rounded-2xl shadow-xl overflow-hidden bg-gray-100">
                  <!-- Solution Image -->
-                 <img class="w-full h-full object-cover transform hover:scale-105 transition duration-500" src="/images/lp/solution.png" alt="アプリ画面から飛び出す電車やねこ" />
+                 <img class="w-full h-full object-cover transform hover:scale-105 transition duration-500" src="/images/lp/solution.png" alt="アプリ画面から飛び出す電車やねこ" width="1024" height="1024" loading="lazy" decoding="async" />
               </div>
             </div>
           </div>
@@ -235,7 +249,7 @@ onMounted(() => {
                    <div class="aspect-video bg-white rounded-2xl shadow-sm flex items-center justify-center relative overflow-hidden">
                       <div class="absolute inset-0 bg-gradient-to-r from-red-100 via-yellow-100 to-blue-100 opacity-30"></div>
                       <div class="text-center relative z-10 w-full h-full">
-                        <img src="/images/lp/cim.png" alt="和音の響きが鮮やかな色に変換されるイメージ" class="w-full h-full object-cover" />
+                        <img src="/images/lp/cim.png" alt="和音の響きが鮮やかな色に変換されるイメージ" class="w-full h-full object-cover" width="1024" height="1024" loading="lazy" decoding="async" />
                       </div>
                    </div>
                 </div>
