@@ -1,11 +1,11 @@
-import * as Tone from 'tone'
+import type * as ToneType from 'tone'
 import { ref, computed } from 'vue'
 import { STEINWAY_FAST_MAP, STEINWAY_FULL_MAP, YAMAHA_MAP } from '~/constants/instruments'
 import { useAuth } from './useAuth'
 import { useVoiceSettings } from './useVoiceSettings'
 
 // Singleton state shared across all components
-const samplers: Record<string, Tone.Sampler> = {}
+const samplers: Record<string, any> = {}
 const isLoaded = ref({
   yamaha: false,
   steinway: false,
@@ -18,28 +18,30 @@ const isPreloading = ref(false)
 const loadingProgress = ref(0)
 const selectedInstrument = ref('yamaha')
 const loadingFile = ref('')
-const narrationBuffers: Record<string, Tone.ToneAudioBuffer> = {}
-const effectBuffers: Record<string, Tone.ToneAudioBuffer> = {}
+const narrationBuffers: Record<string, any> = {}
+const effectBuffers: Record<string, any> = {}
 const samplerLoadingPromises: Record<string, Promise<boolean> | null> = {}
 let narrationLoadingPromise: Promise<boolean> | null = null
 let effectsLoadingPromise: Promise<boolean> | null = null
-const customVoiceBuffers: Record<string, Tone.ToneAudioBuffer> = {}
+const customVoiceBuffers: Record<string, any> = {}
 
 // Set narration volume to approx 50% (-6dB) - initialized lazily on client
-let narrationVolume: Tone.Volume | null = null
-let effectsVolume: Tone.Volume | null = null
+let narrationVolume: any = null
+let effectsVolume: any = null
 
-const getNarrationVolume = () => {
+const getNarrationVolume = async () => {
   if (!import.meta.client) return null
   if (!narrationVolume) {
+    const Tone = await import('tone')
     narrationVolume = new Tone.Volume(-6).toDestination()
   }
   return narrationVolume
 }
 
-const getEffectsVolume = () => {
+const getEffectsVolume = async () => {
   if (!import.meta.client) return null
   if (!effectsVolume) {
+    const Tone = await import('tone')
     effectsVolume = new Tone.Volume(-3).toDestination()
   }
   return effectsVolume
@@ -91,8 +93,9 @@ export function useAudio() {
       selectedInstrument.value = instrumentId
     }
 
-    samplerLoadingPromises[instrumentId] = new Promise<boolean>((resolve) => {
+    samplerLoadingPromises[instrumentId] = new Promise<boolean>(async (resolve) => {
       try {
+        const Tone = await import('tone')
         let urls = instrumentId === 'yamaha' ? YAMAHA_MAP : STEINWAY_FAST_MAP
         const baseUrl = instrumentId === 'yamaha' 
           ? "https://tonejs.github.io/audio/salamander/" 
@@ -145,7 +148,7 @@ export function useAudio() {
             
             resolve(true)
           },
-          onerror: (err) => {
+          onerror: (err: any) => {
             console.error(`${instrumentId} load error:`, err)
             if (!isBackground) {
               if (!isPreloading.value) {
@@ -188,6 +191,7 @@ export function useAudio() {
     narrationLoadingPromise = (async () => {
       console.log('Starting narration buffer load in parallel...')
       try {
+        const Tone = await import('tone')
         const entries = Object.entries(NARRATION_FILES)
         const promises = entries.map(async ([name, url]) => {
           if (!narrationBuffers[name]) {
@@ -227,6 +231,7 @@ export function useAudio() {
       }
 
       try {
+        const Tone = await import('tone')
         const entries = Object.entries(effectFiles)
         const promises = entries.map(async ([name, url]) => {
           if (!effectBuffers[name]) {
@@ -293,6 +298,7 @@ export function useAudio() {
   }
 
   const playNotes = async (notes: string | string[], duration: string | number = 3): Promise<boolean> => {
+    const Tone = await import('tone')
     if (Tone.context.state !== 'running') await Tone.start()
     const s = samplers[selectedInstrument.value]
     if (s && isLoaded.value[selectedInstrument.value as keyof typeof isLoaded.value]) {
@@ -303,6 +309,7 @@ export function useAudio() {
   }
 
   const playNarration = async (colorName: string): Promise<boolean> => {
+    const Tone = await import('tone')
     // 1. Ensure context is running
     if (Tone.context.state !== 'running') {
       try {
@@ -324,7 +331,8 @@ export function useAudio() {
         
         const buffer = customVoiceBuffers[colorName]
         if (buffer) {
-          const vol = getNarrationVolume()
+          const Tone = await import('tone')
+          const vol = await getNarrationVolume()
           const source = new Tone.BufferSource(buffer)
           if (vol) source.connect(vol)
           else source.toDestination()
@@ -349,7 +357,8 @@ export function useAudio() {
     const buffer = narrationBuffers[colorName]
     if (buffer) {
       try {
-        const vol = getNarrationVolume()
+        const Tone = await import('tone')
+        const vol = await getNarrationVolume()
         const source = new Tone.BufferSource(buffer)
         if (vol) source.connect(vol)
         else source.toDestination()
@@ -369,6 +378,7 @@ export function useAudio() {
   }
 
   const playEffect = async (effectName: string): Promise<boolean> => {
+    const Tone = await import('tone')
     if (Tone.context.state !== 'running') {
       await Tone.context.resume()
     }
@@ -380,7 +390,8 @@ export function useAudio() {
     const buffer = effectBuffers[effectName]
     if (buffer) {
       try {
-        const vol = getEffectsVolume()
+        const Tone = await import('tone')
+        const vol = await getEffectsVolume()
         const source = new Tone.BufferSource(buffer)
         if (vol) source.connect(vol)
         else source.toDestination()

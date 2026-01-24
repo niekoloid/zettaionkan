@@ -41,6 +41,13 @@ export default defineNuxtConfig({
   srcDir: 'app/',
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
+  ssr: true,
+  nitro: {
+    compressPublicAssets: true,
+  },
+  experimental: {
+    // inlineSSRStyles is removed in newer Nuxt 3 versions
+  },
   runtimeConfig: {
     resendApiKey: process.env.RESEND_API_KEY,
     public: {

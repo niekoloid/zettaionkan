@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import * as Tone from 'tone'
 const route = useRoute()
 const { authReady } = useAuth()
 
 onMounted(async () => {
-  // Don't wait for auth on LP to speed up initial load
-  if (route.path !== '/lp') {
-    await authReady
+  // Don't wait for auth or load audio logic on LP to keep it lean and fast
+  if (route.path === '/lp') {
+    return
   }
+
+  await authReady
 
   // Global audio context resume handler
   const resumeAudio = async () => {
+    // Dynamic import to keep Tone.js out of the initial entry bundle
+    const Tone = await import('tone')
     if (Tone.context.state !== 'running') {
       await Tone.start()
       console.log('AudioContext started via global gesture')
