@@ -354,8 +354,8 @@ useSeoMeta({
                    </div>
                 </div>
                 <div class="md:w-1/2">
-                  <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 leading-snug">
-                    なぜ和音の練習で絶対音感が身につくのか？
+                  <h3 class="text-xl md:text-xl font-bold text-gray-900 mb-4 leading-snug">
+                    なぜ「和音」の練習で絶対音感が身につくのか？
                   </h3>
                   <div class="prose prose-blue text-gray-600 text-sm md:text-base leading-relaxed space-y-4">
                     <p>
@@ -413,7 +413,7 @@ useSeoMeta({
               </h4>
               
               <p class="text-sm text-gray-600 leading-relaxed font-medium">
-                色と音を対応付ける訓練により、共感覚（Synesthesia）の能力トレーニングになります。また、音を正確に聴き分ける耳は、外国語（英語）の習得においても圧倒的なアドバンテージとなります。
+                色と音を対応付ける日々の訓練は、脳の可塑性を高め、共感覚（Synesthesia）のような特殊な知覚能力を自然と育みます。また、音楽という言葉を超えた、より抽象度の高い世界へアクセスできるようになることで、思考の枠が広がり、お子様の持つ可能性が大きく開花します。さらに、微妙な音の違いを正確に聴き分ける耳は、将来の外国語（英語）習得においても圧倒的なアドバンテージとなります。
               </p>
             </div>
 
