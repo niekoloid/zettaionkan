@@ -89,10 +89,10 @@ useSeoMeta({
     <header class="fixed top-0 w-full bg-white/80 backdrop-blur-md z-40 border-b border-gray-100">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-center md:justify-between items-center h-16">
-          <div class="flex-shrink-0 flex items-center cursor-pointer" @click="scrollToTop">
+          <NuxtLink to="/lp" class="flex-shrink-0 flex items-center cursor-pointer">
              <!-- Text Logo or Image Logo if available -->
              <img src="~/assets/logo_irooto_only_name.webp" alt="いろおと" class="h-8 w-auto" width="100" height="32" />
-          </div>
+          </NuxtLink>
           <nav class="hidden md:flex space-x-8">
             <button @click="scrollToTop" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">トップ</button>
             <a href="#solution" class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">特徴</a>
