@@ -9,6 +9,26 @@ if (!isLp.value) {
 }
 const { authReady } = auth
 
+// Canonical URL logic
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: computed(() => {
+        const baseUrl = 'https://zettaionkan.jp'
+        const path = route.path
+        // Remove trailing slash if present (except for root) to normalize
+        // But actually, often it is better to consistent.
+        // Let's just append path. `route.path` usually comes with leading slash.
+        // If path is '/', it becomes '...jp/'
+        // If path is '/lp', it becomes '...jp/lp'
+        // This seems correct for standard normalization
+        return `${baseUrl}${path}`
+      })
+    }
+  ]
+})
+
 onMounted(async () => {
   if (isLp.value) return
 
