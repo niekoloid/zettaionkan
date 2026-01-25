@@ -258,7 +258,7 @@ useSeoMeta({
             <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
               <div class="relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
                  <div class="rounded-3xl overflow-hidden shadow-2xl border-8 border-white transform -rotate-2 hover:rotate-0 transition-all duration-500">
-                   <img src="/images/lp/feature_visual_nanobanana.png" alt="演出モードのイメージ" class="w-full h-auto object-cover" width="600" height="600" />
+                   <img src="/images/lp/feature_visual_nanobanana_v2.png" alt="演出モードのイメージ" class="w-full h-auto object-cover" width="600" height="600" />
                  </div>
                  <!-- Badge -->
                  <div class="absolute -top-6 -left-6 w-24 h-24 bg-indigo-500 rounded-full flex items-center justify-center shadow-lg transform rotate-12 z-10 border-4 border-white">
