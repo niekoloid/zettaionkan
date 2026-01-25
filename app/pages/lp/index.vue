@@ -181,7 +181,7 @@ useSeoMeta({
               <div class="relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
                  <div class="relative rounded-2xl overflow-hidden shadow-2xl border-8 border-white transform rotate-[-2deg] hover:rotate-0 transition-all duration-500">
                    <div class="absolute inset-0 bg-gray-900/10 z-10"></div> <!-- Slight darken overlay -->
-                   <img src="/images/lp/pain_nanobanana_v2.png" alt="散らかったリビングで頭を抱える親" class="w-full h-auto object-cover" width="600" height="400" />
+                   <img src="/images/lp/pain_nanobanana_v3.png" alt="ピアノの練習を嫌がる子供と困り果てる母親" class="w-full h-auto object-cover" width="600" height="400" />
                    <!-- Caption Overlay -->
                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6 z-20">
                      <p class="text-white font-bold text-lg">「もう、やめたい...」</p>
