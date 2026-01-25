@@ -210,7 +210,7 @@ useSeoMeta({
                  </div>
 
                  <!-- Card 2 -->
-                 <div class="flex items-start p-6 bg-white rounded-2xl shadow-lg border-l-4 border-gray-300 animate-on-scroll opacity-0 translate-x-10 transition-all duration-1000 ease-out delay-200 hover:shadow-xl hover:translate-x-1 transform transition-all group">
+                 <div class="flex items-start p-6 bg-white rounded-2xl shadow-lg border-l-4 border-gray-300 animate-on-scroll opacity-0 -translate-x-10 transition-all duration-1000 ease-out delay-200 hover:shadow-xl hover:translate-x-1 transform transition-all group">
                    <div class="flex-shrink-0 mr-4">
                       <div class="w-12 h-12 bg-gray-100 text-2xl flex items-center justify-center rounded-full group-hover:bg-red-50 group-hover:text-red-500 transition-colors">
                        🕰️
