@@ -486,7 +486,7 @@ useSeoMeta({
             <div class="md:w-1/2 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-400">
                <div class="relative">
                  <div class="absolute inset-0 bg-gradient-to-tr from-indigo-200 to-pink-200 blur-3xl opacity-30 rounded-full"></div>
-                 <img src="/images/lp/gift_confidence_nanobanana.png" alt="子供が未来を夢見るイメージ" class="relative z-10 w-full h-auto rounded-3xl shadow-xl" width="1024" height="1024" />
+                 <img src="/images/lp/benefits_nanobanana_v2.png" alt="子供が未来を夢見るイメージ" class="relative z-10 w-full h-auto rounded-3xl shadow-xl" width="1024" height="1024" />
                </div>
             </div>
             <div class="md:w-1/2 text-center md:text-left animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-500">
