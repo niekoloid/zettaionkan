@@ -253,75 +253,88 @@ useSeoMeta({
             </h2>
           </div>
 
-          <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
-             <!-- Features List -->
-            <div class="space-y-8">
-               <!-- Feature 1: Performance Mode -->
-              <div class="group relative bg-white p-6 rounded-3xl border border-gray-100 shadow-lg shadow-indigo-50/50 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 transition-all duration-300 animate-on-scroll opacity-0 translate-y-10 ease-out">
-                <div class="absolute -left-2 -top-2 bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md z-10 tracking-widest">
-                  楽しさ
-                </div>
-                <div class="flex items-start gap-5">
-                  <div class="flex-shrink-0">
-                    <div class="relative h-16 w-16 md:h-20 md:w-20 rounded-2xl overflow-hidden shadow-md ring-4 ring-indigo-50 group-hover:ring-indigo-100 transition-all">
-                      <img src="/images/lp/feature_visual.webp" alt="演出モードのイメージ" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" width="80" height="80" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="text-lg md:text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">演出モード</h3>
-                    <p class="mt-2 text-sm md:text-base text-gray-600 leading-relaxed font-medium">
-                      電車、車、ねこ…お子様の『大好き』が音と一緒に動き出すから、<span class="text-indigo-600 bg-indigo-50 px-1 rounded font-bold">集中力が途切れません</span>。
-                    </p>
-                  </div>
-                </div>
+          <div class="mt-16 space-y-24">
+            <!-- Feature 1: Performance Mode (Left Image, Right Text) -->
+            <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+              <div class="relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+                 <div class="rounded-3xl overflow-hidden shadow-2xl border-8 border-white transform -rotate-2 hover:rotate-0 transition-all duration-500">
+                   <img src="/images/lp/feature_visual_nanobanana.png" alt="演出モードのイメージ" class="w-full h-auto object-cover" width="600" height="600" />
+                 </div>
+                 <!-- Badge -->
+                 <div class="absolute -top-6 -left-6 w-24 h-24 bg-indigo-500 rounded-full flex items-center justify-center shadow-lg transform rotate-12 z-10 border-4 border-white">
+                   <span class="text-white font-bold text-lg tracking-widest">楽しさ</span>
+                 </div>
               </div>
-
-               <!-- Feature 2: Autoplay -->
-              <div class="group relative bg-white p-6 rounded-3xl border border-gray-100 shadow-lg shadow-indigo-50/50 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 transition-all duration-300 animate-on-scroll opacity-0 translate-y-10 ease-out delay-100">
-                <div class="absolute -left-2 -top-2 bg-pink-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md z-10 tracking-widest">
-                  手軽さ
-                </div>
-                <div class="flex items-start gap-5">
-                  <div class="flex-shrink-0">
-                    <div class="relative h-16 w-16 md:h-20 md:w-20 rounded-2xl overflow-hidden shadow-md ring-4 ring-pink-50 group-hover:ring-pink-100 transition-all">
-                      <img src="/images/lp/feature_autoplay.webp" alt="オートプレイのイメージ" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" width="80" height="80" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="text-lg md:text-xl font-bold text-gray-900 group-hover:text-pink-600 transition-colors">BGMとして流すだけ</h3>
-                    <p class="mt-2 text-sm md:text-base text-gray-600 leading-relaxed font-medium">
-                      「オートプレイ機能」搭載。忙しい家事の合間や移動中、BGMとして流しておくだけで、<span class="text-pink-600 bg-pink-50 px-1 rounded font-bold">無意識のうちに音感が育ちます</span>。
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-               <!-- Feature 3: Sound Quality -->
-              <div class="group relative bg-white p-6 rounded-3xl border border-gray-100 shadow-lg shadow-indigo-50/50 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 transition-all duration-300 animate-on-scroll opacity-0 translate-y-10 ease-out delay-200">
-                <div class="absolute -left-2 -top-2 bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md z-10 tracking-widest">
-                  本物志向
-                </div>
-                <div class="flex items-start gap-5">
-                  <div class="flex-shrink-0">
-                    <div class="relative h-16 w-16 md:h-20 md:w-20 rounded-2xl overflow-hidden shadow-md ring-4 ring-orange-50 group-hover:ring-orange-100 transition-all">
-                      <img src="/images/lp/feature_piano.webp" alt="スタインウェイ音源のイメージ" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" width="80" height="80" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="text-lg md:text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors">最高峰の音源</h3>
-                    <p class="mt-2 text-sm md:text-base text-gray-600 leading-relaxed font-medium">
-                      世界最高峰のスタインウェイ音源を採用。電子音ではない本物のグランドピアノの響きが、<span class="text-orange-600 bg-orange-50 px-1 rounded font-bold">お子様の繊細な耳を育てます</span>。
-                    </p>
-                  </div>
+              <div class="mt-8 lg:mt-0 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 text-left">
+                <h3 class="text-2xl font-bold text-gray-900 sm:text-3xl mb-4">
+                  <span class="block text-indigo-600 text-lg font-bold mb-2 uppercase tracking-wider">Visual Performance Mode</span>
+                  『練習』を、子供が夢中になる<br/>『遊び』へアップデート。
+                </h3>
+                <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                  電車、車、ねこ…お子様の『大好き』が音と一緒に動き出すから、<span class="font-bold text-indigo-600 bg-indigo-50 px-1 rounded">集中力が途切れません</span>。
+                  正解するとキャラクターが可愛くリアクションしたり、動いたり。視覚的な楽しさが聴覚の記憶を強力にサポートするため、飽きっぽいお子様でもゲーム感覚で毎日続けられます。
+                </p>
+                <div class="flex flex-wrap gap-2">
+                   <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#ゲーミフィケーション</span>
+                   <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#視覚学習</span>
+                   <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#継続率90%以上</span>
                 </div>
               </div>
             </div>
 
-            <!-- Solution Image -->
-            <div class="mt-12 lg:mt-0 relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300">
-              <div class="rounded-2xl shadow-xl overflow-hidden bg-gray-100">
-                 <!-- Solution Image -->
-                 <img class="w-full h-full object-cover transform hover:scale-105 transition duration-500" src="/images/lp/solution.webp" alt="アプリ画面から飛び出す電車やねこ" width="1024" height="1024" loading="lazy" decoding="async" />
+            <!-- Feature 2: Autoplay (Right Image, Left Text) -->
+            <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+              <div class="order-2 relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+                 <div class="rounded-3xl overflow-hidden shadow-2xl border-8 border-white transform rotate-2 hover:rotate-0 transition-all duration-500">
+                   <img src="/images/lp/feature_autoplay_nanobanana.png" alt="オートプレイのイメージ" class="w-full h-auto object-cover" width="600" height="600" />
+                 </div>
+                 <!-- Badge -->
+                 <div class="absolute -top-6 -right-6 w-24 h-24 bg-pink-500 rounded-full flex items-center justify-center shadow-lg transform -rotate-12 z-10 border-4 border-white">
+                   <span class="text-white font-bold text-lg tracking-widest">手軽さ</span>
+                 </div>
+              </div>
+              <div class="order-1 mt-8 lg:mt-0 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 text-left">
+                <h3 class="text-2xl font-bold text-gray-900 sm:text-3xl mb-4">
+                  <span class="block text-pink-600 text-lg font-bold mb-2 uppercase tracking-wider">Autoplay Function</span>
+                  忙しいママ・パパの味方。<br/>BGMとして流すだけ。
+                </h3>
+                <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                  「オートプレイ機能」搭載。忙しい家事の合間や移動中、BGMとして流しておくだけで、<span class="font-bold text-pink-600 bg-pink-50 px-1 rounded">無意識のうちに音感が育ちます</span>。
+                  付きっきりで教える必要はありません。生活音の一部として取り入れるだけで、脳は自然と音の違いを学習し始めます。
+                </p>
+                <div class="flex flex-wrap gap-2">
+                   <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#ハンズフリー</span>
+                   <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#ながら学習</span>
+                   <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#負担ゼロ</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feature 3: Sound Quality (Left Image, Right Text) -->
+            <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+              <div class="relative animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+                 <div class="rounded-3xl overflow-hidden shadow-2xl border-8 border-white transform -rotate-2 hover:rotate-0 transition-all duration-500">
+                   <img src="/images/lp/feature_piano_nanobanana.png" alt="スタインウェイ音源のイメージ" class="w-full h-auto object-cover" width="600" height="600" />
+                 </div>
+                 <!-- Badge -->
+                 <div class="absolute -top-6 -left-6 w-24 h-24 bg-orange-500 rounded-full flex items-center justify-center shadow-lg transform rotate-12 z-10 border-4 border-white">
+                   <span class="text-white font-bold text-lg tracking-widest">本物</span>
+                 </div>
+              </div>
+              <div class="mt-8 lg:mt-0 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 text-left">
+                <h3 class="text-2xl font-bold text-gray-900 sm:text-3xl mb-4">
+                  <span class="block text-orange-600 text-lg font-bold mb-2 uppercase tracking-wider">Authentic Sound</span>
+                  電子音では育たない、<br/>世界最高峰の響き。
+                </h3>
+                <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                  世界最高峰のスタインウェイ（Steinway & Sons）のグランドピアノ音源を贅沢に採用。
+                  安価なキーボードの電子音ではなく、<span class="font-bold text-orange-600 bg-orange-50 px-1 rounded">本物の倍音成分を含む豊かな響き</span>が、これからの成長期にあるお子様の繊細な耳を正しく育てます。
+                </p>
+                <div class="flex flex-wrap gap-2">
+                   <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#Steinway Model D</span>
+                   <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#ハイレゾ音源</span>
+                   <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#情操教育</span>
+                </div>
               </div>
             </div>
           </div>
