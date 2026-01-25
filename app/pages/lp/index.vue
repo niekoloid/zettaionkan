@@ -140,12 +140,12 @@ useSeoMeta({
                 <div class="relative w-full aspect-[9/16] max-h-[600px] flex items-center justify-center transform-style-3d mx-auto">
                   
                   <!-- Phone (Center Front) -->
-                  <div class="relative z-10 w-[85%] h-auto rounded-[3rem] border-8 border-gray-900 bg-black shadow-2xl animate-float">
+                  <div class="relative z-10 w-[300px] aspect-[9/19] rounded-[3rem] border-8 border-gray-900 bg-black shadow-2xl animate-float overflow-hidden mx-auto">
                      <!-- Notch -->
                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/3 h-7 bg-black rounded-b-2xl z-20"></div>
-                     <img src="/images/lp/screen_dashboard.png" class="w-full h-auto rounded-[2.5rem]" alt="Main Dashboard" />
+                     <img src="/images/lp/screen_dashboard.png" class="w-full h-full object-cover object-top rounded-[2.5rem]" alt="Main Dashboard" />
                      <!-- Reflection -->
-                     <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-[2.5rem]"></div>
+                     <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-[2.5rem] z-30"></div>
                   </div>
 
                 </div>
