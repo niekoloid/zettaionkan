@@ -137,25 +137,15 @@ useSeoMeta({
             <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
               <div class="relative w-full max-w-lg lg:max-w-xl mx-auto lg:mx-0 perspective-1000">
                 <!-- 3D Phone Mockup Container -->
-                <div class="relative w-full aspect-square flex items-center justify-center transform-style-3d">
+                <div class="relative w-full aspect-[9/16] max-h-[600px] flex items-center justify-center transform-style-3d mx-auto">
                   
-                  <!-- Phone 1 (Back Left) -->
-                  <div class="absolute w-[45%] rounded-[2rem] border-4 border-gray-800 bg-gray-900 shadow-2xl transform -translate-x-20 -translate-y-4 -rotate-y-12 rotate-z-[-5deg] animate-float-slow opacity-90 transition-all duration-500 hover:z-20 hover:scale-105 overflow-hidden">
-                    <img src="/images/lp/screen_subscription.png" class="w-full h-auto rounded-[1.7rem]" alt="Subscription Screen" />
-                  </div>
-
-                  <!-- Phone 2 (Back Right) -->
-                  <div class="absolute w-[45%] rounded-[2rem] border-4 border-gray-800 bg-gray-900 shadow-2xl transform translate-x-20 -translate-y-8 rotate-y-12 rotate-z-[5deg] animate-float-slower opacity-90 transition-all duration-500 hover:z-20 hover:scale-105 overflow-hidden">
-                    <img src="/images/lp/screen_dashboard.png" class="w-full h-auto rounded-[1.7rem]" alt="Settings Screen" />
-                  </div>
-
-                  <!-- Phone 3 (Center Front) -->
-                  <div class="relative z-10 w-[50%] rounded-[2.5rem] border-8 border-gray-900 bg-black shadow-2xl transform translate-y-4 animate-float">
+                  <!-- Phone (Center Front) -->
+                  <div class="relative z-10 w-[85%] h-auto rounded-[3rem] border-8 border-gray-900 bg-black shadow-2xl animate-float">
                      <!-- Notch -->
-                     <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/3 h-6 bg-black rounded-b-xl z-20"></div>
-                     <img src="/images/lp/screen_dashboard.png" class="w-full h-auto rounded-[2rem]" alt="Main Dashboard" />
+                     <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/3 h-7 bg-black rounded-b-2xl z-20"></div>
+                     <img src="/images/lp/screen_dashboard.png" class="w-full h-auto rounded-[2.5rem]" alt="Main Dashboard" />
                      <!-- Reflection -->
-                     <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-[2rem]"></div>
+                     <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-[2.5rem]"></div>
                   </div>
 
                 </div>
