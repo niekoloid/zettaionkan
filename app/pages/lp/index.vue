@@ -412,7 +412,7 @@ useSeoMeta({
               </div>
               
               <div class="w-24 h-24 mb-6 rounded-full overflow-hidden shadow-lg border-4 border-indigo-50 bg-white group-hover:scale-110 transition-transform duration-300">
-                <img src="/images/lp/gift_language_nanobanana.png" alt="語学の贈り物" class="w-full h-full object-cover" width="96" height="96" />
+                <img src="/images/lp/gift_language_simple_nanobanana.png" alt="語学の贈り物" class="w-full h-full object-cover" width="96" height="96" />
               </div>
               
               <div class="mb-3">
@@ -438,7 +438,7 @@ useSeoMeta({
               </div>
 
               <div class="w-24 h-24 mb-6 rounded-full overflow-hidden shadow-lg border-4 border-orange-50 bg-white group-hover:scale-110 transition-transform duration-300">
-                <img src="/images/lp/gift_music_nanobanana.png" alt="音楽の贈り物" class="w-full h-full object-cover" width="96" height="96" />
+                <img src="/images/lp/gift_confidence_simple_nanobanana.png" alt="自信の贈り物" class="w-full h-full object-cover" width="96" height="96" />
               </div>
 
               <div class="mb-3">
