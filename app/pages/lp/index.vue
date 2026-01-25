@@ -355,7 +355,8 @@ useSeoMeta({
             </p>
           </div>
 
-          <div class="mt-12 md:mt-16">
+          <div class="mt-12 md:mt-16 space-y-16">
+            <!-- Part 1: Chord Mechanism -->
             <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-3xl p-6 md:p-12 shadow-sm border border-indigo-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100">
               <div class="md:flex md:items-center md:gap-12">
                 <div class="md:w-1/2 mb-8 md:mb-0 relative">
@@ -367,21 +368,64 @@ useSeoMeta({
                    </div>
                 </div>
                 <div class="md:w-1/2">
-                  <h3 class="text-xl md:text-xl font-bold text-gray-900 mb-4 leading-snug">
-                    なぜ「和音」の練習で絶対音感が身につくのか？
+                  <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-6 leading-snug">
+                    なぜ「和音」の練習で<br/>絶対音感が身につくのか？
                   </h3>
                   <div class="prose prose-blue text-gray-600 text-sm md:text-base leading-relaxed space-y-4">
                     <p>
                       「ド」はド、「レ」はレ…といった単音は、子供の脳にとっては「細すぎて記憶に残りにくい」という特徴があります。
                     </p>
-                      一方、複数の音が重なる<span class="text-indigo-600">「和音」</span>は響きが豊かで、脳に鮮烈な印象を与えます。
-                      この14種類の和音特有の響き（クロマ）を記憶することで、脳内で音が整理され、やがて一つ一つの音の違いも識別できるようになります（和音→単音分化）。
-                      <br class="hidden md:inline"/><br class="hidden md:inline"/>
-                      いろおとは、１オクターブの中に含まれる１３音すべてがしっかりとトレーニングできるよう絶妙な組み合わせで設計された１４種類の和音から構成されています。
                     <p>
+                      一方、複数の音が重なる<span class="text-indigo-600 font-bold bg-indigo-50 px-1 rounded">「和音」</span>は響きが豊かで、脳に鮮烈な印象を与えます。<br/>
+                      この14種類の和音特有の響き（クロマ）を記憶することで、脳内で音が整理され、やがて一つ一つの音の違いも識別できるようになります（和音→単音分化）。
+                    </p>
+                    <p>
+                      いろおとは、１オクターブの中に含まれる１３音すべてがしっかりとトレーニングできるよう絶妙な組み合わせで設計された１４種類の和音から構成されています。<br/>
                       このアプローチこそが、日常言語を覚えるのと同じ仕組みで、一生モノの「絶対的な音の記憶」を定着させる最短ルートなのです。
                     </p>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Part 2: 3 Scientific Approaches -->
+            <div class="relative">
+              <div class="text-center mb-12 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+                <span class="text-indigo-600 font-bold tracking-wide uppercase text-xs md:text-sm">Brain Science</span>
+                <h3 class="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">
+                   なぜ「いろおと」で絶対音感が身につくのか？<br class="hidden sm:inline" />３つの科学的アプローチ
+                </h3>
+                <p class="mt-4 max-w-3xl mx-auto text-gray-600 font-medium leading-relaxed">
+                  絶対音感の習得は、決して魔法ではありません。<br/>人間の脳が持つ成長のメカニズムを正しく利用することで、誰でも「言葉を覚えるのと同じように」身につけることができます。
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100">
+                  <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-4 self-center">1</div>
+                  <h4 class="text-lg font-bold text-gray-900 mb-3 text-center">視覚（色）で音を具体化</h4>
+                  <p class="text-sm text-gray-600 leading-relaxed flex-grow">
+                    幼児の脳にとって、目に見えない「音」を記憶するのは困難です。しかし、「色」を識別する能力はすでに発達しています。そこで、<span class="font-bold text-indigo-600">聴覚（音）と視覚（色）をセットで脳に入力（クロストレーニング）</span>します。これにより、抽象的だった音が「色を持った記憶」として脳の長期記憶エリアに強烈に定着します。
+                  </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200">
+                  <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-4 self-center">2</div>
+                  <h4 class="text-lg font-bold text-gray-900 mb-3 text-center">ゲシュタルト認知（全体把握）</h4>
+                  <p class="text-sm text-gray-600 leading-relaxed flex-grow">
+                    子供の脳は、細かいパーツ（単音）よりも、全体の雰囲気（和音の響き）を先に捉えるのが得意です。お母さんの顔を「パーツ」ではなく「全体」として認識するのと同じです。<span class="font-bold text-indigo-600">「響きの違い」を14色のカラーパレットとして脳内に構築する</span>のが、絶対音感の土台となります。
+                  </p>
+                </div>
+
+                 <!-- Step 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300">
+                  <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-4 self-center">3</div>
+                  <h4 class="text-lg font-bold text-gray-900 mb-3 text-center">脳のズーム機能（単音分化）</h4>
+                  <p class="text-sm text-gray-600 leading-relaxed flex-grow">
+                    14種類の和音（色の塊）が定着すると、脳内で和音の響きが分解され、構成していた「ド」「ミ」「ソ」といった個々の音（単音）が、くっきりと分離して聴こえるようになります。<span class="font-bold text-indigo-600">一度この回路が完成すれば、どんな曲を聴いても、瞬時に「音の名前」がわかる</span>ようになります。
+                  </p>
                 </div>
               </div>
             </div>
