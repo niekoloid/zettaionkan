@@ -137,15 +137,24 @@ useSeoMeta({
             <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
               <div class="relative w-full max-w-lg lg:max-w-xl mx-auto lg:mx-0 perspective-1000">
                 <!-- 3D Phone Mockup Container -->
-                <div class="relative w-full aspect-[9/16] max-h-[600px] flex items-center justify-center transform-style-3d mx-auto">
+                <div class="relative w-full aspect-[4/3] max-h-[500px] flex items-center justify-center transform-style-3d mx-auto mt-8 lg:mt-0">
                   
-                  <!-- Phone (Center Front) -->
-                  <div class="relative z-10 w-[300px] aspect-[9/19] rounded-[3rem] border-8 border-gray-900 bg-black shadow-2xl animate-float overflow-hidden mx-auto">
+                  <!-- Tablet (Back Left) -->
+                  <div class="absolute w-[80%] aspect-[4/3] rounded-[2rem] border-8 border-gray-800 bg-gray-900 shadow-2xl transform -translate-x-12 -translate-y-4 rotate-y-6 rotate-z-[-2deg] animate-float-slow transition-all duration-500 hover:z-20 hover:scale-105 overflow-hidden">
+                    <!-- Bezel -->
+                    <div class="absolute inset-0 border-[12px] border-black rounded-[1.5rem] z-20 pointer-events-none"></div>
+                    <img src="/images/lp/screen_dashboard.png" class="w-full h-full object-cover rounded-[1.5rem]" alt="Tablet Dashboard" />
+                    <!-- Reflection -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-[1.5rem] z-30"></div>
+                  </div>
+
+                  <!-- Phone (Front Right) -->
+                  <div class="absolute right-0 bottom-[-20px] z-30 w-[35%] aspect-[9/19] rounded-[2.5rem] border-8 border-gray-900 bg-black shadow-2xl transform translate-x-4 translate-y-8 rotate-y-[-12deg] rotate-z-[5deg] animate-float overflow-hidden">
                      <!-- Notch -->
-                     <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/3 h-7 bg-black rounded-b-2xl z-20"></div>
-                     <img src="/images/lp/screen_dashboard.png" class="w-full h-full object-cover object-top rounded-[2.5rem]" alt="Main Dashboard" />
+                     <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/3 h-6 bg-black rounded-b-xl z-20"></div>
+                     <img src="/images/lp/screen_subscription.png" class="w-full h-full object-cover object-top rounded-[2rem]" alt="Phone Screen" />
                      <!-- Reflection -->
-                     <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-[2.5rem] z-30"></div>
+                     <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none rounded-[2rem] z-30"></div>
                   </div>
 
                 </div>
