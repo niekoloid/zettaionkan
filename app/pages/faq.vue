@@ -1,12 +1,5 @@
 <script setup lang="ts">
 
-onMounted(() => {
-  const meta = document.createElement('meta')
-  meta.name = 'robots'
-  meta.content = 'noindex'
-  document.head.appendChild(meta)
-})
-
 const faqs = [
   {
     q: '本当にスマホだけで絶対音感が身につくのでしょうか？',
@@ -74,6 +67,12 @@ const faqs = [
             <NuxtLink to="/contact" class="inline-block px-8 py-3 bg-white text-indigo-900 font-black rounded-full text-xs hover:bg-indigo-50 transition-colors">
               お問い合わせフォーム
             </NuxtLink>
+          </div>
+
+          <div class="pt-8 text-right border-t border-gray-100 mt-8">
+            <p class="text-[10px] text-gray-400">
+              最終更新日：2026年1月25日
+            </p>
           </div>
         </div>
       </main>

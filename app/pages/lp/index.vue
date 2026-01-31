@@ -81,6 +81,14 @@ useSeoMeta({
   twitterDescription: 'こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。',
   twitterImage: 'https://zettaionkan.jp/images/lp/ogp_image.webp',
 })
+import { ChordDefinitions } from '~/constants/chords'
+import ChordStave from '~/components/lp/ChordStave.vue'
+
+const orderedChords = computed(() => {
+  return Object.values(ChordDefinitions)
+    .filter(chord => chord.scoreImage)
+    .sort((a, b) => (a.sortOrder || 99) - (b.sortOrder || 99))
+})
 </script>
 
 <template>
@@ -137,10 +145,11 @@ useSeoMeta({
             <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
               <div class="relative w-full max-w-lg lg:max-w-xl mx-auto lg:mx-0 perspective-1000">
                 <!-- 3D Phone Mockup Container -->
-                <div class="relative w-full aspect-[4/3] max-h-[500px] flex items-center justify-center transform-style-3d mx-auto mt-8 lg:mt-0">
+                <!-- Increased max-height constraint and removed aspect ratio lock to allow overflowing size -->
+                <div class="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center transform-style-3d mx-auto mt-8 lg:mt-0">
                   
-                  <!-- Tablet (Back Left) -->
-                  <div class="absolute w-[80%] aspect-[4/3] rounded-[2rem] border-8 border-gray-800 bg-gray-900 shadow-2xl transform -translate-x-12 -translate-y-4 rotate-y-6 rotate-z-[-2deg] animate-float-slow transition-all duration-500 hover:z-20 hover:scale-105 overflow-hidden">
+                  <!-- Tablet (Back Left) - Increased size to 110% of container width for impact -->
+                  <div class="absolute w-[110%] aspect-[4/3] rounded-[2rem] border-8 border-gray-800 bg-gray-900 shadow-2xl transform -translate-x-12 -translate-y-4 rotate-y-6 rotate-z-[-2deg] animate-float-slow transition-all duration-500 hover:z-20 hover:scale-105 overflow-hidden">
                     <!-- Bezel -->
                     <div class="absolute inset-0 border-[12px] border-black rounded-[1.5rem] z-20 pointer-events-none"></div>
                     <img src="/images/lp/screen_dashboard.png" class="w-full h-full object-cover rounded-[1.5rem]" alt="Tablet Dashboard" />
@@ -148,11 +157,12 @@ useSeoMeta({
                     <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-[1.5rem] z-30"></div>
                   </div>
 
-                  <!-- Phone (Front Right) -->
-                  <div class="absolute right-0 bottom-[-20px] z-30 w-[35%] aspect-[9/19] rounded-[2.5rem] border-8 border-gray-900 bg-black shadow-2xl transform translate-x-4 translate-y-8 rotate-y-[-12deg] rotate-z-[5deg] animate-float overflow-hidden">
+                  <!-- Phone (Front Right) - Adjusted positioning to prevent overflow clipping -->
+                  <div class="absolute right-0 bottom-[-5%] z-30 w-[40%] sm:w-[45%] aspect-[9/19] rounded-[2.5rem] border-8 border-gray-900 bg-black shadow-2xl transform translate-x-4 translate-y-8 rotate-y-[-12deg] rotate-z-[5deg] animate-float overflow-hidden">
                      <!-- Notch -->
                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/3 h-6 bg-black rounded-b-xl z-20"></div>
-                     <img src="/images/lp/screen_subscription.png" class="w-full h-full object-cover object-top rounded-[2rem]" alt="Phone Screen" />
+                     <!-- Switched directly to object-top to ensure the header/content is visible -->
+                     <img src="/images/lp/screen_dashboard_mobile.png" class="w-full h-full object-cover object-top rounded-[2rem]" alt="Phone Screen" />
                      <!-- Reflection -->
                      <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none rounded-[2rem] z-30"></div>
                   </div>
@@ -315,7 +325,6 @@ useSeoMeta({
               </div>
               <div class="order-1 mt-8 lg:mt-0 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 text-left">
                 <h3 class="text-2xl font-bold text-gray-900 sm:text-3xl mb-4">
-                  <span class="block text-pink-600 text-lg font-bold mb-2 uppercase tracking-wider">Autoplay Function</span>
                   忙しいママ・パパの味方。<br/>BGMとして流すだけ。
                 </h3>
                 <p class="text-lg text-gray-600 leading-relaxed mb-6">
@@ -343,7 +352,6 @@ useSeoMeta({
               </div>
               <div class="mt-8 lg:mt-0 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200 text-left">
                 <h3 class="text-2xl font-bold text-gray-900 sm:text-3xl mb-4">
-                  <span class="block text-orange-600 text-lg font-bold mb-2 uppercase tracking-wider">Authentic Sound</span>
                   電子音では育たない、<br/>世界最高峰の響き。
                 </h3>
                 <p class="text-lg text-gray-600 leading-relaxed mb-6">
@@ -354,98 +362,6 @@ useSeoMeta({
                    <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#Steinway Model D</span>
                    <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#ハイレゾ音源</span>
                    <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">#情操教育</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 2.5 Method / Theory (CIM) -->
-      <section id="method" class="py-16 bg-white overflow-hidden relative border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="lg:text-center animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-            <span class="text-indigo-600 font-bold tracking-wide uppercase text-xs md:text-sm">Method</span>
-            <h2 class="mt-2 text-2xl font-extrabold text-gray-900 sm:text-4xl text-balance">
-              <span class="inline-block">どうすれば、</span><span class="inline-block">絶対音感を身につけられるのか？</span>
-            </h2>
-            <p class="mt-4 max-w-2xl text-base md:text-xl text-gray-500 lg:mx-auto font-medium">
-              特別な才能は必要ありません。やることは非常にシンプル。<br />
-              <span class="text-indigo-600 font-bold text-lg md:text-2xl">「白鍵9種類＋黒鍵5種類の計14種類の和音」</span>を覚えるだけです。
-            </p>
-          </div>
-
-          <div class="mt-12 md:mt-16 space-y-16">
-            <!-- Part 1: Chord Mechanism -->
-            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-3xl p-6 md:p-12 shadow-sm border border-indigo-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100">
-              <div class="md:flex md:items-center md:gap-12">
-                <div class="md:w-1/2 mb-8 md:mb-0 relative">
-                   <div class="aspect-video bg-white rounded-2xl shadow-sm flex items-center justify-center relative overflow-hidden">
-                      <div class="absolute inset-0 bg-gradient-to-r from-red-100 via-yellow-100 to-blue-100 opacity-30"></div>
-                      <div class="text-center relative z-10 w-full h-full">
-                        <img src="/images/lp/cim.webp" alt="和音の響きが鮮やかな色に変換されるイメージ" class="w-full h-full object-cover" width="1024" height="1024" loading="lazy" decoding="async" />
-                      </div>
-                   </div>
-                </div>
-                <div class="md:w-1/2">
-                  <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-6 leading-snug">
-                    なぜ「和音」の練習で<br/>絶対音感が身につくのか？
-                  </h3>
-                  <div class="prose prose-blue text-gray-600 text-sm md:text-base leading-relaxed space-y-4">
-                    <p>
-                      「ド」はド、「レ」はレ…といった単音は、子供の脳にとっては「細すぎて記憶に残りにくい」という特徴があります。
-                    </p>
-                    <p>
-                      一方、複数の音が重なる<span class="text-indigo-600 font-bold bg-indigo-50 px-1 rounded">「和音」</span>は響きが豊かで、脳に鮮烈な印象を与えます。<br/>
-                      この14種類の和音特有の響き（クロマ）を記憶することで、脳内で音が整理され、やがて一つ一つの音の違いも識別できるようになります（和音→単音分化）。
-                    </p>
-                    <p>
-                      いろおとは、１オクターブの中に含まれる１３音すべてがしっかりとトレーニングできるよう絶妙な組み合わせで設計された１４種類の和音から構成されています。<br/>
-                      このアプローチこそが、日常言語を覚えるのと同じ仕組みで、一生モノの「絶対的な音の記憶」を定着させる最短ルートなのです。
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Part 2: 3 Scientific Approaches -->
-            <div class="relative">
-              <div class="text-center mb-12 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-                <span class="text-indigo-600 font-bold tracking-wide uppercase text-xs md:text-sm">Brain Science</span>
-                <h3 class="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">
-                   なぜ「いろおと」で絶対音感が身につくのか？<br class="hidden sm:inline" />３つの科学的アプローチ
-                </h3>
-                <p class="mt-4 max-w-3xl mx-auto text-gray-600 font-medium leading-relaxed">
-                  絶対音感の習得は、決して魔法ではありません。<br/>人間の脳が持つ成長のメカニズムを正しく利用することで、誰でも「言葉を覚えるのと同じように」身につけることができます。
-                </p>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Step 1 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100">
-                  <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-4 self-center">1</div>
-                  <h4 class="text-lg font-bold text-gray-900 mb-3 text-center">視覚（色）で音を具体化</h4>
-                  <p class="text-sm text-gray-600 leading-relaxed flex-grow">
-                    幼児の脳にとって、目に見えない「音」を記憶するのは困難です。しかし、「色」を識別する能力はすでに発達しています。そこで、<span class="font-bold text-indigo-600">聴覚（音）と視覚（色）をセットで脳に入力（クロストレーニング）</span>します。これにより、抽象的だった音が「色を持った記憶」として脳の長期記憶エリアに強烈に定着します。
-                  </p>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200">
-                  <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-4 self-center">2</div>
-                  <h4 class="text-lg font-bold text-gray-900 mb-3 text-center">ゲシュタルト認知（全体把握）</h4>
-                  <p class="text-sm text-gray-600 leading-relaxed flex-grow">
-                    子供の脳は、細かいパーツ（単音）よりも、全体の雰囲気（和音の響き）を先に捉えるのが得意です。お母さんの顔を「パーツ」ではなく「全体」として認識するのと同じです。<span class="font-bold text-indigo-600">「響きの違い」を14色のカラーパレットとして脳内に構築する</span>のが、絶対音感の土台となります。
-                  </p>
-                </div>
-
-                 <!-- Step 3 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300">
-                  <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-4 self-center">3</div>
-                  <h4 class="text-lg font-bold text-gray-900 mb-3 text-center">脳のズーム機能（単音分化）</h4>
-                  <p class="text-sm text-gray-600 leading-relaxed flex-grow">
-                    14種類の和音（色の塊）が定着すると、脳内で和音の響きが分解され、構成していた「ド」「ミ」「ソ」といった個々の音（単音）が、くっきりと分離して聴こえるようになります。<span class="font-bold text-indigo-600">一度この回路が完成すれば、どんな曲を聴いても、瞬時に「音の名前」がわかる</span>ようになります。
-                  </p>
                 </div>
               </div>
             </div>
@@ -550,7 +466,8 @@ useSeoMeta({
             <div class="md:w-1/2 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-400">
                <div class="relative">
                  <div class="absolute inset-0 bg-gradient-to-tr from-indigo-200 to-pink-200 blur-3xl opacity-30 rounded-full"></div>
-                 <img src="/images/lp/benefits_nanobanana_v5.png" alt="子供が未来を夢見るイメージ" class="relative z-10 w-full h-auto rounded-3xl shadow-xl" width="1024" height="1024" />
+                  <!-- Updated image to version without English text -->
+                  <img src="/images/lp/benefits_no_text.png" alt="子供が未来を夢見るイメージ" class="relative z-10 w-full h-auto rounded-3xl shadow-xl" width="1024" height="1024" />
                </div>
             </div>
             <div class="md:w-1/2 text-center md:text-left animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-500">
@@ -568,6 +485,109 @@ useSeoMeta({
                       無料で今すぐ始める
                     </a>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.5 Method / Theory (CIM) -->
+      <section id="method" class="py-16 bg-white overflow-hidden relative border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="lg:text-center animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+            <span class="text-indigo-600 font-bold tracking-wide uppercase text-xs md:text-sm">Method</span>
+            <h2 class="mt-2 text-2xl font-extrabold text-gray-900 sm:text-4xl text-balance">
+              <span class="inline-block">どうすれば、</span><span class="inline-block">絶対音感を身につけられるのか？</span>
+            </h2>
+            <p class="mt-4 max-w-2xl text-base md:text-xl text-gray-500 lg:mx-auto font-medium">
+              特別な才能は必要ありません。やることは非常にシンプル。<br />
+              <span class="text-indigo-600 font-bold text-lg md:text-2xl">「白鍵9種類＋黒鍵5種類の計14種類の和音」</span>を覚えるだけです。
+            </p>
+          </div>
+
+          <!-- Chord Stave Visualization -->
+          <div class="mt-8 max-w-6xl mx-auto">
+             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 overscroll-none">
+               <h3 class="text-center text-sm font-bold text-gray-500 mb-4">14種類の和音一覧</h3>
+               <ChordStave :chords="orderedChords" />
+             </div>
+             <p class="text-center text-xs text-gray-400 mt-4">
+               ※ 全14種類の和音は、色と響きが対応しています。
+             </p>
+          </div>
+
+          <div class="mt-12 md:mt-16 space-y-16">
+            <!-- Part 1: Chord Mechanism -->
+            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-3xl p-6 md:p-12 shadow-sm border border-indigo-100 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100">
+              <div class="md:flex md:items-center md:gap-12">
+                <div class="md:w-1/2 mb-8 md:mb-0 relative">
+                   <div class="aspect-video bg-white rounded-2xl shadow-sm flex items-center justify-center relative overflow-hidden">
+                      <div class="absolute inset-0 bg-gradient-to-r from-red-100 via-yellow-100 to-blue-100 opacity-30"></div>
+                      <div class="text-center relative z-10 w-full h-full">
+                        <img src="/images/lp/cim.webp" alt="和音の響きが鮮やかな色に変換されるイメージ" class="w-full h-full object-cover" width="1024" height="1024" loading="lazy" decoding="async" />
+                      </div>
+                   </div>
+                </div>
+                <div class="md:w-1/2">
+                  <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-6 leading-snug">
+                    なぜ「和音」の練習で<br/>絶対音感が身につくのか？
+                  </h3>
+                  <div class="prose prose-blue text-gray-600 text-sm md:text-base leading-relaxed space-y-4">
+                    <p>
+                      「ド」はド、「レ」はレ…といった単音は、子供の脳にとっては「細すぎて記憶に残りにくい」という特徴があります。
+                    </p>
+                    <p>
+                      一方、複数の音が重なる<span class="text-indigo-600 font-bold bg-indigo-50 px-1 rounded">「和音」</span>は響きが豊かで、脳に鮮烈な印象を与えます。<br/>
+                      この14種類の和音特有の響き（クロマ）を記憶することで、脳内で音が整理され、やがて一つ一つの音の違いも識別できるようになります（和音→単音分化）。
+                    </p>
+                    <p>
+                      いろおとは、１オクターブの中に含まれる１３音すべてがしっかりとトレーニングできるよう絶妙な組み合わせで設計された１４種類の和音から構成されています。<br/>
+                      このアプローチこそが、日常言語を覚えるのと同じ仕組みで、一生モノの「絶対的な音の記憶」を定着させる最短ルートなのです。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Part 2: 3 Scientific Approaches -->
+            <div class="relative">
+              <div class="text-center mb-12 animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+                <span class="text-indigo-600 font-bold tracking-wide uppercase text-xs md:text-sm">Brain Science</span>
+                <h3 class="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">
+                   なぜ「いろおと」で絶対音感が身につくのか？<br class="hidden sm:inline" />３つの科学的アプローチ
+                </h3>
+                <p class="mt-4 max-w-3xl mx-auto text-gray-600 font-medium leading-relaxed">
+                  絶対音感の習得は、決して魔法ではありません。<br/>人間の脳が持つ成長のメカニズムを正しく利用することで、誰でも「言葉を覚えるのと同じように」身につけることができます。
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-100">
+                  <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-4 self-center">1</div>
+                  <h4 class="text-lg font-bold text-gray-900 mb-3 text-center">視覚（色）で音を具体化</h4>
+                  <p class="text-sm text-gray-600 leading-relaxed flex-grow">
+                    幼児の脳にとって、目に見えない「音」を記憶するのは困難です。しかし、「色」を識別する能力はすでに発達しています。そこで、<span class="font-bold text-indigo-600">聴覚（音）と視覚（色）をセットで脳に入力（クロストレーニング）</span>します。これにより、抽象的だった音が「色を持った記憶」として脳の長期記憶エリアに強烈に定着します。
+                  </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-200">
+                  <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-4 self-center">2</div>
+                  <h4 class="text-lg font-bold text-gray-900 mb-3 text-center">ゲシュタルト認知（全体把握）</h4>
+                  <p class="text-sm text-gray-600 leading-relaxed flex-grow">
+                    子供の脳は、細かいパーツ（単音）よりも、全体の雰囲気（和音の響き）を先に捉えるのが得意です。お母さんの顔を「パーツ」ではなく「全体」として認識するのと同じです。<span class="font-bold text-indigo-600">「響きの違い」を14色のカラーパレットとして脳内に構築する</span>のが、絶対音感の土台となります。
+                  </p>
+                </div>
+
+                 <!-- Step 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col h-full animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 ease-out delay-300">
+                  <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-4 self-center">3</div>
+                  <h4 class="text-lg font-bold text-gray-900 mb-3 text-center">脳のズーム機能（単音分化）</h4>
+                  <p class="text-sm text-gray-600 leading-relaxed flex-grow">
+                    14種類の和音（色の塊）が定着すると、脳内で和音の響きが分解され、構成していた「ド」「ミ」「ソ」といった個々の音（単音）が、くっきりと分離して聴こえるようになります。<span class="font-bold text-indigo-600">一度この回路が完成すれば、どんな曲を聴いても、瞬時に「音の名前」がわかる</span>ようになります。
+                  </p>
                 </div>
               </div>
             </div>

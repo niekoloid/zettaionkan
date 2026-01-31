@@ -41,7 +41,7 @@ const goToSubscription = () => {
                         {{ modalDesc }}
                       </p>
                        <p class="text-sm text-gray-500 mt-2 font-bold">
-                        PROプランで、色彩音感の扉を開きましょう。
+                        PROプランで、絶対音感の扉を開きましょう。
                       </p>
                     </div>
                   </div>

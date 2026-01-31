@@ -139,7 +139,7 @@ const isAutoPlayRevealed = ref(false)
 const isAutoPlayImmediate = ref(false)
 const isVoiceEnabled = ref(true)
 const revealDelay = ref(2.5) // seconds before revealing/speaking
-const autoPlayRevealType = ref('full') // 'full' | 'icecream' | 'train' | 'vehicle' | 'cat' | 'video_cat' | 'cat_flag'
+const autoPlayRevealType = ref('full') // 'full' | 'icecream' | 'train' | 'vehicle' | 'cat' | 'cute_cat' | 'video_cat' | 'cat_flag' | 'train_front'
 
 const selectedChords = computed(() => {
   return TEST_CHORDS.value.filter(c => selectedChordIds.value.has(c.id))
@@ -569,7 +569,21 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
               >
                 <div v-if="!checkAccess('mode_cat')" class="absolute top-2 right-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg></div>
                 <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_cat') }">🐱</div>
-                <span class="text-xs font-black" :class="[autoPlayRevealType === 'cat' ? 'text-amber-600' : 'text-gray-400', !checkAccess('mode_cat') && 'opacity-50']">ねこ</span>
+                <span class="text-xs font-black" :class="[autoPlayRevealType === 'cat' ? 'text-amber-600' : 'text-gray-400', !checkAccess('mode_cat') && 'opacity-50']">リアルねこ</span>
+              </button>
+
+              <!-- Cute Cat Option (New) -->
+              <button 
+                v-if="isEnabled('mode_cute_cat')"
+                @click="checkAccess('mode_cute_cat') ? autoPlayRevealType = 'cute_cat' : handleLockedClick()"
+                class="flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 relative overflow-hidden"
+                :class="autoPlayRevealType === 'cute_cat' 
+                  ? 'bg-white border-pink-400 shadow-md transform scale-[1.02]' 
+                  : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
+              >
+                <div v-if="!checkAccess('mode_cute_cat')" class="absolute top-2 right-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg></div>
+                <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_cute_cat') }">😻</div>
+                <span class="text-xs font-black" :class="[autoPlayRevealType === 'cute_cat' ? 'text-pink-500' : 'text-gray-400', !checkAccess('mode_cute_cat') && 'opacity-50']">ねこ</span>
               </button>
 
               <!-- Video Cat Option -->
@@ -585,6 +599,21 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
                 <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_video_cat') }">🎥</div>
                 <span class="text-xs font-black" :class="[autoPlayRevealType === 'video_cat' ? 'text-stone-800' : 'text-gray-400', !checkAccess('mode_video_cat') && 'opacity-50']">動画ねこ</span>
               </button>
+
+              <!-- Train Front Option (New) -->
+              <button 
+                v-if="isEnabled('mode_train_front')"
+                @click="checkAccess('mode_train_front') ? autoPlayRevealType = 'train_front' : handleLockedClick()"
+                class="flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 relative overflow-hidden"
+                :class="autoPlayRevealType === 'train_front' 
+                  ? 'bg-white border-blue-600 shadow-md transform scale-[1.02]' 
+                  : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'"
+              >
+                <div v-if="!checkAccess('mode_train_front')" class="absolute top-2 right-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg></div>
+                <div class="text-2xl mb-1" :class="{ 'opacity-50 grayscale': !checkAccess('mode_train_front') }">🚄</div>
+                <span class="text-xs font-black" :class="[autoPlayRevealType === 'train_front' ? 'text-blue-700' : 'text-gray-400', !checkAccess('mode_train_front') && 'opacity-50']">迫る電車</span>
+              </button>
+
 
               <!-- Cat Flag Option -->
               <button 
@@ -870,6 +899,31 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
           </div>
         </transition>
 
+        <!-- Auto Play Reveal: Cute Cat Mode -->
+        <transition name="fade">
+          <div 
+            v-if="autoPlayRevealType === 'cute_cat'" 
+            class="fixed inset-0 z-40 bg-white"
+          >
+             <CuteCatGameMode 
+               :currentQuestion="currentQuestion"
+               :isAutoPlay="true"
+               @play="playCurrentQuestion"
+             />
+             
+             <!-- Overlay Stop Button -->
+             <div class="absolute bottom-12 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+                <button 
+                  @click="stopAutoPlay"
+                  class="pointer-events-auto px-6 py-2.5 bg-white/80 backdrop-blur-md text-gray-400 hover:text-red-500 font-bold rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-lg hover:shadow-xl border border-white/20"
+                >
+                  <div class="w-1.5 h-1.5 bg-current rounded-full"></div>
+                  <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
+                </button>
+             </div>
+          </div>
+        </transition>
+
         <!-- Auto Play Reveal: Video Cat Mode -->
         <transition name="fade">
           <div 
@@ -950,6 +1004,30 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
                 >
                   <div class="w-1.5 h-1.5 bg-current rounded-full"></div>
                   <span class="text-[10px] tracking-[0.2em] font-black mr-1">停止する</span>
+                </button>
+             </div>
+          </div>
+        </transition>
+
+        <!-- AutoPlay Reveal: Train Front Mode (New) -->
+        <transition name="fade">
+          <div 
+            v-if="autoPlayRevealType === 'train_front'" 
+            class="fixed inset-0 z-40 bg-white"
+          >
+             <TrainFrontGameMode 
+               :key="currentQuestionIndex"
+               :currentQuestion="currentQuestion"
+               :isAutoPlay="true"
+             />
+             
+             <!-- Overlay Stop Button -->
+             <div class="absolute bottom-12 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+                <button 
+                  @click.stop="stopAutoPlay"
+                  class="pointer-events-auto bg-white/10 hover:bg-white/20 backdrop-blur-md text-slate-800 px-6 py-2 rounded-full border border-slate-200/50 flex items-center shadow-lg transition-transform active:scale-95 text-sm font-bold"
+                >
+                  <span class="mr-2">●</span> 停止する
                 </button>
              </div>
           </div>

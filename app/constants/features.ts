@@ -53,6 +53,8 @@ export type FeatureKey =
   | 'mode_cat_flag'         // ねこ旗揚げ
   | 'mode_train'            // 電車
   | 'mode_vehicle'          // 車
+  | 'mode_cute_cat'         // キッズ猫
+  | 'mode_train_front'      // 電車モード2 (正面)
 
   // --- Settings ---
   | 'settings_instrument_yamaha'
@@ -134,6 +136,8 @@ export const FEATURE_GATES: Record<FeatureKey, FeatureConfig> = {
   'mode_cat_flag': { tier: 'standard', enabled: false },
   'mode_train': { tier: 'standard', enabled: true }, // Changed to standard
   'mode_vehicle': { tier: 'standard', enabled: false },
+  'mode_cute_cat': { tier: 'free', enabled: true },
+  'mode_train_front': { tier: 'free', enabled: true },
 
   // --- Settings ---
   'settings_instrument_yamaha': { tier: 'free', enabled: true },
@@ -206,11 +210,13 @@ export const FEATURE_DESCRIPTIONS: Record<FeatureKey, string> = {
 
   // --- Autoplay Display Modes ---
   'mode_icecream': 'モード: アイス',
-  'mode_cat': 'モード: ねこ',
+  'mode_cat': 'モード: リアルねこ',
   'mode_video_cat': 'モード: 動画ねこ',
   'mode_cat_flag': 'モード: ねこ旗揚げ',
   'mode_train': 'モード: 電車',
   'mode_vehicle': 'モード: 車',
+  'mode_cute_cat': 'モード: ねこ',
+  'mode_train_front': 'モード: 迫る電車',
 
   // --- Settings ---
   'settings_instrument_yamaha': '設定: Yamaha音源',
