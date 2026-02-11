@@ -906,7 +906,7 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
             class="fixed inset-0 z-40 bg-white"
           >
              <CuteCatGameMode 
-               :currentQuestion="currentQuestion"
+               :currentQuestion="isAutoPlayRevealed ? currentQuestion : null"
                :isAutoPlay="true"
                @play="playCurrentQuestion"
              />
@@ -934,7 +934,7 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
                :currentQuestion="currentQuestion"
                :choices="selectedChords"
                :correctHistory="iceCreamHistory"
-               :userAnswer="isAutoPlayRevealed ? currentQuestion : undefined"
+               :userAnswer="isAutoPlayRevealed ? currentQuestion : null"
                :isQuestionChanging="false"
                :isAutoPlay="true"
              />
@@ -1017,7 +1017,7 @@ watch([selectedChordIds, autoPlayRevealType, isVoiceEnabled, isAutoPlayImmediate
           >
              <TrainFrontGameMode 
                :key="currentQuestionIndex"
-               :currentQuestion="currentQuestion"
+               :currentQuestion="isAutoPlayRevealed ? currentQuestion : null"
                :isAutoPlay="true"
              />
              

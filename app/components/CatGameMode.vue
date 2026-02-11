@@ -204,6 +204,10 @@ defineEmits(['answer', 'play'])
 // So just take the last item of correctHistory if available?
 const currentCat = computed(() => {
   if (props.userAnswer) return props.userAnswer
+  
+  // In AutoPlay, if we are waiting for answer (userAnswer is null), do not show history
+  if (props.isAutoPlay) return null
+
   if (props.correctHistory.length > 0) {
     const last = props.correctHistory[props.correctHistory.length - 1]
     if (!last) return null
