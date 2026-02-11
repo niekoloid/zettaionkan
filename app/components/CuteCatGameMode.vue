@@ -46,7 +46,6 @@
             stroke-width="20" 
             stroke-linecap="round"
             class="origin-bottom-left"
-            :class="{ 'animate-tail-wag': !isPlaying, 'animate-tail-excited': isPlaying }"
           />
 
           <!-- Main Body (Soft Round Shape) -->
@@ -55,18 +54,13 @@
           <!-- White Belly -->
           <ellipse cx="0" cy="30" rx="55" ry="45" fill="#FFF" opacity="0.8" />
           
-           <!-- Arms/Paws (Visible/Moving during some animations) -->
-           <path v-if="currentAction === 'peek' || currentAction === 'pounce'" d="M-60,50 Q-80,80 -50,90" fill="none" :stroke="catTheme.body" stroke-width="15" stroke-linecap="round" />
-           <path v-if="currentAction === 'peek' || currentAction === 'pounce'" d="M60,50 Q80,80 50,90" fill="none" :stroke="catTheme.body" stroke-width="15" stroke-linecap="round" />
+           <!-- Arms/Paws (Visible/Moving only if explicitly set, but now static) -->
+           <!-- Removed complex action-based arms for simplicity/cleanliness or left as fallback -->
            
-           <g v-if="currentAction === 'scratch'">
-              <path d="M-60,40" stroke="#333" stroke-width="15" stroke-linecap="round" class="animate-scratch-left" />
-              <path d="M60,40" stroke="#333" stroke-width="15" stroke-linecap="round" class="animate-scratch-right" />
-           </g>
         </g>
 
         <!-- Head Group -->
-        <g transform="translate(200, 160)" :class="{ 'animate-head-bob': currentAction === 'sing' }">
+        <g transform="translate(200, 160)">
           <!-- Ears -->
           <path d="M-70,-50 L-90,-110 L-20,-80 Z" :fill="catTheme.body" />
           <path d="M70,-50 L90,-110 L20,-80 Z" :fill="catTheme.body" />
@@ -87,7 +81,8 @@
           <!-- Face -->
           <g transform="translate(0, 10)">
             <!-- Eyes Container -->
-            <g v-if="!isPlaying || currentAction === 'idle'">
+            <!-- Always show happy eyes when playing, normal when idle -->
+            <g v-if="!isPlaying">
               <!-- Open Eyes (Normal) -->
               <circle cx="-40" cy="-10" r="10" fill="#333">
                  <animate attributeName="r" values="10;10;1;10" keyTimes="0;0.9;0.95;1" dur="4s" repeatCount="indefinite" />
@@ -100,65 +95,20 @@
               <circle cx="44" cy="-14" r="3" fill="white" /> 
             </g>
             <g v-else>
-               <!-- Variable Eyes based on Action -->
-               <template v-if="currentAction === 'laugh'">
-                 <!-- > < Eyes -->
-                 <path d="M-55,-15 L-40,-5 L-55,5" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-                 <path d="M55,-15 L40,-5 L55,5" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" transform="scale(-1, 1) translate(-100, 0)"/> 
-                 <path d="M55,-15 L40,-5 L55,5" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-               </template>
-               
-               <template v-else-if="currentAction === 'spin' || currentAction === 'zoomies'">
-                  <!-- Dizzy Eyes (X X) or Vertigo -->
-                 <path d="M-50,-20 L-30,0 M-30,-20 L-50,0" stroke="#333" stroke-width="4" stroke-linecap="round" />
-                 <path d="M30,-20 L50,0 M50,-20 L30,0" stroke="#333" stroke-width="4" stroke-linecap="round" />
-               </template>
-
-               <template v-else-if="currentAction === 'jump' || currentAction === 'pounce' || currentAction === 'scratch'">
-                 <!-- Wide Open Eyes (O O) -->
-                 <circle cx="-40" cy="-10" r="14" fill="#333" />
-                 <circle cx="-34" cy="-16" r="4" fill="white" />
-                 <circle cx="40" cy="-10" r="14" fill="#333" />
-                 <circle cx="46" cy="-16" r="4" fill="white" />
-               </template>
-
-               <template v-else-if="currentAction === 'sleep_wake'">
-                 <!-- Closed/Sleepy Eyes (- -) -->
-                 <path d="M-55,-10 L-25,-10" stroke="#333" stroke-width="4" stroke-linecap="round" />
-                 <path d="M25,-10 L55,-10" stroke="#333" stroke-width="4" stroke-linecap="round" />
-               </template>
-
-               <template v-else-if="currentAction === 'chase_ball'">
-                  <!-- Focused Eyes (looking sideways) -->
-                 <circle cx="-35" cy="-10" r="10" fill="#333" />
-                 <circle cx="45" cy="-10" r="10" fill="#333" />
-               </template>
-
-               <template v-else>
-                 <!-- Happy Eyes (Closed Curves) default -->
+                 <!-- Happy Eyes (Closed Curves) default for playing -->
                  <path d="M-55,-10 Q-40,-25 -25,-10" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round" />
                  <path d="M25,-10 Q40,-25 55,-10" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round" />
-               </template>
             </g>
 
             <!-- Nose -->
             <path d="M-8,15 L8,15 L0,23 Z" fill="#Pink" />
             
             <!-- Mouth -->
-            <g v-if="!isPlaying || currentAction === 'idle'">
+            <g v-if="!isPlaying">
                <path d="M-8,23 Q-15,35 0,35 Q15,35 8,23" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round" />
             </g>
             <g v-else>
-               <template v-if="currentAction === 'laugh'">
-                  <path d="M-15,25 Q0,50 15,25" fill="#900" stroke="#333" stroke-width="2" /> 
-                  <path d="M-15,25 Q0,45 15,25 Z" fill="#F88" stroke="#333" stroke-width="2" />
-               </template>
-               <template v-else-if="currentAction === 'peek' || currentAction === 'sleep_wake'">
-                  <circle cx="0" cy="30" r="5" fill="#333" />
-               </template>
-               <template v-else>
                  <ellipse cx="0" cy="35" rx="10" ry="12" fill="#F88" stroke="#333" stroke-width="2" />
-               </template>
             </g>
 
             <!-- Cheeks & Whiskers -->
@@ -180,17 +130,6 @@
            <circle cx="0" cy="-5" r="8" :fill="accessoryColor" />
         </g>
         
-        <!-- Extra Items: Yarn Ball -->
-        <g v-if="currentAction === 'chase_ball'" transform="translate(300, 300)" class="animate-ball-roll">
-           <circle cx="0" cy="0" r="25" :fill="accessoryColor" />
-           <path d="M-20,-5 Q0,-20 20,-5 M-15,10 Q0,25 15,10" stroke="white" stroke-width="2" fill="none" opacity="0.5"/>
-        </g>
-
-        <!-- Extra Items: Zzz -->
-        <g v-if="currentAction === 'sleep_wake'" transform="translate(280, 100)">
-           <text x="0" y="0" font-size="40" fill="#888" class="animate-zzz">Zzz...</text>
-        </g>
-
       </svg>
     </div>
 
@@ -201,7 +140,7 @@
            TAP TO PLAY
          </p>
        </div>
-       <div v-else class="transition-all duration-300 transform scale-100" :class="{'scale-110': currentAction === 'jump'}">
+       <div v-else class="transition-all duration-300 transform scale-100">
           <p class="text-4xl font-black tracking-widest drop-shadow-sm transition-colors duration-300" 
              :style="{ color: currentActionColor }">
             {{ formatColorName(currentQuestion?.colorName || '') }}
@@ -228,55 +167,12 @@ const props = defineProps({
 defineEmits(['play'])
 
 const isPlaying = ref(false)
-const currentAction = ref<string | null>(null) 
-
-// Expanded List of 10+ Animations
-const ANIMATIONS = [
-  'sing',        // 0. Standard Sing
-  'jump',        // 1. High Jump
-  'wiggle',      // 2. Body Wiggle
-  'spin',        // 3. 360 Spin
-  'laugh',       // 4. Laughing
-  'peek',        // 5. Peek-a-boo
-  'chase_ball',  // 6. Chase Yarn Ball
-  'zoomies',     // 7. Fast Run Side-to-Side
-  'pounce',      // 8. Crouch and Pounce
-  'scratch',     // 9. Scratching screen
-  'sleep_wake',  // 10. Sleep then Wake
-  'stretch',     // 11. Stretch Up
-  'curious'      // 12. Head Tilt
-]
-
-// Keep track of last action to avoid repetition if possible
-let lastActionIndex = -1
-
-const getRandomAction = () => {
-  let attempts = 0
-  let newIndex = Math.floor(Math.random() * ANIMATIONS.length)
-  
-  // Try strictly to get a different one (max 10 attempts)
-  while (newIndex === lastActionIndex && attempts < 10) {
-     newIndex = Math.floor(Math.random() * ANIMATIONS.length)
-     attempts++
-  }
-  
-  lastActionIndex = newIndex
-  return ANIMATIONS[newIndex] || 'sing'
-}
+// const currentAction = ref<string | null>(null) // Removed usage
 
 watch(() => props.currentQuestion, async (newVal) => {
   if (newVal) {
     isPlaying.value = true
-    
-    // Force reset animation by momentarily clearing action
-    currentAction.value = null
-    await nextTick()
-    
-    // Slight delay to ensure DOM reflow happens if needed, though nextTick usually enough
-    // Using simple requestAnimationFrame or small timeout also works to restart CSS animations
-    setTimeout(() => {
-        currentAction.value = getRandomAction()
-    }, 10) 
+    // No specific random action needed, CSS animation handles the entrance
   }
 }, { immediate: true })
 
@@ -288,33 +184,21 @@ const accessoryColor = computed(() => {
     return props.currentQuestion?.color || '#FF6B6B'
 })
 
-const catTheme = computed(() => ({
-    body: '#FDFCF8',
-    stroke: '#E0E0DB',
-    earInner: '#FFE4E1',
-    stripe: '#EEE',
-    hasStripes: true
-}))
+const catTheme = computed(() => {
+    const color = props.currentQuestion?.color || '#ccc'
+    return {
+        body: color,
+        stroke: '#fff', // White stroke for better contrast on colored body
+        earInner: '#fff', // White inner ears
+        stripe: 'rgba(255,255,255,0.3)', // Subtle white stripes
+        hasStripes: true
+    }
+})
 
 const actionClass = computed(() => {
-  if (!isPlaying.value) return 'animate-breathe'
-  if (!currentAction.value) return '' // Reset state
-  
-  switch (currentAction.value) {
-    case 'jump': return 'animate-cat-jump'
-    case 'wiggle': return 'animate-cat-wiggle'
-    case 'spin': return 'animate-cat-spin'
-    case 'laugh': return 'animate-cat-laugh'
-    case 'peek': return 'animate-cat-peek'
-    case 'chase_ball': return 'animate-cat-chase'
-    case 'zoomies': return 'animate-cat-zoomies'
-    case 'pounce': return 'animate-cat-pounce'
-    case 'scratch': return 'animate-cat-scratch'
-    case 'sleep_wake': return 'animate-cat-sleep-wake'
-    case 'stretch': return 'animate-cat-stretch'
-    case 'curious': return 'animate-cat-curious'
-    case 'sing': default: return 'animate-bounce-gentle'
-  }
+  if (!isPlaying.value) return '' // No idle animation or maybe just breathe? User said "no tail movement".
+  // Actually, user wants "Jump and rotate from right to left".
+  return 'animate-enter-right' 
 })
 
 </script>
@@ -334,162 +218,24 @@ const actionClass = computed(() => {
 }
 .animate-breathe { animation: breathe 3s ease-in-out infinite; }
 
-/* 1. JUMP */
-@keyframes catJump {
-  0% { transform: scale(1,1) translateY(0); }
-  10% { transform: scale(1.1, 0.9) translateY(10px); }
-  40% { transform: scale(0.9, 1.1) translateY(-80px); }
-  60% { transform: scale(0.9, 1.1) translateY(-80px); }
-  90% { transform: scale(1.1, 0.9) translateY(0); }
-  100% { transform: scale(1,1) translateY(0); }
+/* Right-to-Left Jump & Spin Entrance */
+@keyframes enterRightSpin {
+  0% { 
+    transform: translateX(100vw) rotate(0deg) scale(0.5); 
+    opacity: 0;
+  }
+  50% { 
+    transform: translateX(0) rotate(-360deg) scale(1.2); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translateX(0) rotate(-720deg) scale(1); 
+    opacity: 1; 
+  }
 }
-.animate-cat-jump { animation: catJump 0.8s ease-out; }
+.animate-enter-right { 
+    animation: enterRightSpin 1.0s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+}
 
-/* 2. WIGGLE */
-@keyframes catWiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-5deg); }
-  75% { transform: rotate(5deg); }
-}
-.animate-cat-wiggle { animation: catWiggle 0.4s ease-in-out infinite; }
-
-/* 3. SPIN */
-@keyframes catSpin {
-  0% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(0.8); }
-  100% { transform: rotate(360deg) scale(1); }
-}
-.animate-cat-spin { animation: catSpin 0.8s ease-in-out; }
-
-/* 4. LAUGH */
-@keyframes catLaugh {
-  0%, 100% { transform: translateY(0); }
-  25% { transform: translateY(-5px) rotate(-3deg); }
-  75% { transform: translateY(-5px) rotate(3deg); }
-}
-.animate-cat-laugh { animation: catLaugh 0.4s ease-in-out infinite; }
-
-/* 5. PEEK */
-@keyframes catPeek {
-  0% { transform: translateY(0); }
-  20% { transform: translateY(150px); }
-  40% { transform: translateY(150px); }
-  50% { transform: translateY(20px); }
-  60% { transform: translateY(20px); }
-  80% { transform: translateY(0); }
-}
-.animate-cat-peek { animation: catPeek 1.5s ease-in-out; }
-
-/* 6. CHASE BALL */
-@keyframes catChase {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-40px) rotate(-5deg); }
-  75% { transform: translateX(40px) rotate(5deg); }
-}
-.animate-cat-chase { animation: catChase 1.2s ease-in-out infinite; }
-@keyframes ballRoll {
-  0%, 100% { transform: translateX(0) rotate(0deg); }
-  25% { transform: translateX(-150px) rotate(-180deg); opacity: 1;}
-  75% { transform: translateX(50px) rotate(180deg); opacity: 1;}
-}
-.animate-ball-roll { animation: ballRoll 1.2s ease-in-out infinite; }
-
-/* 7. ZOOMIES */
-@keyframes catZoomies {
-  0% { transform: translateX(0) scaleX(1); }
-  20% { transform: translateX(-100px) scaleX(1); }
-  21% { transform: translateX(-100px) scaleX(-1); }
-  50% { transform: translateX(100px) scaleX(-1); }
-  51% { transform: translateX(100px) scaleX(1); }
-  80% { transform: translateX(-50px) scaleX(1); }
-  100% { transform: translateX(0) scaleX(1); }
-}
-.animate-cat-zoomies { animation: catZoomies 1s linear; }
-
-/* 8. POUNCE */
-@keyframes catPounce {
-  0% { transform: scale(1) translateY(0); }
-  20% { transform: scale(1.1, 0.7) translateY(20px); } /* Crouch */
-  30% { transform: scale(1.1, 0.7) translateY(20px); } /* Hold */
-  40% { transform: scale(0.9, 1.1) translateY(-50px); } /* Pounce */
-  60% { transform: scale(1) translateY(0); }
-  70% { transform: scale(1.05, 0.95) translateY(5px); } /* Land */
-  100% { transform: scale(1) translateY(0); }
-}
-.animate-cat-pounce { animation: catPounce 1s ease-in-out; }
-
-/* 9. SCRATCH */
-@keyframes catScratch {
-  0% { transform: translateY(0); }
-  25% { transform: translateY(-5px) rotate(1deg); }
-  75% { transform: translateY(5px) rotate(-1deg); }
-}
-.animate-cat-scratch { animation: catScratch 0.1s linear infinite; }
-@keyframes scratchPaw {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(20px); }
-}
-.animate-scratch-left { animation: scratchPaw 0.2s alternate infinite; }
-.animate-scratch-right { animation: scratchPaw 0.2s alternate-reverse infinite; }
-
-/* 10. SLEEP WAKE */
-@keyframes catSleepWake {
-  0% { transform: scale(0.95) translateY(10px); } /* Sleeping */
-  40% { transform: scale(0.95) translateY(10px); }
-  45% { transform: scale(1.1) translateY(-20px); } /* Startle */
-  60% { transform: scale(1) translateY(0); }
-  100% { transform: scale(1) translateY(0); }
-}
-.animate-cat-sleep-wake { animation: catSleepWake 2s ease-in-out; }
-@keyframes floatZzz {
-  0% { opacity: 0; transform: translate(0, 0); }
-  50% { opacity: 1; }
-  100% { opacity: 0; transform: translate(20px, -30px); }
-}
-.animate-zzz { animation: floatZzz 1s linear infinite; }
-
-/* 11. STRETCH */
-@keyframes catStretch {
-  0% { transform: scale(1, 1); }
-  50% { transform: scale(0.8, 1.2) translateY(-20px); }
-  100% { transform: scale(1, 1); }
-}
-.animate-cat-stretch { animation: catStretch 1.5s ease-in-out; }
-
-/* 12. CURIOUS */
-@keyframes catCurious {
-  0% { transform: rotate(0deg); }
-  30% { transform: rotate(-20deg); }
-  60% { transform: rotate(20deg); }
-  100% { transform: rotate(0deg); }
-}
-.animate-cat-curious { animation: catCurious 1.5s ease-in-out; }
-
-
-/* Standard Bounce */
-@keyframes bounceGentle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
-}
-.animate-bounce-gentle { animation: bounceGentle 0.6s ease-in-out infinite; }
-
-@keyframes tailWag {
-  0%, 100% { transform: rotate(-5deg); }
-  50% { transform: rotate(5deg); }
-}
-.animate-tail-wag { animation: tailWag 3s ease-in-out infinite; }
-
-@keyframes tailExcited {
-  0%, 100% { transform: rotate(-15deg); }
-  50% { transform: rotate(15deg); }
-}
-.animate-tail-excited { animation: tailExcited 0.2s ease-in-out infinite; }
-
-@keyframes headBob {
-  0%, 100% { transform: translate(200px, 160px) rotate(0deg); }
-  25% { transform: translate(200px, 162px) rotate(2deg); }
-  75% { transform: translate(200px, 158px) rotate(-2deg); }
-}
-.animate-head-bob { animation: headBob 0.6s ease-in-out infinite; }
-
+/* Tail animations removed as requested */
 </style>
