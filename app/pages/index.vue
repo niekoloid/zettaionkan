@@ -488,26 +488,7 @@ const itemClasses = computed(() => {
                   </div>
                 </div>
               </div>
-              <!-- Single Note Training -->
-              <NuxtLink to="/singlenotetest" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-sky-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-                <div class="relative z-10 flex items-center w-full px-6">
-                  <!-- Icon Container -->
-                  <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-50 text-sky-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                    <span class="text-2xl font-black">?</span>
-                  </div>
-                  <!-- Text Content -->
-                  <div class="ml-4 flex flex-col items-start justify-center flex-grow">
-                    <h3 class="text-sm font-black text-sky-900 tracking-wider">単音テストに挑戦</h3>
-                    <p class="text-[10px] font-bold text-sky-400 mt-0.5">ドレミの音を一つずつ当ててみましょう</p>
-                  </div>
-                  <!-- Arrow -->
-                  <div class="text-sky-200 group-hover:text-sky-500 transition-colors duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-              </NuxtLink>
+
 
               <!-- Learning History -->
               <NuxtLink to="/history" class="group relative flex items-center w-full h-16 overflow-hidden rounded-2xl bg-white border border-indigo-50 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
