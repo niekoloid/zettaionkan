@@ -9,7 +9,13 @@
     "sync-public": "node scripts/sync-public.mjs",
     "predev": "npm run sync-public",
     "prebuild": "npm run sync-public",
-    "test:smoke": "node scripts/smoke.mjs"
+    "test:smoke": "node scripts/smoke.mjs",
+    "db:start": "npx --yes supabase --workdir .. start",
+    "db:stop": "npx --yes supabase --workdir .. stop",
+    "db:reset": "npx --yes supabase --workdir .. db reset",
+    "db:status": "npx --yes supabase --workdir .. status",
+    "db:env": "node scripts/local-env.mjs",
+    "setup:local": "npm run db:start && npm run db:env"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",

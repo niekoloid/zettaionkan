@@ -48,7 +48,40 @@ BASE_URL=http://localhost:3000 npm run test:smoke   # 全ページ表示 + ク�
 ```
 `test:smoke` は Chrome が必要です(`CHROME_PATH` で指定可)。
 
-## テスト環境 (Vercel プレビュー)
+## ローカル開発(推奨): ローカル Supabase
+
+Docker が動いていれば、ネットワークなし・無料・いつでもリセット可能な環境が作れます。
+
+```bash
+cd next
+npm install
+npm run setup:local      # Supabase 起動(初回は Docker イメージ取得で数分)+ .env.local を自動生成
+npm run dev              # http://localhost:3000
+```
+
+| 用途 | コマンド / URL |
+| --- | --- |
+| DB を初期状態に戻す(マイグレーション+seed 再適用) | `npm run db:reset` |
+| 停止 | `npm run db:stop` |
+| 状態・キーの確認 | `npm run db:status` |
+| Studio(テーブル編集) | http://127.0.0.1:54323 |
+| 受信メール(Mailpit) | http://127.0.0.1:54324 |
+
+seed のテストユーザー(パスワードはすべて `password123`):
+
+| メール | プラン |
+| --- | --- |
+| `test@example.com` | premium(`/auth` の「DEBUG TEST LOGIN」もこれ) |
+| `standard@example.com` | standard |
+| `entry@example.com` | entry |
+| `free@example.com` | free(ログイン中は entry 扱い) |
+
+`test@example.com` には学習履歴のサンプルが入っています。有料機能は Studio の `profiles` で `subscription_tier` を書き換えても確認できます。
+
+注意: `supabase/` はこのリポジトリで **本番プロジェクトにリンク**されています(`supabase/.temp/project-ref`)。
+ローカル起動(`supabase start`)には影響しませんが、`supabase db push` は実行しないでください。
+
+## 共有用テスト環境 (Vercel プレビュー + テスト用 Supabase)
 
 1. Vercel で `niekoloid/zettaionkan` をインポート
 2. **Root Directory** = `next`(「Include source files outside of the Root Directory」は ON のまま。`../public` をコピーするため)

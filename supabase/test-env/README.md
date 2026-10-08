@@ -5,7 +5,7 @@ Use a **new** Supabase project, not production. The Next.js app in `next/` only 
 
 ## 1. Supabase (test project)
 1. Create a project (e.g. `zettaionkan-test`).
-2. SQL Editor → run `schema.sql` in this folder.
+2. SQL Editor → run `schema.sql` in this folder (same schema as `supabase/migrations/20260101000000_init_schema.sql`).
 3. Authentication → URL Configuration:
    - Site URL: your Vercel preview URL
    - Redirect URLs: `https://*-<your-team>.vercel.app/**` and `http://localhost:3000/**`
