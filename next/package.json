@@ -8,7 +8,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "sync-public": "node scripts/sync-public.mjs",
     "predev": "npm run sync-public",
-    "prebuild": "npm run sync-public"
+    "prebuild": "npm run sync-public",
+    "test:smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -26,6 +27,7 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "autoprefixer": "^10.4.20",
+    "playwright-core": "^1.64.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.0"
