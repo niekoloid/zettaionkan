@@ -6,6 +6,7 @@ import {
 import type * as ToneNS from 'tone'
 import { STEINWAY_FAST_MAP, STEINWAY_FULL_MAP, YAMAHA_MAP } from '@/constants/instruments'
 import { useAuth } from '@/lib/app-context'
+import { useVoiceSettings } from '@/lib/voice'
 
 type InstrumentId = 'yamaha' | 'steinway'
 type LoadedFlags = { yamaha: boolean; steinway: boolean; narration: boolean; effects: boolean }
@@ -26,6 +27,7 @@ const loadTone = () => (tonePromise ??= import('tone'))
 // Samplers / buffers are not React state: they live for the whole session.
 const samplers: Partial<Record<InstrumentId, ToneNS.Sampler>> = {}
 const narrationBuffers: Record<string, ToneNS.ToneAudioBuffer> = {}
+const customVoiceBuffers: Record<string, ToneNS.ToneAudioBuffer> = {}
 const effectBuffers: Record<string, ToneNS.ToneAudioBuffer> = {}
 const samplerPromises: Partial<Record<InstrumentId, Promise<boolean>>> = {}
 let narrationPromise: Promise<boolean> | null = null
@@ -49,12 +51,16 @@ interface AudioContextValue {
   playNotes: (notes: string | string[], duration?: string | number) => Promise<boolean>
   playNarration: (colorName: string) => Promise<boolean>
   playEffect: (name: string) => Promise<boolean>
+  customVoiceEnabled: boolean
 }
 
 const AudioCtx = createContext<AudioContextValue | null>(null)
 
 export function AudioProvider({ children }: { children: ReactNode }) {
   const { userTier } = useAuth()
+  const { customVoiceEnabled, availableVoices, getVoiceUrl } = useVoiceSettings()
+  const voiceRef = useRef({ customVoiceEnabled, availableVoices, getVoiceUrl })
+  voiceRef.current = { customVoiceEnabled, availableVoices, getVoiceUrl }
   const tierRef = useRef(userTier)
   tierRef.current = userTier
 
@@ -250,9 +256,26 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     source.start()
   }
 
-  // TODO(stage 2): custom (parent) voice recordings, see useVoiceSettings in the Nuxt app.
   const playNarration = useCallback(async (colorName: string) => {
-    await ensureRunning()
+    const Tone = await ensureRunning()
+
+    // 1. Parent's own recording, when enabled
+    const voice = voiceRef.current
+    if (voice.customVoiceEnabled && voice.availableVoices.has(colorName)) {
+      try {
+        if (!customVoiceBuffers[colorName]) {
+          const url = voice.getVoiceUrl(colorName)
+          if (url) customVoiceBuffers[colorName] = await Tone.ToneAudioBuffer.fromUrl(url)
+        }
+        const buffer = customVoiceBuffers[colorName]
+        if (buffer) { await playBuffer(buffer, 'narration'); return true }
+      } catch (e) {
+        console.error(`Custom Voice Play Error (${colorName}):`, e)
+        // fall back to the default voice
+      }
+    }
+
+    // 2. Default narration
     if (!loadedRef.current.narration && !(await loadNarration())) return false
     const buffer = narrationBuffers[colorName]
     if (!buffer) { console.warn(`Buffer missing for ${colorName}`); return false }
@@ -271,8 +294,8 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     samplers, isLoading, isPreloading, loadingProgress, loadingFile, isLoaded,
     isSamplerLoaded: isLoaded[selectedInstrument],
     selectedInstrument, loadSampler, loadNarration, loadEffects, preloadAll,
-    playNotes, playNarration, playEffect
-  }), [isLoading, isPreloading, loadingProgress, loadingFile, isLoaded, selectedInstrument,
+    playNotes, playNarration, playEffect, customVoiceEnabled
+  }), [customVoiceEnabled, isLoading, isPreloading, loadingProgress, loadingFile, isLoaded, selectedInstrument,
     loadSampler, loadNarration, loadEffects, preloadAll, playNotes, playNarration, playEffect])
 
   return <AudioCtx.Provider value={value}>{children}</AudioCtx.Provider>
