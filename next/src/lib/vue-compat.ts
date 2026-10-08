@@ -16,8 +16,8 @@ export function vcls(...values: ClassValue[]): string {
 }
 
 /** Vue-style v-for over arrays or a number (1..n). */
-export function vfor<R>(source: number, render: (item: number, index: number) => R): R[]
 export function vfor<T, R>(source: T[] | null | undefined, render: (item: T, index: number) => R): R[]
+export function vfor<R>(source: number, render: (item: number, index: number) => R): R[]
 export function vfor(source: unknown, render: (item: any, index: number) => unknown): unknown[] {
   if (source == null) return []
   if (typeof source === 'number') return Array.from({ length: source }, (_, i) => render(i + 1, i))
