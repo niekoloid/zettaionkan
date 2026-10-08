@@ -6,6 +6,7 @@ import { AudioProvider } from '@/lib/audio'
 import { VoiceProvider } from '@/lib/voice'
 import AudioLoadingStatus from '@/components/AudioLoadingStatus'
 import ProModal from '@/components/common/ProModal'
+import RouteGuard from '@/components/RouteGuard'
 
 export default function Providers({ initial, children }: { initial: InitialState; children: ReactNode }) {
   return (
@@ -16,6 +17,7 @@ export default function Providers({ initial, children }: { initial: InitialState
           {children}
           <AudioLoadingStatus />
           <ProModal />
+          <RouteGuard />
         </div>
       </AudioProvider>
       </VoiceProvider>

@@ -18,6 +18,7 @@ import {
 const SETTINGS_COOKIE = 'zettaionkan_app_settings'
 const TIER_COOKIE = 'zettaionkan_user_tier'
 const OVERRIDES_COOKIE = 'feature_overrides'
+export const DEBUG_TIER_COOKIE = 'zettaionkan_debug_tier'
 
 export const DEFAULT_SETTINGS: AppSettings = {
   namingConvention: 'italian',
@@ -43,6 +44,8 @@ export interface InitialState {
   mappings: CustomMappings
   overrides: FeatureOverrides
   tier: SubscriptionTier
+  /** dev only: lets /account force a tier for testing */
+  debugTier?: SubscriptionTier | null
 }
 
 interface ProModalState {
@@ -87,6 +90,7 @@ export function AppProvider({ initial, children }: { initial: InitialState; chil
   const [overrides, setOverridesState] = useState(initial.overrides)
   const [tier, setTier] = useState<SubscriptionTier>(initial.tier)
   const [user, setUser] = useState<User | null>(null)
+  const debugTier = process.env.NODE_ENV === 'development' ? initial.debugTier ?? null : null
   const [authReady, setAuthReady] = useState(false)
   const [proModal, setProModal] = useState<ProModalState>({ isOpen: false, title: DEFAULT_PRO_TITLE, desc: DEFAULT_PRO_DESC })
 
@@ -171,8 +175,8 @@ export function AppProvider({ initial, children }: { initial: InitialState; chil
 
   const value = useMemo<AppContextValue>(() => ({
     settings, updateSetting, mappings, saveSingleMapping, resetMappings,
-    overrides, setOverrides, user, tier, authReady, refreshStatus, proModal, setProModal
-  }), [settings, updateSetting, mappings, saveSingleMapping, resetMappings, overrides, setOverrides, user, tier, authReady, refreshStatus, proModal])
+    overrides, setOverrides, user, tier: user && debugTier ? debugTier : tier, authReady, refreshStatus, proModal, setProModal
+  }), [settings, updateSetting, mappings, saveSingleMapping, resetMappings, overrides, setOverrides, user, tier, debugTier, authReady, refreshStatus, proModal])
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }

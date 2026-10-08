@@ -11,7 +11,9 @@ const nextConfig = {
       process.env.VITE_SUPABASE_ANON_KEY ||
       process.env.SUPABASE_KEY ||
       process.env.SUPABASE_ANON_KEY ||
-      ''
+      '',
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || process.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
+    NEXT_PUBLIC_FORMSPREE_ENDPOINT: process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || process.env.NUXT_PUBLIC_FORMSPREE_ENDPOINT || ''
   }
 }
 

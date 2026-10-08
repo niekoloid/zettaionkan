@@ -26,7 +26,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     settings: { ...DEFAULT_SETTINGS, ...decodeCookie<Partial<AppSettings>>(jar.get('zettaionkan_app_settings')?.value, {}) },
     mappings: decodeCookie(jar.get(CHORD_MAPPINGS_COOKIE)?.value, {}),
     overrides: decodeCookie(jar.get('feature_overrides')?.value, {}),
-    tier: decodeCookie<SubscriptionTier>(jar.get('zettaionkan_user_tier')?.value, 'free')
+    tier: decodeCookie<SubscriptionTier>(jar.get('zettaionkan_user_tier')?.value, 'free'),
+    debugTier: decodeCookie<SubscriptionTier | null>(jar.get('zettaionkan_debug_tier')?.value, null)
   }
 
   return (
