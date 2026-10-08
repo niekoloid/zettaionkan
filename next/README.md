@@ -11,7 +11,7 @@ npm run dev              # http://localhost:3000
 npm run typecheck
 ```
 
-`public/` は `../public` へのシンボリックリンクです(音声・画像は Nuxt と共有)。
+`dev` / `build` の前に `../public` を `./public` へコピーします(音声・画像は Nuxt と共有。`scripts/sync-public.mjs`)。
 
 ## 移行状況
 
@@ -32,3 +32,16 @@ npm run typecheck
 | 機能ゲートのルートガード (`feature-gate.global.ts`) | | ⏳ (`middleware.ts` or layout) |
 | sitemap / PWA / canonical | `@nuxtjs/sitemap` | ⏳ |
 | Supabase Edge Functions (Stripe) | `supabase/functions` | 変更不要 (フロントのフレームワーク非依存) |
+
+## テスト環境 (Vercel プレビュー)
+
+1. Vercel で `niekoloid/zettaionkan` をインポート
+2. **Root Directory** = `next`(「Include source files outside of the Root Directory」は ON のまま。`../public` をコピーするため)
+3. Framework Preset = Next.js(自動検出)
+4. Environment Variables(Preview)
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+5. ブランチ `claude/optimistic-thompson-qayzyl` をプッシュするとプレビューURLが発行されます
+6. Supabase の Authentication > URL Configuration の Redirect URLs に、プレビューURL(`https://<project>-*.vercel.app/**`)を追加
+
+> 既存(本番)の Supabase に接続する場合、プレビューから行った操作(ログイン、学習履歴の保存など)は本番データに書き込まれます。
