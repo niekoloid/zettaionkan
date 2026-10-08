@@ -50,7 +50,8 @@ BASE_URL=http://localhost:3000 npm run test:smoke   # 全ページ表示 + ク�
 
 ## 開発環境(zandobank と同じ構成)
 
-Supabase は **dev / prod の 2 プロジェクト** + **ローカル(Docker)** の 3 つを使い分けます。
+Supabase は **ローカル(Docker)だけで開発できます**(ホスト版の dev プロジェクトは作らなくて構いません)。
+構成としては zandobank と同じく dev / prod / ローカルの 3 つを想定していますが、使うのはローカルと本番だけで足ります。
 
 | 用途 | 接続先 | 設定ファイル |
 | --- | --- | --- |
