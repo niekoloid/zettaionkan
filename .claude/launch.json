@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "zettaionkan-next",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "next",
+        "run",
+        "dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

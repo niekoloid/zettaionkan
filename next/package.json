@@ -15,7 +15,17 @@
     "db:reset": "npx --yes supabase --workdir .. db reset",
     "db:status": "npx --yes supabase --workdir .. status",
     "db:env": "node scripts/local-env.mjs",
-    "setup:local": "npm run db:start && npm run db:env"
+    "setup:local": "npm run db:start && npm run db:env",
+    "check-db": "node scripts/check-db.mjs",
+    "check-db:prod": "node scripts/check-db.mjs --prod",
+    "db:studio": "echo 'Supabase Studio: http://127.0.0.1:54323' && open http://127.0.0.1:54323",
+    "supabase:link:dev": "npx --yes supabase --workdir .. link --project-ref $SUPABASE_DEV_REF",
+    "supabase:link:prod": "npx --yes supabase --workdir .. link --project-ref pfiyfqxbmenlrwjvhorl",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:e2e": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -29,10 +39,15 @@
     "tone": "^15.1.22"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "autoprefixer": "^10.4.20",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
     "playwright-core": "^1.64.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",

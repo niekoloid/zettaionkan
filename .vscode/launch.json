@@ -6,8 +6,13 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "skipFiles": ["<node_internals>/**"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "console": "integratedTerminal"
     },
     {
@@ -16,12 +21,59 @@
       "request": "launch",
       "url": "http://localhost:3000",
       "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Next.js: サーバー側 (next/)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/next"
+    },
+    {
+      "name": "Next.js: クライアント側 (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/next"
+    },
+    {
+      "name": "Next.js: debug full stack",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/next/node_modules/next/dist/bin/next",
+      "args": [
+        "dev"
+      ],
+      "cwd": "${workspaceFolder}/next",
+      "runtimeArgs": [
+        "--inspect"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}/next"
+      }
     }
   ],
   "compounds": [
     {
       "name": "Nuxt: フルスタック",
-      "configurations": ["Nuxt: サーバー側 (Node)", "Nuxt: クライアント側 (Chrome)"]
+      "configurations": [
+        "Nuxt: サーバー側 (Node)",
+        "Nuxt: クライアント側 (Chrome)"
+      ]
+    },
+    {
+      "name": "Next.js: フルスタック(Chrome併用)",
+      "configurations": [
+        "Next.js: サーバー側 (next/)",
+        "Next.js: クライアント側 (Chrome)"
+      ]
     }
   ]
 }
