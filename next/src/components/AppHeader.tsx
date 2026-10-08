@@ -14,9 +14,10 @@ interface Props {
   showBack?: boolean
   backTo?: string
   transparent?: boolean
+  onBack?: (e: React.MouseEvent) => void
 }
 
-export default function AppHeader({ showBack = false, backTo = '/', transparent = false }: Props) {
+export default function AppHeader({ showBack = false, backTo = '/', transparent = false, onBack }: Props) {
   const { user, userTier } = useAuth()
   const { selectedInstrument } = useAudio()
 
@@ -29,7 +30,7 @@ export default function AppHeader({ showBack = false, backTo = '/', transparent 
     <header className={`w-full pt-6 pb-2 px-4 flex items-center justify-between shrink-0 relative z-20 ${transparent ? '' : 'bg-white/80 backdrop-blur-md'}`}>
       <div className="w-10 flex items-center">
         {showBack && (
-          <Link href={backTo} aria-label="戻る" className="p-2 -ml-2 hover:bg-black/5 rounded-full transition-colors group">
+          <Link href={backTo} onClick={onBack} aria-label="戻る" className="p-2 -ml-2 hover:bg-black/5 rounded-full transition-colors group">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
