@@ -1,0 +1,16 @@
+/* Landing page styles (scoped under .lp-root so they cannot leak into the app) */
+.lp-root { font-family: 'Noto Sans JP', ui-sans-serif, system-ui, sans-serif; }
+.lp-root h1, .lp-root h2, .lp-root h3 { text-wrap: balance; word-break: keep-all; overflow-wrap: anywhere; }
+.lp-root p { text-wrap: pretty; }
+.lp-root { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  .lp-root { scroll-behavior: auto; }
+  .lp-root * { transition-duration: 0.01ms !important; }
+}
+
+/* ChordStave (desktop only) */
+.custom-scrollbar::-webkit-scrollbar { height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+.chord-stave .abcjs-lyric { font-family: sans-serif; font-size: 14px; font-weight: bold; fill: #374151; }
+.chord-stave .abcjs-stem { display: none; stroke: none; fill: none; }

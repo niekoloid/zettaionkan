@@ -1,0 +1,289 @@
+/* ---- IceCream ---- */
+/* Stacking Animation */
+
+
+
+
+
+@keyframes drop-bounce {
+  0% { transform: translateY(-500px) scaleX(0.5) scaleY(1.5); opacity: 0; }
+  60% { transform: translateY(20px) scaleX(1.3) scaleY(0.7); opacity: 1; } /* Squash on impact */
+  80% { transform: translateY(-10px) scaleX(0.9) scaleY(1.1); } /* Rebound stretch */
+  100% { transform: translateY(0) scaleX(1) scaleY(1); } /* Settle */
+}
+
+/* Base Wobble details */
+.cone-wobble-base {
+  transform-origin: bottom center;
+  animation: gentle-sway 4s ease-in-out infinite;
+}
+
+@keyframes gentle-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+/* ---- Cat ---- */
+/* Fade Transition */
+
+
+
+
+
+
+/* ---- CuteCat ---- */
+/* Common / Utility */
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-150px) rotate(45deg); opacity: 0; }
+}
+.animate-float { animation: float 2.5s linear forwards; }
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+.animate-breathe { animation: breathe 3s ease-in-out infinite; }
+
+/* Right-to-Left Jump & Spin Entrance */
+@keyframes enterRightSpin {
+  0% { 
+    transform: translateX(100vw) rotate(0deg) scale(0.5); 
+    opacity: 0;
+  }
+  50% { 
+    transform: translateX(0) rotate(-360deg) scale(1.2); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translateX(0) rotate(-720deg) scale(1); 
+    opacity: 1; 
+  }
+}
+.animate-enter-right { 
+    animation: enterRightSpin 1.0s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+}
+
+/* Tail animations removed as requested */
+
+/* ---- TrainFront ---- */
+@keyframes trainApproach {
+  0% { 
+    transform: scale(0.1) translateY(40px); 
+    opacity: 0; 
+  }
+  10% {
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(1.6) translateY(0); 
+    opacity: 1; 
+  }
+}
+.animate-train-approach {
+    animation: trainApproach 3.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes signPop {
+    0% { transform: translate(-50%, 100px); }
+    80% { transform: translate(-50%, -10px); }
+    100% { transform: translate(-50%, 0); }
+}
+.animate-sign-pop {
+    animation: signPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: 0.5s;
+}
+
+.perspective-3d {
+    perspective: 1000px;
+}
+
+/* ---- Train ---- */
+/* Train Car Entry Animation */
+
+
+
+
+
+/* Background Animations */
+.animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.animate-ping-slow {
+    animation: ping 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.float-cloud-1 {
+  animation: float-1 30s linear infinite;
+}
+.float-cloud-2 {
+  animation: float-2 45s linear infinite;
+}
+
+@keyframes float-1 {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-40px); }
+  100% { transform: translateX(0); }
+}
+@keyframes float-2 {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(60px); }
+  100% { transform: translateX(0); }
+}
+
+/* Hide scrollbar for train container */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* ---- Vehicle ---- */
+/* Transitions */
+
+
+
+
+
+
+
+/* Animations */
+@keyframes color-pulse {
+  0% { opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+
+@keyframes white-flash {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes fire-float {
+  0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 10px orange); }
+  50% { transform: translateY(-10px) scale(1.1); filter: drop-shadow(0 0 20px red); }
+}
+.animate-fire-float { animation: fire-float 1s ease-in-out infinite; }
+
+@keyframes push-out {
+  0% { transform: scale(1) translateX(40px); opacity: 1; }
+  20% { transform: scale(1.1) translateX(35px); }
+  100% { transform: scale(1.2) translateX(300px); opacity: 0; }
+}
+.animate-push-out { animation: push-out 1.2s ease-in forwards; }
+
+@keyframes truck-tilt {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(-20deg) translateY(-10px); }
+}
+.animate-truck-tilt { animation: truck-tilt 0.6s ease-in-out infinite; }
+
+@keyframes truck-jolt {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-15px); }
+  75% { transform: translateX(15px); }
+}
+.animate-truck-jolt { animation: truck-jolt 0.2s infinite; }
+
+@keyframes bulldozer-push {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  50% { transform: translateX(20px) scaleX(1.05); }
+}
+.animate-bulldozer-push { animation: bulldozer-push 0.5s infinite; }
+
+@keyframes bulldozer-heavy {
+  0%, 100% { transform: rotate(0) translateY(0); }
+  50% { transform: rotate(5deg) translateY(5px); }
+}
+.animate-bulldozer-heavy { animation: bulldozer-heavy 0.8s infinite; }
+
+@keyframes roll {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(10px); }
+}
+.animate-roll { animation: roll 1.5s infinite; }
+
+@keyframes scoop-out {
+  0% { transform: scale(1); opacity: 1; }
+  70% { transform: translateY(0) rotate(10deg); opacity: 1; }
+  100% { transform: translateY(-100px) rotate(45deg); opacity: 0; }
+}
+.animate-scoop-out { animation: scoop-out 2s ease-in-out forwards; }
+
+@keyframes water-particle {
+  0% { transform: translate(0, 0) scale(0); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; }
+}
+.animate-water-particle { animation: water-particle 1.2s ease-out infinite; }
+
+@keyframes excavator-varied {
+  0%, 100% { transform: rotate(0); }
+  30% { transform: rotate(-15deg) translateY(-10px); }
+  60% { transform: rotate(10deg) translateY(5px); }
+}
+.animate-excavator-varied { animation: excavator-varied 1s ease-in-out infinite; }
+
+@keyframes drive {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.animate-drive { animation: drive 0.3s infinite; }
+
+@keyframes text-pop {
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  50% { transform: scale(1.3) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.animate-text-pop { animation: text-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.animate-bounce-subtle { animation: bounce-subtle 3s ease-in-out infinite; }
+@keyframes impact {
+  0% { transform: scale(1); }
+  20% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.animate-impact { animation: impact 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+/* ---- VideoCat ---- */
+
+
+
+
+/* ---- CatFlag ---- */
+
+
+
+
+
+
+
+
+
+/* ---- enter animations (React replacement for Vue <Transition>) ---- */
+.scoop-item { animation: drop-bounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes train-car-in { from { transform: translateX(-50px) scale(0.5); opacity: 0; } to { transform: none; opacity: 1; } }
+.train-car { animation: train-car-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes cat-fade-in { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: none; } }
+.cat-fade-in { animation: cat-fade-in 0.5s ease; }
+@keyframes video-fade-in { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: none; } }
+.video-fade-in { animation: video-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes simple-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.fade-in { animation: simple-fade-in 0.3s ease; }
+.fade-in-slow { animation: simple-fade-in 0.5s ease; }
+@keyframes vehicle-hyper-in { from { transform: translateX(-150vw) scale(0.5) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes vehicle-jump-in { from { transform: translateY(-100vh) scale(2); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes vehicle-spin-in { from { transform: translateX(-100vw) rotate(720deg) scale(0); opacity: 0; } to { transform: none; opacity: 1; } }
+.vehicle-hyper-in { animation: vehicle-hyper-in 0.8s cubic-bezier(0.34, 1.7, 0.64, 1); }
+.vehicle-jump-in { animation: vehicle-jump-in 0.8s cubic-bezier(0.34, 1.7, 0.64, 1); }
+.vehicle-spin-in { animation: vehicle-spin-in 0.8s cubic-bezier(0.34, 1.7, 0.64, 1); }
+.anim-white-flash { animation: white-flash 0.1s ease-out; }
+.anim-color-pulse { animation: color-pulse 0.15s ease-out; }
