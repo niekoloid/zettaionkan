@@ -1,14 +1,53 @@
 'use client'
 import Link from 'next/link'
-import { vcls } from '@/lib/vue-compat'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import AppHeader from '@/components/AppHeader'
+import PageTitle from '@/components/PageTitle'
 import { useAuth } from '@/lib/app-context'
 import { getSupabase } from '@/lib/supabase'
 
+type Tier = 'free' | 'standard' | 'premium'
+
+// Feature lists mirror FEATURE_GATES in constants/features.ts and the LP pricing section
+const PLANS: { id: Tier; name: string; tagline: string; monthly: number; yearly: number; yearlyNote?: string; features: { ok: boolean; t: string }[] }[] = [
+  {
+    id: 'free', name: 'Free', tagline: 'まずは基本から', monthly: 0, yearly: 0,
+    features: [
+      { ok: true, t: '白鍵の和音 9種類' },
+      { ok: true, t: '聞き流し（赤の和音）' },
+      { ok: true, t: '演出モード 2種類（ねこ・迫る電車）' },
+      { ok: false, t: '黒鍵の和音（全14種類）' },
+      { ok: false, t: 'Steinway Model B 音源' }
+    ]
+  },
+  {
+    id: 'standard', name: 'Standard', tagline: '基本をしっかり', monthly: 980, yearly: 9800, yearlyNote: '2か月分おトク',
+    features: [
+      { ok: true, t: '白鍵の和音 9種類' },
+      { ok: true, t: '黒鍵の和音（全14種類）' },
+      { ok: true, t: '聞き流し（全14和音・全モード）' },
+      { ok: true, t: 'すべての演出モード' },
+      { ok: true, t: '色のひらがな表示・詳しい学習履歴' },
+      { ok: false, t: 'Steinway Model B 音源' }
+    ]
+  },
+  {
+    id: 'premium', name: 'Premium', tagline: '最高の音で', monthly: 1980, yearly: 15000,
+    features: [
+      { ok: true, t: 'Standard のすべて' },
+      { ok: true, t: 'Steinway Model B 音源' },
+      { ok: true, t: 'ホーム画面の鍵盤の音' },
+      { ok: true, t: '和音と色のカスタマイズ' }
+    ]
+  }
+]
+
+const yen = (n: number) => `¥${n.toLocaleString('ja-JP')}`
+
 export default function SubscriptionPage() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, userTier } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
 
@@ -42,6 +81,100 @@ export default function SubscriptionPage() {
   }
 
   return (
-<div className="min-h-screen bg-white font-['Noto_Sans_JP']"><div className="min-h-screen flex flex-col max-w-3xl mx-auto relative relative">{/* Header */}<header className="pt-8 pb-6 px-4 flex items-center justify-between relative shrink-0"><Link className="p-2 hover:bg-gray-100 rounded-full transition-colors group z-10" href="/"><svg className="h-6 w-6 text-gray-400 group-hover:text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg></Link><div className="absolute left-1/2 transform -translate-x-1/2"><img className="h-16 w-auto object-contain" src="/logo_irooto.png" alt="いろおと" /></div><div className="w-10" /></header><main className="flex-grow px-6 pb-20 overflow-y-auto"><div className="text-center mb-8"><h1 className="text-xs font-bold text-amber-500 uppercase tracking-[0.2em] mb-2">Upgrade to Pro</h1><h2 className="text-2xl font-black text-gray-900 mb-2">Proプランで才能を開花させる</h2><p className="text-sm text-gray-500 leading-relaxed font-medium">黒鍵を含む全ての和音と、最高級の音源で<br />本物の絶対音感を身につけましょう。</p></div>{/* Billing Cycle Toggle */}<div className="flex justify-center mb-8"><div className="bg-gray-100 p-1 rounded-xl flex shadow-inner"><button className={vcls("px-5 py-2 rounded-lg text-xs font-bold transition-all", billingCycle === 'monthly' ? 'bg-white text-gray-900 shadow-md transform scale-105' : 'text-gray-400 hover:text-gray-600')} onClick={(e) => { setBillingCycle('monthly') }}>月額払い</button><button className={vcls("px-5 py-2 rounded-lg text-xs font-bold transition-all flex items-center group", billingCycle === 'yearly' ? 'bg-white text-gray-900 shadow-md transform scale-105' : 'text-gray-400 hover:text-gray-600')} onClick={(e) => { setBillingCycle('yearly') }}>年額払い<span className="ml-1.5 text-[9px] bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded-full group-hover:bg-amber-200 transition-colors">お得</span></button></div></div><div className="grid md:grid-cols-3 gap-4 mb-8">{/* Free Plan */}<div className="rounded-3xl p-6 border border-gray-100 bg-gray-50/50 flex flex-col"><h3 className="text-lg font-black text-gray-900 mb-1">Free</h3><p className="text-[11px] text-gray-400 mb-4 font-bold">まずは基本から</p><div className="text-3xl font-black text-gray-900 mb-6">¥0<span className="text-xs font-medium text-gray-400 ml-1">/月</span></div><button className="w-full py-3 rounded-xl bg-gray-200 text-gray-400 font-bold text-xs mb-6 cursor-default" disabled>現在のプラン</button><ul className="space-y-3 flex-grow">{/* Free Features */}<li className="flex items-center text-[11px] font-bold text-gray-600"><svg className="h-4 w-4 mr-2 shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg><span>白鍵の和音 (9種類)</span></li><li className="flex items-center text-[11px] font-bold text-gray-300 line-through decoration-gray-300 decoration-2 opacity-60"><svg className="h-4 w-4 mr-2 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg><span>黒鍵の和音 (全14種類)</span></li><li className="flex items-center text-[11px] font-bold text-gray-300 line-through decoration-gray-300 decoration-2 opacity-60"><svg className="h-4 w-4 mr-2 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg><span>自動再生 (全モード)</span></li><li className="flex items-center text-[11px] font-bold text-gray-300 line-through decoration-gray-300 decoration-2 opacity-60"><svg className="h-4 w-4 mr-2 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg><span>Steinway B 音源</span></li></ul></div>{/* Standard Plan */}<div className="rounded-3xl p-6 border-2 border-indigo-100 bg-white relative overflow-hidden flex flex-col hover:border-indigo-300 transition-colors"><h3 className="text-lg font-black text-gray-900 mb-1">Standard</h3><p className="text-[11px] text-gray-400 mb-4 font-bold">基本をしっかり</p><div className="flex items-baseline mb-6"><span className="text-3xl font-black text-gray-900">¥{billingCycle === 'monthly' ? '980' : '9,800'}</span><span className="text-xs font-medium text-gray-400 ml-1">/{billingCycle === 'monthly' ? '月' : '年'}</span></div><button className="w-full py-3 rounded-xl bg-indigo-50 text-indigo-600 font-bold text-xs mb-6 hover:bg-indigo-100 transition-all active:scale-95 relative overflow-hidden group" onClick={(e) => { handleSubscribe('standard') }} disabled={isLoading}><span className="relative z-10 flex items-center justify-center"><span>{isLoading ? '処理中...' : 'Standardを選ぶ'}</span></span></button><ul className="space-y-3 flex-grow">{/* Standard Features */}<li className="flex items-center text-[11px] font-bold text-gray-900"><svg className="h-4 w-4 mr-2 shrink-0 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg><span>白鍵の和音 (9種類)</span></li><li className="flex items-center text-[11px] font-bold text-gray-900"><svg className="h-4 w-4 mr-2 shrink-0 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg><span>黒鍵の和音 (全14種類)</span></li><li className="flex items-center text-[11px] font-bold text-gray-900"><svg className="h-4 w-4 mr-2 shrink-0 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg><span>自動再生 (全モード)</span></li><li className="flex items-center text-[11px] font-bold text-gray-300 line-through decoration-gray-300 decoration-2 opacity-60"><svg className="h-4 w-4 mr-2 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg><span>Steinway B 音源</span></li></ul></div>{/* Premium Plan */}<div className="rounded-3xl p-6 border-2 border-amber-400 bg-white relative overflow-hidden shadow-xl shadow-amber-100/50 flex flex-col"><div className="absolute top-0 right-0 bg-amber-400 text-white text-[9px] font-black px-3 py-1 rounded-bl-xl shadow-sm tracking-wide">RECOMMENDED</div><h3 className="text-lg font-black text-gray-900 mb-1">Premium</h3><p className="text-[11px] text-gray-400 mb-4 font-bold">最高品質の環境を</p><div className="flex items-baseline mb-6"><span className="text-3xl font-black text-gray-900">¥{billingCycle === 'monthly' ? '1,980' : '15,000'}</span><span className="text-xs font-medium text-gray-400 ml-1">/{billingCycle === 'monthly' ? '月' : '年'}</span></div><button className="w-full py-3 rounded-xl bg-gray-900 text-white font-bold text-xs mb-6 hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200 relative overflow-hidden group" onClick={(e) => { handleSubscribe('premium') }} disabled={isLoading}><span className="relative z-10 flex items-center justify-center"><span>{isLoading ? '処理中...' : 'Premiumにアップグレード'}</span>{(!isLoading) ? (<svg className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>) : null}</span></button><ul className="space-y-3 flex-grow">{/* Premium Features */}<li className="flex items-center text-[11px] font-bold text-gray-900"><svg className="h-4 w-4 mr-2 shrink-0 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg><span>白鍵の和音 (9種類)</span></li><li className="flex items-center text-[11px] font-bold text-gray-900"><svg className="h-4 w-4 mr-2 shrink-0 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg><span>黒鍵の和音 (全14種類)</span></li><li className="flex items-center text-[11px] font-bold text-gray-900"><svg className="h-4 w-4 mr-2 shrink-0 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg><span>自動再生 (全モード)</span></li><li className="flex items-center text-[11px] font-bold text-gray-900"><svg className="h-4 w-4 mr-2 shrink-0 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg><span>Steinway B 音源</span></li></ul></div></div><p className="text-[10px] text-gray-400 mt-8 text-center font-medium leading-relaxed">決済はStripeを通じて安全に行われます。<br />いつでもマイページからキャンセル可能です。<br /><Link className="hover:underline" href="/terms">利用規約</Link>{' '}|<Link className="hover:underline" href="/privacy">プライバシーポリシー</Link>{' '}|<Link className="hover:underline" href="/legal">特定商取引法に基づく表記</Link></p></main></div></div>
+    <div className="min-h-screen bg-white font-['Noto_Sans_JP'] antialiased">
+      <div className="min-h-screen flex flex-col max-w-3xl mx-auto relative">
+        <AppHeader showBack />
+        <main className="flex-grow px-5 sm:px-6 py-8 pb-20">
+          <PageTitle
+            title="料金プラン"
+            lead="有料プラン（Standard / Premium）をまとめて「PRO」と呼んでいます。どちらも最初の14日間は無料で、体験中に解約すれば料金はかかりません。"
+          />
+
+          {/* Billing cycle */}
+          <div className="mb-6 flex justify-center">
+            <div className="inline-flex rounded-full bg-gray-100 p-1" role="group" aria-label="支払い周期">
+              {(['monthly', 'yearly'] as const).map(c => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setBillingCycle(c)}
+                  aria-pressed={billingCycle === c}
+                  className={`flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-bold transition-all ${billingCycle === c ? 'bg-white text-gray-900 shadow' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  {c === 'monthly' ? '月額払い' : '年額払い'}
+                  {c === 'yearly' && <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-black text-amber-700">おトク</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {PLANS.map(p => {
+              const current = userTier === p.id
+              const highlight = p.id === 'standard'
+              const price = billingCycle === 'monthly' ? p.monthly : p.yearly
+              return (
+                <div key={p.id} className={`relative flex flex-col rounded-3xl p-6 ${highlight ? 'bg-gray-900 text-white shadow-xl ring-4 ring-indigo-200' : 'bg-white text-gray-900 shadow-sm ring-1 ring-black/5'}`}>
+                  {highlight && !current && <span className="absolute -top-3 left-6 rounded-full bg-indigo-500 px-3 py-1 text-[11px] font-black text-white">人気</span>}
+                  {current && <span className={`absolute -top-3 left-6 rounded-full px-3 py-1 text-[11px] font-black ${highlight ? 'bg-white text-gray-900' : 'bg-gray-900 text-white'}`}>現在のプラン</span>}
+                  <h2 className="text-lg font-black">{p.name}</h2>
+                  <p className={`text-xs font-bold ${highlight ? 'text-white/70' : 'text-gray-500'}`}>{p.tagline}</p>
+                  <p className="mt-4 flex items-baseline gap-1">
+                    <span className="text-4xl font-black tracking-tight">{yen(price)}</span>
+                    <span className={`text-sm font-bold ${highlight ? 'text-white/70' : 'text-gray-500'}`}>{p.monthly === 0 ? '' : billingCycle === 'monthly' ? '/月' : '/年'}</span>
+                  </p>
+                  {p.monthly > 0 && (
+                    <p className={`mt-1 text-xs font-bold ${highlight ? 'text-indigo-200' : 'text-indigo-700'}`}>
+                      {billingCycle === 'monthly' ? `年額 ${yen(p.yearly)}${p.yearlyNote ? `（${p.yearlyNote}）` : ''}` : `月あたり ${yen(Math.round(p.yearly / 12))}`}
+                    </p>
+                  )}
+
+                  <ul className="mt-6 flex-grow space-y-2.5">
+                    {p.features.map(f => (
+                      <li key={f.t} className={`flex items-start gap-2 text-sm ${f.ok ? '' : highlight ? 'text-white/40' : 'text-gray-400'}`}>
+                        {f.ok ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={`mt-0.5 h-4 w-4 shrink-0 ${highlight ? 'text-indigo-300' : 'text-indigo-600'}`} aria-hidden="true"><path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" /></svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" /></svg>
+                        )}
+                        <span className="font-bold">{f.t}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {p.id === 'free' ? (
+                    <Link href="/" className="mt-6 flex h-12 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-900 hover:bg-gray-200 transition-colors">
+                      {current ? '無料のまま使う' : 'ホームへ戻る'}
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleSubscribe(p.id as 'standard' | 'premium')}
+                      disabled={isLoading || current}
+                      className={`mt-6 flex h-12 items-center justify-center rounded-full text-sm font-bold transition-all active:scale-[0.98] disabled:opacity-60 disabled:active:scale-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300 ${highlight ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-700'}`}
+                    >
+                      {isLoading ? '処理中…' : current ? 'ご利用中' : '14日間無料で試す'}
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          <p className="mt-8 text-center text-xs leading-relaxed text-gray-500">
+            決済は Stripe を通じて安全に行われます。契約期間の縛りはなく、
+            <Link href="/account" className="underline underline-offset-2 hover:text-gray-800">マイページ</Link>
+            からいつでも解約できます。
+          </p>
+          <p className="mt-3 text-center text-[11px] text-gray-400">
+            <Link className="hover:underline" href="/terms">利用規約</Link>
+            {' ・ '}
+            <Link className="hover:underline" href="/privacy">プライバシーポリシー</Link>
+            {' ・ '}
+            <Link className="hover:underline" href="/legal">特定商取引法に基づく表記</Link>
+          </p>
+        </main>
+      </div>
+    </div>
   )
 }

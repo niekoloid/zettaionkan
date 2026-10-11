@@ -75,7 +75,7 @@ export default function HistoryPage() {
   }, [authReady, user])
 
   return (
-<div className="min-h-screen bg-white font-['Noto_Sans_JP'] antialiased"><div className="min-h-screen flex flex-col max-w-3xl mx-auto relative"><AppHeader showBack /><main className="flex-grow px-6 py-8"><div className="mb-8"><h2 className="text-2xl font-black text-gray-900 mb-2">学習履歴</h2><p className="text-sm text-gray-400 font-bold">これまでのトレーニング成果を確認できます</p></div>{/* Tabs */}<div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-xl mb-6">{vfor([
+<div className="min-h-screen bg-white font-['Noto_Sans_JP'] antialiased"><div className="min-h-screen flex flex-col max-w-3xl mx-auto relative"><AppHeader showBack /><main className="flex-grow px-6 py-8"><div className="mb-8"><h1 className="text-2xl font-black text-gray-900">学習履歴</h1><p className="mt-1 text-sm text-gray-500">これまでのトレーニング成果を確認できます</p></div>{/* Tabs */}<div className="flex items-center space-x-1 p-1 bg-gray-100 rounded-xl mb-6">{vfor([
               { id: 'chord_quizz', label: '和音テスト' },
               { id: 'single_note_quizz', label: '単音テスト' },
               { id: 'autoplay', label: '聞き流し' }

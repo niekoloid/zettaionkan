@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import AppHeader from '@/components/AppHeader'
+import PageTitle from '@/components/PageTitle'
 import ChordSelectionButton from '@/components/ChordSelectionButton'
 import FrequencySettings from '@/components/FrequencySettings'
 import CatGameMode from '@/components/game/CatGameMode'
@@ -40,7 +41,7 @@ interface AutoplayCookie {
   isReviewWeighted: boolean
 }
 
-const DEFAULTS: AutoplayCookie = { chordIds: [], revealType: 'icecream', voiceEnabled: false, immediate: false, delay: 3, ratio: 0.3, isReviewWeighted: false }
+const DEFAULTS: AutoplayCookie = { chordIds: [], revealType: 'cute_cat', voiceEnabled: false, immediate: false, delay: 3, ratio: 0.3, isReviewWeighted: false }
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
@@ -134,10 +135,12 @@ export default function AutoplayPage() {
   useEffect(() => {
     if (!authReady) return
     const saved = { ...DEFAULTS, ...readCookie<Partial<AutoplayCookie>>(COOKIE, {}) }
-    let ids = saved.chordIds
-    if (ids.length === 0 && chords.length >= 2) ids = [chords[0]!.id, chords[1]!.id]
+    const canPlay = (id: string) => hasAccess(`autoplay_chord_${id}` as FeatureKey, userTier)
+    let ids = saved.chordIds.filter(canPlay)
+    if (ids.length === 0) ids = chords.filter(c => canPlay(c.id)).slice(0, 2).map(c => c.id)
     setSelectedIds(ids)
-    setRevealType(saved.revealType)
+    const modeOk = (t: RevealType) => t === 'full' || MODES.some(m => m.type === t && isEnabled(m.feature) && hasAccess(m.feature, userTier))
+    setRevealType(modeOk(saved.revealType) ? saved.revealType : (MODES.find(m => isEnabled(m.feature) && hasAccess(m.feature, userTier))?.type ?? 'full'))
     setIsVoiceEnabled(saved.voiceEnabled)
     setIsImmediate(saved.immediate)
     setRevealDelay(saved.delay)
@@ -258,7 +261,7 @@ export default function AutoplayPage() {
 
   api.current.start = async (idsOverride?: string[]) => {
     const first = live.current.getRandomChord() as QuizChord | null
-    const pool = idsOverride ? chords.filter(c => idsOverride.includes(c.id)) : null
+    const pool = idsOverride ? chords.filter(c => idsOverride.includes(c.id) && checkAccess(`autoplay_chord_${c.id}` as FeatureKey)) : null
     const firstChord = pool && pool.length ? pool[Math.floor(Math.random() * pool.length)]! : first
     if (!firstChord) return
     // Tone.start() must run inside the user gesture to unlock audio
@@ -338,10 +341,7 @@ export default function AutoplayPage() {
           {/* SETTINGS */}
           {view === 'settings' && (
             <div className="space-y-8 pb-40">
-              <div className="text-center mb-6">
-                <h2 className="text-xl font-black text-gray-900">和音の聞き流し</h2>
-                <p className="text-xs text-gray-400 mt-1 font-bold">色と和音の対応を反復トレーニング</p>
-              </div>
+              <PageTitle title="和音の聞き流し" lead="流しておくだけで、色と和音の対応を覚えます" />
 
               <div className="px-2">
                 <button
@@ -361,15 +361,15 @@ export default function AutoplayPage() {
               <div className="px-2">
                 <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">表示スタイル</p>
-                  <div className="flex items-center gap-3 overflow-x-auto py-2 px-1">
+                  <div className="grid grid-cols-4 gap-2 py-1">
                     <button
                       type="button"
                       onClick={() => setRevealType('full')}
                       aria-pressed={revealType === 'full'}
-                      className={`flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 ${revealType === 'full' ? 'bg-white border-gray-900 shadow-md scale-[1.02]' : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'}`}
+                      className={`flex flex-col items-center justify-center py-3 rounded-xl border-2 transition-all duration-200 ${revealType === 'full' ? 'bg-white border-gray-900 shadow-md' : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'}`}
                     >
                       <div className="text-2xl mb-1">📱</div>
-                      <span className={`text-xs font-black ${revealType === 'full' ? 'text-gray-900' : 'text-gray-400'}`}>画面全体</span>
+                      <span className={`text-[11px] font-black ${revealType === 'full' ? 'text-gray-900' : 'text-gray-500'}`}>画面全体</span>
                     </button>
 
                     {MODES.filter(m => isEnabled(m.feature)).map(m => {
@@ -381,11 +381,12 @@ export default function AutoplayPage() {
                           type="button"
                           onClick={() => (ok ? setRevealType(m.type) : goPro())}
                           aria-pressed={active}
-                          className={`flex-1 flex flex-col items-center justify-center py-4 min-w-[80px] rounded-xl border-2 transition-all duration-200 relative overflow-hidden ${active ? `bg-white ${m.border} shadow-md scale-[1.02]` : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'}`}
+                          aria-label={`${m.label}${ok ? '' : '（PROプラン限定）'}`}
+                          className={`flex flex-col items-center justify-center py-3 rounded-xl border-2 transition-all duration-200 relative ${active ? `bg-white ${m.border} shadow-md` : 'bg-white border-transparent hover:bg-gray-100 text-gray-400'}`}
                         >
-                          {!ok && <div className="absolute top-2 right-2"><LockIcon /></div>}
-                          <div className={`text-2xl mb-1 ${!ok ? 'opacity-50 grayscale' : ''}`}>{m.emoji}</div>
-                          <span className={`text-xs font-black ${active ? m.text : 'text-gray-400'} ${!ok ? 'opacity-50' : ''}`}>{m.label}</span>
+                          {!ok && <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gray-900"><svg xmlns="http://www.w3.org/2000/svg" className="h-2.5 w-2.5 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg></span>}
+                          <div className="text-2xl mb-1">{m.emoji}</div>
+                          <span className={`text-[11px] font-black ${active ? m.text : 'text-gray-500'}`}>{m.label}</span>
                         </button>
                       )
                     })}
