@@ -12,6 +12,8 @@ interface Props {
   compact?: boolean
   scale?: number
   footer?: ReactNode
+  /** Overrides the size/frame classes of the non-compact card */
+  boxClassName?: string
 }
 
 export default function ScoreDisplay({
@@ -22,7 +24,8 @@ export default function ScoreDisplay({
   clef = 'treble',
   compact = false,
   scale = 1,
-  footer
+  footer,
+  boxClassName
 }: Props) {
   const elementId = `score-${useId().replace(/:/g, '')}`
 
@@ -45,7 +48,7 @@ export default function ScoreDisplay({
   return (
     <div
       className={`flex flex-col items-center justify-center overflow-hidden relative ${
-        compact ? 'w-20 h-16 bg-gray-50/50 rounded-xl' : 'w-[155px] h-[180px] bg-white rounded-3xl p-4 shadow-sm border border-gray-100'
+        compact ? 'w-20 h-16 bg-gray-50/50 rounded-xl' : boxClassName ?? 'w-[155px] h-[180px] bg-white rounded-3xl p-4 shadow-sm border border-gray-100'
       }`}
     >
       {!isAnswered && (
