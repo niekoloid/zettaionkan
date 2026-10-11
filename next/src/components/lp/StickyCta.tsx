@@ -1,9 +1,16 @@
-'use client'
+import Link from 'next/link'
+import { SIGNUP_HREF } from './ui'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-
+/** Mobile-only bar pinned to the bottom. The page adds bottom padding so nothing hides under it. */
 export default function StickyCta() {
   return (
-<div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-sm border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50 md:hidden"><div className="flex flex-col items-center"><a className="w-full bg-gradient-to-r from-orange-400 to-pink-500 text-white font-bold text-center py-4 rounded-full shadow-lg text-lg animate-pulse" href="/auth?mode=signup">今すぐ無料で始める</a></div></div>
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/5 bg-white/90 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden">
+      <Link
+        href={SIGNUP_HREF}
+        className="flex h-12 items-center justify-center rounded-full bg-gray-900 text-base font-bold text-white shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300"
+      >
+        今すぐ無料で始める
+      </Link>
+    </div>
   )
 }

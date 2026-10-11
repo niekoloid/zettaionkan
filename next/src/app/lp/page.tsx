@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import LpPage from '@/components/lp/LpPage'
 
-const title = '絶対音感の習得を、もっと簡単に。 | いろおと'
-const description = 'こどもの耳の『黄金期』を逃さない。再現性の高い科学的メソッドで、スマホひとつで身につく絶対音感トレーニング。'
+const title = '絶対音感を、色でおぼえる。 | いろおと'
+const description = '14種類の和音を14の色と結びつけて、遊びながら耳を育てる2〜6歳向けの絶対音感トレーニング。本物のグランドピアノの音を、スマホひとつで。14日間無料。'
 const image = 'https://zettaionkan.jp/images/lp/ogp_image.webp'
 
 export const metadata: Metadata = {
