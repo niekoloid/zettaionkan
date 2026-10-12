@@ -45,12 +45,6 @@ const DEFAULTS: AutoplayCookie = { chordIds: [], revealType: 'cute_cat', voiceEn
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
-const LockIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-  </svg>
-)
-
 // Display styles: feature gate, label and selected colours
 const MODES: { type: Exclude<RevealType, 'full'>; feature: FeatureKey; emoji: string; label: string; border: string; text: string }[] = [
   { type: 'icecream', feature: 'mode_icecream', emoji: '🍦', label: 'アイス', border: 'border-pink-400', text: 'text-pink-500' },
@@ -159,11 +153,11 @@ export default function AutoplayPage() {
     if (q.get('start') === 'true') {
       if (q.get('delay')) setRevealDelay(parseFloat(q.get('delay')!))
       if (q.get('voice') === 'false') setIsVoiceEnabled(false)
-      if (q.get('type')) setRevealType(q.get('type') as RevealType)
+      if (q.get('type') && modeOk(q.get('type') as RevealType)) setRevealType(q.get('type') as RevealType)
       if (q.get('ratio')) setParentChordRatio(parseFloat(q.get('ratio')!))
-      if (q.get('chords') === 'all') setSelectedIds(chords.map(c => c.id))
-      else if (q.get('chordId')) setSelectedIds([q.get('chordId')!])
-      setTimeout(() => api.current.start(q.get('chords') === 'all' ? chords.map(c => c.id) : q.get('chordId') ? [q.get('chordId')!] : undefined), 2000)
+      const urlIds = (q.get('chords') === 'all' ? chords.map(c => c.id) : q.get('chordId') ? [q.get('chordId')!] : []).filter(canPlay)
+      if (urlIds.length > 0) setSelectedIds(urlIds)
+      setTimeout(() => api.current.start(urlIds.length > 0 ? urlIds : undefined), 2000)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authReady])

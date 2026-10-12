@@ -108,7 +108,7 @@ export default function SubscriptionPage() {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-3">
             {PLANS.map(p => {
               const current = userTier === p.id
               const highlight = p.id === 'standard'
