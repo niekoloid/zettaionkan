@@ -148,7 +148,7 @@ export default function HomePage() {
 
   const toggleChord = (chord: DisplayChord) => {
     if (chord.isLocked) {
-      if (userTier === 'free') openProModal('PROプラン限定', 'この和音（黒鍵など）はPROプランで利用可能です。体験版では制限されています。')
+      if (userTier === 'free') openProModal('PROプラン限定', 'この和音（黒鍵など）はPROプラン（Standard / Premium）で使えます。無料プランでは使えません。')
       else openProModal('PROプラン機能', 'この機能はPROプラン限定です。')
       return
     }

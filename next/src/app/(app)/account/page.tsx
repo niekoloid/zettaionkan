@@ -57,10 +57,10 @@ export default function AccountPage() {
   }
 
   const getTierName = (tier: SubscriptionTier | undefined | null | string) => {
-    if (tier === 'premium') return 'PROプラン'
-    if (tier === 'standard') return 'スタンダードプラン'
-    if (tier === 'entry') return 'フリープラン'
-    if (tier === 'free') return 'フリープラン（未ログイン）'
+    if (tier === 'premium') return 'Premium（PRO）'
+    if (tier === 'standard') return 'Standard（PRO）'
+    if (tier === 'entry') return '無料プラン'
+    if (tier === 'free') return '無料プラン'
     return '無料プラン'
   }
 

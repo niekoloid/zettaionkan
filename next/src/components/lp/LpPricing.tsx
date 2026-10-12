@@ -36,7 +36,7 @@ export default function LpPricing() {
       <SectionHeading
         eyebrow="料金"
         title={<>まずは無料で。<br className="sm:hidden" />気に入ったら月額980円から。</>}
-        lead="有料プランは14日間の無料体験つき。体験中に解約すれば料金はかかりません。"
+        lead="有料プラン（Standard / Premium）をまとめて「PRO」と呼んでいます。どちらも14日間の無料体験つきで、体験中に解約すれば料金はかかりません。"
       />
 
       <div className="mt-12 grid gap-5 md:grid-cols-3">
