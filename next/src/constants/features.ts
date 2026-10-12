@@ -135,7 +135,7 @@ export const FEATURE_GATES: Record<FeatureKey, FeatureConfig> = {
   'mode_video_cat': { tier: 'standard', enabled: false },
   'mode_cat_flag': { tier: 'standard', enabled: false },
   'mode_train': { tier: 'standard', enabled: true }, // Changed to standard
-  'mode_vehicle': { tier: 'standard', enabled: false },
+  'mode_vehicle': { tier: 'standard', enabled: true },
   'mode_cute_cat': { tier: 'free', enabled: true },
   'mode_train_front': { tier: 'free', enabled: true },
 

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AppHeader from '@/components/AppHeader'
+import PageTitle from '@/components/PageTitle'
 import ChordSelectionButton from '@/components/ChordSelectionButton'
 import FrequencySettings from '@/components/FrequencySettings'
 import type { Chord } from '@/constants/chords'
@@ -230,16 +231,13 @@ export default function ChordQuizPage() {
   return (
     <div className="min-h-screen bg-white font-['Noto_Sans_JP'] antialiased">
       <div className="min-h-screen flex flex-col items-center max-w-3xl mx-auto relative overflow-hidden">
-        <AppHeader showBack onBack={handleHeaderBack} />
+        {view !== 'quiz' && <AppHeader showBack onBack={handleHeaderBack} />}
 
         <main className={`w-full flex-grow flex flex-col ${view === 'quiz' ? 'p-0 overflow-hidden' : 'px-4 py-6 overflow-y-auto'}`} style={{ scrollbarGutter: 'stable' }}>
           {/* SETTINGS */}
           {view === 'settings' && (
             <div className="space-y-8 pb-40">
-              <div className="text-center mb-2">
-                <h2 className="text-xl font-black text-gray-900">和音クイズ</h2>
-                <p className="text-xs text-gray-400 mt-1 font-bold">覚えた色をテストしてみましょう</p>
-              </div>
+              <PageTitle title="和音クイズ" lead="音を聴いて、色を当てるテストです" />
 
               <div className="px-2 space-y-3">
                 <button
@@ -303,7 +301,7 @@ export default function ChordQuizPage() {
               <div className="absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
                 <div className={`flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-lg overflow-hidden ring-1 ring-black/5 h-8 transition-all duration-300 ${isQuestionChanging ? 'scale-125 ring-4 ring-indigo-500/50 bg-indigo-900/60' : ''}`}>
                   <div className="px-3 h-full flex items-center bg-white/10 border-r border-white/5">
-                    <span className="text-[8px] text-gray-300 font-black uppercase tracking-widest leading-none">Question</span>
+                    <span className="text-[8px] text-gray-300 font-black tracking-widest leading-none">もんだい</span>
                   </div>
                   <div className="px-4 h-full flex items-center min-w-[3rem] justify-center text-white text-[11px] font-black">Q {questionIndex + 1}</div>
                 </div>
@@ -359,19 +357,19 @@ export default function ChordQuizPage() {
           {view === 'result' && (
             <div className="h-full flex flex-col items-center">
               <div className="mb-8 text-center pt-8">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Quiz Finished</p>
+                <p className="text-xs font-bold text-gray-400 tracking-widest mb-2">テスト結果</p>
                 <div className="text-6xl font-black text-gray-900 mb-2">
                   <span className="text-blue-500">{score}</span>
                   <span className="text-gray-300 text-4xl">/{history.length}</span>
                 </div>
                 <p className="text-lg font-bold text-gray-600 mb-6">
-                  {score === history.length ? 'Perfect! 🎉' : rate >= 0.8 ? 'Great Job! 👍' : 'Keep Practicing! 💪'}
+                  {score === history.length ? 'ぜんぶ正解！🎉' : rate >= 0.8 ? 'よくできました 👍' : 'つづけてみよう 💪'}
                 </p>
               </div>
 
               <div className="w-full bg-gray-50 rounded-3xl border border-gray-100 mb-10 overflow-hidden flex flex-col max-h-[400px]">
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white/50">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">解答履歴</span>
+                  <span className="text-[10px] font-bold text-gray-400 tracking-widest">解答履歴</span>
                   <span className="text-[10px] font-bold text-gray-900">{score} / {history.length} 正解</span>
                 </div>
                 <div className="flex-grow overflow-y-auto px-4 py-2 space-y-2">
