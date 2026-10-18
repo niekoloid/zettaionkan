@@ -29,6 +29,31 @@ const customVoiceBuffers: Record<string, any> = {}
 let narrationVolume: any = null
 let effectsVolume: any = null
 
+// Tone.js schedules "now" as currentTime + lookAhead (0.1s by default), which
+// adds a noticeable delay between a tap and the sound. Nothing in the app uses
+// the Transport, so play immediately instead.
+const ensureLowLatency = (Tone: typeof ToneType) => {
+  if (Tone.getContext().lookAhead !== 0) Tone.getContext().lookAhead = 0
+}
+
+// Voices started by playExclusive. Sampler.triggerAttackRelease schedules the
+// release right away and forgets its sources, so sampler.releaseAll() cannot
+// stop them later; keep our own references instead.
+let exclusiveVoices: any[] = []
+const EXCLUSIVE_CUT_FADE = 0.05
+
+const stopExclusiveVoices = () => {
+  exclusiveVoices.forEach(source => {
+    try {
+      source.fadeOut = EXCLUSIVE_CUT_FADE
+      source.stop()
+    } catch (e) {
+      // Already ended and disposed
+    }
+  })
+  exclusiveVoices = []
+}
+
 const getNarrationVolume = async () => {
   if (!import.meta.client) return null
   if (!narrationVolume) {
@@ -96,10 +121,14 @@ export function useAudio() {
     samplerLoadingPromises[instrumentId] = new Promise<boolean>(async (resolve) => {
       try {
         const Tone = await import('tone')
+        ensureLowLatency(Tone)
         let urls = instrumentId === 'yamaha' ? YAMAHA_MAP : STEINWAY_FAST_MAP
         const baseUrl = instrumentId === 'yamaha' 
           ? "https://tonejs.github.io/audio/salamander/" 
-          : "/samples/steinway/ff/"
+          // ff20: the ff samples trimmed (stream copy, no re-encode) to 20s.
+          // The longest playback is 15s + 4s release, so the dropped tail was
+          // never audible but roughly doubled download, decode time and memory.
+          : "/samples/steinway/ff20/"
 
         // Use full map if background or already partially loaded
         if (instrumentId === 'steinway' && (isBackground || isLoaded.value.steinway)) {
@@ -299,6 +328,7 @@ export function useAudio() {
 
   const playNotes = async (notes: string | string[], duration: string | number = 3): Promise<boolean> => {
     const Tone = await import('tone')
+    ensureLowLatency(Tone)
     if (Tone.context.state !== 'running') await Tone.start()
     const s = samplers[selectedInstrument.value]
     if (s && isLoaded.value[selectedInstrument.value as keyof typeof isLoaded.value]) {
@@ -306,6 +336,23 @@ export function useAudio() {
       return true
     }
     return false
+  }
+
+  // Stops whatever playExclusive played before, then plays the given notes.
+  // Used where only one sound may ring at a time (e.g. the home page).
+  const playExclusive = async (notes: string | string[], duration: number): Promise<boolean> => {
+    const Tone = await import('tone')
+    ensureLowLatency(Tone)
+    if (Tone.context.state !== 'running') await Tone.start()
+    const s = samplers[selectedInstrument.value]
+    if (!s || !isLoaded.value[selectedInstrument.value as keyof typeof isLoaded.value]) return false
+
+    stopExclusiveVoices()
+    s.releaseAll()
+    s.triggerAttack(notes)
+    s._activeSources.forEach((sources: any[]) => exclusiveVoices.push(...sources))
+    s.triggerRelease(notes, Tone.now() + duration)
+    return true
   }
 
   const playNarration = async (colorName: string): Promise<boolean> => {
@@ -419,6 +466,8 @@ export function useAudio() {
     loadEffects,
     preloadAll,
     playNotes,
+    playExclusive,
+    stopExclusiveVoices,
     playNarration,
     playEffect,
     customVoiceEnabled

@@ -42,4 +42,6 @@ export interface AppSettings {
   instrument: string
   colorFormat: 'standard' | 'hiragana'
   isKeyboardSoundEnabled: boolean
+  // Home shows chords 1..homeChordLimit (null = all)
+  homeChordLimit?: number | null
 }

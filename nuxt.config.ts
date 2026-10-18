@@ -33,7 +33,10 @@ export default defineNuxtConfig({
     '/lp': { sitemap: { priority: 0.9, changefreq: 'weekly' }, prerender: true },
     '/auth/**': { ssr: false, sitemap: false },
     '/account/**': { ssr: false, sitemap: false },
-    '/subscription/**': { ssr: false, sitemap: false }
+    '/subscription/**': { ssr: false, sitemap: false },
+    // Piano samples never change in place (a new directory is used instead),
+    // so let browsers keep them instead of revalidating every visit.
+    '/samples/steinway/ff20/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } }
   },
   supabase: {
     url: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
