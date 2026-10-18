@@ -29,7 +29,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   namingConvention: 'italian',
   instrument: 'yamaha',
   colorFormat: 'standard',
-  isKeyboardSoundEnabled: true
+  isKeyboardSoundEnabled: true,
+  homeChordLimit: null
 }
 
 export function useAppSettings() {
@@ -75,10 +76,12 @@ export function useAppSettings() {
     instrument: computed(() => settings.value.instrument),
     colorFormat: computed(() => settings.value.colorFormat),
     isKeyboardSoundEnabled: computed(() => settings.value.isKeyboardSoundEnabled),
+    homeChordLimit: computed(() => settings.value.homeChordLimit ?? null),
     updateNamingConvention: (val: AppSettings['namingConvention']) => updateSetting('namingConvention', val),
     updateInstrument: (val: string) => updateSetting('instrument', val),
     updateColorFormat: (val: AppSettings['colorFormat']) => updateSetting('colorFormat', val),
     updateKeyboardSound: (val: boolean) => updateSetting('isKeyboardSoundEnabled', val),
+    updateHomeChordLimit: (val: number | null) => updateSetting('homeChordLimit', val),
     formatColorName,
     formatChordName
   }

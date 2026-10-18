@@ -21,16 +21,37 @@ const playbackTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
 // === Single List Logic ===
 // Flatten all 14 basic chords into a single list with metadata
 const { allChords: customChords } = useChordSettings()
-const { namingConvention, updateNamingConvention, instrument, updateInstrument, formatColorName, formatChordName, colorFormat, updateColorFormat, isKeyboardSoundEnabled, updateKeyboardSound } = useAppSettings()
+const { namingConvention, updateNamingConvention, instrument, updateInstrument, formatColorName, formatChordName, colorFormat, updateColorFormat, isKeyboardSoundEnabled, updateKeyboardSound, homeChordLimit, updateHomeChordLimit } = useAppSettings()
 const { user, userTier, authReady } = useAuth()
 const { isPro, hasAccess } = usePro()
 
-const allChords = computed(() => {
+// Chords available on Home (the selection from settings, or all 14)
+const homeChords = computed(() => {
   const selected = customChords.value.filter(c => c.homeEnabled)
   // If nothing is selected, display everything. If something is selected, display only those.
-  const displaySource = selected.length > 0 ? selected : customChords.value
+  return selected.length > 0 ? selected : customChords.value
+})
 
-  return displaySource.map((chord, index) => {
+// "Show up to N": remembered in the settings cookie; null means show all.
+// "/" is prerendered without the cookie, so apply the limit only after mount
+// to keep hydration consistent.
+const isMounted = ref(false)
+onMounted(() => { isMounted.value = true })
+
+const visibleCount = computed(() => {
+  const max = homeChords.value.length
+  const limit = isMounted.value ? homeChordLimit.value : null
+  return limit ? Math.min(Math.max(limit, 1), max) : max
+})
+
+const setVisibleCount = (count: number) => {
+  const max = homeChords.value.length
+  const next = Math.min(Math.max(count, 1), max)
+  updateHomeChordLimit(next >= max ? null : next)
+}
+
+const allChords = computed(() => {
+  return homeChords.value.slice(0, visibleCount.value).map((chord, index) => {
     const r = parseInt(chord.color.slice(1, 3), 16)
     const g = parseInt(chord.color.slice(3, 5), 16)
     const b = parseInt(chord.color.slice(5, 7), 16)
@@ -47,6 +68,13 @@ const allChords = computed(() => {
       isLocked
     }
   })
+})
+
+// Keep the selected chord within the visible range
+watch(allChords, (chords) => {
+  if (currentChord.value && !chords.some(c => c.id === currentChord.value!.id)) {
+    currentChord.value = chords[0] ?? null
+  }
 })
 
 const toSharp = (n: string) => {
@@ -371,6 +399,26 @@ const legalLinks = [
           <p class="text-center text-sm font-bold text-gray-500 mb-4" role="status">
             {{ isLoading ? '音源を読み込み中です…' : 'いろをタップして、和音を聴いてみよう' }}
           </p>
+          <!-- How many colors to show (1..N), remembered across visits -->
+          <div v-if="homeChords.length > 1" class="flex items-center justify-center gap-3 mb-4" role="group" aria-label="表示する色の数">
+            <button
+              type="button"
+              @click="setVisibleCount(visibleCount - 1)"
+              :disabled="visibleCount <= 1"
+              aria-label="表示する色を減らす"
+              class="w-9 h-9 rounded-full bg-white border border-gray-200 shadow-sm text-lg font-black text-gray-600 disabled:opacity-30 active:scale-95 transition"
+            >−</button>
+            <span class="min-w-[8rem] text-center text-sm font-bold text-gray-700" aria-live="polite">
+              1〜<span class="text-lg font-black text-indigo-600 mx-0.5">{{ visibleCount }}</span>番まで表示
+            </span>
+            <button
+              type="button"
+              @click="setVisibleCount(visibleCount + 1)"
+              :disabled="visibleCount >= homeChords.length"
+              aria-label="表示する色を増やす"
+              class="w-9 h-9 rounded-full bg-white border border-gray-200 shadow-sm text-lg font-black text-gray-600 disabled:opacity-30 active:scale-95 transition"
+            >+</button>
+          </div>
           <div class="grid gap-3 sm:gap-4 transition-all duration-500" :class="gridClasses">
             <button
               v-for="chord in allChords"
