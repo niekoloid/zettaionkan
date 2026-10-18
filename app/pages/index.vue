@@ -2,7 +2,6 @@
 useHead({
   title: 'いろおと - 絶対音感トレーニング'
 })
-import * as Tone from 'tone'
 
 
 
@@ -65,12 +64,12 @@ const activeNotesSet = computed(() => {
 })
 
 const { 
-  samplers, 
   isLoading, 
   loadingProgress, 
   isSamplerLoaded, 
   selectedInstrument, 
-  loadSampler
+  loadSampler,
+  playExclusive
 } = useAudio()
 
 const { getPreferredInstrument } = useAudioSettings()
@@ -105,50 +104,37 @@ onUnmounted(() => {
 
 const isMenuOpen = ref(true)
 
-const playChord = async (notes: string[]) => {
-  if (Tone.context.state !== 'running') await Tone.start()
-  
-  const currentSampler = samplers[selectedInstrument.value]
-
-  if (currentSampler && isSamplerLoaded.value) {
-    if (playbackTimeout.value) {
-      clearTimeout(playbackTimeout.value)
-      playbackTimeout.value = null
-    }
-
-    currentSampler.releaseAll()
-    pressedNotes.value.clear()
-    
-    // Set state immediately for UI responsiveness
-    isChordPlaying.value = true
-
-    // Audio trigger - Increased to 15s for extra long sustain
-    currentSampler.triggerAttackRelease(notes, 15)
-    notes.forEach(note => pressedNotes.value.add(note))
-    
-    playbackTimeout.value = setTimeout(() => {
-      notes.forEach(note => pressedNotes.value.delete(note))
-      isChordPlaying.value = false
-      playbackTimeout.value = null
-    }, 15000)
-  } else {
+// Only one sound rings at a time: a new press cuts off the previous one
+const playExclusiveSound = async (notes: string[], duration: number) => {
+  const played = await playExclusive(notes, duration)
+  if (!played) {
     console.warn('Sampler not ready or missing:', selectedInstrument.value)
+    return false
   }
+
+  if (playbackTimeout.value) {
+    clearTimeout(playbackTimeout.value)
+    playbackTimeout.value = null
+  }
+  pressedNotes.value.clear()
+  notes.forEach(note => pressedNotes.value.add(note))
+
+  playbackTimeout.value = setTimeout(() => {
+    pressedNotes.value.clear()
+    isChordPlaying.value = false
+    playbackTimeout.value = null
+  }, duration * 1000)
+  return true
+}
+
+const playChord = async (notes: string[]) => {
+  // 15s for extra long sustain
+  if (await playExclusiveSound(notes, 15)) isChordPlaying.value = true
 }
 
 const playNote = async (note: string) => {
   if (!isKeyboardSoundEnabled.value) return
-  if (Tone.context.state !== 'running') await Tone.start()
-  
-  const currentSampler = samplers[selectedInstrument.value]
-
-  if (currentSampler && isSamplerLoaded.value) {
-    currentSampler.triggerAttackRelease(note, 10)
-    pressedNotes.value.add(note)
-    setTimeout(() => pressedNotes.value.delete(note), 10000)
-  } else {
-    console.warn('Sampler not ready or missing:', selectedInstrument.value)
-  }
+  if (await playExclusiveSound([note], 10)) isChordPlaying.value = false
 }
 
   const toggleChord = async (chord: DisplayChord) => {

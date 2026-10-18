@@ -36,6 +36,24 @@ const ensureLowLatency = (Tone: typeof ToneType) => {
   if (Tone.getContext().lookAhead !== 0) Tone.getContext().lookAhead = 0
 }
 
+// Voices started by playExclusive. Sampler.triggerAttackRelease schedules the
+// release right away and forgets its sources, so sampler.releaseAll() cannot
+// stop them later; keep our own references instead.
+let exclusiveVoices: any[] = []
+const EXCLUSIVE_CUT_FADE = 0.05
+
+const stopExclusiveVoices = () => {
+  exclusiveVoices.forEach(source => {
+    try {
+      source.fadeOut = EXCLUSIVE_CUT_FADE
+      source.stop()
+    } catch (e) {
+      // Already ended and disposed
+    }
+  })
+  exclusiveVoices = []
+}
+
 const getNarrationVolume = async () => {
   if (!import.meta.client) return null
   if (!narrationVolume) {
@@ -320,6 +338,23 @@ export function useAudio() {
     return false
   }
 
+  // Stops whatever playExclusive played before, then plays the given notes.
+  // Used where only one sound may ring at a time (e.g. the home page).
+  const playExclusive = async (notes: string | string[], duration: number): Promise<boolean> => {
+    const Tone = await import('tone')
+    ensureLowLatency(Tone)
+    if (Tone.context.state !== 'running') await Tone.start()
+    const s = samplers[selectedInstrument.value]
+    if (!s || !isLoaded.value[selectedInstrument.value as keyof typeof isLoaded.value]) return false
+
+    stopExclusiveVoices()
+    s.releaseAll()
+    s.triggerAttack(notes)
+    s._activeSources.forEach((sources: any[]) => exclusiveVoices.push(...sources))
+    s.triggerRelease(notes, Tone.now() + duration)
+    return true
+  }
+
   const playNarration = async (colorName: string): Promise<boolean> => {
     const Tone = await import('tone')
     // 1. Ensure context is running
@@ -431,6 +466,8 @@ export function useAudio() {
     loadEffects,
     preloadAll,
     playNotes,
+    playExclusive,
+    stopExclusiveVoices,
     playNarration,
     playEffect,
     customVoiceEnabled
