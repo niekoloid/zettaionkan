@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import abcjs from 'abcjs'
 
 const props = defineProps({
   abc: {
@@ -43,7 +42,9 @@ const props = defineProps({
 const scoreContainer = ref(null)
 const uniqueId = `score-${Math.random().toString(36).substr(2, 9)}`
 
-const render = () => {
+const render = async () => {
+  if (!props.isAnswered) return
+  const abcjs = await loadAbcjs()
   if (!props.isAnswered) return
 
   // Remove chord symbols if present (Home page requirement)

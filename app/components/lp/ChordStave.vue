@@ -7,7 +7,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from 'vue'
-import abcjs from 'abcjs'
 import type { Chord } from '~/constants/chords'
 
 const props = defineProps<{
@@ -62,6 +61,7 @@ const renderStave = async () => {
   try {
     const abcString = generateAbc(props.chords)
     
+    const abcjs = await loadAbcjs()
     await nextTick()
     
     const visualObj = abcjs.renderAbc(elementId, abcString, {

@@ -38,16 +38,21 @@ export function useAuth(currentRoute?: { path: string }) {
     maxAge: 60 * 60 * 24 * 365 * 100 // 100 years
   })
 
+  const loadTier = async (currentUser: User | null) => {
+    if (!currentUser) {
+      userTierCookie.value = 'free'
+      return
+    }
+    const status = await checkProStatus(currentUser.id)
+    userTierCookie.value = status.tier
+  }
+
+  // Explicit refresh: verifies the user with the auth server
   const refreshStatus = async () => {
     try {
       const { data } = await supabase.auth.getUser()
       user.value = data?.user || null
-      if (user.value) {
-        const status = await checkProStatus()
-        userTierCookie.value = status.tier
-      } else {
-        userTierCookie.value = 'free'
-      }
+      await loadTier(user.value)
     } catch (err) {
       console.error('refreshStatus error:', err)
       userTierCookie.value = 'free'
@@ -67,20 +72,34 @@ export function useAuth(currentRoute?: { path: string }) {
 
     isInitialized = true
 
-    // Initial check
-    await refreshStatus()
+    // Initial check. Every page (and the route middleware) waits on this, so
+    // read the locally stored session instead of calling getUser(), which is
+    // a network round trip. The tier still comes from the profiles table,
+    // where RLS checks the token on the server.
+    try {
+      const { data } = await supabase.auth.getSession()
+      user.value = data?.session?.user || null
+      await loadTier(user.value)
+    } catch (err) {
+      console.error('Auth init error:', err)
+      userTierCookie.value = 'free'
+    }
     isAuthReady.value = true
     if (authReadyResolver) authReadyResolver()
 
     // Listen for auth changes
     supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event (global):', event)
-      user.value = session?.user || null
-      if (user.value) {
-        const status = await checkProStatus()
-        userTierCookie.value = status.tier
-      } else {
-        userTierCookie.value = 'free'
+      const nextUser = session?.user || null
+      const sameUser = nextUser?.id === user.value?.id
+      user.value = nextUser
+      // INITIAL_SESSION repeats the check above, and a token refresh for the
+      // same user does not change the tier: skip the profile query.
+      if (event === 'INITIAL_SESSION' || (event === 'TOKEN_REFRESHED' && sameUser)) return
+      try {
+        await loadTier(nextUser)
+      } catch (err) {
+        console.error('Tier refresh error:', err)
       }
     })
   }

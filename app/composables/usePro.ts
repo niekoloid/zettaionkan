@@ -19,14 +19,19 @@ export const usePro = () => {
   const supabase = useSupabaseClient<Database>()
   const { getFeatureConfig, isEnabled: isFeatureEnabled } = useFeatures()
 
-  const checkProStatus = async (): Promise<ProStatus> => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { tier: 'free', hasCustomer: false, isPro: false }
+  // Pass userId when the caller already knows the user, to skip the extra
+  // auth round trip (getUser always hits the Supabase auth server).
+  const checkProStatus = async (userId?: string): Promise<ProStatus> => {
+    if (!userId) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return { tier: 'free', hasCustomer: false, isPro: false }
+      userId = user.id
+    }
 
     const { data, error } = await supabase
       .from('profiles')
       .select('subscription_tier, stripe_customer_id')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single()
     
     if (error || !data) return { tier: 'free', hasCustomer: false, isPro: false }

@@ -103,23 +103,21 @@ const {
 const { getPreferredInstrument } = useAudioSettings()
 
 onMounted(async () => {
-  // Wait for auth state to be confirmed to avoid loading wrong instrument initially
-  await authReady
-  
-  // Initial load
-  let preferred = getPreferredInstrument(userTier.value)
-  
-  // Safeguard: If steinway is preferred but user is not PRO, force yamaha
-  if (preferred === 'steinway' && !isPro(userTier.value)) {
-    preferred = 'yamaha'
-  }
-  
-  loadSampler(preferred as 'yamaha' | 'steinway')
-  
-  // Set initial chord
+  // Set initial chord (does not depend on auth)
   if (allChords.value.length > 0) {
     currentChord.value = allChords.value[0]!
   }
+
+  // Yamaha is available to every tier, so start loading it right away.
+  // Steinway needs the tier, so wait for auth before deciding.
+  let preferred = getPreferredInstrument(userTier.value)
+  if (preferred === 'steinway') {
+    await authReady
+    // Safeguard: If steinway is preferred but user is not PRO, force yamaha
+    if (!isPro(userTier.value)) preferred = 'yamaha'
+  }
+
+  loadSampler(preferred as 'yamaha' | 'steinway')
 })
 
 onUnmounted(() => {

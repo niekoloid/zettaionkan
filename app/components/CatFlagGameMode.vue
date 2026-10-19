@@ -59,6 +59,7 @@
       <video 
         v-for="url in preloadUrls" 
         :key="url" 
+        ref="preloadEls"
         :src="url" 
         preload="auto"
       ></video>
@@ -131,6 +132,7 @@ const COLOR_TO_EN: Record<string, string> = {
 const hasVideoError = ref(false)
 const currentVariant = ref(1)
 const isPreloaded = ref(false)
+const preloadEls = ref<HTMLVideoElement[]>([])
 const preloadProgress = ref(0)
 
 // Helper to check if a color has multiple variants
@@ -193,14 +195,12 @@ const preloadVideos = async () => {
   }
 
   let loadedCount = 0
-  const total = preloadUrls.value.length
+  const total = preloadEls.value.length
 
-  const promises = preloadUrls.value.map(url => {
+  // Wait on the hidden <video preload="auto"> elements above. Creating extra
+  // detached <video> elements here would download every clip a second time.
+  const promises = preloadEls.value.map(video => {
     return new Promise((resolve) => {
-      const video = document.createElement('video')
-      video.src = url
-      video.preload = 'auto'
-      
       const onDone = () => {
         loadedCount++
         preloadProgress.value = Math.round((loadedCount / total) * 100)
@@ -209,11 +209,15 @@ const preloadVideos = async () => {
         resolve(true)
       }
 
+      // Already has metadata (e.g. from the browser cache)
+      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+        onDone()
+        return
+      }
       video.addEventListener('loadedmetadata', onDone)
       video.addEventListener('error', onDone)
-      
-      // Start loading
-      video.load()
+      // Browsers that ignore preload="auto" (iOS Safari) need an explicit load()
+      if (video.networkState !== HTMLMediaElement.NETWORK_LOADING) video.load()
     })
   })
 
