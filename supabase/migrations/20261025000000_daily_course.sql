@@ -4,6 +4,13 @@
 -- Set by hand (SQL editor) for the operator's own account; clients cannot update profiles.
 alter table public.profiles add column if not exists is_unlimited boolean not null default false;
 
+-- Production had "update own profile" policies, which let any user raise their own tier.
+-- Clients may only write the Stripe customer id (the checkout function does this with the user's token).
+revoke update on public.profiles from anon, authenticated;
+grant update (stripe_customer_id) on public.profiles to authenticated;
+revoke insert on public.profiles from anon, authenticated;
+grant insert (id) on public.profiles to authenticated;
+
 -- ---------------------------------------------------------------- children
 create table if not exists public.children (
   user_id uuid primary key references auth.users (id) on delete cascade,
