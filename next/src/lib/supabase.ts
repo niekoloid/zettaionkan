@@ -1,22 +1,16 @@
-import { createBrowserClient } from '@supabase/ssr'
-import type { Database } from '@/types/database.types'
+'use client'
 
-let client: ReturnType<typeof createBrowserClient<Database>> | null = null
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-export function getSupabase() {
-  if (!client) {
-    client = createBrowserClient<Database>(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        auth: {
-          flowType: 'pkce',
-          detectSessionInUrl: true,
-          persistSession: true,
-          autoRefreshToken: true
-        }
-      }
-    )
-  }
+let client: SupabaseClient | null = null
+
+/** null when Supabase is not configured (the app still works, without accounts) */
+export function getSupabase(): SupabaseClient | null {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) return null
+  client ??= createClient(url, key, {
+    auth: { flowType: 'pkce', detectSessionInUrl: true, persistSession: true, autoRefreshToken: true }
+  })
   return client
 }
