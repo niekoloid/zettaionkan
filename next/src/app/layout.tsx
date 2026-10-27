@@ -24,6 +24,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ja">
       <head>
         <link rel="stylesheet" href="/fonts/noto-sans-jp.css" />
+        {/* Vercel Web Analytics (page views, no cookies); served by Vercel, missing locally */}
+        <script defer src="/_vercel/insights/script.js" />
       </head>
       <body>
         <AccountProvider>{children}</AccountProvider>

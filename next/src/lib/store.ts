@@ -14,6 +14,8 @@ export interface AppState {
   lessons: Lesson[]
   /** Lesson ids already saved to the account */
   synced: string[]
+  /** The user id `synced` refers to */
+  syncedFor?: string
 }
 
 const KEY = 'irooto.v2'
