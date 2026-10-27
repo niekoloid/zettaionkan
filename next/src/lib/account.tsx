@@ -9,12 +9,13 @@ import { maxLevelFor, type Tier } from './plans'
 
 interface AccountValue {
   ready: boolean
+  /** The signed-in account; null for the automatic anonymous session */
   user: User | null
   tier: Tier
   unlimited: boolean
   maxLevel: number
   signOut: () => Promise<void>
-  /** Push local changes to the account (no-op when signed out) */
+  /** Push local changes to the account (starts an anonymous session when there is none) */
   sync: () => void
 }
 
@@ -36,6 +37,23 @@ interface LessonRow {
   finished_at: string
   level: number
   answers: Lesson['answers']
+}
+
+/**
+ * Lessons already saved under another user (e.g. the anonymous session before signing in)
+ * get fresh ids, so they can be saved again under this one.
+ */
+function adopt(userId: string) {
+  setState(s => {
+    if (s.syncedFor === userId) return {}
+    if (!s.syncedFor) return { syncedFor: userId }
+    const done = new Set(s.synced)
+    return {
+      syncedFor: userId,
+      synced: [],
+      lessons: s.lessons.map(l => (done.has(l.id) ? { ...l, id: crypto.randomUUID() } : l))
+    }
+  })
 }
 
 async function pull(userId: string) {
@@ -115,6 +133,25 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   const userId = session?.user.id ?? null
   const userRef = useRef<string | null>(null)
   userRef.current = userId
+  const anonPending = useRef(false)
+
+  /**
+   * Every family that has finished setup gets an anonymous session, so lessons are saved
+   * (and counted) without asking anyone to register. Fails quietly when anonymous sign-ins are off.
+   */
+  const ensureSession = useCallback(async () => {
+    const sb = getSupabase()
+    if (!sb || userRef.current || anonPending.current || !getState().nickname) return
+    anonPending.current = true
+    try {
+      const { data } = await sb.auth.getSession()
+      if (data.session) return
+      const { error } = await sb.auth.signInAnonymously()
+      if (error) console.warn('anonymous sign-in unavailable', error.message)
+    } finally {
+      anonPending.current = false
+    }
+  }, [])
 
   useEffect(() => {
     const sb = getSupabase()
@@ -124,11 +161,14 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     }
     sb.auth.getSession().then(({ data }) => {
       setSession(data.session)
-      if (!data.session) setReady(true)
+      if (!data.session) {
+        setReady(true)
+        ensureSession()
+      }
     })
     const { data } = sb.auth.onAuthStateChange((_e, s) => setSession(s))
     return () => data.subscription.unsubscribe()
-  }, [])
+  }, [ensureSession])
 
   useEffect(() => {
     if (!userId) {
@@ -145,6 +185,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
       setUnlimited(!!data?.is_unlimited)
       setReady(true)
       try {
+        adopt(userId)
         await pull(userId)
         await push(userId)
       } catch (err) {
@@ -159,7 +200,8 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   const sync = useCallback(() => {
     const id = userRef.current
     if (id) push(id).catch(err => console.error('sync failed', err))
-  }, [])
+    else ensureSession()
+  }, [ensureSession])
 
   const signOut = useCallback(async () => {
     await getSupabase()?.auth.signOut()
@@ -168,7 +210,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AccountValue>(
     () => ({
       ready,
-      user: session?.user ?? null,
+      user: session && !session.user.is_anonymous ? session.user : null,
       tier,
       unlimited,
       maxLevel: maxLevelFor(tier, unlimited),
