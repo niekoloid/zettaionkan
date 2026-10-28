@@ -9,6 +9,7 @@ import { CHORD_BY_ID, CHORDS, chordsForLevel } from '@/lib/chords'
 import { checkPromotion, dayKey, isStuck, lessonsOn, suggestFocus, weekDays } from '@/lib/engine'
 import { changeLevel, useAppState, useHydrated } from '@/lib/store'
 import { useAccount } from '@/lib/account'
+import { warm } from '@/lib/audio'
 
 const STICKERS = ['🐱', '🚃', '🍓', '🐶', '🌷', '🚗', '🐰', '🍙', '⭐', '🐘', '🍎', '🚀', '🐧', '🌈']
 
@@ -21,6 +22,11 @@ export default function TodayPage() {
   useEffect(() => {
     if (hydrated && !s.nickname) router.replace('/start')
   }, [hydrated, s.nickname, router])
+
+  // Fetch the piano samples while the parent reads this page
+  useEffect(() => {
+    if (hydrated && s.nickname) warm(chordsForLevel(Math.min(s.level, maxLevel)))
+  }, [hydrated, s.nickname, s.level, maxLevel])
 
   const today = dayKey(new Date())
   const todays = lessonsOn(s.lessons, today)

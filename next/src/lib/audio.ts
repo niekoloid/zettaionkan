@@ -49,18 +49,24 @@ function load(url: string): Promise<AudioBuffer | null> {
   return p
 }
 
-const sampleUrl = (note: string) => `/samples/steinway/ff20/${note}.mp3`
+const sampleUrl = (note: string) => `/samples/steinway/short/${note}.mp3`
 const narrationUrl = (name: string) => `/narration/google/${encodeURIComponent(name)}.mp3`
 const EFFECTS = { correct: '/audio/effects/correct.mp3' }
 
+const lessonUrls = (chords: Chord[]) => [
+  ...ALL_SAMPLES.filter(n => chords.some(c => c.samples.includes(n))).map(sampleUrl),
+  ...chords.map(c => narrationUrl(c.narration)),
+  EFFECTS.correct
+]
+
+/** Download (without decoding) what the next lesson needs, so starting it is quick. Safe before any tap. */
+export function warm(chords: Chord[]) {
+  lessonUrls(chords).forEach(url => fetch(url).catch(() => {}))
+}
+
 /** Fetch everything a lesson needs; resolves to false if any file failed */
 export async function preload(chords: Chord[]) {
-  const urls = [
-    ...ALL_SAMPLES.filter(n => chords.some(c => c.samples.includes(n))).map(sampleUrl),
-    ...chords.map(c => narrationUrl(c.narration)),
-    EFFECTS.correct
-  ]
-  const results = await Promise.all(urls.map(load))
+  const results = await Promise.all(lessonUrls(chords).map(load))
   return results.every(Boolean)
 }
 

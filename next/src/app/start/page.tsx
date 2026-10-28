@@ -80,7 +80,7 @@ export default function StartPage() {
             最初は「あか」1色から始めます。印刷できる「いろマット」のほか、折り紙やおもちゃなど、その色のものなら何でもかまいません。
           </p>
           <div className="mt-3 flex gap-3">
-            {CHORDS.slice(0, 3).map(c => (
+            {CHORDS.slice(0, 1).map(c => (
               <ColorDot key={c.id} chord={c} size={40} />
             ))}
           </div>

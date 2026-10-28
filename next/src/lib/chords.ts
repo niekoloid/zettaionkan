@@ -1,6 +1,6 @@
 /**
  * The 14 chords, in the order they are added: 9 white-key chords, then 5 with black keys.
- * `notes` are sample file names under /samples/steinway/ff20/ (flats, no sharps).
+ * `notes` are sample file names under /samples/steinway/short/ (flats, no sharps).
  */
 export interface Chord {
   id: string
