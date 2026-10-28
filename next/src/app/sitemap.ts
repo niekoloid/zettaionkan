@@ -5,6 +5,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${base}/`, changeFrequency: 'weekly', priority: 1 },
     { url: `${base}/plans`, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${base}/flags`, changeFrequency: 'monthly', priority: 0.5 }
+    { url: `${base}/mat`, changeFrequency: 'monthly', priority: 0.5 }
   ]
 }

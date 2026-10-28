@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Flag from '@/components/Flag'
+import ColorDot from '@/components/ColorDot'
 import { CHORD_BY_ID, chordsForLevel } from '@/lib/chords'
 import { chordStats, checkPromotion, confusionWeights, pickChord, pickFocus, type Answer } from '@/lib/engine'
 import { cheer, playChord, preload, sayColor, stop, unlock, wait } from '@/lib/audio'
@@ -133,10 +133,10 @@ export default function LessonPage() {
     return (
       <Screen>
         <p className="text-sm font-bold text-gray-500">{focus ? 'くらべっこ' : 'じゅんび'}</p>
-        <h1 className="mt-1 text-2xl font-black">きょうの はたを ならべてね</h1>
+        <h1 className="mt-1 text-2xl font-black">きょうの いろを ならべてね</h1>
         <div className="my-8 flex flex-wrap justify-center gap-4">
           {chords.map(c => (
-            <Flag key={c.id} chord={c} size={72} />
+            <ColorDot key={c.id} chord={c} size={72} />
           ))}
         </div>
         {focus && (
@@ -145,8 +145,8 @@ export default function LessonPage() {
           </p>
         )}
         <ul className="space-y-2 text-sm text-gray-600">
-          <li>・おとが なったら、{chords.length > 1 ? 'おもう いろの はたを' : 'はたを'} あげてもらいます。</li>
-          <li>・おうちの方は、画面に出る「こたえ」と見くらべて ○ を押してください。ちがったら、お子さんが上げた色を押します。</li>
+          <li>・おとが なったら、{chords.length > 1 ? 'おもう いろに' : 'いろに'} タッチしてもらいます。</li>
+          <li>・おうちの方は、画面に出る「こたえ」と見くらべて ○ を押してください。ちがったら、お子さんがタッチした色を押します。</li>
           <li>・スマホは お子さんに画面が見えないように持つと、音だけで答える練習になります。</li>
         </ul>
         {loaded === false && <p className="mt-4 text-sm text-red-600">音の読み込みに失敗しました。通信を確認して、もう一度開いてください。</p>}
@@ -214,7 +214,7 @@ export default function LessonPage() {
       </div>
 
       <div className="mt-6 flex items-center gap-4 rounded-3xl bg-white p-4 shadow-sm">
-        {chord && <Flag chord={chord} size={56} label={false} />}
+        {chord && <ColorDot chord={chord} size={56} label={false} />}
         <div className="flex-1">
           <p className="text-xs font-bold text-gray-400">こたえ（おうちの方へ）</p>
           <p className="text-2xl font-black">{chord?.kana}</p>
@@ -233,7 +233,7 @@ export default function LessonPage() {
         </button>
       </div>
 
-      <p className="mt-6 text-center text-sm text-gray-500">{busy ? '♪' : 'はたは あっていた？'}</p>
+      <p className="mt-6 text-center text-sm text-gray-500">{busy ? '♪' : 'あっていた？'}</p>
 
       <button
         className="mt-4 flex h-36 w-full items-center justify-center rounded-[2rem] bg-emerald-500 text-7xl font-black text-white shadow-lg active:scale-95 disabled:opacity-40"
@@ -246,7 +246,7 @@ export default function LessonPage() {
 
       {others.length > 0 && (
         <>
-          <p className="mt-5 text-center text-xs font-bold text-gray-400">ちがう色をあげたら、その色を押す</p>
+          <p className="mt-5 text-center text-xs font-bold text-gray-400">ちがう色にタッチしたら、その色を押す</p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             {others.map(c => (
               <button
@@ -254,9 +254,9 @@ export default function LessonPage() {
                 className="rounded-2xl bg-white px-1 py-2 shadow-sm active:scale-95 disabled:opacity-40"
                 onClick={() => mark(false, c.id)}
                 disabled={busy}
-                aria-label={`${c.kana}をあげた`}
+                aria-label={`${c.kana}にタッチした`}
               >
-                <Flag chord={c} size={40} />
+                <ColorDot chord={c} size={40} />
               </button>
             ))}
           </div>
@@ -268,7 +268,7 @@ export default function LessonPage() {
         onClick={() => mark(false)}
         disabled={busy}
       >
-        × {others.length > 0 ? '（色はわからない・あげなかった）' : 'ちがっていた'}
+        × {others.length > 0 ? '（色はわからない・タッチしなかった）' : 'ちがっていた'}
       </button>
 
       {answers.length > 0 && (

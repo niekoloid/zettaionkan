@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Shell from '@/components/Shell'
-import Flag from '@/components/Flag'
+import ColorDot from '@/components/ColorDot'
 import { chordsForLevel, type Chord } from '@/lib/chords'
 import { playChord, preload, sayColor, stop, unlock, wait } from '@/lib/audio'
 import { useAppState, useHydrated } from '@/lib/store'
@@ -60,7 +60,7 @@ export default function ListenPage() {
   return (
     <Shell title="きく">
       <p className="text-sm text-gray-600">
-        いま練習している和音を、色の名前といっしょに流します。車の中や遊びの合間などに。メインはあくまで旗あげのレッスンです。
+        いま練習している和音を、色の名前といっしょに流します。車の中や遊びの合間などに。メインはあくまで色にタッチするレッスンです。
       </p>
       <div
         className="mt-6 flex aspect-square w-full flex-col items-center justify-center rounded-[2.5rem] transition-colors duration-500"
@@ -74,7 +74,7 @@ export default function ListenPage() {
       </button>
       <div className="mt-6 flex flex-wrap justify-center gap-2">
         {chords.map(c => (
-          <Flag key={c.id} chord={c} size={32} />
+          <ColorDot key={c.id} chord={c} size={32} />
         ))}
       </div>
     </Shell>

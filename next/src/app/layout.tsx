@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://zettaionkan.jp'),
   title: { default: 'いろおと - 1日30秒×4回の絶対音感トレーニング', template: '%s | いろおと' },
   description:
-    '和音を聞いて、色の旗をあげるだけ。1回30秒、1日4回。3歳から続けられる、親子のための絶対音感トレーニングアプリです。',
+    '和音を聞いて、色にタッチするだけ。1回30秒、1日4回。3歳から続けられる、親子のための絶対音感トレーニングアプリです。',
   openGraph: { images: '/ogp_image.png', siteName: 'いろおと', locale: 'ja_JP', type: 'website' },
   icons: { icon: '/favicon.png', apple: '/apple-touch-icon.png' },
   appleWebApp: { capable: true, title: 'いろおと', statusBarStyle: 'default' },

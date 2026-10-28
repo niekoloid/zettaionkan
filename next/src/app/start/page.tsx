@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import Flag from '@/components/Flag'
+import ColorDot from '@/components/ColorDot'
 import { CHORDS } from '@/lib/chords'
 import { DEFAULT_TIMES, setState, useAppState } from '@/lib/store'
 import { useAccount } from '@/lib/account'
@@ -35,7 +35,7 @@ export default function StartPage() {
       <img src="/logo_irooto_only_name.webp" alt="いろおと" className="h-8 w-auto" />
       <h1 className="mt-6 text-2xl font-black">はじめる前に</h1>
       <p className="mt-2 text-sm text-gray-600">
-        1回30秒ほどのレッスンを、1日4回。お子さんは音を聞いて色の旗をあげ、おうちの方は ○ か × を押すだけです。
+        1回30秒ほどのレッスンを、1日4回。お子さんは音を聞いて色にタッチし、おうちの方は ○ か、タッチした色を押すだけです。
       </p>
 
       <form onSubmit={save} className="mt-8 space-y-6">
@@ -75,17 +75,17 @@ export default function StartPage() {
         </div>
 
         <div className="card">
-          <p className="font-bold">旗を用意してください</p>
+          <p className="font-bold">色の丸を用意してください</p>
           <p className="mt-1 text-sm text-gray-600">
-            最初は「あか」1本から始めます。折り紙やハンカチなど、その色のものなら何でもかまいません。
+            最初は「あか」1色から始めます。印刷できる「いろマット」のほか、折り紙やおもちゃなど、その色のものなら何でもかまいません。
           </p>
           <div className="mt-3 flex gap-3">
             {CHORDS.slice(0, 3).map(c => (
-              <Flag key={c.id} chord={c} size={40} />
+              <ColorDot key={c.id} chord={c} size={40} />
             ))}
           </div>
-          <Link href="/flags" className="mt-3 inline-block text-sm font-bold text-gray-900 underline">
-            印刷して使える旗のページ
+          <Link href="/mat" className="mt-3 inline-block text-sm font-bold text-gray-900 underline">
+            印刷して使える いろマット
           </Link>
         </div>
 
