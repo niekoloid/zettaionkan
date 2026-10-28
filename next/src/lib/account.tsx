@@ -37,6 +37,7 @@ interface LessonRow {
   finished_at: string
   level: number
   answers: Lesson['answers']
+  focus: [string, string] | null
 }
 
 /**
@@ -69,7 +70,8 @@ async function pull(userId: string) {
       startedAt: r.started_at,
       finishedAt: r.finished_at,
       level: r.level,
-      answers: r.answers
+      answers: r.answers,
+      ...(r.focus ? { focus: r.focus } : {})
     }))
     const lessons = [...s.lessons, ...remote.filter(l => !known.has(l.id))].sort((a, b) =>
       a.startedAt.localeCompare(b.startedAt)
@@ -116,6 +118,7 @@ async function push(userId: string) {
         finished_at: l.finishedAt,
         level: l.level,
         answers: l.answers,
+        focus: l.focus ?? null,
         correct: l.answers.filter(a => a.correct).length,
         total: l.answers.length
       }))

@@ -3,14 +3,15 @@
 import { useMemo } from 'react'
 import Shell from '@/components/Shell'
 import Flag from '@/components/Flag'
-import { chordsForLevel } from '@/lib/chords'
-import { accuracy, chordStats, dayKey, lessonsOn } from '@/lib/engine'
+import { CHORD_BY_ID, chordsForLevel } from '@/lib/chords'
+import { accuracy, chordStats, confusions, dayKey, lessonsOn } from '@/lib/engine'
 import { useAppState, useHydrated } from '@/lib/store'
 
 export default function RecordPage() {
   const s = useAppState()
   const hydrated = useHydrated()
   const stats = useMemo(() => chordStats(s.lessons), [s.lessons])
+  const mixups = useMemo(() => confusions(s.lessons).slice(0, 5), [s.lessons])
 
   const days = useMemo(() => {
     return Array.from({ length: 14 }, (_, i) => {
@@ -78,6 +79,30 @@ export default function RecordPage() {
       </section>
 
       <section className="card mt-5">
+        <h2 className="font-black">取り違えやすい組</h2>
+        <p className="mt-1 text-xs text-gray-400">ちがう色をあげたときに、その色を押した記録から（直近150問）</p>
+        {mixups.length === 0 ? (
+          <p className="mt-3 text-sm text-gray-500">まだ記録がありません。</p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {mixups.map(m => {
+              const [a, b] = m.pair.map(id => CHORD_BY_ID[id]!)
+              return (
+                <li key={m.pair.join('/')} className="flex items-center gap-2 text-sm">
+                  <Flag chord={a!} size={28} label={false} />
+                  <Flag chord={b!} size={28} label={false} />
+                  <span className="flex-1 font-bold">
+                    {a!.kana} と {b!.kana}
+                  </span>
+                  <span className="text-gray-500">{m.count}回</span>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </section>
+
+      <section className="card mt-5">
         <h2 className="font-black">さいきんのレッスン</h2>
         {recent.length === 0 ? (
           <p className="mt-2 text-sm text-gray-500">まだレッスンがありません。</p>
@@ -92,7 +117,7 @@ export default function RecordPage() {
                     {d.getMonth() + 1}/{d.getDate()} {String(d.getHours()).padStart(2, '0')}:{String(d.getMinutes()).padStart(2, '0')}
                   </span>
                   <span>
-                    {l.level}和音・{c}/{l.answers.length}問
+                    {l.focus ? `くらべっこ（${l.focus.map(id => CHORD_BY_ID[id]?.kana).join('・')}）` : `${l.level}和音`}・{c}/{l.answers.length}問
                   </span>
                 </li>
               )

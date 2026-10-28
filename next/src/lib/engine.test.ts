@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { checkPromotion, chordStats, isStuck, pickChord, weekDays, type Lesson } from './engine'
+import { checkPromotion, chordStats, confusions, isStuck, pickChord, pickFocus, suggestFocus, weekDays, type Answer, type Lesson } from './engine'
 import { lessonCalendar } from './ics'
 import { maxLevelFor } from './plans'
 
@@ -47,6 +47,60 @@ describe('checkPromotion', () => {
   })
 })
 
+const withAnswers = (day: string, level: number, answers: Answer[], focus?: [string, string]): Lesson => ({
+  id: String(n++),
+  startedAt: new Date(`${day}T10:00:00`).toISOString(),
+  finishedAt: new Date(`${day}T10:01:00`).toISOString(),
+  level,
+  answers,
+  ...(focus ? { focus } : {})
+})
+const right = (chordId: string, k: number): Answer[] => Array.from({ length: k }, () => ({ chordId, correct: true }))
+const mixup = (chordId: string, raised: string): Answer => ({ chordId, correct: false, raised })
+
+describe('mix-ups', () => {
+  it('counts both directions as one pair, newest answers first', () => {
+    const ls = [
+      withAnswers('2026-10-20', 4, [mixup('shireso', 'radofa'), mixup('radofa', 'shireso'), mixup('domiso', 'dofara')]),
+      withAnswers('2026-10-21', 4, [{ chordId: 'radofa', correct: false }, mixup('radofa', 'shireso')])
+    ]
+    expect(confusions(ls)).toEqual([
+      { pair: ['shireso', 'radofa'], count: 3 },
+      { pair: ['domiso', 'dofara'], count: 1 }
+    ])
+    expect(confusions(ls, 2)).toEqual([{ pair: ['shireso', 'radofa'], count: 1 }])
+  })
+
+  it('holds promotion while the newest chord is mixed up', () => {
+    const good = (day: string, extra: Answer[]) => withAnswers(day, 4, [...right('domiso', 9), ...right('radofa', 9), ...extra])
+    const ls = [good('2026-10-20', [mixup('radofa', 'shireso')]), good('2026-10-20', []), good('2026-10-21', [mixup('shireso', 'radofa')])]
+    const r = checkPromotion(ls, 4)
+    expect(r.ready).toBe(false)
+    expect(r.hint).toContain('あお')
+    expect(r.hint).toContain('くろ')
+    expect(checkPromotion([ls[0]!, ls[1]!, good('2026-10-21', [])], 4).ready).toBe(true)
+  })
+
+  it('leaves くらべっこ lessons out of promotion', () => {
+    const pair: [string, string] = ['domiso', 'dofara']
+    const ls = [lesson('2026-10-20', 2, 10), lesson('2026-10-21', 2, 10), withAnswers('2026-10-21', 2, right('domiso', 10), pair)]
+    expect(checkPromotion(ls, 2).ready).toBe(false)
+  })
+
+  it('suggests くらべっこ for a pair mixed up three times, only with both chords in play', () => {
+    const ls = [withAnswers('2026-10-20', 4, [mixup('shireso', 'radofa'), mixup('radofa', 'shireso'), mixup('shireso', 'radofa')])]
+    expect(suggestFocus(ls, 4)).toEqual(['shireso', 'radofa'])
+    expect(suggestFocus(ls, 3)).toBeNull()
+    expect(suggestFocus([withAnswers('2026-10-20', 4, [mixup('shireso', 'radofa')])], 4)).toBeNull()
+  })
+
+  it('alternates the くらべっこ pair without three in a row', () => {
+    expect(pickFocus(['domiso', 'dofara'], ['dofara', 'dofara'], () => 0.9)).toBe('domiso')
+    expect(pickFocus(['domiso', 'dofara'], ['domiso', 'domiso'], () => 0.1)).toBe('dofara')
+    expect(pickFocus(['domiso', 'dofara'], ['domiso'], () => 0.1)).toBe('domiso')
+  })
+})
+
 describe('pickChord', () => {
   it('only uses unlocked chords', () => {
     for (let i = 0; i < 200; i++) expect(['domiso', 'dofara', 'shireso']).toContain(pickChord(3, [], {}))
@@ -58,6 +112,17 @@ describe('pickChord', () => {
 
   it('never asks the same chord three times in a row', () => {
     for (let i = 0; i < 200; i++) expect(pickChord(2, ['dofara', 'dofara'], {})).toBe('domiso')
+  })
+
+  it('brings up mixed-up chords more', () => {
+    let seed = 7
+    const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+    const count = (extra: Record<string, number>) => {
+      let k = 0
+      for (let i = 0; i < 3000; i++) if (pickChord(4, [], {}, rand, extra) === 'domiso') k++
+      return k
+    }
+    expect(count({ domiso: 1 })).toBeGreaterThan(count({}) * 1.3)
   })
 
   it('favours the newest chord', () => {
