@@ -33,7 +33,8 @@ const nextConfig = {
       { source: '/history', destination: '/record', permanent: false },
       { source: '/subscription', destination: '/plans', permanent: false },
       { source: '/auth', destination: '/login', permanent: false },
-      { source: '/lp', destination: '/', permanent: true }
+      { source: '/lp', destination: '/', permanent: true },
+      { source: '/flags', destination: '/mat', permanent: true }
     ]
   }
 }

@@ -3,7 +3,7 @@ import { CHORD_BY_ID, CHORDS, chordsForLevel } from './chords'
 export interface Answer {
   chordId: string
   correct: boolean
-  /** The colour the child raised instead, when the parent picked it (wrong answers only) */
+  /** The colour the child touched instead, when the parent picked it (wrong answers only) */
   raised?: string
 }
 

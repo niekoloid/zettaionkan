@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Shell from '@/components/Shell'
-import Flag from '@/components/Flag'
+import ColorDot from '@/components/ColorDot'
 import { CHORDS } from '@/lib/chords'
 import { lessonCalendar } from '@/lib/ics'
 import { PLANS } from '@/lib/plans'
@@ -94,7 +94,7 @@ export default function SettingsPage() {
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {CHORDS.slice(0, s.level).map(c => (
-            <Flag key={c.id} chord={c} size={32} label={false} />
+            <ColorDot key={c.id} chord={c} size={32} label={false} />
           ))}
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2">
@@ -145,8 +145,8 @@ export default function SettingsPage() {
       </section>
 
       <section className="mt-8 space-y-3 text-center text-sm">
-        <Link href="/flags" className="block text-gray-600 underline">
-          印刷用の旗
+        <Link href="/mat" className="block text-gray-600 underline">
+          印刷用の いろマット
         </Link>
         <button
           className="text-red-500"

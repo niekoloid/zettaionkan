@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import Shell from '@/components/Shell'
-import Flag from '@/components/Flag'
+import ColorDot from '@/components/ColorDot'
 import { CHORD_BY_ID, CHORDS, chordsForLevel } from '@/lib/chords'
 import { checkPromotion, dayKey, isStuck, lessonsOn, suggestFocus, weekDays } from '@/lib/engine'
 import { changeLevel, useAppState, useHydrated } from '@/lib/store'
@@ -85,7 +85,7 @@ export default function TodayPage() {
                 直近{promo.counted.length}回のレッスンがよくできています。「{nextChord.kana}（{nextChord.notes}）」を加えましょう。
               </p>
               <div className="mt-3 flex items-center gap-4">
-                <Flag chord={nextChord} />
+                <ColorDot chord={nextChord} />
                 <button className="btn-primary flex-1" onClick={addChord}>
                   {nextChord.kana}を ふやす
                 </button>
@@ -112,8 +112,8 @@ export default function TodayPage() {
             さいきん「{CHORD_BY_ID[focus[0]]!.kana}」と「{CHORD_BY_ID[focus[1]]!.kana}」を取り違えることが多いようです。この2色だけで1回やってみると、聞き分けやすくなります。
           </p>
           <div className="mt-3 flex items-center gap-3">
-            <Flag chord={CHORD_BY_ID[focus[0]]!} size={40} />
-            <Flag chord={CHORD_BY_ID[focus[1]]!} size={40} />
+            <ColorDot chord={CHORD_BY_ID[focus[0]]!} size={40} />
+            <ColorDot chord={CHORD_BY_ID[focus[1]]!} size={40} />
             <Link href={`/lesson?focus=${focus.join(',')}`} className="btn-primary flex-1">
               くらべっこ
             </Link>
@@ -132,14 +132,14 @@ export default function TodayPage() {
 
       <section className="card mt-5">
         <div className="flex items-baseline justify-between">
-          <h2 className="font-black">いまの はた</h2>
+          <h2 className="font-black">いまの いろ</h2>
           <span className="text-xs text-gray-400">
             {s.level} / {CHORDS.length} 和音
           </span>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           {chordsForLevel(s.level).map(c => (
-            <Flag key={c.id} chord={c} size={44} />
+            <ColorDot key={c.id} chord={c} size={44} />
           ))}
         </div>
         {!promo.ready && s.level < CHORDS.length && <p className="mt-3 text-xs text-gray-500">つぎの和音まで：{promo.hint}</p>}

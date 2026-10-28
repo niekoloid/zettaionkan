@@ -1,13 +1,13 @@
 import Link from 'next/link'
-import Flag from '@/components/Flag'
+import ColorDot from '@/components/ColorDot'
 import Footer from '@/components/Footer'
 import { CHORDS } from '@/lib/chords'
 import { PLANS, yen } from '@/lib/plans'
 
 const STEPS = [
   { title: '和音が鳴る', body: 'アプリがピアノの和音を鳴らします。ピアノがなくても大丈夫です。' },
-  { title: '旗をあげる', body: 'お子さんは、その和音の色の旗をあげます。画面は見ません。' },
-  { title: '○か×を押す', body: 'おうちの方は、画面の「こたえ」と旗を見くらべて押すだけ。' }
+  { title: '色にタッチ', body: 'お子さんは、並べた色の丸から、聞こえた和音の色にタッチします。画面は見ません。' },
+  { title: '○か×を押す', body: 'おうちの方は、画面の「こたえ」と見くらべて押すだけ。' }
 ]
 
 const APP_DOES = [
@@ -19,9 +19,9 @@ const APP_DOES = [
 ]
 
 const FAQ = [
-  ['何歳から使えますか？', '2〜6歳ごろが目安です。旗をあげる遊びができれば始められます。3歳前後から始めるご家庭が多い想定です。'],
+  ['何歳から使えますか？', '2〜6歳ごろが目安です。色を指さす遊びができれば始められます。3歳前後から始めるご家庭が多い想定です。'],
   ['1日4回できない日は？', '1回でもできたら、その日は「たっせい」です。続けることをいちばん大切にしています。'],
-  ['旗はどうすればいいですか？', '折り紙やハンカチなど、その色のものなら何でもかまいません。印刷して使える旗のページもあります。'],
+  ['何を用意すればいいですか？', '印刷して使える「いろマット」のページがあります。折り紙やおもちゃなど、その色のものを並べてもかまいません。お子さんが使い慣れている色の道具があれば、それでも大丈夫です。'],
   ['ピアノは必要ですか？', 'いりません。アプリがグランドピアノの録音で和音を鳴らします。']
 ]
 
@@ -40,13 +40,13 @@ export default function Home() {
       <section className="pb-12 pt-8 text-center">
         <div className="mb-6 flex justify-center gap-1">
           {CHORDS.slice(0, 5).map(c => (
-            <Flag key={c.id} chord={c} size={48} label={false} />
+            <ColorDot key={c.id} chord={c} size={48} label={false} />
           ))}
         </div>
         <h1 className="text-3xl font-black leading-tight sm:text-5xl">
           1回30秒、1日4回。
           <br />
-          和音を聞いて、旗をあげるだけ。
+          和音を聞いて、色にタッチするだけ。
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-gray-600">
           いろおとは、3歳から毎日続けられる親子の絶対音感トレーニングです。おうちの方はボタンを押すだけ。出題も記録も、次に進むタイミングも、アプリが引き受けます。
@@ -83,7 +83,7 @@ export default function Home() {
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           {CHORDS.map(c => (
-            <Flag key={c.id} chord={c} size={40} />
+            <ColorDot key={c.id} chord={c} size={40} />
           ))}
         </div>
       </section>

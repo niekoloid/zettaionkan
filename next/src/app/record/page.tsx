@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import Shell from '@/components/Shell'
-import Flag from '@/components/Flag'
+import ColorDot from '@/components/ColorDot'
 import { CHORD_BY_ID, chordsForLevel } from '@/lib/chords'
 import { accuracy, chordStats, confusions, dayKey, lessonsOn } from '@/lib/engine'
 import { useAppState, useHydrated } from '@/lib/store'
@@ -60,7 +60,7 @@ export default function RecordPage() {
             const pct = st ? Math.round(st.accuracy * 100) : null
             return (
               <li key={c.id} className="flex items-center gap-3">
-                <Flag chord={c} size={32} label={false} />
+                <ColorDot chord={c} size={32} label={false} />
                 <div className="flex-1">
                   <div className="flex justify-between text-sm">
                     <span className="font-bold">
@@ -80,7 +80,7 @@ export default function RecordPage() {
 
       <section className="card mt-5">
         <h2 className="font-black">取り違えやすい組</h2>
-        <p className="mt-1 text-xs text-gray-400">ちがう色をあげたときに、その色を押した記録から（直近150問）</p>
+        <p className="mt-1 text-xs text-gray-400">ちがう色にタッチしたときに、その色を押した記録から（直近150問）</p>
         {mixups.length === 0 ? (
           <p className="mt-3 text-sm text-gray-500">まだ記録がありません。</p>
         ) : (
@@ -89,8 +89,8 @@ export default function RecordPage() {
               const [a, b] = m.pair.map(id => CHORD_BY_ID[id]!)
               return (
                 <li key={m.pair.join('/')} className="flex items-center gap-2 text-sm">
-                  <Flag chord={a!} size={28} label={false} />
-                  <Flag chord={b!} size={28} label={false} />
+                  <ColorDot chord={a!} size={28} label={false} />
+                  <ColorDot chord={b!} size={28} label={false} />
                   <span className="flex-1 font-bold">
                     {a!.kana} と {b!.kana}
                   </span>
