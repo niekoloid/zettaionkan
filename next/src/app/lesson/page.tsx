@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import ColorDot from '@/components/ColorDot'
 import { CHORD_BY_ID, chordsForLevel } from '@/lib/chords'
 import { chordStats, checkPromotion, confusionWeights, pickChord, pickFocus, type Answer } from '@/lib/engine'
-import { cheer, playChord, preload, sayColor, stop, unlock, wait } from '@/lib/audio'
+import { CHORD_SECONDS, cheer, playChord, preload, sayColor, stop, unlock, wait } from '@/lib/audio'
 import { addLesson, getState, useAppState, useHydrated } from '@/lib/store'
 import { useAccount } from '@/lib/account'
 
@@ -112,8 +112,8 @@ export default function LessonPage() {
     } else {
       // No "wrong" sound: say the right colour and play the chord again
       await sayColor(chord)
-      await playChord(chord, 1.6)
-      await wait(1600)
+      await playChord(chord)
+      await wait(CHORD_SECONDS * 1000)
     }
     if (!alive.current) return
     if (list.length >= total) finish(list)

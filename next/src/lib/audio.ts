@@ -11,6 +11,9 @@ const buffers = new Map<string, AudioBuffer>()
 const pending = new Map<string, Promise<AudioBuffer | null>>()
 let current: { stop: () => void } | null = null
 
+/** How long a chord rings: 6 seconds, as the practice books ask */
+export const CHORD_SECONDS = 6
+
 const getCtx = () => {
   if (!ctx) {
     const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
@@ -49,7 +52,7 @@ function load(url: string): Promise<AudioBuffer | null> {
   return p
 }
 
-const sampleUrl = (note: string) => `/samples/steinway/short/${note}.mp3`
+const sampleUrl = (note: string) => `/samples/steinway/s7/${note}.mp3`
 const narrationUrl = (name: string) => `/narration/google/${encodeURIComponent(name)}.mp3`
 const EFFECTS = { correct: '/audio/effects/correct.mp3' }
 
@@ -76,7 +79,7 @@ export function stop() {
   current = null
 }
 
-export async function playChord(chord: Chord, seconds = 2.5) {
+export async function playChord(chord: Chord, seconds = CHORD_SECONDS) {
   const c = getCtx()
   const bufs = await Promise.all(chord.samples.map(n => load(sampleUrl(n))))
   stop()
