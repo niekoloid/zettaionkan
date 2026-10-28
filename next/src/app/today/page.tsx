@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import Shell from '@/components/Shell'
 import Flag from '@/components/Flag'
-import { CHORDS, chordsForLevel } from '@/lib/chords'
-import { checkPromotion, dayKey, isStuck, lessonsOn, weekDays } from '@/lib/engine'
+import { CHORD_BY_ID, CHORDS, chordsForLevel } from '@/lib/chords'
+import { checkPromotion, dayKey, isStuck, lessonsOn, suggestFocus, weekDays } from '@/lib/engine'
 import { changeLevel, useAppState, useHydrated } from '@/lib/store'
 import { useAccount } from '@/lib/account'
 
@@ -27,6 +27,11 @@ export default function TodayPage() {
   const week = weekDays(s.lessons)
   const promo = useMemo(() => checkPromotion(s.lessons, s.level), [s.lessons, s.level])
   const stuck = useMemo(() => isStuck(s.lessons, s.level), [s.lessons, s.level])
+  // Suggested at most until a くらべっこ lesson is done that day
+  const focus = useMemo(
+    () => (lessonsOn(s.lessons, dayKey(new Date())).some(l => l.focus) ? null : suggestFocus(s.lessons, Math.min(s.level, maxLevel))),
+    [s.lessons, s.level, maxLevel]
+  )
   const nextChord = CHORDS[s.level]
   const nextTime = s.times[todays.length]
 
@@ -97,6 +102,22 @@ export default function TodayPage() {
               </Link>
             </>
           )}
+        </section>
+      )}
+
+      {focus && (
+        <section className="card mt-5 border-sky-200 bg-sky-50">
+          <p className="font-black">くらべっこ をしてみましょう</p>
+          <p className="mt-1 text-sm text-gray-600">
+            さいきん「{CHORD_BY_ID[focus[0]]!.kana}」と「{CHORD_BY_ID[focus[1]]!.kana}」を取り違えることが多いようです。この2色だけで1回やってみると、聞き分けやすくなります。
+          </p>
+          <div className="mt-3 flex items-center gap-3">
+            <Flag chord={CHORD_BY_ID[focus[0]]!} size={40} />
+            <Flag chord={CHORD_BY_ID[focus[1]]!} size={40} />
+            <Link href={`/lesson?focus=${focus.join(',')}`} className="btn-primary flex-1">
+              くらべっこ
+            </Link>
+          </div>
         </section>
       )}
 
