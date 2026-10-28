@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Shell from '@/components/Shell'
 import ColorDot from '@/components/ColorDot'
 import { chordsForLevel, type Chord } from '@/lib/chords'
-import { playChord, preload, sayColor, stop, unlock, wait } from '@/lib/audio'
+import { CHORD_SECONDS, playChord, preload, sayColor, stop, unlock, wait } from '@/lib/audio'
 import { useAppState, useHydrated } from '@/lib/store'
 import { useAccount } from '@/lib/account'
 
@@ -40,8 +40,8 @@ export default function ListenPage() {
       const c = options[Math.floor(Math.random() * options.length)]!
       last = c.id
       setPlaying(c)
-      await playChord(c, 2.2)
-      await wait(1800)
+      await playChord(c)
+      await wait(CHORD_SECONDS * 1000)
       if (!alive()) break
       await sayColor(c)
       await wait(2500)
