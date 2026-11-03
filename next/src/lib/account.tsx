@@ -156,6 +156,19 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  // Count one visit per browser session (also keeps the free Supabase project awake)
+  useEffect(() => {
+    const sb = getSupabase()
+    if (!sb) return
+    try {
+      if (sessionStorage.getItem('irooto.counted')) return
+      sessionStorage.setItem('irooto.counted', '1')
+    } catch {}
+    sb.rpc('increment_access').then(({ error }) => {
+      if (error) console.warn('access count failed', error.message)
+    })
+  }, [])
+
   useEffect(() => {
     const sb = getSupabase()
     if (!sb) {
